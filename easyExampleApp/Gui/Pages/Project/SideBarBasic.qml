@@ -14,12 +14,14 @@ EaComponents.SideBarColumn {
         collapsible: false
 
         EaElements.SideBarButton {
+            id: createProjectButton
             fontIcon: "plus-circle"
             text: qsTr("Create a new project")
             onClicked: {
                 ExGlobals.Variables.samplePageEnabled = true
                 ExGlobals.Variables.projectCreated = true
             }
+            Component.onCompleted: ExGlobals.Variables.createProjectButton = createProjectButton
         }
     }
 

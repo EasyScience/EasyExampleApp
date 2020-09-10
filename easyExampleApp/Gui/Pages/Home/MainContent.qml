@@ -59,12 +59,14 @@ Item {
 
         // Start button
         Button {
+            id: startButton
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Start")
             onClicked: {
                 ExGlobals.Variables.projectPageEnabled = true
                 ExGlobals.Variables.projectTabButton.toggle()
             }
+            Component.onCompleted: ExGlobals.Variables.startButton = startButton
         }
 
         // Links
@@ -102,6 +104,8 @@ Item {
 
     }
 
+    // Remote controller for tutorials
+
     EaElements.RemoteController {
         id: rc
     }
@@ -118,12 +122,12 @@ Item {
     Component.onCompleted: {
         if (EaGlobals.Variables.isTestMode) {
             print('TEST MODE')
-            runTutorial0()
+            runTutorial1()
             quit.start()
         }
     }
 
-    // Tutorials
+    // Tutorials related logic
 
     function startSavingScreenshots(message) {
         if (EaGlobals.Variables.isTestMode) {
@@ -138,24 +142,17 @@ Item {
         }
     }
 
-    function runTutorial0() {
-        startSavingScreenshots("* run Tutorial 0")
-        rc.wait(1000)
-        rc.show()
-        rc.wait(1000)
-        rc.hide()
-        rc.wait(1000)
-        endSavingScreenshots()
-    }
-
     function runTutorial1() {
         startSavingScreenshots("* run Tutorial 1")
 
         rc.wait(1000)
         rc.show()
 
+        rc.mouseClick(ExGlobals.Variables.startButton)
+        rc.mouseClick(ExGlobals.Variables.createProjectButton)
         rc.mouseClick(ExGlobals.Variables.sampleTabButton)
         rc.mouseClick(ExGlobals.Variables.addNewSampleButton)
+        rc.mouseClick(ExGlobals.Variables.sampleParametersGroup)
         rc.mouseClick(ExGlobals.Variables.amplitudeTextInput)
         rc.clearText(4)
         rc.typeText("2.10")
@@ -211,17 +208,6 @@ Item {
         rc.wait(1000)
         rc.hide()
 
-        rc.wait(1000)
-        endSavingScreenshots()
-    }
-
-    function runTutorial3() {
-        startSavingScreenshots("* run Tutorial 3")
-        rc.wait(1000)
-        rc.show()
-        rc.mouseClick(ExGlobals.Variables.sampleTabButton)
-        rc.wait(1000)
-        rc.hide()
         rc.wait(1000)
         endSavingScreenshots()
     }

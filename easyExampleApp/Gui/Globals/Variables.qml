@@ -22,6 +22,8 @@ QtObject {
     property bool experimentLoaded: false
 
     // References to GUI elements
+
+    // Application bar tab buttons
     property var homeTabButton
     property var projectTabButton
     property var sampleTabButton
@@ -29,16 +31,25 @@ QtObject {
     property var analysisTabButton
     property var summaryTabButton
 
+    // Application bar tool buttons
     property var preferencesButton
 
+    // Main content and sidebar buttons
+    property var startButton
+    property var createProjectButton
     property var addNewSampleButton
     property var generateMeasuredDataButton
     property var startFittingButton
 
+    // Sidebar group boxes
+    property var sampleParametersGroup
+
+    // Sidebar text inputs
     property var amplitudeTextInput
     property var periodTextInput
     property var xShiftTextInput
     property var yShiftTextInput
 
+    // Comboboxes
     property var themeSelector
 }

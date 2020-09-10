@@ -26,10 +26,13 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
+        id: sampleParametersGroup
         title: qsTr("Sample parameters")
         //visible: ExGlobals.Variables.experimentPageEnabled
         enabled: ExGlobals.Variables.sampleLoaded
         //collapsed: false
+
+        Component.onCompleted: ExGlobals.Variables.sampleParametersGroup = sampleParametersGroup
 
         Grid {
             columns: 4
