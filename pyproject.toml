@@ -145,7 +145,7 @@ file_ext = { macos = '.dmg', ubuntu = '.run', windows = '.exe' }
 installation_path = { macos = '/Users/runner/Qt', ubuntu = '/home/runner/Qt', windows = 'C:\Qt' }
 
 [ci.ffmpeg.macos] # https://evermeet.cx/ffmpeg/ffmpeg-4.3.zip
-version = '4.3'
+version = '4.3.1'
 base_url = 'https://evermeet.cx/ffmpeg'
 file_name_base = 'ffmpeg-'
 file_ext = '.zip'

@@ -102,11 +102,9 @@ Item {
 
     }
 
-    /*
     EaElements.RemoteController {
         id: rc
     }
-    */
 
     Timer {
         id: quit
@@ -120,7 +118,7 @@ Item {
     Component.onCompleted: {
         if (EaGlobals.Variables.isTestMode) {
             print('TEST MODE')
-            //runTutorial1()
+            runTutorial0()
             quit.start()
         }
     }
@@ -138,6 +136,16 @@ Item {
         if (EaGlobals.Variables.isTestMode) {
             EaGlobals.Variables.saveScreenshotsRunning = false
         }
+    }
+
+    function runTutorial0() {
+        startSavingScreenshots("* run Tutorial 0")
+        rc.wait(1000)
+        rc.show()
+        rc.wait(1000)
+        rc.hide()
+        rc.wait(1000)
+        endSavingScreenshots()
     }
 
     function runTutorial1() {
