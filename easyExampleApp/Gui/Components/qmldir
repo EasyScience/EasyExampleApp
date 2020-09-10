@@ -1,0 +1,4 @@
+module Components
+
+ApplicationWindow 1.0 ApplicationWindow.qml
+DataChartView 1.0 DataChartView.qml

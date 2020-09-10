@@ -1,0 +1,7 @@
+module Analysis
+
+MainContentFitting 1.0 MainContentFitting.qml
+MainContentCifEdit 1.0 MainContentCifEdit.qml
+
+SideBarAdvanced 1.0 SideBarAdvanced.qml
+SideBarBasic 1.0 SideBarBasic.qml

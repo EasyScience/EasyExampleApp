@@ -1,0 +1,21 @@
+{
+"files": [
+    "easyExampleApp/main.py",
+
+    "easyExampleApp/Logic/ProjectSentinel.py",
+    "easyExampleApp/Logic/PyQmlProxy.py",
+    "easyExampleApp/Logic/QtInterface.py",
+
+    "easyExampleApp/Logic/DisplayModels/DataModels.py",
+
+    "../easyAppLogic/easyAppLogic/Translator.py",
+
+    "../easyTemplateLib/easyTemplateLib/interface.py",
+
+    "../easyTemplateLib/easyTemplateLib/Objects/fitting.py",
+
+    "../easyTemplateLib/easyTemplateLib/Engines/calculator1.py",
+    "../easyTemplateLib/easyTemplateLib/Engines/calculator2.py",
+    "../easyTemplateLib/easyTemplateLib/Engines/calculatorTemplate.py"
+    ]
+}
