@@ -111,7 +111,7 @@ Item {
     }
 
     Timer {
-        id: quit
+        id: quitTimer
         interval: 1000
         onTriggered: {
             print("* closing app")
@@ -123,15 +123,13 @@ Item {
         if (EaGlobals.Variables.isTestMode) {
             print('TEST MODE')
             runTutorial2()
-            quit.start()
         }
     }
 
     // Tutorials related logic
 
-    function startSavingScreenshots(message) {
+    function startSavingScreenshots() {
         if (EaGlobals.Variables.isTestMode) {
-            print(message)
             EaGlobals.Variables.saveScreenshotsRunning = true
         }
     }
@@ -139,11 +137,14 @@ Item {
     function endSavingScreenshots() {
         if (EaGlobals.Variables.isTestMode) {
             EaGlobals.Variables.saveScreenshotsRunning = false
+            quitTimer.start()
         }
     }
 
     function runTutorial1() {
-        startSavingScreenshots("* run Tutorial 1")
+        print("* run Tutorial 1")
+
+        startSavingScreenshots()
 
         rc.wait(1000)
         rc.show()
@@ -185,10 +186,13 @@ Item {
     }
 
     function runTutorial2() {
-        startSavingScreenshots("* run Tutorial 2")
+        print("* run Tutorial 2")
+
+        startSavingScreenshots()
 
         rc.wait(1000)
         rc.show()
+        rc.wait(3000)
 
         rc.mouseClick(ExGlobals.Variables.preferencesButton)
         rc.mouseClick(ExGlobals.Variables.themeSelector)
