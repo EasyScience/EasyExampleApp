@@ -74,18 +74,18 @@ jobs:
     - name: Create app installer from freezed app bundle
       run: poetry run python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
 
-    - name: Install and run app in test mode to create video tutorials
+    - name: Install and run app in test mode to create GUI test videos
       if: runner.os == 'macOS'
       run: |
         poetry run python ${{ env.SCRIPTS_PATH }}/InstallApp.py
         poetry run python ${{ env.SCRIPTS_PATH }}/RunApp.py test
-#        poetry run python ${{ env.SCRIPTS_PATH }}/CreateTutorials.py
-#
-#    - name: Upload video tutorials to GitHub repository
-#      if: runner.os == 'macOS'
-#      uses: stefanzweifel/git-auto-commit-action@v4
-#      with:
-#        commit_message: Upload video tutorials
+        poetry run python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py
+
+    - name: Upload GUI test videos to GitHub repository
+      if: runner.os == 'macOS'
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: Upload GUI test videos
 
     - name: Create zip archive of app installer
       run: poetry run python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.SHORT_GITHUB_REF }}
