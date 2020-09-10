@@ -122,7 +122,7 @@ Item {
     Component.onCompleted: {
         if (EaGlobals.Variables.isTestMode) {
             print('TEST MODE')
-            runTutorial1()
+            runTutorial2()
             quit.start()
         }
     }
