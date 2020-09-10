@@ -49,7 +49,7 @@ attrs = "*"
 requests = "*"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Converts a Python dictionary or other native data type into a valid XML string."
 name = "dicttoxml"
 optional = false
@@ -57,39 +57,35 @@ python-versions = "*"
 version = "1.7.4"
 
 [[package]]
-category = "dev"
+category = "main"
 description = ""
-develop = true
 name = "easyappgui"
 optional = false
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
-version = "0.2.4"
+version = "0.2.3"
 
 [package.dependencies]
 PySide2 = "^5.15"
 
 [package.source]
-reference = ""
-type = "directory"
-url = "../easyAppGui"
-
+reference = "ca7fb22fe2a3207ada10afb6f3a01de0a3c84a67"
+type = "git"
+url = "https://github.com/easyScience/easyAppGui.git"
 [[package]]
-category = "dev"
+category = "main"
 description = ""
-develop = true
 name = "easyapplogic"
 optional = false
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
-version = "0.1.1"
+version = "0.1.0"
 
 [package.dependencies]
 dicttoxml = "^1.7.4"
 
 [package.source]
-reference = ""
-type = "directory"
-url = "../easyAppLogic"
-
+reference = "a5ae76dcff1a63f909f583ff1a5e62fa93068619"
+type = "git"
+url = "https://github.com/easyScience/easyAppLogic.git"
 [[package]]
 category = "main"
 description = ""
@@ -297,7 +293,7 @@ version = "223"
 pywin32 = ">=223"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Python bindings for the Qt cross-platform application and UI framework"
 name = "pyside2"
 optional = false
@@ -366,7 +362,7 @@ version = "1.5.2"
 numpy = ">=1.14.5"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Python / C++ bindings helper module"
 name = "shiboken2"
 optional = false
@@ -403,7 +399,7 @@ secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "pyOpenSSL (>=0
 socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
 
 [metadata]
-content-hash = "7f4141d84e09c50fb46ebd2b4d0da83d4814f23b2666262126c48e94ffcc460f"
+content-hash = "8687c012e47cd292789c31db3debca632a98b5cf1c8e23cf7fc1f6dcb84cb721"
 lock-version = "1.0"
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
 
