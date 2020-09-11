@@ -192,7 +192,6 @@ Item {
 
         rc.wait(1000)
         rc.show()
-        rc.wait(3000)
 
         rc.mouseClick(ExGlobals.Variables.preferencesButton)
         rc.mouseClick(ExGlobals.Variables.themeSelector)
