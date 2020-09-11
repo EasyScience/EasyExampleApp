@@ -49,7 +49,7 @@ attrs = "*"
 requests = "*"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Converts a Python dictionary or other native data type into a valid XML string."
 name = "dicttoxml"
 optional = false
@@ -57,8 +57,9 @@ python-versions = "*"
 version = "1.7.4"
 
 [[package]]
-category = "main"
+category = "dev"
 description = ""
+develop = true
 name = "easyappgui"
 optional = false
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
@@ -68,12 +69,14 @@ version = "0.2.3"
 PySide2 = "^5.15"
 
 [package.source]
-reference = "e18fd235374072b00ade67648e04b2b33ecc4494"
-type = "git"
-url = "https://github.com/easyScience/easyAppGui.git"
+reference = ""
+type = "directory"
+url = "../easyAppGui"
+
 [[package]]
-category = "main"
+category = "dev"
 description = ""
+develop = true
 name = "easyapplogic"
 optional = false
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
@@ -83,25 +86,42 @@ version = "0.1.0"
 dicttoxml = "^1.7.4"
 
 [package.source]
-reference = "a5ae76dcff1a63f909f583ff1a5e62fa93068619"
-type = "git"
-url = "https://github.com/easyScience/easyAppLogic.git"
+reference = ""
+type = "directory"
+url = "../easyAppLogic"
+
 [[package]]
-category = "main"
+category = "dev"
 description = ""
-name = "easytemplatelib"
+develop = true
+name = "easycore"
 optional = false
-python-versions = "^3.6, >=3.6.1"
+python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
 version = "0.0.1"
 
 [package.dependencies]
-numpy = "^1.18.5"
-scipy = "^1.4.1"
+numpy = "^1.19"
+pint = "^0.15"
 
 [package.source]
-reference = "cd69e45146ca03b3c40416695624c1a9e1175373"
-type = "git"
-url = "https://github.com/tempScience/easyTemplateLib.git"
+reference = ""
+type = "directory"
+url = "../easyCore"
+
+[[package]]
+category = "dev"
+description = ""
+develop = true
+name = "easyexamplelib"
+optional = false
+python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
+version = "0.0.1"
+
+[package.source]
+reference = ""
+type = "directory"
+url = "../easyExampleLib"
+
 [[package]]
 category = "dev"
 description = "Python bindings for FFmpeg - with complex filtering support"
@@ -229,12 +249,24 @@ version = "1.14"
 altgraph = ">=0.15"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "NumPy is the fundamental package for array computing with Python."
 name = "numpy"
 optional = false
 python-versions = ">=3.6"
 version = "1.19.2"
+
+[[package]]
+category = "dev"
+description = "Core utilities for Python packages"
+name = "packaging"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "20.4"
+
+[package.dependencies]
+pyparsing = ">=2.0.2"
+six = "*"
 
 [[package]]
 category = "dev"
@@ -247,6 +279,23 @@ version = "2019.4.18"
 
 [package.dependencies]
 future = "*"
+
+[[package]]
+category = "dev"
+description = "Physical quantities module"
+name = "pint"
+optional = false
+python-versions = ">=3.6"
+version = "0.15"
+
+[package.dependencies]
+packaging = "*"
+setuptools = "*"
+
+[package.extras]
+numpy = ["numpy (>=1.14)"]
+test = ["pytest", "pytest-mpl", "pytest-cov"]
+uncertainties = ["uncertainties (>=3.0)"]
 
 [[package]]
 category = "dev"
@@ -282,6 +331,14 @@ version = "2020.7"
 
 [[package]]
 category = "dev"
+description = "Python parsing module"
+name = "pyparsing"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
+version = "2.4.7"
+
+[[package]]
+category = "dev"
 description = ""
 marker = "sys_platform == \"win32\""
 name = "pypiwin32"
@@ -293,7 +350,7 @@ version = "223"
 pywin32 = ">=223"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Python bindings for the Qt cross-platform application and UI framework"
 name = "pyside2"
 optional = false
@@ -351,23 +408,20 @@ version = "1.4.0"
 idna2008 = ["idna"]
 
 [[package]]
-category = "main"
-description = "SciPy: Scientific Library for Python"
-name = "scipy"
-optional = false
-python-versions = ">=3.6"
-version = "1.5.2"
-
-[package.dependencies]
-numpy = ">=1.14.5"
-
-[[package]]
-category = "main"
+category = "dev"
 description = "Python / C++ bindings helper module"
 name = "shiboken2"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <3.10"
 version = "5.15.1"
+
+[[package]]
+category = "dev"
+description = "Python 2 and 3 compatibility utilities"
+name = "six"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+version = "1.15.0"
 
 [[package]]
 category = "dev"
@@ -399,7 +453,7 @@ secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "pyOpenSSL (>=0
 socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
 
 [metadata]
-content-hash = "8687c012e47cd292789c31db3debca632a98b5cf1c8e23cf7fc1f6dcb84cb721"
+content-hash = "a36065cd76e5d37c88aa050d26808ccecc9d61656cda50478e3e690432df93cf"
 lock-version = "1.0"
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
 
@@ -429,7 +483,8 @@ dicttoxml = [
 ]
 easyappgui = []
 easyapplogic = []
-easytemplatelib = []
+easycore = []
+easyexamplelib = []
 ffmpeg-python = [
     {file = "ffmpeg-python-0.2.0.tar.gz", hash = "sha256:65225db34627c578ef0e11c8b1eb528bb35e024752f6f10b78c011f6f64c4127"},
     {file = "ffmpeg_python-0.2.0-py3-none-any.whl", hash = "sha256:ac441a0404e053f8b6a1113a77c0f452f1cfc62f6344a769475ffdc0f56c23c5"},
@@ -504,13 +559,25 @@ numpy = [
     {file = "numpy-1.19.2-pp36-pypy36_pp73-manylinux2010_x86_64.whl", hash = "sha256:0bfd85053d1e9f60234f28f63d4a5147ada7f432943c113a11afcf3e65d9d4c8"},
     {file = "numpy-1.19.2.zip", hash = "sha256:0d310730e1e793527065ad7dde736197b705d0e4c9999775f212b03c44a8484c"},
 ]
+packaging = [
+    {file = "packaging-20.4-py2.py3-none-any.whl", hash = "sha256:998416ba6962ae7fbd6596850b80e17859a5753ba17c32284f67bfff33784181"},
+    {file = "packaging-20.4.tar.gz", hash = "sha256:4357f74f47b9c12db93624a82154e9b120fa8293699949152b22065d556079f8"},
+]
 pefile = [
     {file = "pefile-2019.4.18.tar.gz", hash = "sha256:a5d6e8305c6b210849b47a6174ddf9c452b2888340b8177874b862ba6c207645"},
+]
+pint = [
+    {file = "Pint-0.15-py2.py3-none-any.whl", hash = "sha256:42809516a30e20d9e07fb4d211f0a8df6f7e188131925f8aa66718f673f0974c"},
+    {file = "Pint-0.15.tar.gz", hash = "sha256:73b517bc4e49d199eb8ae9ed49104d74a11e596849ad2330b58c09e1eb6f327d"},
 ]
 pyinstaller = []
 pyinstaller-hooks-contrib = [
     {file = "pyinstaller-hooks-contrib-2020.7.tar.gz", hash = "sha256:74936d044f319cd7a9dca322b46a818fcb6e2af1c67af62e8a6a3121eb2863d2"},
     {file = "pyinstaller_hooks_contrib-2020.7-py2.py3-none-any.whl", hash = "sha256:5b6e06ba6072499189f5b8e1623d5f0414962941aac370ee4f842de25455be5b"},
+]
+pyparsing = [
+    {file = "pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"},
+    {file = "pyparsing-2.4.7.tar.gz", hash = "sha256:c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1"},
 ]
 pypiwin32 = [
     {file = "pypiwin32-223-py3-none-any.whl", hash = "sha256:67adf399debc1d5d14dffc1ab5acacb800da569754fafdc576b2a039485aa775"},
@@ -550,24 +617,6 @@ rfc3986 = [
     {file = "rfc3986-1.4.0-py2.py3-none-any.whl", hash = "sha256:af9147e9aceda37c91a05f4deb128d4b4b49d6b199775fd2d2927768abdc8f50"},
     {file = "rfc3986-1.4.0.tar.gz", hash = "sha256:112398da31a3344dc25dbf477d8df6cb34f9278a94fee2625d89e4514be8bb9d"},
 ]
-scipy = [
-    {file = "scipy-1.5.2-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:cca9fce15109a36a0a9f9cfc64f870f1c140cb235ddf27fe0328e6afb44dfed0"},
-    {file = "scipy-1.5.2-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:1c7564a4810c1cd77fcdee7fa726d7d39d4e2695ad252d7c86c3ea9d85b7fb8f"},
-    {file = "scipy-1.5.2-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:07e52b316b40a4f001667d1ad4eb5f2318738de34597bd91537851365b6c61f1"},
-    {file = "scipy-1.5.2-cp36-cp36m-win32.whl", hash = "sha256:d56b10d8ed72ec1be76bf10508446df60954f08a41c2d40778bc29a3a9ad9bce"},
-    {file = "scipy-1.5.2-cp36-cp36m-win_amd64.whl", hash = "sha256:8e28e74b97fc8d6aa0454989db3b5d36fc27e69cef39a7ee5eaf8174ca1123cb"},
-    {file = "scipy-1.5.2-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:6e86c873fe1335d88b7a4bfa09d021f27a9e753758fd75f3f92d714aa4093768"},
-    {file = "scipy-1.5.2-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:a0afbb967fd2c98efad5f4c24439a640d39463282040a88e8e928db647d8ac3d"},
-    {file = "scipy-1.5.2-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:eecf40fa87eeda53e8e11d265ff2254729d04000cd40bae648e76ff268885d66"},
-    {file = "scipy-1.5.2-cp37-cp37m-win32.whl", hash = "sha256:315aa2165aca31375f4e26c230188db192ed901761390be908c9b21d8b07df62"},
-    {file = "scipy-1.5.2-cp37-cp37m-win_amd64.whl", hash = "sha256:ec5fe57e46828d034775b00cd625c4a7b5c7d2e354c3b258d820c6c72212a6ec"},
-    {file = "scipy-1.5.2-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:fc98f3eac993b9bfdd392e675dfe19850cc8c7246a8fd2b42443e506344be7d9"},
-    {file = "scipy-1.5.2-cp38-cp38-manylinux1_i686.whl", hash = "sha256:a785409c0fa51764766840185a34f96a0a93527a0ff0230484d33a8ed085c8f8"},
-    {file = "scipy-1.5.2-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:0a0e9a4e58a4734c2eba917f834b25b7e3b6dc333901ce7784fd31aefbd37b2f"},
-    {file = "scipy-1.5.2-cp38-cp38-win32.whl", hash = "sha256:dac09281a0eacd59974e24525a3bc90fa39b4e95177e638a31b14db60d3fa806"},
-    {file = "scipy-1.5.2-cp38-cp38-win_amd64.whl", hash = "sha256:92eb04041d371fea828858e4fff182453c25ae3eaa8782d9b6c32b25857d23bc"},
-    {file = "scipy-1.5.2.tar.gz", hash = "sha256:066c513d90eb3fd7567a9e150828d39111ebd88d3e924cdfc9f8ce19ab6f90c9"},
-]
 shiboken2 = [
     {file = "shiboken2-5.15.1-5.15.1-cp27-cp27m-macosx_10_13_intel.whl", hash = "sha256:610e3fd0cd16e85f85ef81bc09762868ade2239d43f6de6f3db0733ee6810619"},
     {file = "shiboken2-5.15.1-5.15.1-cp27-cp27mu-manylinux1_x86_64.whl", hash = "sha256:28f98204d0ad77861b553db12eec0fa04c6e2da7e16126e761bdd70bbd8ae511"},
@@ -575,6 +624,10 @@ shiboken2 = [
     {file = "shiboken2-5.15.1-5.15.1-cp35.cp36.cp37.cp38.cp39-abi3-manylinux1_x86_64.whl", hash = "sha256:71f563daabc3a363ccc27a843cfb452f01ebaeb24e5e46704964ffa4c7dc98d9"},
     {file = "shiboken2-5.15.1-5.15.1-cp35.cp36.cp37.cp38.cp39-none-win32.whl", hash = "sha256:4c112b5758a39ffa5473d2c6995e2594eb6e002332d9dac35e2efd9debf157a2"},
     {file = "shiboken2-5.15.1-5.15.1-cp35.cp36.cp37.cp38.cp39-none-win_amd64.whl", hash = "sha256:55249cad55541471b60256179d92be08d520873b76f9cff595bae775dbb06aba"},
+]
+six = [
+    {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},
+    {file = "six-1.15.0.tar.gz", hash = "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259"},
 ]
 sniffio = [
     {file = "sniffio-1.1.0-py3-none-any.whl", hash = "sha256:20ed6d5b46f8ae136d00b9dcb807615d83ed82ceea6b2058cecb696765246da5"},

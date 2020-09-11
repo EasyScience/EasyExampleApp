@@ -1,3 +1,6 @@
+__author__ = 'github.com/wardsimon'
+__version__ = '0.0.1'
+
 from random import random
 
 from PySide2.QtCore import QPointF
@@ -5,10 +8,10 @@ from PySide2.QtCharts import QtCharts
 
 
 class MeasuredDataModel:
-    def __init__(self, interface=None):
+    def __init__(self, data_obj=None):
+        self.data_obj = data_obj
         self._lowerSeriesRefs = []
         self._upperSeriesRefs = []
-        self.interface = interface
 
     def updateSeries(self):
         """
@@ -17,8 +20,8 @@ class MeasuredDataModel:
         if not self._lowerSeriesRefs or not self._upperSeriesRefs:
             return
 
-        lowerSeries = self.interface.get_lowerXY()
-        upperSeries = self.interface.get_upperXY()
+        lowerSeries = self.data_obj.get_lowerXY()
+        upperSeries = self.data_obj.get_upperXY()
 
         for seriesRef in self._lowerSeriesRefs:
             seriesRef.replace(lowerSeries)
@@ -37,10 +40,11 @@ class MeasuredDataModel:
         """
         self._upperSeriesRefs.append(seriesRef)
 
+
 class CalculatedDataModel:
-    def __init__(self, interface=None):
+    def __init__(self, data_obj=None):
         self._seriesRef = None
-        self.interface = interface
+        self.data_obj = data_obj
 
     def updateSeries(self):
         """
@@ -49,7 +53,7 @@ class CalculatedDataModel:
         if self._seriesRef is None:
             return
 
-        series = self.interface.get_fit_XY()
+        series = self.data_obj.get_fit_XY()
         self._seriesRef.replace(series)
 
     def setSeriesRef(self, seriesRef):

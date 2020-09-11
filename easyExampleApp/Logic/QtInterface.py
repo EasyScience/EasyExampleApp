@@ -1,20 +1,21 @@
+__author__ = 'github.com/wardsimon'
+__version__ = '0.0.1'
+
 from typing import List
 
-import numpy as np
 from PySide2.QtCore import QPointF
+from Example1.interface import InterfaceFactory
+from Example1.model import Sin, DummySin
 
-from easyTemplateLib.interface import Interface, calculators_list
 
-
-class QtInterface(Interface):
-    def __init__(self, model, generator):
-        super().__init__(model)
-        self.generator = generator
-        self.x = np.linspace(0, 10, 100)
-        self.y = self.generator(self.x)
-        self.sy = np.random.normal(1.5, 0.0, self.x.shape) * 0.3
-        self.calculator = 'scipy'
-        self.calculatorList = [calc.name for calc in calculators_list]
+class QtInterface():
+    def __init__(self):
+        self.interface = InterfaceFactory()
+        self.model = Sin(interface_factory=self.interface)
+        self.generator = DummySin()
+        self.x = self.generator.x_data
+        self.y = self.generator.y_data
+        self.sy = self.generator.sy_data
 
     def get_XY(self) -> List[QPointF]:
         return [QPointF(x, y) for x, y in zip(self.x, self.y)]
@@ -29,14 +30,7 @@ class QtInterface(Interface):
         return [QPointF(x, y) for x, y in zip(self.x, self.y_opt)]
 
     def new_model(self):
-        self.y = self.generator(self.x)
-
-    def update_model(self):
-        self.y_opt = self.model.func(self.x)
-
-    def set_parameter(self, parm, value):
-        super().set_parameter(parm, value)
-        self.update_model()
-
-
-
+        self.generator = DummySin()
+        self.x = self.generator.x_data
+        self.y = self.generator.y_data
+        self.sy = self.generator.sy_data
