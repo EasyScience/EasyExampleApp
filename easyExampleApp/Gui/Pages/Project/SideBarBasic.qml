@@ -27,7 +27,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Test Group")
-        collapsed: false
+        //collapsed: false
 
         Grid {
             columns: 1

@@ -13,7 +13,7 @@ Item {
 
     Column {
         anchors.centerIn: parent
-        spacing: EaStyle.Sizes.fontPixelSize * 2
+        spacing: EaStyle.Sizes.fontPixelSize * 2.5
 
         // Application logo, name and version
         Column {
@@ -58,9 +58,11 @@ Item {
         }
 
         // Start button
-        Button {
+        EaElements.SideBarButton {
             id: startButton
+            width: EaStyle.Sizes.fontPixelSize * 15
             anchors.horizontalCenter: parent.horizontalCenter
+            fontIcon: "rocket"
             text: qsTr("Start")
             onClicked: {
                 ExGlobals.Variables.projectPageEnabled = true

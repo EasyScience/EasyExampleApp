@@ -24,16 +24,19 @@ EaComponents.ApplicationWindow {
     appBarLeftButtons: [
 
         EaElements.ToolButton {
+            enabled: false
             fontIcon: "\uf0c7"
             ToolTip.text: qsTr("Save current state of the project")
         },
 
         EaElements.ToolButton {
+            enabled: false
             fontIcon: "\uf2ea"
             ToolTip.text: qsTr("Undo")
         },
 
         EaElements.ToolButton {
+            enabled: false
             fontIcon: "\uf2f9"
             ToolTip.text: qsTr("Redo")
         }
