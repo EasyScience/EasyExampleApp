@@ -4,6 +4,7 @@ __version__ = '0.0.1'
 from typing import List
 from PySide2.QtCore import QPointF
 
+
 class QtDataStore():
     def __init__(self, x, y, sy, y_opt):
         self.x = x

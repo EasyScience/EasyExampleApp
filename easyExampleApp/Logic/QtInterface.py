@@ -2,10 +2,10 @@ __author__ = 'github.com/wardsimon'
 __version__ = '0.0.1'
 
 from typing import List
-
 from PySide2.QtCore import QPointF
-from Example1.interface import InterfaceFactory
-from Example1.model import Sin, DummySin
+
+from easyExampleLib.interface import InterfaceFactory
+from easyExampleLib.model import Sin, DummySin
 
 
 class QtInterface():
