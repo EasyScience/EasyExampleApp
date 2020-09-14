@@ -6,7 +6,7 @@ QtObject {
     property var proxy: _pyQmlProxyObj
 
     // Debug mode
-    property bool isDebugMode: false
+    property bool isDebugMode: true
 
     // Initial application components accessibility
     property bool homePageEnabled: isDebugMode ? true : true

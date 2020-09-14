@@ -30,15 +30,17 @@ EaComponents.ApplicationWindow {
         },
 
         EaElements.ToolButton {
-            enabled: false
+            //enabled: ExGlobals.Variables.proxy.canUndo()
             fontIcon: "\uf2ea"
             ToolTip.text: qsTr("Undo")
+            onClicked: ExGlobals.Variables.proxy.undo()
         },
 
         EaElements.ToolButton {
-            enabled: false
+            //enabled: ExGlobals.Variables.proxy.canRedo()
             fontIcon: "\uf2f9"
             ToolTip.text: qsTr("Redo")
+            onClicked: ExGlobals.Variables.proxy.redo()
         }
 
     ]
