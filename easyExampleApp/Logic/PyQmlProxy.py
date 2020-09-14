@@ -83,7 +83,7 @@ class PyQmlProxy(QObject):
     def generateMeasuredData(self):
         self.dummy_source = DummySin()
         self.data = QtDataStore(self.dummy_source.x_data, self.dummy_source.y_data, self.dummy_source.sy_data, None)
-        self._measured_data_model.updateSeries()
+        self._measured_data_model.updateData(self.data)
 
     # Model
 

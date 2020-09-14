@@ -8,8 +8,8 @@ from PySide2.QtCharts import QtCharts
 
 
 class MeasuredDataModel:
-    def __init__(self, data_obj=None):
-        self.data_obj = data_obj
+    def __init__(self, dataObj=None):
+        self._dataObj = dataObj
         self._lowerSeriesRefs = []
         self._upperSeriesRefs = []
 
@@ -20,13 +20,20 @@ class MeasuredDataModel:
         if not self._lowerSeriesRefs or not self._upperSeriesRefs:
             return
 
-        lowerSeries = self.data_obj.get_lowerXY()
-        upperSeries = self.data_obj.get_upperXY()
+        lowerSeries = self._dataObj.get_lowerXY()
+        upperSeries = self._dataObj.get_upperXY()
 
         for seriesRef in self._lowerSeriesRefs:
             seriesRef.replace(lowerSeries)
         for seriesRef in self._upperSeriesRefs:
             seriesRef.replace(upperSeries)
+
+    def updateData(self, dataObj):
+        """
+        Update ...
+        """
+        self._dataObj = dataObj
+        self.updateSeries()
 
     def addLowerSeriesRef(self, seriesRef):
         """
@@ -42,9 +49,9 @@ class MeasuredDataModel:
 
 
 class CalculatedDataModel:
-    def __init__(self, data_obj=None):
+    def __init__(self, dataObj=None):
         self._seriesRef = None
-        self.data_obj = data_obj
+        self._dataObj = dataObj
 
     def updateSeries(self):
         """
@@ -53,8 +60,15 @@ class CalculatedDataModel:
         if self._seriesRef is None:
             return
 
-        series = self.data_obj.get_fit_XY()
+        series = self._dataObj.get_fit_XY()
         self._seriesRef.replace(series)
+
+    def updateData(self, dataObj):
+        """
+        Update ...
+        """
+        self._dataObj = dataObj
+        self.updateSeries()
 
     def setSeriesRef(self, seriesRef):
         """
