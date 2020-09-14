@@ -4,13 +4,13 @@ from typing import List
 from PySide2.QtCore import QObject, Slot, Signal, Property
 from PySide2.QtCharts import QtCharts
 
-#from easyCore.Fitting.Fitting import Fitter
+from easyCore.Fitting.Fitting import Fitter
 
 from easyExampleLib.interface import InterfaceFactory
-#from easyExampleLib.model import Sin, DummySin
+from easyExampleLib.model import Sin, DummySin
 
-#from easyExampleApp.Logic.QtDataStore import QtDataStore
-#from easyExampleApp.Logic.DisplayModels.DataModels import MeasuredDataModel, CalculatedDataModel
+from easyExampleApp.Logic.QtDataStore import QtDataStore
+from easyExampleApp.Logic.DisplayModels.DataModels import MeasuredDataModel, CalculatedDataModel
 
 class PyQmlProxy(QObject):
 
@@ -23,12 +23,13 @@ class PyQmlProxy(QObject):
         super().__init__(parent)
         self.appName = "easyExample (from PyQmlProxy)"
         self.interface = InterfaceFactory()
-#        self.model = Sin(self.interface)
-#        self.fitter = Fitter(self.model, self.interface.fit_func)
-#        self.dummy_source = DummySin()
-#        self.data = QtDataStore(self.dummy_source.x_data, self.dummy_source.y_data, self.dummy_source.sy_data, None)
-#        self._measured_data_model = MeasuredDataModel(self.data)
-#        self._calculated_data_model = CalculatedDataModel(self.data)
+        self.model = Sin(self.interface)
+        self.fitter = Fitter(self.model, self.interface.fit_func)
+        self.dummy_source = DummySin()
+        self.data = QtDataStore(self.dummy_source.x_data, self.dummy_source.y_data, self.dummy_source.sy_data, None)
+        self._measured_data_model = MeasuredDataModel(self.data)
+        self._calculated_data_model = CalculatedDataModel(self.data)
+        self.calculate()
 
     # App info
     @Property(str, notify=appNameChanged)
@@ -67,14 +68,19 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def calculate(self):
-        y_opt = self.interface().fit_function(self.data.x)
+        y_opt = self.interface().fit_func(self.data.x)
         self.data.y_opt = y_opt
+        self._calculated_data_model.updateSeries()
+        self.modelChanged.emit()
+
+    @Slot()
+    def updateCalculatedData(self):
         self._calculated_data_model.updateSeries()
         self.modelChanged.emit()
 
     # Load/Generate Data
     @Slot()
-    def generateReferenceData(self):
+    def generateMeasuredData(self):
         self.dummy_source = DummySin()
         self.data = QtDataStore(self.dummy_source.x_data, self.dummy_source.y_data, self.dummy_source.sy_data, None)
         self._measured_data_model.updateSeries()
@@ -83,7 +89,7 @@ class PyQmlProxy(QObject):
 
     @Property(str, notify=modelChanged)
     def amplitude(self):
-        return str(self.model.amplitude)
+        return str(self.model.amplitude.raw_value)
 
     @amplitude.setter
     def setAmplitude(self, value: str):
@@ -93,7 +99,7 @@ class PyQmlProxy(QObject):
 
     @Property(str, notify=modelChanged)
     def period(self):
-        return str(self.model.period)
+        return str(self.model.period.raw_value)
 
     @period.setter
     def setPeriod(self, value: str):
@@ -103,7 +109,7 @@ class PyQmlProxy(QObject):
 
     @Property(str, notify=modelChanged)
     def xShift(self):
-        return str(self.model.x_shift)
+        return str(self.model.x_shift.raw_value)
 
     @xShift.setter
     def setXShift(self, value: str):
@@ -113,7 +119,7 @@ class PyQmlProxy(QObject):
 
     @Property(str, notify=modelChanged)
     def yShift(self):
-        return str(self.model.y_shift)
+        return str(self.model.y_shift.raw_value)
 
     @yShift.setter
     def setYShift(self, value: str):
