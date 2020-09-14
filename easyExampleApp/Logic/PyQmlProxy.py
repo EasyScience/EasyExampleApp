@@ -43,7 +43,7 @@ class PyQmlProxy(QObject):
 
     # Interfacing
     @Slot()
-    def start_fitting(self):
+    def startFitting(self):
         result = self.fitter.fit(self.data.x, self.data.y, weights=self.data.sy)
         self.data.y_opt = result.y_calc
         self._calculated_data_model.updateSeries()
