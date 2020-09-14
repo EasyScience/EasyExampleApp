@@ -4,13 +4,13 @@ from typing import List
 from PySide2.QtCore import QObject, Slot, Signal, Property
 from PySide2.QtCharts import QtCharts
 
-from easyCore.Fitting.Fitting import Fitter
+#from easyCore.Fitting.Fitting import Fitter
 
 from easyExampleLib.interface import InterfaceFactory
-from easyExampleLib.model import Sin, DummySin
+#from easyExampleLib.model import Sin, DummySin
 
-from easyExampleApp.Logic.QtDataStore import QtDataStore
-from easyExampleApp.Logic.DisplayModels.DataModels import MeasuredDataModel, CalculatedDataModel
+#from easyExampleApp.Logic.QtDataStore import QtDataStore
+#from easyExampleApp.Logic.DisplayModels.DataModels import MeasuredDataModel, CalculatedDataModel
 
 class PyQmlProxy(QObject):
 
@@ -19,15 +19,16 @@ class PyQmlProxy(QObject):
     modelChanged = Signal()
     fitChanged = Signal()
 
-    def __init__(self):
-        self.appName = "easyTemplate"
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.appName = "easyExample (from PyQmlProxy)"
         self.interface = InterfaceFactory()
-        self.model = Sin(self.interface)
-        self.fitter = Fitter(self.model, self.interface.fit_func)
-        self.dummy_source = DummySin()
-        self.data = QtDataStore(self.dummy_source.x_data, self.dummy_source.y_data, self.dummy_source.sy_data, None)
-        self._measured_data_model = MeasuredDataModel(self.data)
-        self._calculated_data_model = CalculatedDataModel(self.data)
+#        self.model = Sin(self.interface)
+#        self.fitter = Fitter(self.model, self.interface.fit_func)
+#        self.dummy_source = DummySin()
+#        self.data = QtDataStore(self.dummy_source.x_data, self.dummy_source.y_data, self.dummy_source.sy_data, None)
+#        self._measured_data_model = MeasuredDataModel(self.data)
+#        self._calculated_data_model = CalculatedDataModel(self.data)
 
     # App info
     @Property(str, notify=appNameChanged)

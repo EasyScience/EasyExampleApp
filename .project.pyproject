@@ -5,7 +5,6 @@
     "easyExampleApp/Logic/ProjectSentinel.py",
     "easyExampleApp/Logic/PyQmlProxy.py",
     "easyExampleApp/Logic/QtDataStore.py",
-    "easyExampleApp/Logic/QtInterface.py",
 
     "easyExampleApp/Logic/DisplayModels/DataModels.py",
 
