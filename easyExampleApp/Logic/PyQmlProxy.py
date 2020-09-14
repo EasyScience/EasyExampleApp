@@ -29,7 +29,7 @@ class PyQmlProxy(QObject):
         self.data = QtDataStore(self.dummy_source.x_data, self.dummy_source.y_data, self.dummy_source.sy_data, None)
         self._measured_data_model = MeasuredDataModel(self.data)
         self._calculated_data_model = CalculatedDataModel(self.data)
-        self.calculate()
+        self.updateCalculatedData()
 
     # App info
     @Property(str, notify=appNameChanged)
@@ -46,7 +46,7 @@ class PyQmlProxy(QObject):
     def startFitting(self):
         result = self.fitter.fit(self.data.x, self.data.y, weights=self.data.sy)
         self.data.y_opt = result.y_calc
-        self._calculated_data_model.updateSeries()
+        self._calculated_data_model.updateData(self.data)
         self.modelChanged.emit()
 
     # @Property(float, notify=fitChanged)
@@ -67,15 +67,9 @@ class PyQmlProxy(QObject):
     #     self.calculatorChanged.emit()
 
     @Slot()
-    def calculate(self):
-        y_opt = self.interface().fit_func(self.data.x)
-        self.data.y_opt = y_opt
-        self._calculated_data_model.updateSeries()
-        self.modelChanged.emit()
-
-    @Slot()
     def updateCalculatedData(self):
-        self._calculated_data_model.updateSeries()
+        self.data.y_opt = self.interface().fit_func(self.data.x)
+        self._calculated_data_model.updateData(self.data)
         self.modelChanged.emit()
 
     # Load/Generate Data
@@ -95,7 +89,7 @@ class PyQmlProxy(QObject):
     def setAmplitude(self, value: str):
         value = float(value)
         self.model.amplitude = value
-        self.calculate()
+        self.updateCalculatedData()
 
     @Property(str, notify=modelChanged)
     def period(self):
@@ -105,7 +99,7 @@ class PyQmlProxy(QObject):
     def setPeriod(self, value: str):
         value = float(value)
         self.model.period = value
-        self.calculate()
+        self.updateCalculatedData()
 
     @Property(str, notify=modelChanged)
     def xShift(self):
@@ -115,7 +109,7 @@ class PyQmlProxy(QObject):
     def setXShift(self, value: str):
         value = float(value)
         self.model.x_shift = value
-        self.calculate()
+        self.updateCalculatedData()
 
     @Property(str, notify=modelChanged)
     def yShift(self):
@@ -125,7 +119,7 @@ class PyQmlProxy(QObject):
     def setYShift(self, value: str):
         value = float(value)
         self.model.y_shift = value
-        self.calculate()
+        self.updateCalculatedData()
 
     # Charts
     @Slot(QtCharts.QXYSeries)
