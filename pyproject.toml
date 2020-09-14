@@ -21,17 +21,17 @@ packages = [ { include = "easyExampleApp" } ]
 python = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
 #python = "3.7" # PyInstaller 3.6 doesn't support Python 3.8
 # easyScience
-#easyCore = { git = "https://github.com/easyScience/easyCore.git", rev = "fitting_refactor" }
-#easyExampleLib = { git = "https://github.com/easyScience/easyExampleLib.git", rev = "master" }
-#easyAppLogic = { git = "https://github.com/easyScience/easyAppLogic.git", rev = "master" }
-#easyAppGui = { git = "https://github.com/easyScience/easyAppGui.git", rev = "master" }
+easyCore = { git = "https://github.com/easyScience/easyCore.git", rev = "fitting_refactor" }
+easyExampleLib = { git = "https://github.com/easyScience/easyExampleLib.git", rev = "master" }
+easyAppLogic = { git = "https://github.com/easyScience/easyAppLogic.git", rev = "master" }
+easyAppGui = { git = "https://github.com/easyScience/easyAppGui.git", rev = "master" }
 
 [tool.poetry.dev-dependencies]
 # easyScience
-easyCore = { path = '../easyCore/' }
-easyExampleLib = { path = '../easyExampleLib/' }
-easyAppLogic = { path = "../easyAppLogic/" }
-easyAppGui = { path = "../easyAppGui/" }
+#easyCore = { path = '../easyCore/' }
+#easyExampleLib = { path = '../easyExampleLib/' }
+#easyAppLogic = { path = "../easyAppLogic/" }
+#easyAppGui = { path = "../easyAppGui/" }
 # PyInstaller
 #pyinstaller = "^3.6"
 pyinstaller = { git = "https://github.com/pyinstaller/pyinstaller.git", rev = "develop" }
