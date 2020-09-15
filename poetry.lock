@@ -7,7 +7,7 @@ python-versions = "*"
 version = "0.17"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Safe, minimalistic evaluator of python expression using ast module"
 name = "asteval"
 optional = false
@@ -29,7 +29,7 @@ tests = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six
 tests_no_zope = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six"]
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Data fitting with bayesian uncertainty analysis"
 name = "bumps"
 optional = false
@@ -68,7 +68,7 @@ attrs = "*"
 requests = "*"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Converts a Python dictionary or other native data type into a valid XML string."
 name = "dicttoxml"
 optional = false
@@ -76,9 +76,8 @@ python-versions = "*"
 version = "1.7.4"
 
 [[package]]
-category = "dev"
+category = "main"
 description = ""
-develop = true
 name = "easyappgui"
 optional = false
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
@@ -88,14 +87,12 @@ version = "0.2.3"
 PySide2 = "^5.15"
 
 [package.source]
-reference = ""
-type = "directory"
-url = "../easyAppGui"
-
+reference = "e18fd235374072b00ade67648e04b2b33ecc4494"
+type = "git"
+url = "https://github.com/easyScience/easyAppGui.git"
 [[package]]
-category = "dev"
+category = "main"
 description = ""
-develop = true
 name = "easyapplogic"
 optional = false
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
@@ -105,14 +102,12 @@ version = "0.1.0"
 dicttoxml = "^1.7.4"
 
 [package.source]
-reference = ""
-type = "directory"
-url = "../easyAppLogic"
-
+reference = "a5ae76dcff1a63f909f583ff1a5e62fa93068619"
+type = "git"
+url = "https://github.com/easyScience/easyAppLogic.git"
 [[package]]
-category = "dev"
+category = "main"
 description = ""
-develop = true
 name = "easycore"
 optional = false
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
@@ -126,24 +121,21 @@ pint = "^0.15"
 uncertainties = "^3.1"
 
 [package.source]
-reference = ""
-type = "directory"
-url = "../easyCore"
-
+reference = "6586b8d99487d93cdc92b59857ae6dd300f3776e"
+type = "git"
+url = "https://github.com/easyScience/easyCore.git"
 [[package]]
-category = "dev"
+category = "main"
 description = ""
-develop = true
 name = "easyexamplelib"
 optional = false
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
 version = "0.0.1"
 
 [package.source]
-reference = ""
-type = "directory"
-url = "../easyExampleLib"
-
+reference = "f796834ff48e201bc162dab7d08793cdfc5171ad"
+type = "git"
+url = "https://github.com/easyScience/easyExampleLib.git"
 [[package]]
 category = "dev"
 description = "Python bindings for FFmpeg - with complex filtering support"
@@ -159,7 +151,7 @@ future = "*"
 dev = ["future (0.17.1)", "numpy (1.16.4)", "pytest-mock (1.10.4)", "pytest (4.6.1)", "Sphinx (2.1.0)", "tox (3.12.1)"]
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Clean single-source support for Python 3 and 2"
 name = "future"
 optional = false
@@ -260,7 +252,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "2.10"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Least-Squares Minimization with Bounds and Constraints"
 name = "lmfit"
 optional = false
@@ -285,7 +277,7 @@ version = "1.14"
 altgraph = ">=0.15"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "NumPy is the fundamental package for array computing with Python."
 name = "numpy"
 optional = false
@@ -293,7 +285,7 @@ python-versions = ">=3.6"
 version = "1.19.2"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Core utilities for Python packages"
 name = "packaging"
 optional = false
@@ -317,7 +309,7 @@ version = "2019.4.18"
 future = "*"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Physical quantities module"
 name = "pint"
 optional = false
@@ -366,7 +358,7 @@ python-versions = "*"
 version = "2020.8"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Python parsing module"
 name = "pyparsing"
 optional = false
@@ -386,7 +378,7 @@ version = "223"
 pywin32 = ">=223"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Python bindings for the Qt cross-platform application and UI framework"
 name = "pyside2"
 optional = false
@@ -444,7 +436,7 @@ version = "1.4.0"
 idna2008 = ["idna"]
 
 [[package]]
-category = "dev"
+category = "main"
 description = "SciPy: Scientific Library for Python"
 name = "scipy"
 optional = false
@@ -455,7 +447,7 @@ version = "1.5.2"
 numpy = ">=1.14.5"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Python / C++ bindings helper module"
 name = "shiboken2"
 optional = false
@@ -463,7 +455,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <3.10"
 version = "5.15.1"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Python 2 and 3 compatibility utilities"
 name = "six"
 optional = false
@@ -487,7 +479,7 @@ python-versions = "*"
 version = "0.10.1"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Transparent calculations with uncertainties on the quantities involved (aka error propagation); fast calculation of derivatives"
 name = "uncertainties"
 optional = false
@@ -517,7 +509,7 @@ secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "pyOpenSSL (>=0
 socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
 
 [metadata]
-content-hash = "a36065cd76e5d37c88aa050d26808ccecc9d61656cda50478e3e690432df93cf"
+content-hash = "b0a64071bca0262801f4146eb0964c7ae2383ea50764cc34b89bca1d8955f853"
 lock-version = "1.0"
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
 
