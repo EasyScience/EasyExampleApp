@@ -3,7 +3,17 @@ pragma Singleton
 import QtQuick 2.13
 
 QtObject {
-    property var proxy: _pyQmlProxyObj
+    property var proxy: _pyQmlProxyObj !== null ? _pyQmlProxyObj : {
+                                                      "calculatorList": ["calculator1"],
+                                                      "calculatorIndex": 0,
+                                                      "minimizerList": ["minimizer1"],
+                                                      "minimizerIndex": 0,
+                                                      "amplitude": 0,
+                                                      "period": 0,
+                                                      "xShift": 0,
+                                                      "yShift": 0,
+                                                      "statusModelAsXml": ""
+                                                  }
 
     // Debug mode
     property bool isDebugMode: false
@@ -21,7 +31,9 @@ QtObject {
     property bool sampleLoaded: false
     property bool experimentLoaded: false
 
+    // //////////////////////////
     // References to GUI elements
+    // //////////////////////////
 
     // Application bar tab buttons
     property var homeTabButton
