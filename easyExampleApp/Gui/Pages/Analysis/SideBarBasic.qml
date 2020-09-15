@@ -39,7 +39,7 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.TextField {
-                width: 125
+                width: 130
                 text: parseFloat(ExGlobals.Variables.proxy.amplitude).toFixed(2)
                 onEditingFinished: ExGlobals.Variables.proxy.amplitude = text
             }
@@ -49,7 +49,7 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.TextField {
-                width: 125
+                width: 130
                 text: parseFloat(ExGlobals.Variables.proxy.period).toFixed(2)
                 onEditingFinished: ExGlobals.Variables.proxy.period = text
             }
@@ -60,7 +60,7 @@ EaComponents.SideBarColumn {
 
             EaElements.TextField {
                 id: xShiftTextInput
-                width: 125
+                width: 130
                 text: parseFloat(ExGlobals.Variables.proxy.xShift).toFixed(2)
                 onEditingFinished: ExGlobals.Variables.proxy.xShift = text
                 Component.onCompleted: ExGlobals.Variables.xShiftTextInput = xShiftTextInput
@@ -72,7 +72,7 @@ EaComponents.SideBarColumn {
 
             EaElements.TextField {
                 id: yShiftTextInput
-                width: 125
+                width: 130
                 text: parseFloat(ExGlobals.Variables.proxy.yShift).toFixed(2)
                 onEditingFinished: ExGlobals.Variables.proxy.yShift = text
                 Component.onCompleted: ExGlobals.Variables.yShiftTextInput = yShiftTextInput

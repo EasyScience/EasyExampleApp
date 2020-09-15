@@ -43,7 +43,7 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.TextField {
-                width: 125
+                width: 140
                 text: parseFloat(ExGlobals.Variables.proxy.xShift).toFixed(2)
                 onEditingFinished: ExGlobals.Variables.proxy.xShift = text
             }
@@ -53,7 +53,7 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.TextField {
-                width: 125
+                width: 140
                 text: parseFloat(ExGlobals.Variables.proxy.yShift).toFixed(2)
                 onEditingFinished: ExGlobals.Variables.proxy.yShift = text
             }
