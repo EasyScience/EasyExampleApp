@@ -9,18 +9,6 @@ import Gui.Globals 1.0 as ExGlobals
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
-        title: qsTr("Minimizer")
-        collapsible: false
-
-        EaElements.ComboBox {
-            width: 200
-            currentIndex: ExGlobals.Variables.proxy.minimizerIndex
-            model: ExGlobals.Variables.proxy.minimizerList
-            onActivated: ExGlobals.Variables.proxy.minimizerIndex = currentIndex
-        }
-    }
-
-    EaElements.GroupBox {
         title: qsTr("Calculator")
         collapsible: false
 
@@ -29,7 +17,18 @@ EaComponents.SideBarColumn {
             currentIndex: ExGlobals.Variables.proxy.calculatorIndex
             model: ExGlobals.Variables.proxy.calculatorList
             onActivated: ExGlobals.Variables.proxy.calculatorIndex = currentIndex
-            //Component.onCompleted: ExGlobals.Variables.proxy.calculatorInt = currentIndex
+        }
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Minimizer")
+        collapsible: false
+
+        EaElements.ComboBox {
+            width: 200
+            currentIndex: ExGlobals.Variables.proxy.minimizerIndex
+            model: ExGlobals.Variables.proxy.minimizerList
+            onActivated: ExGlobals.Variables.proxy.minimizerIndex = currentIndex
         }
     }
 

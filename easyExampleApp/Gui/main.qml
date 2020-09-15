@@ -6,5 +6,5 @@ import Gui.Components 1.0 as ExComponents
 ExComponents.ApplicationWindow {
     id: window
 
-    title: ExGlobals.Constants.appName
+    title: `${ExGlobals.Constants.appName} ${ExGlobals.Constants.appVersion}`
 }

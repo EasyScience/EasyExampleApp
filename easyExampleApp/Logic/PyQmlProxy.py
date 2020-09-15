@@ -15,16 +15,13 @@ from easyExampleApp.Logic.DisplayModels.DataModels import MeasuredDataModel, Cal
 
 class PyQmlProxy(QObject):
 
-    appNameChanged = Signal()
-    calculatorChanged = Signal()
     modelChanged = Signal()
-    fitChanged = Signal()
+    calculatorChanged = Signal()
     minimizerChanged = Signal()
     statusChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.appName = "easyExample (from PyQmlProxy)"
         self.interface = InterfaceFactory()
         self.model = Sin(self.interface)
         self.fitter = Fitter(self.model, self.interface.fit_func)
@@ -37,71 +34,19 @@ class PyQmlProxy(QObject):
         self.calculatorChanged.connect(self.statusChanged)
         self.minimizerChanged.connect(self.statusChanged)
 
-    # App info
-    @Property(str, notify=appNameChanged)
-    def appName(self):
-        return self._app_name
+    # Data
 
-    @appName.setter
-    def setAppName(self, value: str):
-        self._app_name = value
-        self.appNameChanged.emit()
-
-    # Interfacing
-    @Slot()
-    def startFitting(self):
-        result = self.fitter.fit(self.data.x, self.data.y, weights=self.data.sy)
-        self.data.y_opt = result.y_calc
-        self._calculated_data_model.updateData(self.data)
-        self.modelChanged.emit()
-
-    # @Property(float, notify=fitChanged)
-    # def fit_tollerence(self):
-    #     pass
-
-    @Slot()
-    def updateCalculatedData(self):
-        self.data.y_opt = self.interface().fit_func(self.data.x)
-        self._calculated_data_model.updateData(self.data)
-        self.modelChanged.emit()
-
-    # Load/Generate Data
     @Slot()
     def generateMeasuredData(self):
         self.dummy_source = DummySin()
         self.data = QtDataStore(self.dummy_source.x_data, self.dummy_source.y_data, self.dummy_source.sy_data, None)
         self._measured_data_model.updateData(self.data)
 
-
-    # Calculator
-
-    @Property('QVariant', notify=calculatorChanged)
-    def calculatorList(self):
-        return self.interface.available_interfaces
-
-    @Property(int, notify=calculatorChanged)
-    def calculatorIndex(self):
-        return self.calculatorList.index(self.interface.current_interface_name)
-
-    @calculatorIndex.setter
-    def setCalculator(self, index: int):
-        self.interface.switch(self.calculatorList[index])
-        self.calculatorChanged.emit()
-
-    # Minimizer
-
-    @Property('QVariant', notify=minimizerChanged)
-    def minimizerList(self):
-        return self.fitter.available_engines
-
-    @Property(int, notify=minimizerChanged)
-    def minimizerIndex(self):
-        return self.minimizerList.index(self.fitter.current_engine.name)
-
-    @minimizerIndex.setter
-    def setMinimizer(self, index: int):
-        self.fitter.switch_engine(self.minimizerList[index])
-        self.minimizerChanged.emit()
+    @Slot()
+    def updateCalculatedData(self):
+        self.data.y_opt = self.interface().fit_func(self.data.x)
+        self._calculated_data_model.updateData(self.data)
+        self.modelChanged.emit()
 
     # Model
 
@@ -145,6 +90,43 @@ class PyQmlProxy(QObject):
         self.model.y_shift = value
         self.updateCalculatedData()
 
+    # Calculator
+
+    @Property('QVariant', notify=calculatorChanged)
+    def calculatorList(self):
+        return self.interface.available_interfaces
+
+    @Property(int, notify=calculatorChanged)
+    def calculatorIndex(self):
+        return self.calculatorList.index(self.interface.current_interface_name)
+
+    @calculatorIndex.setter
+    def setCalculator(self, index: int):
+        self.interface.switch(self.calculatorList[index])
+        self.calculatorChanged.emit()
+
+    # Minimizer
+
+    @Property('QVariant', notify=minimizerChanged)
+    def minimizerList(self):
+        return self.fitter.available_engines
+
+    @Property(int, notify=minimizerChanged)
+    def minimizerIndex(self):
+        return self.minimizerList.index(self.fitter.current_engine.name)
+
+    @minimizerIndex.setter
+    def setMinimizer(self, index: int):
+        self.fitter.switch_engine(self.minimizerList[index])
+        self.minimizerChanged.emit()
+
+    @Slot()
+    def startFitting(self):
+        result = self.fitter.fit(self.data.x, self.data.y, weights=self.data.sy)
+        self.data.y_opt = result.y_calc
+        self._calculated_data_model.updateData(self.data)
+        self.modelChanged.emit()
+
     # Charts
 
     @Slot(QtCharts.QXYSeries)
@@ -167,7 +149,6 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def undo(self):
-        print("self.model._borg.stack.canUndo()", self.model._borg.stack.canUndo())
         self.model._borg.stack.undo()
         self.modelChanged.emit()
 
