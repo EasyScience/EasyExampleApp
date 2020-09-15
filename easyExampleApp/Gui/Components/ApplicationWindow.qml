@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQuick.XmlListModel 2.13
 
 import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Globals 1.0 as EaGlobals
@@ -291,6 +292,16 @@ EaComponents.ApplicationWindow {
     /////////////
 
     statusBar: EaElements.StatusBar {
-        text: "Status bar"
+
+        model: XmlListModel {
+            xml: ExGlobals.Variables.proxy.statusModelAsXml
+            query: "/root/item"
+
+            XmlRole { name: "label"; query: "label/string()" }
+            XmlRole { name: "value"; query: "value/string()" }
+        }
     }
+
+    //Component.onCompleted: print(ExGlobals.Variables.proxy.statusModelAsXml)
+
 }

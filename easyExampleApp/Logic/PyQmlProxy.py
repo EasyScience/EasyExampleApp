@@ -1,5 +1,6 @@
 import numpy as np
 from typing import List
+from dicttoxml import dicttoxml
 
 from PySide2.QtCore import QObject, Slot, Signal, Property
 from PySide2.QtCharts import QtCharts
@@ -19,6 +20,7 @@ class PyQmlProxy(QObject):
     modelChanged = Signal()
     fitChanged = Signal()
     minimizerChanged = Signal()
+    statusChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -31,6 +33,9 @@ class PyQmlProxy(QObject):
         self._measured_data_model = MeasuredDataModel(self.data)
         self._calculated_data_model = CalculatedDataModel(self.data)
         self.updateCalculatedData()
+        # when to emit status bar items cnahged
+        self.calculatorChanged.connect(self.statusChanged)
+        self.minimizerChanged.connect(self.statusChanged)
 
     # App info
     @Property(str, notify=appNameChanged)
@@ -178,3 +183,13 @@ class PyQmlProxy(QObject):
     @Slot(result=bool)
     def canRedo(self):
         return self.model._borg.stack.canRedo()
+
+    # Status
+
+    @Property(str, notify=statusChanged)
+    def statusModelAsXml(self):
+        items = [ { "label": "Calculator", "value": self.interface.current_interface_name },
+                  { "label": "Minimizer", "value": self.fitter.current_engine.name } ]
+        xml = dicttoxml(items, attr_type=False)
+        xml = xml.decode()
+        return xml
