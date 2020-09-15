@@ -1,10 +1,8 @@
-import numpy as np
-from typing import List
-from dicttoxml import dicttoxml
-
 from PySide2.QtCore import QObject, Slot, Signal, Property
 from PySide2.QtCharts import QtCharts
+from dicttoxml import dicttoxml
 
+from easyCore import Borg
 from easyCore.Fitting.Fitting import Fitter
 
 from easyExampleLib.interface import InterfaceFactory
@@ -13,8 +11,9 @@ from easyExampleLib.model import Sin, DummySin
 from easyExampleApp.Logic.QtDataStore import QtDataStore
 from easyExampleApp.Logic.DisplayModels.DataModels import MeasuredDataModel, CalculatedDataModel
 
-class PyQmlProxy(QObject):
 
+class PyQmlProxy(QObject):
+    _borg = Borg()
     modelChanged = Signal()
     calculatorChanged = Signal()
     minimizerChanged = Signal()
@@ -44,9 +43,40 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def updateCalculatedData(self):
-        self.data.y_opt = self.interface().fit_func(self.data.x)
+        self.data.y_opt = self.interface.fit_func(self.data.x)
         self._calculated_data_model.updateData(self.data)
         self.modelChanged.emit()
+
+    # Calculator
+
+    @Property('QVariant', notify=calculatorChanged)
+    def calculatorList(self):
+        return self.interface.available_interfaces
+
+    @Property(int, notify=calculatorChanged)
+    def calculatorIndex(self):
+        return self.calculatorList.index(self.interface.current_interface_name)
+
+    @calculatorIndex.setter
+    def setCalculator(self, index: int):
+        self.model.switch_interface(self.calculatorList[index])
+        self.updateCalculatedData()
+        self.calculatorChanged.emit()
+
+    # Minimizer
+
+    @Property('QVariant', notify=minimizerChanged)
+    def minimizerList(self):
+        return self.fitter.available_engines
+
+    @Property(int, notify=minimizerChanged)
+    def minimizerIndex(self):
+        return self.minimizerList.index(self.fitter.current_engine.name)
+
+    @minimizerIndex.setter
+    def setMinimizer(self, index: int):
+        self.fitter.switch_engine(self.minimizerList[index])
+        self.minimizerChanged.emit()
 
     # Model
 
@@ -102,7 +132,7 @@ class PyQmlProxy(QObject):
 
     @calculatorIndex.setter
     def setCalculator(self, index: int):
-        self.interface.switch(self.calculatorList[index])
+        self.model.switch_interface(self.calculatorList[index])
         self.calculatorChanged.emit()
 
     # Minimizer
@@ -149,21 +179,21 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def undo(self):
-        self.model._borg.stack.undo()
+        self._borg.stack.undo()
         self.modelChanged.emit()
 
     @Slot(result=bool)
     def canUndo(self):
-        return self.model._borg.stack.canUndo()
+        return self._borg.stack.canUndo()
 
     @Slot()
     def redo(self):
-        self.model._borg.stack.redo()
+        self._borg.stack.redo()
         self.modelChanged.emit()
 
     @Slot(result=bool)
     def canRedo(self):
-        return self.model._borg.stack.canRedo()
+        return self._borg.stack.canRedo()
 
     # Status
 
