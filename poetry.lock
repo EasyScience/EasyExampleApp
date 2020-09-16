@@ -87,7 +87,7 @@ version = "0.2.3"
 PySide2 = "^5.15"
 
 [package.source]
-reference = "6db8b089591ceb9e4b7f1caec4172779e8946efb"
+reference = "766eeeb7b2bda5a4985d5f863dd7f12b0f75a47d"
 type = "git"
 url = "https://github.com/easyScience/easyAppGui.git"
 [[package]]
@@ -110,7 +110,7 @@ category = "main"
 description = ""
 name = "easycore"
 optional = false
-python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
+python-versions = "^3.6, >=3.6.1" # "^3.8" generates error when installing PySide2 in easyAppGui
 version = "0.0.1"
 
 [package.dependencies]
@@ -121,7 +121,7 @@ pint = "^0.15"
 uncertainties = "^3.1"
 
 [package.source]
-reference = "bceaff04a9ea2dd1871e23dbdc0f44ba538da273"
+reference = "4ec3fbea184db36a13e71cf3d85063aa7cdb2d37"
 type = "git"
 url = "https://github.com/easyScience/easyCore.git"
 [[package]]
@@ -133,7 +133,7 @@ python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 
 version = "0.0.1"
 
 [package.source]
-reference = "f888a77038bf66f1ef8fa7933cf36638e3b4dfa0"
+reference = "43334405ef99cf1c308ad6cafda981673c05cf4e"
 type = "git"
 url = "https://github.com/easyScience/easyExampleLib.git"
 [[package]]
