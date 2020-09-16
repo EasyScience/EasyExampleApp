@@ -21,7 +21,7 @@ Rectangle {
         EaCharts.ValueAxis {
             id: axisX
 
-            titleText: "Time (s)"
+            title: "Time (s)"
 
             tickCount: 4
 
@@ -32,7 +32,7 @@ Rectangle {
         EaCharts.ValueAxis {
             id: axisY
 
-            titleText: "Signal (arb. units)"
+            title: "Signal (arb. units)"
 
             min: -6
             max: 6
