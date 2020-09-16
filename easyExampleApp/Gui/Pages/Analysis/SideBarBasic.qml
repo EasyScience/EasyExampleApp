@@ -17,8 +17,8 @@ EaComponents.SideBarColumn {
         EaElements.SideBarButton {
             fontIcon: "plus-circle"
             text: "Generate measured data"
-            onClicked: ExGlobals.Variables.proxy.generateMeasuredData()
-            Component.onCompleted: ExGlobals.Variables.proxy.generateMeasuredData()
+            onClicked: ExGlobals.Constants.proxy.generateMeasuredData()
+            Component.onCompleted: ExGlobals.Constants.proxy.generateMeasuredData()
         }
     }
     */
@@ -40,8 +40,8 @@ EaComponents.SideBarColumn {
 
             EaElements.TextField {
                 width: 130
-                text: parseFloat(ExGlobals.Variables.proxy.amplitude).toFixed(2)
-                onEditingFinished: ExGlobals.Variables.proxy.amplitude = text
+                text: parseFloat(ExGlobals.Constants.proxy.amplitude).toFixed(2)
+                onEditingFinished: ExGlobals.Constants.proxy.amplitude = text
             }
 
             EaElements.Label {
@@ -50,8 +50,8 @@ EaComponents.SideBarColumn {
 
             EaElements.TextField {
                 width: 130
-                text: parseFloat(ExGlobals.Variables.proxy.period).toFixed(2)
-                onEditingFinished: ExGlobals.Variables.proxy.period = text
+                text: parseFloat(ExGlobals.Constants.proxy.period).toFixed(2)
+                onEditingFinished: ExGlobals.Constants.proxy.period = text
             }
 
             EaElements.Label {
@@ -61,8 +61,8 @@ EaComponents.SideBarColumn {
             EaElements.TextField {
                 id: xShiftTextInput
                 width: 130
-                text: parseFloat(ExGlobals.Variables.proxy.xShift).toFixed(2)
-                onEditingFinished: ExGlobals.Variables.proxy.xShift = text
+                text: parseFloat(ExGlobals.Constants.proxy.xShift).toFixed(2)
+                onEditingFinished: ExGlobals.Constants.proxy.xShift = text
                 Component.onCompleted: ExGlobals.Variables.xShiftTextInput = xShiftTextInput
             }
 
@@ -73,8 +73,8 @@ EaComponents.SideBarColumn {
             EaElements.TextField {
                 id: yShiftTextInput
                 width: 130
-                text: parseFloat(ExGlobals.Variables.proxy.yShift).toFixed(2)
-                onEditingFinished: ExGlobals.Variables.proxy.yShift = text
+                text: parseFloat(ExGlobals.Constants.proxy.yShift).toFixed(2)
+                onEditingFinished: ExGlobals.Constants.proxy.yShift = text
                 Component.onCompleted: ExGlobals.Variables.yShiftTextInput = yShiftTextInput
             }
         }
@@ -85,12 +85,12 @@ EaComponents.SideBarColumn {
             text: "Start fitting"
             onClicked: {
                 ExGlobals.Variables.summaryPageEnabled = true
-                ExGlobals.Variables.proxy.startFitting()
+                ExGlobals.Constants.proxy.startFitting()
             }
             Component.onCompleted: ExGlobals.Variables.startFittingButton = startFittingButton
         }
     }
 
-    Component.onCompleted: ExGlobals.Variables.proxy.updateCalculatedData()
+    Component.onCompleted: ExGlobals.Constants.proxy.updateCalculatedData()
 
 }

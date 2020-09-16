@@ -16,8 +16,8 @@ Rectangle {
     Rectangle {
         anchors.centerIn: parent
 
-        height: ExGlobals.Variables.proxy.amplitude ? 80 * Math.abs(ExGlobals.Variables.proxy.amplitude) : 200
-        width: ExGlobals.Variables.proxy.period ? 80 * Math.abs(ExGlobals.Variables.proxy.period) : 200
+        height: ExGlobals.Constants.proxy.amplitude * 80
+        width: ExGlobals.Constants.proxy.period * 80
 
         opacity: 0.8
         color: "coral"

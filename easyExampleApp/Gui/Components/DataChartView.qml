@@ -47,13 +47,39 @@ Rectangle {
             lowerSeries: LineSeries {
                 id: lowerMeasuredSeries
 
-                Component.onCompleted: ExGlobals.Variables.proxy.addLowerMeasuredSeriesRef(lowerMeasuredSeries)
+                // defult points
+                XYPoint { x: 0; y: -3.8 }
+                XYPoint { x: 1; y: -2.7 }
+                XYPoint { x: 2; y:  0.2 }
+                XYPoint { x: 3; y:  2.1 }
+                XYPoint { x: 4; y:  3.2 }
+                XYPoint { x: 5; y:  2.2 }
+                XYPoint { x: 6; y:  0.1 }
+                XYPoint { x: 7; y: -2.3 }
+                XYPoint { x: 8; y: -3.6 }
+                XYPoint { x: 9; y: -2.7 }
+                XYPoint { x: 9.4; y: -2.2 }
+
+                Component.onCompleted: ExGlobals.Constants.proxy.addLowerMeasuredSeriesRef(lowerMeasuredSeries)
             }
 
             upperSeries: LineSeries {
                 id: upperMeasuredSeries
 
-                Component.onCompleted: ExGlobals.Variables.proxy.addUpperMeasuredSeriesRef(upperMeasuredSeries)
+                // defult points
+                XYPoint { x: 0; y: -3.2 }
+                XYPoint { x: 1; y: -2.1 }
+                XYPoint { x: 2; y:  0.6 }
+                XYPoint { x: 3; y:  2.8 }
+                XYPoint { x: 4; y:  3.7 }
+                XYPoint { x: 5; y:  2.5 }
+                XYPoint { x: 6; y:  0.7 }
+                XYPoint { x: 7; y: -2.1 }
+                XYPoint { x: 8; y: -3.1 }
+                XYPoint { x: 9; y: -2.2 }
+                XYPoint { x: 9.4; y: -2.0 }
+
+                Component.onCompleted: ExGlobals.Constants.proxy.addUpperMeasuredSeriesRef(upperMeasuredSeries)
             }
         }
 
@@ -65,9 +91,22 @@ Rectangle {
             axisX: axisX
             axisY: axisY
 
+            // defult points
+            XYPoint { x: 0; y: -3 }
+            XYPoint { x: 1; y: -2 }
+            XYPoint { x: 2; y:  0 }
+            XYPoint { x: 3; y:  2 }
+            XYPoint { x: 4; y:  3 }
+            XYPoint { x: 5; y:  2 }
+            XYPoint { x: 6; y:  0 }
+            XYPoint { x: 7; y: -2 }
+            XYPoint { x: 8; y: -3 }
+            XYPoint { x: 9; y: -2 }
+            XYPoint { x: 9.4; y: -1 }
+
             Component.onCompleted: {
                 if (visible) {
-                    ExGlobals.Variables.proxy.setCalculatedSeriesRef(calculatedSeries)
+                    ExGlobals.Constants.proxy.setCalculatedSeriesRef(calculatedSeries)
                 }
             }
         }

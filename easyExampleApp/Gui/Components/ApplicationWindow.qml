@@ -31,17 +31,17 @@ EaComponents.ApplicationWindow {
         },
 
         EaElements.ToolButton {
-            //enabled: ExGlobals.Variables.proxy.canUndo()
+            //enabled: ExGlobals.Constants.proxy.canUndo()
             fontIcon: "\uf2ea"
             ToolTip.text: qsTr("Undo")
-            onClicked: ExGlobals.Variables.proxy.undo()
+            onClicked: ExGlobals.Constants.proxy.undo()
         },
 
         EaElements.ToolButton {
-            //enabled: ExGlobals.Variables.proxy.canRedo()
+            //enabled: ExGlobals.Constants.proxy.canRedo()
             fontIcon: "\uf2f9"
             ToolTip.text: qsTr("Redo")
-            onClicked: ExGlobals.Variables.proxy.redo()
+            onClicked: ExGlobals.Constants.proxy.redo()
         }
 
     ]
@@ -294,7 +294,7 @@ EaComponents.ApplicationWindow {
     statusBar: EaElements.StatusBar {
 
         model: XmlListModel {
-            xml: ExGlobals.Variables.proxy.statusModelAsXml
+            xml: ExGlobals.Constants.proxy.statusModelAsXml
             query: "/root/item"
 
             XmlRole { name: "label"; query: "label/string()" }
@@ -302,6 +302,6 @@ EaComponents.ApplicationWindow {
         }
     }
 
-    //Component.onCompleted: print(ExGlobals.Variables.proxy.statusModelAsXml)
+    //Component.onCompleted: print(ExGlobals.Constants.proxy.statusModelAsXml)
 
 }

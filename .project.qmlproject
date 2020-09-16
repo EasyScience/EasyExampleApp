@@ -17,6 +17,14 @@ Project {
         directory: "../easyAppGui"
     }
 
+    // Include .js files from specified directory and its subdirectories
+    JavaScriptFiles {
+        directory: "easyExampleApp"
+    }
+    JavaScriptFiles {
+        directory: "../easyAppGui"
+    }
+
     // Include Module Definition Files (qmldir), as well as .ts and .qrc
     // from specified directory and its subdirectories
     Files {

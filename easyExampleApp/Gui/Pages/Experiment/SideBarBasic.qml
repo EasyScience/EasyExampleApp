@@ -20,7 +20,7 @@ EaComponents.SideBarColumn {
             onClicked: {
                 ExGlobals.Variables.analysisPageEnabled = true
                 ExGlobals.Variables.experimentLoaded = true
-                ExGlobals.Variables.proxy.generateMeasuredData()
+                ExGlobals.Constants.proxy.generateMeasuredData()
             }
             Component.onCompleted: ExGlobals.Variables.generateMeasuredDataButton = generateMeasuredDataButton
         }
@@ -44,8 +44,8 @@ EaComponents.SideBarColumn {
 
             EaElements.TextField {
                 width: 140
-                text: parseFloat(ExGlobals.Variables.proxy.xShift).toFixed(2)
-                onEditingFinished: ExGlobals.Variables.proxy.xShift = text
+                text: parseFloat(ExGlobals.Constants.proxy.xShift).toFixed(2)
+                onEditingFinished: ExGlobals.Constants.proxy.xShift = text
             }
 
             EaElements.Label {
@@ -54,8 +54,8 @@ EaComponents.SideBarColumn {
 
             EaElements.TextField {
                 width: 140
-                text: parseFloat(ExGlobals.Variables.proxy.yShift).toFixed(2)
-                onEditingFinished: ExGlobals.Variables.proxy.yShift = text
+                text: parseFloat(ExGlobals.Constants.proxy.yShift).toFixed(2)
+                onEditingFinished: ExGlobals.Constants.proxy.yShift = text
             }
         }
     }

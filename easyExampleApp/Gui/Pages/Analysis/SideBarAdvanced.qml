@@ -14,9 +14,9 @@ EaComponents.SideBarColumn {
 
         EaElements.ComboBox {
             width: 200
-            currentIndex: ExGlobals.Variables.proxy.calculatorIndex
-            model: ExGlobals.Variables.proxy.calculatorList
-            onActivated: ExGlobals.Variables.proxy.calculatorIndex = currentIndex
+            currentIndex: ExGlobals.Constants.proxy.calculatorIndex
+            model: ExGlobals.Constants.proxy.calculatorList
+            onActivated: ExGlobals.Constants.proxy.calculatorIndex = currentIndex
         }
     }
 
@@ -26,9 +26,9 @@ EaComponents.SideBarColumn {
 
         EaElements.ComboBox {
             width: 200
-            currentIndex: ExGlobals.Variables.proxy.minimizerIndex
-            model: ExGlobals.Variables.proxy.minimizerList
-            onActivated: ExGlobals.Variables.proxy.minimizerIndex = currentIndex
+            currentIndex: ExGlobals.Constants.proxy.minimizerIndex
+            model: ExGlobals.Constants.proxy.minimizerList
+            onActivated: ExGlobals.Constants.proxy.minimizerIndex = currentIndex
         }
     }
 
