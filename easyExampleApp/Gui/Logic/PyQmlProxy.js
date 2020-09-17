@@ -38,6 +38,10 @@ class PyQmlProxy {
         return "<root><item><label>Calculator</label><value>calculator1</value></item><item><label>Minimizer</label><value>minimizer1</value></item></root>"
     }
 
+    get fitablesModelAsXml() {
+        return "<root><item><number>1</number><label>Fe3O4 cell length_a</label><value>8.5700</value><unit>A</unit><error>0.0324</error><fit>1</fit></item><item><number>2</number><label>Fe3O4 cell length_a</label><value>8.5700</value><unit>frac</unit><error></error><fit>0</fit></item><item><number>3</number><label>PolNPD5T setup wavelength</label><value>2.4000</value><unit>A</unit><error></error><fit>0</fit></item></root>"
+    }
+
     // Functions
 
     addLowerMeasuredSeriesRef(series) {}
