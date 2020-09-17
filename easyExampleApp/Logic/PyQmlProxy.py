@@ -239,6 +239,6 @@ class PyQmlProxy(QObject):
         if key == "fit":
             par.fixed = value[0] == 'f'
             print("par.fixed", par.fixed)
-        else if key == "value":
+        elif key == "value":
             par.value = float(value)
             self.updateCalculatedData()
