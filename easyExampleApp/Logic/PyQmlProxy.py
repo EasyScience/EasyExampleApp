@@ -2,7 +2,7 @@ from PySide2.QtCore import QObject, Slot, Signal, Property
 from PySide2.QtCharts import QtCharts
 from dicttoxml import dicttoxml
 
-from easyCore import Borg
+from easyCore import borg
 from easyCore.Fitting.Fitting import Fitter
 
 from easyExampleLib.interface import InterfaceFactory
@@ -13,7 +13,7 @@ from easyExampleApp.Logic.DisplayModels.DataModels import MeasuredDataModel, Cal
 
 
 class PyQmlProxy(QObject):
-    _borg = Borg()
+    _borg = borg
     modelChanged = Signal()
     calculatorChanged = Signal()
     minimizerChanged = Signal()
@@ -210,9 +210,22 @@ class PyQmlProxy(QObject):
     # Display Models
     @Property(str, notify=modelChanged)
     def fitablesModelAsXml(self):
-        fitables = [ { "number": 1, "label": "Fe3O4 cell length_a", "value": "8.5700", "unit": "A", "error": "0.0324", "fit": 1 },
-                     { "number": 2, "label": "Fe3O4 cell length_a", "value": "8.5700", "unit": "frac", "error": "", "fit": 0 },
-                     { "number": 3, "label": "PolNPD5T setup wavelength", "value": "2.4000", "unit": "A", "error": "", "fit": 0 } ]
+
+        pars = self.model.get_parameters()
+        fitables = []
+        for index, par in enumerate(pars):
+            unit = str(par.unit)
+            if unit == "dimensionless":
+                unit = ''
+            fitables.append(
+                {"number": index,
+                 "label": par.name,
+                 "value": par.raw_value,
+                 "unit": unit,
+                 "error": par.error,
+                 "fit": int(not par.fixed)}
+            )
+
         xml = dicttoxml(fitables, attr_type=False)
         xml = xml.decode()
         return xml
