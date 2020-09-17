@@ -210,7 +210,7 @@ class PyQmlProxy(QObject):
     # Display Models
     @Property(str, notify=modelChanged)
     def fitablesModelAsXml(self):
-        pars = self.model.get_parameters()
+        pars = self.model.get_all_parameters()
         fitables = []
         for index, par in enumerate(pars):
             unit = str(par.unit)
@@ -232,3 +232,13 @@ class PyQmlProxy(QObject):
     @Slot(int, str, str)
     def editFitablesModel(self, index, key, value):
         print(index, key, value)
+        if index == -1:
+            return
+        pars = self.model.get_all_parameters()
+        par = pars[index]
+        if key == "fit":
+            par.fixed = value[0] == 'f'
+            print("par.fixed", par.fixed)
+        else if key == "value":
+            par.value = float(value)
+            self.updateCalculatedData()
