@@ -210,7 +210,6 @@ class PyQmlProxy(QObject):
     # Display Models
     @Property(str, notify=modelChanged)
     def fitablesModelAsXml(self):
-
         pars = self.model.get_parameters()
         fitables = []
         for index, par in enumerate(pars):
@@ -229,3 +228,7 @@ class PyQmlProxy(QObject):
         xml = dicttoxml(fitables, attr_type=False)
         xml = xml.decode()
         return xml
+
+    @Slot(int, str, str)
+    def editFitablesModel(self, index, key, value):
+        print(index, key, value)
