@@ -47,7 +47,7 @@ EaComponents.SideBarColumn {
             EaElements.TextField {
                 id: amplitudeTextInput
                 width: 130
-                text: parseFloat(ExGlobals.Constants.proxy.amplitude).toFixed(2)
+                text: parseFloat(ExGlobals.Constants.proxy.amplitude).toFixed(4)
                 onEditingFinished: ExGlobals.Constants.proxy.amplitude = text
                 Component.onCompleted: ExGlobals.Variables.amplitudeTextInput = amplitudeTextInput
             }
@@ -59,7 +59,7 @@ EaComponents.SideBarColumn {
             EaElements.TextField {
                 id: periodTextInput
                 width: 130
-                text: parseFloat(ExGlobals.Constants.proxy.period).toFixed(2)
+                text: parseFloat(ExGlobals.Constants.proxy.period).toFixed(4)
                 onEditingFinished: ExGlobals.Constants.proxy.period = text
                 Component.onCompleted: ExGlobals.Variables.periodTextInput = periodTextInput
             }

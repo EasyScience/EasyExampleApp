@@ -33,6 +33,7 @@ EaComponents.SideBarColumn {
 
         EaComponents.FitablesView {}
 
+        /*
         Grid {
             columns: 4
             columnSpacing: 20
@@ -83,6 +84,7 @@ EaComponents.SideBarColumn {
                 Component.onCompleted: ExGlobals.Variables.yShiftTextInput = yShiftTextInput
             }
         }
+        */
 
         EaElements.SideBarButton {
             id: startFittingButton

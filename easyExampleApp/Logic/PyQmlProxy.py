@@ -216,14 +216,14 @@ class PyQmlProxy(QObject):
         for index, par in enumerate(pars):
             unit = str(par.unit)
             if unit == "dimensionless":
-                unit = ''
+                unit = ""
             fitables.append(
-                {"number": index,
-                 "label": par.name,
-                 "value": par.raw_value,
-                 "unit": unit,
-                 "error": par.error,
-                 "fit": int(not par.fixed)}
+                { "number": index + 1,
+                  "label": par.name,
+                  "value": par.raw_value,
+                  "unit": unit,
+                  "error": par.error,
+                  "fit": int(not par.fixed) }
             )
 
         xml = dicttoxml(fitables, attr_type=False)
