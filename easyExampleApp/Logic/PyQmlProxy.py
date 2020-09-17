@@ -208,6 +208,25 @@ class PyQmlProxy(QObject):
         return xml
 
     # Display Models
+
+    @Property('QVariant', notify=modelChanged)
+    def fitablesAsJson(self):
+        pars = self.model.get_all_parameters()
+        fitables = {}
+        for par in pars:
+            fitables[par.name] = par.raw_value
+        return fitables
+
+    @Slot(str, str)
+    def editFitableValue(self, name, value):
+        pars = self.model.get_all_parameters()
+        for par in pars:
+            if par.name == name:
+                par.value = float(value)
+                self.updateCalculatedData()
+
+
+
     @Property(str, notify=modelChanged)
     def fitablesModelAsXml(self):
         pars = self.model.get_all_parameters()
@@ -224,7 +243,6 @@ class PyQmlProxy(QObject):
                   "error": par.error,
                   "fit": int(not par.fixed) }
             )
-
         xml = dicttoxml(fitables, attr_type=False)
         xml = xml.decode()
         return xml

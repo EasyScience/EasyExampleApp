@@ -64,6 +64,35 @@ EaComponents.SideBarColumn {
                 Component.onCompleted: ExGlobals.Variables.periodTextInput = periodTextInput
             }
         }
+
+
+        Grid {
+            columns: 4
+            columnSpacing: 20
+            rowSpacing: 10
+            verticalItemAlignment: Grid.AlignVCenter
+
+            EaElements.Label {
+                text: "Amplitude"
+            }
+
+            EaElements.TextField {
+                width: 130
+                text: ExGlobals.Constants.proxy.fitablesAsJson.amplitude.toFixed(4)
+                onEditingFinished: ExGlobals.Constants.proxy.editFitableValue("amplitude", text)
+            }
+
+            EaElements.Label {
+                text: "Period"
+            }
+
+            EaElements.TextField {
+                width: 130
+                text: ExGlobals.Constants.proxy.fitablesAsJson.period.toFixed(4)
+                onEditingFinished: ExGlobals.Constants.proxy.editFitableValue("period", text)
+            }
+        }
     }
+
 
 }
