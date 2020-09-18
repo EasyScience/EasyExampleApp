@@ -87,7 +87,7 @@ version = "0.2.3"
 PySide2 = "^5.15"
 
 [package.source]
-reference = "fb370e6d49f443b52f42735eed818bc871072c70"
+reference = "4045c9ee514fd38691dc4b34283b17923cecd5bf"
 type = "git"
 url = "https://github.com/easyScience/easyAppGui.git"
 [[package]]
