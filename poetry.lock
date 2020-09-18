@@ -87,7 +87,7 @@ version = "0.2.3"
 PySide2 = "^5.15"
 
 [package.source]
-reference = "73d6f0f771aacdb691bc142d238145d539e31cc4"
+reference = "fb370e6d49f443b52f42735eed818bc871072c70"
 type = "git"
 url = "https://github.com/easyScience/easyAppGui.git"
 [[package]]
@@ -117,11 +117,11 @@ version = "0.0.1"
 bumps = "^0.7"
 lmfit = "^1.0"
 numpy = "^1.19"
-pint = "^0.15"
+pint = "^0.16"
 uncertainties = "^3.1"
 
 [package.source]
-reference = "4ec3fbea184db36a13e71cf3d85063aa7cdb2d37"
+reference = "a0539466569344566fc02d8acfa5369d5ba3b3e8"
 type = "git"
 url = "https://github.com/easyScience/easyCore.git"
 [[package]]
@@ -314,11 +314,10 @@ description = "Physical quantities module"
 name = "pint"
 optional = false
 python-versions = ">=3.6"
-version = "0.15"
+version = "0.16"
 
 [package.dependencies]
 packaging = "*"
-setuptools = "*"
 
 [package.extras]
 numpy = ["numpy (>=1.14)"]
@@ -509,7 +508,7 @@ secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "pyOpenSSL (>=0
 socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
 
 [metadata]
-content-hash = "b0a64071bca0262801f4146eb0964c7ae2383ea50764cc34b89bca1d8955f853"
+content-hash = "3c4059b28619db3f67fb628d54ab9c6e529553c81eac8af778d34dd3ca3f9a75"
 lock-version = "1.0"
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
 
@@ -632,8 +631,8 @@ pefile = [
     {file = "pefile-2019.4.18.tar.gz", hash = "sha256:a5d6e8305c6b210849b47a6174ddf9c452b2888340b8177874b862ba6c207645"},
 ]
 pint = [
-    {file = "Pint-0.15-py2.py3-none-any.whl", hash = "sha256:42809516a30e20d9e07fb4d211f0a8df6f7e188131925f8aa66718f673f0974c"},
-    {file = "Pint-0.15.tar.gz", hash = "sha256:73b517bc4e49d199eb8ae9ed49104d74a11e596849ad2330b58c09e1eb6f327d"},
+    {file = "Pint-0.16-py2.py3-none-any.whl", hash = "sha256:703db26c4780b3c10ec92961d5bb20252f11aab311ff820714d343178c29bf84"},
+    {file = "Pint-0.16.tar.gz", hash = "sha256:e437420e65fa72a2805f4036f986669c48d54944eeb0e47c8ba16f98cbdcd599"},
 ]
 pyinstaller = []
 pyinstaller-hooks-contrib = [
