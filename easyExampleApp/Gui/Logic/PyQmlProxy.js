@@ -38,8 +38,12 @@ class PyQmlProxy {
         return "<root><item><label>Calculator</label><value>calculator1</value></item><item><label>Minimizer</label><value>minimizer1</value></item></root>"
     }
 
-    get fitablesModelAsXml() {
-        return "<root><item><number>1</number><label>Fe3O4 cell length_a</label><value>8.5700</value><unit>A</unit><error>0.0324</error><fit>1</fit></item><item><number>2</number><label>Fe3O4 cell length_a</label><value>8.5700</value><unit>frac</unit><error></error><fit>0</fit></item><item><number>3</number><label>PolNPD5T setup wavelength</label><value>2.4000</value><unit>A</unit><error></error><fit>0</fit></item></root>"
+    get fitablesListAsXml() {
+        return "<root><item><number>1</number><label>amplitude</label><value>3.5</value><unit></unit><error>0.0</error><fit>1</fit></item><item><number>2</number><label>period</label><value>3.141592653589793</value><unit></unit><error>0.0</error><fit>1</fit></item><item><number>3</number><label>x_shift</label><value>0.0</value><unit></unit><error>0.0</error><fit>1</fit></item><item><number>4</number><label>y_shift</label><value>0.0</value><unit></unit><error>0.0</error><fit>1</fit></item></root>"
+    }
+
+    get fitablesDict() {
+        return {'amplitude': 3.5, 'period': 3.141592653589793, 'x_shift': 0.0, 'y_shift': 0.0}
     }
 
     // Functions
@@ -55,4 +59,9 @@ class PyQmlProxy {
     generateMeasuredData() {}
 
     startFitting() {}
+
+    editFitableValueByName(name, value) {}
+
+    editFitableByIndexAndName(index, name, value) {}
+
 }

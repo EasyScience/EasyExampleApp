@@ -1,6 +1,8 @@
+from dicttoxml import dicttoxml
+from distutils.util import strtobool
+
 from PySide2.QtCore import QObject, Slot, Signal, Property
 from PySide2.QtCharts import QtCharts
-from dicttoxml import dicttoxml
 
 from easyCore import borg
 from easyCore.Fitting.Fitting import Fitter
@@ -77,48 +79,6 @@ class PyQmlProxy(QObject):
     def setMinimizer(self, index: int):
         self.fitter.switch_engine(self.minimizerList[index])
         self.minimizerChanged.emit()
-
-    # Model
-
-    @Property(str, notify=modelChanged)
-    def amplitude(self):
-        return str(self.model.amplitude.raw_value)
-
-    @amplitude.setter
-    def setAmplitude(self, value: str):
-        value = float(value)
-        self.model.amplitude = value
-        self.updateCalculatedData()
-
-    @Property(str, notify=modelChanged)
-    def period(self):
-        return str(self.model.period.raw_value)
-
-    @period.setter
-    def setPeriod(self, value: str):
-        value = float(value)
-        self.model.period = value
-        self.updateCalculatedData()
-
-    @Property(str, notify=modelChanged)
-    def xShift(self):
-        return str(self.model.x_shift.raw_value)
-
-    @xShift.setter
-    def setXShift(self, value: str):
-        value = float(value)
-        self.model.x_shift = value
-        self.updateCalculatedData()
-
-    @Property(str, notify=modelChanged)
-    def yShift(self):
-        return str(self.model.y_shift.raw_value)
-
-    @yShift.setter
-    def setYShift(self, value: str):
-        value = float(value)
-        self.model.y_shift = value
-        self.updateCalculatedData()
 
     # Calculator
 
@@ -207,56 +167,93 @@ class PyQmlProxy(QObject):
         xml = xml.decode()
         return xml
 
-    # Display Models
+    # Model parameters
+
+    @Property(str, notify=modelChanged)
+    def amplitude(self):
+        return str(self.model.amplitude.raw_value)
+
+    @amplitude.setter
+    def setAmplitude(self, value: str):
+        value = float(value)
+        self.model.amplitude = value
+        self.updateCalculatedData()
+
+    @Property(str, notify=modelChanged)
+    def period(self):
+        return str(self.model.period.raw_value)
+
+    @period.setter
+    def setPeriod(self, value: str):
+        value = float(value)
+        self.model.period = value
+        self.updateCalculatedData()
+
+    @Property(str, notify=modelChanged)
+    def xShift(self):
+        return str(self.model.x_shift.raw_value)
+
+    @xShift.setter
+    def setXShift(self, value: str):
+        value = float(value)
+        self.model.x_shift = value
+        self.updateCalculatedData()
+
+    @Property(str, notify=modelChanged)
+    def yShift(self):
+        return str(self.model.y_shift.raw_value)
+
+    @yShift.setter
+    def setYShift(self, value: str):
+        value = float(value)
+        self.model.y_shift = value
+        self.updateCalculatedData()
+
+    # Models
+
+    def fitablesList(self):
+        fitables_list = []
+        for index, par in enumerate(self.model.get_all_parameters()):
+            fitables_list.append(
+                { "number": index + 1,
+                  "label": par.name,
+                  "value": par.raw_value,
+                  "unit": str(par.unit).replace("dimensionless", ""),
+                  "error": par.error,
+                  "fit": int(not par.fixed) }
+            )
+        return fitables_list
+
+    @Property(str, notify=modelChanged)
+    def fitablesListAsXml(self):
+        xml = dicttoxml(self.fitablesList(), attr_type=False)
+        xml = xml.decode()
+        return xml
 
     @Property('QVariant', notify=modelChanged)
-    def fitablesAsJson(self):
-        pars = self.model.get_all_parameters()
-        fitables = {}
-        for par in pars:
-            fitables[par.name] = par.raw_value
-        return fitables
+    def fitablesDict(self):
+        fitables_dict = {}
+        for par in self.model.get_all_parameters():
+            fitables_dict[par.name] = par.raw_value
+        return fitables_dict
 
     @Slot(str, str)
-    def editFitableValue(self, name, value):
-        pars = self.model.get_all_parameters()
-        for par in pars:
+    def editFitableValueByName(self, name, value):
+        for par in self.model.get_all_parameters():
             if par.name == name:
                 par.value = float(value)
                 self.updateCalculatedData()
 
-
-
-    @Property(str, notify=modelChanged)
-    def fitablesModelAsXml(self):
-        pars = self.model.get_all_parameters()
-        fitables = []
-        for index, par in enumerate(pars):
-            unit = str(par.unit)
-            if unit == "dimensionless":
-                unit = ""
-            fitables.append(
-                { "number": index + 1,
-                  "label": par.name,
-                  "value": par.raw_value,
-                  "unit": unit,
-                  "error": par.error,
-                  "fit": int(not par.fixed) }
-            )
-        xml = dicttoxml(fitables, attr_type=False)
-        xml = xml.decode()
-        return xml
-
     @Slot(int, str, str)
-    def editFitablesModel(self, index, key, value):
-        print(index, key, value)
-        if index == -1:
+    def editFitableByIndexAndName(self, index, name, value):
+        #print("----", index, name, value)
+        if index == -1: # TODO: Check why index is changed twice when name == "value"
             return
-        pars = self.model.get_all_parameters()
-        par = pars[index]
-        if key == "fit":
-            par.fixed = value[0] == 'f'
-            print("par.fixed", par.fixed)
-        elif key == "value":
+        par = self.model.get_all_parameters()[index]
+        if name == "fit":
+            par.fixed = not bool(strtobool(value))
+        elif name == "value":
             par.value = float(value)
             self.updateCalculatedData()
+        else:
+            print(f"Unsupported name '{name}'")
