@@ -213,7 +213,7 @@ class PyQmlProxy(QObject):
 
     def fitablesList(self):
         fitables_list = []
-        for index, par in enumerate(self.model.get_all_parameters()):
+        for index, par in enumerate(self.model.get_parameters()):
             fitables_list.append(
                 { "number": index + 1,
                   "label": par.name,
@@ -233,13 +233,13 @@ class PyQmlProxy(QObject):
     @Property('QVariant', notify=modelChanged)
     def fitablesDict(self):
         fitables_dict = {}
-        for par in self.model.get_all_parameters():
+        for par in self.model.get_parameters():
             fitables_dict[par.name] = par.raw_value
         return fitables_dict
 
     @Slot(str, str)
     def editFitableValueByName(self, name, value):
-        for par in self.model.get_all_parameters():
+        for par in self.model.get_parameters():
             if par.name == name:
                 par.value = float(value)
                 self.updateCalculatedData()
@@ -249,7 +249,7 @@ class PyQmlProxy(QObject):
         #print("----", index, name, value)
         if index == -1: # TODO: Check why index is changed twice when name == "value"
             return
-        par = self.model.get_all_parameters()[index]
+        par = self.model.get_parameters()[index]
         if name == "fit":
             par.fixed = not bool(strtobool(value))
         elif name == "value":
