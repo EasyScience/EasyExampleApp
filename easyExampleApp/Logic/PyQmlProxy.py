@@ -108,7 +108,6 @@ class PyQmlProxy(QObject):
 
     @minimizerIndex.setter
     def setMinimizer(self, index: int):
-        print("setMinimizer", index)
         self.fitter.switch_engine(self.minimizerList[index])
         self.minimizerChanged.emit()
 

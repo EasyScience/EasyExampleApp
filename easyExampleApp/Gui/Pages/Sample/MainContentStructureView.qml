@@ -16,8 +16,8 @@ Rectangle {
     Rectangle {
         anchors.centerIn: parent
 
-        height: ExGlobals.Constants.proxy.amplitude * 80
-        width: ExGlobals.Constants.proxy.period * 80
+        height: ExGlobals.Constants.proxy.amplitude * ExGlobals.Constants.sampleScale
+        width: ExGlobals.Constants.proxy.period * ExGlobals.Constants.sampleScale
 
         opacity: 0.8
         color: "coral"
@@ -35,12 +35,12 @@ Rectangle {
             x: -height
             y: (parent.height + width) / 2
             transform: Rotation { origin.x: 0; origin.y: 0; angle: -90}
-            text: "Amplitude = " + (parent.height / 80).toFixed(2)
+            text: "amplitude = " + (parent.height / ExGlobals.Constants.sampleScale).toFixed(4)
         }
         EaElements.Label {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.bottom
-            text: "Period = " + (parent.width / 80).toFixed(2)
+            text: "period = " + (parent.width / ExGlobals.Constants.sampleScale).toFixed(4)
         }
     }
 
