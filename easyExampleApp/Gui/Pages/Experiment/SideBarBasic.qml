@@ -66,7 +66,7 @@ EaComponents.SideBarColumn {
             verticalItemAlignment: Grid.AlignVCenter
 
             EaElements.Label {
-                text: "X-shift"
+                text: "x_shift"
             }
 
             EaElements.TextField {
@@ -76,7 +76,7 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.Label {
-                text: "Y-shift"
+                text: "y_shift"
             }
 
             EaElements.TextField {

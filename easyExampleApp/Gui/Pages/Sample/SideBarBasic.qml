@@ -73,7 +73,7 @@ EaComponents.SideBarColumn {
             verticalItemAlignment: Grid.AlignVCenter
 
             EaElements.Label {
-                text: "Amplitude"
+                text: "amplitude"
             }
 
             EaElements.TextField {
@@ -83,7 +83,7 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.Label {
-                text: "Period"
+                text: "period"
             }
 
             EaElements.TextField {
