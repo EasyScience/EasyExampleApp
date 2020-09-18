@@ -58,6 +58,33 @@ EaComponents.SideBarColumn {
                 onEditingFinished: ExGlobals.Constants.proxy.yShift = text
             }
         }
+
+        Grid {
+            columns: 4
+            columnSpacing: 20
+            rowSpacing: 10
+            verticalItemAlignment: Grid.AlignVCenter
+
+            EaElements.Label {
+                text: "X-shift"
+            }
+
+            EaElements.TextField {
+                width: 140
+                text: ExGlobals.Constants.proxy.fitablesDict.x_shift.toFixed(4)
+                onEditingFinished: ExGlobals.Constants.proxy.editFitableValueByName("x_shift", text)
+            }
+
+            EaElements.Label {
+                text: "Y-shift"
+            }
+
+            EaElements.TextField {
+                width: 140
+                text: ExGlobals.Constants.proxy.fitablesDict.y_shift.toFixed(4)
+                onEditingFinished: ExGlobals.Constants.proxy.editFitableValueByName("y_shift", text)
+            }
+        }
     }
 
 }

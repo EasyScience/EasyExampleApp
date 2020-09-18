@@ -78,8 +78,8 @@ EaComponents.SideBarColumn {
 
             EaElements.TextField {
                 width: 130
-                text: ExGlobals.Constants.proxy.fitablesAsJson.amplitude.toFixed(4)
-                onEditingFinished: ExGlobals.Constants.proxy.editFitableValue("amplitude", text)
+                text: ExGlobals.Constants.proxy.fitablesDict.amplitude.toFixed(4)
+                onEditingFinished: ExGlobals.Constants.proxy.editFitableValueByName("amplitude", text)
             }
 
             EaElements.Label {
@@ -88,8 +88,8 @@ EaComponents.SideBarColumn {
 
             EaElements.TextField {
                 width: 130
-                text: ExGlobals.Constants.proxy.fitablesAsJson.period.toFixed(4)
-                onEditingFinished: ExGlobals.Constants.proxy.editFitableValue("period", text)
+                text: ExGlobals.Constants.proxy.fitablesDict.period.toFixed(4)
+                onEditingFinished: ExGlobals.Constants.proxy.editFitableValueByName("period", text)
             }
         }
     }
