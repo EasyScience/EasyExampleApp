@@ -16,7 +16,7 @@ EaComponents.SideBarColumn {
         EaElements.SideBarButton {
             id: addNewSampleButton
             fontIcon: "plus-circle"
-            text: "Add new sample"
+            text: qsTr("Add new sample")
             onClicked: {
                 ExGlobals.Variables.experimentPageEnabled = true
                 ExGlobals.Variables.sampleLoaded = true

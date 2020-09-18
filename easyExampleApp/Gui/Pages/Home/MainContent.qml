@@ -53,7 +53,7 @@ Item {
             EaElements.Label {
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.family: EaStyle.Fonts.secondExpandedFontFamily
-                text: "Version %1 (%2)".arg(ExGlobals.Constants.appVersion).arg(ExGlobals.Constants.appDate)
+                text: qsTr("Version %1 (%2)".arg(ExGlobals.Constants.appVersion).arg(ExGlobals.Constants.appDate))
             }
         }
 

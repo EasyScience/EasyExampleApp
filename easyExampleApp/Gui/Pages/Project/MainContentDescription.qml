@@ -20,7 +20,7 @@ Item {
             font.family: EaStyle.Fonts.secondFontFamily
             font.pixelSize: EaStyle.Sizes.fontPixelSize * 3
             font.weight: Font.ExtraLight
-            text: "Project"
+            text: "Project Name"
         }
 
         Grid {
@@ -30,7 +30,7 @@ Item {
 
             EaElements.Label {
                 font.bold: true
-                text: "Keywords:"
+                text: qsTr("Keywords:")
             }
             EaElements.Label {
                 text: "sine, cosine, lmfit, bumps"
@@ -38,7 +38,7 @@ Item {
 
             EaElements.Label {
                 font.bold: true
-                text: "Samples:"
+                text: qsTr("Samples:")
             }
             EaElements.Label {
                 text: "samples.cif"
@@ -46,7 +46,7 @@ Item {
 
             EaElements.Label {
                 font.bold: true
-                text: "Experiments:"
+                text: qsTr("Experiments:")
             }
             EaElements.Label {
                 text: "experiments.cif"
@@ -54,7 +54,7 @@ Item {
 
             EaElements.Label {
                 font.bold: true
-                text: "Calculations:"
+                text: qsTr("Calculations:")
             }
             EaElements.Label {
                 text: "calculations.cif"
@@ -62,7 +62,7 @@ Item {
 
             EaElements.Label {
                 font.bold: true
-                text: "Modified:"
+                text: qsTr("Modified:")
             }
             EaElements.Label {
                 text: "18.09.2020, 09:24"

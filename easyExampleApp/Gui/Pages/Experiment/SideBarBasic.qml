@@ -16,7 +16,7 @@ EaComponents.SideBarColumn {
         EaElements.SideBarButton {
             id: generateMeasuredDataButton
             fontIcon: "plus-circle"
-            text: "Generate measured data"
+            text: qsTr("Generate measured data")
             onClicked: {
                 ExGlobals.Variables.analysisPageEnabled = true
                 ExGlobals.Variables.experimentLoaded = true

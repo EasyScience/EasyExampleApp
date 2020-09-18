@@ -302,6 +302,4 @@ EaComponents.ApplicationWindow {
         }
     }
 
-    //Component.onCompleted: print(ExGlobals.Constants.proxy.statusModelAsXml)
-
 }

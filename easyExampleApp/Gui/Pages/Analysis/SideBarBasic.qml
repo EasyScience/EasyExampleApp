@@ -89,7 +89,7 @@ EaComponents.SideBarColumn {
         EaElements.SideBarButton {
             id: startFittingButton
             fontIcon: "play-circle"
-            text: "Start fitting"
+            text: qsTr("Start fitting")
             onClicked: {
                 ExGlobals.Variables.summaryPageEnabled = true
                 ExGlobals.Constants.proxy.startFitting()
