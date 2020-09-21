@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQuick.XmlListModel 2.13
 
 import easyAppGui.Globals 1.0 as EaGlobals
 import easyAppGui.Style 1.0 as EaStyle
@@ -85,6 +86,73 @@ EaComponents.SideBarColumn {
             }
         }
         */
+
+
+
+
+
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Constraints")
+        visible: ExGlobals.Variables.analysisPageEnabled
+        collapsed: false
+
+        Grid {
+            columns: 4
+            columnSpacing: 10
+            rowSpacing: 10
+            verticalItemAlignment: Grid.AlignVCenter
+
+            EaElements.ComboBox {
+                id: dependentPar
+                width: 170
+                currentIndex: 0
+                model: XmlListModel {
+                    xml: ExGlobals.Constants.proxy.fitablesListAsXml
+                    query: "/root/item"
+                    XmlRole { name: "label"; query: "label/string()" }
+                }
+                //onActivated: ExGlobals.Constants.proxy.addConstraint(dependentPar.currentIndex, operator.text, independentPar.currentIndex)
+            }
+
+            EaElements.Label {
+                text: "="
+            }
+
+            EaElements.TextField {
+                id: operator
+                width: 43
+                horizontalAlignment: Text.AlignRight
+                text: "2*"
+                //onEditingFinished: ExGlobals.Constants.proxy.addConstraint(dependentPar.currentIndex, operator.text, independentPar.currentIndex)
+            }
+
+            EaElements.ComboBox {
+                id: independentPar
+                width: 170
+                currentIndex: 1
+                model: XmlListModel {
+                    xml: ExGlobals.Constants.proxy.fitablesListAsXml
+                    query: "/root/item"
+                    XmlRole { name: "label"; query: "label/string()" }
+                }
+                //onActivated: ExGlobals.Constants.proxy.addConstraint(dependentPar.currentIndex, operator.text, independentPar.currentIndex)
+            }
+        }
+
+        EaElements.SideBarButton {
+            id: addConstraint
+            fontIcon: "plus-circle"
+            text: qsTr("Add constraint")
+            onClicked: ExGlobals.Constants.proxy.addConstraint(dependentPar.currentIndex, operator.text, independentPar.currentIndex)
+        }
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Fitting")
+        visible: ExGlobals.Variables.analysisPageEnabled
+        collapsed: false
 
         EaElements.SideBarButton {
             id: startFittingButton

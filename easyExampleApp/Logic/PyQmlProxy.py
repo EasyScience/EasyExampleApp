@@ -6,6 +6,7 @@ from PySide2.QtCharts import QtCharts
 
 from easyCore import borg
 from easyCore.Fitting.Fitting import Fitter
+from easyCore.Fitting.Constraints import ObjConstraint
 
 from easyExampleLib.interface import InterfaceFactory
 from easyExampleLib.model import Sin, DummySin
@@ -256,3 +257,10 @@ class PyQmlProxy(QObject):
             self.updateCalculatedData()
         else:
             print(f"Unsupported name '{name}'")
+
+    # Constraints
+
+    @Slot(int, str, int)
+    def addConstraint(self, dependent_par_idx, operator, independent_par_idx):
+#        self.fitter.
+        print(f"Add constraint: {self.fitablesList()[dependent_par_idx]['label']} = {operator} {self.fitablesList()[independent_par_idx]['label']}")
