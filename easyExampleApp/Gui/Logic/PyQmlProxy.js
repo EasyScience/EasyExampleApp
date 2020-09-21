@@ -46,6 +46,10 @@ class PyQmlProxy {
         return {'amplitude': 3.5, 'period': 3.141592653589793, 'x_shift': 0.0, 'y_shift': 0.0}
     }
 
+    get constraintsListAsXml() {
+        return "<root><item><number>1</number><dependentName>amplitude</dependentName><operator>2.0000 *</operator><independentName>period</independentName><enabled>1</enabled></item><item><number>2</number><dependentName>x_shift</dependentName><operator>1.3333 *</operator><independentName>y_shift</independentName><enabled>1</enabled></item></root>"
+    }
+
     // Functions
 
     addLowerMeasuredSeriesRef(series) {}
@@ -63,5 +67,11 @@ class PyQmlProxy {
     editFitableValueByName(name, value) {}
 
     editFitableByIndexAndName(index, name, value) {}
+
+    addConstraints(dependent_par_idx, operator, independent_par_idx) {}
+
+    removeConstraintByIndex(index) {}
+
+    toggleConstraintByIndex(index, enabled) {}
 
 }

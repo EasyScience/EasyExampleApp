@@ -19,6 +19,7 @@ from easyExampleApp.Logic.DisplayModels.DataModels import MeasuredDataModel, Cal
 class PyQmlProxy(QObject):
     _borg = borg
     modelChanged = Signal()
+    constraintsChanged = Signal()
     calculatorChanged = Signal()
     minimizerChanged = Signal()
     statusChanged = Signal()
@@ -271,25 +272,24 @@ class PyQmlProxy(QObject):
                           operator,
                           pars[independent_par_idx])
         )
-        print(f"Add constraint: {self.fitablesList()[dependent_par_idx]['label']} = {operator} {self.fitablesList()[independent_par_idx]['label']}")
+        self.constraintsChanged.emit()
+        #print(f"Add constraint: {self.fitablesList()[dependent_par_idx]['label']} = {operator} {self.fitablesList()[independent_par_idx]['label']}")
 
     def constraintsList(self):
         constraint_list = []
-        for index, constraint in enumerate(self.fitter.get_constraints()):
+        for index, constraint in enumerate(self.fitter.fit_constraints()):
             independent = constraint.get_obj(constraint.independent_obj_ids)
             dependent = constraint.get_obj(constraint.dependent_obj_ids)
             constraint_list.append(
-                {
-                  "number": index + 1,
-                  "enabled": constraint.enabled,
-                  "dependent_name": dependent.name,
+                { "number": index + 1,
+                  "dependentName": dependent.name,
                   "operator": constraint.operator,
-                  "independent_name": independent.name
-                  }
+                  "independentName": independent.name,
+                  "enabled": int(constraint.enabled) }
             )
         return constraint_list
 
-    @Property(str, notify=modelChanged)
+    @Property(str, notify=constraintsChanged)
     def constraintsListAsXml(self):
         xml = dicttoxml(self.constraintsList(), attr_type=False)
         xml = xml.decode()
@@ -298,8 +298,10 @@ class PyQmlProxy(QObject):
     @Slot(int)
     def removeConstraintByIndex(self, index: int):
         self.fitter.remove_fit_constraint(index)
+        self.constraintsChanged.emit()
 
     @Slot(int, str)
     def toggleConstraintByIndex(self, index, enabled):
-        constraint = self.fitter.get_constraints()[index]
+        constraint = self.fitter.fit_constraints()[index]
         constraint.enabled = bool(strtobool(enabled))
+        self.constraintsChanged.emit()
