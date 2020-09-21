@@ -87,7 +87,7 @@ version = "0.2.3"
 PySide2 = "^5.15"
 
 [package.source]
-reference = "4045c9ee514fd38691dc4b34283b17923cecd5bf"
+reference = "ddda01af17e5c1eab6262c8b6ab0ec392a942510"
 type = "git"
 url = "https://github.com/easyScience/easyAppGui.git"
 [[package]]
@@ -345,7 +345,7 @@ encryption = ["tinyaes (>=1.0.0)"]
 hook_testing = ["pytest (>=2.7.3)", "execnet (>=1.5.0)", "psutil"]
 
 [package.source]
-reference = "ad39eb8df209d02636399ffdc44521a97886cf8c"
+reference = "90012221f89278952d0b1c81a7c31a05f50f4abe"
 type = "git"
 url = "https://github.com/pyinstaller/pyinstaller.git"
 [[package]]
