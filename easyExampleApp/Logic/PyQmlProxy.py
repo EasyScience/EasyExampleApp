@@ -7,6 +7,7 @@ from PySide2.QtCharts import QtCharts
 from easyCore import borg
 from easyCore.Fitting.Fitting import Fitter
 from easyCore.Fitting.Constraints import ObjConstraint
+from easyCore.Utils.classTools import generatePath
 
 from easyExampleLib.interface import InterfaceFactory
 from easyExampleLib.model import Sin, DummySin
@@ -213,10 +214,12 @@ class PyQmlProxy(QObject):
 
     def fitablesList(self):
         fitables_list = []
-        for index, par in enumerate(self.model.get_parameters()):
+        pars_id, pars_path = generatePath(self.model)
+        for index, par_path in enumerate(pars_path):
+            par = borg.map.get_item_by_key(pars_id[index])
             fitables_list.append(
                 { "number": index + 1,
-                  "label": par.name,
+                  "label": par_path,
                   "value": par.raw_value,
                   "unit": str(par.unit).replace("dimensionless", ""),
                   "error": par.error,
@@ -262,5 +265,41 @@ class PyQmlProxy(QObject):
 
     @Slot(int, str, int)
     def addConstraint(self, dependent_par_idx, operator, independent_par_idx):
-#        self.fitter.
+        pars = self.model.get_parameters()
+        self.fitter.add_fit_constraint(
+            ObjConstraint(pars[dependent_par_idx],
+                          operator,
+                          pars[independent_par_idx])
+        )
         print(f"Add constraint: {self.fitablesList()[dependent_par_idx]['label']} = {operator} {self.fitablesList()[independent_par_idx]['label']}")
+
+    def constraintsList(self):
+        constraint_list = []
+        for index, constraint in enumerate(self.fitter.get_constraints()):
+            independent = constraint.get_obj(constraint.independent_obj_ids)
+            dependent = constraint.get_obj(constraint.dependent_obj_ids)
+            constraint_list.append(
+                {
+                  "number": index + 1,
+                  "enabled": constraint.enabled,
+                  "dependent_name": dependent.name,
+                  "operator": constraint.operator,
+                  "independent_name": independent.name
+                  }
+            )
+        return constraint_list
+
+    @Property(str, notify=modelChanged)
+    def constraintsListAsXml(self):
+        xml = dicttoxml(self.constraintsList(), attr_type=False)
+        xml = xml.decode()
+        return xml
+
+    @Slot(int)
+    def removeConstraintByIndex(self, index: int):
+        self.fitter.remove_fit_constraint(index)
+
+    @Slot(int, str)
+    def toggleConstraintByIndex(self, index, enabled):
+        constraint = self.fitter.get_constraints()[index]
+        constraint.enabled = bool(strtobool(enabled))
