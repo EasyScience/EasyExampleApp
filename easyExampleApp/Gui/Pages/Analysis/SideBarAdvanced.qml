@@ -74,7 +74,7 @@ EaComponents.SideBarColumn {
                 id: operator
                 width: 50
                 currentIndex: 0
-                font.family: EaStyle.Fonts.iconsFamily
+                //font.family: EaStyle.Fonts.iconsFamily
                 model: ["*", "/", "+", "-"]
                 //model: ["\uf00d", "\uf529", "\uf067", "\uf068"]
                 /*
@@ -102,12 +102,16 @@ EaComponents.SideBarColumn {
             id: addConstraint
             fontIcon: "plus-circle"
             text: qsTr("Add constraint")
-            onClicked: ExGlobals.Constants.proxy.addConstraint(
+            onClicked: {
+                if (dependentPar.currentIndex === -1 || independentPar.currentIndex === -1)
+                    return
+                ExGlobals.Constants.proxy.addConstraint(
                            dependentPar.currentIndex,
                            //coefficient.text + operator.currentText.replace("\uf00d", "*").replace("\uf529", "/").replace("\uf067", "+").replace("\uf068", "-"),
                            coefficient.text + operator.currentText,
                            independentPar.currentIndex
                            )
+            }
         }
     }
 
