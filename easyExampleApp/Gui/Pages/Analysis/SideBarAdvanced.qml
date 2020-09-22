@@ -11,6 +11,7 @@ import Gui.Globals 1.0 as ExGlobals
 EaComponents.SideBarColumn {
     property int independentParCurrentIndex: 0
     property int dependentParCurrentIndex: 0
+    property int dependentParCurrentIndex2: 0
 
     EaElements.GroupBox {
         title: qsTr("Calculator")
@@ -44,14 +45,14 @@ EaComponents.SideBarColumn {
         EaComponents.ConstraintsView {}
 
         Grid {
-            columns: 5
+            columns: 6
             columnSpacing: 10
-            rowSpacing: 10
+            rowSpacing: -5
             verticalItemAlignment: Grid.AlignVCenter
 
             EaElements.ComboBox {
                 id: dependentPar
-                width: 137
+                width: 140
                 currentIndex: -1
                 displayText: currentIndex === -1 ? "Select parameter" : currentText
                 model: XmlListModel {
@@ -68,7 +69,7 @@ EaComponents.SideBarColumn {
 
             EaElements.ComboBox {
                 id: relationalOperator
-                width: 50
+                width: 47
                 currentIndex: 0
                 //model: ["=", ">", "<"]
                 font.family: EaStyle.Fonts.iconsFamily
@@ -81,20 +82,20 @@ EaComponents.SideBarColumn {
 
             EaElements.TextField {
                 id: value
-                width: 61
+                width: 65
                 horizontalAlignment: Text.AlignRight
                 text: "1.0000"
             }
 
             EaElements.ComboBox {
                 id: arithmeticOperator
-                width: 50
+                width: relationalOperator.width
                 currentIndex: 0
                 //model: ["", "*", "/", "+", "-"]
                 font.family: EaStyle.Fonts.iconsFamily
                 //model: ["\uf00d", "\uf529", "\uf067", "\uf068"]
                 model: XmlListModel {
-                    xml: "<root><item><operator></operator><icon></icon></item><item><operator>*</operator><icon>\uf00d</icon></item><item><operator>/</operator><icon>\uf529</icon></item><item><operator>+</operator><icon>\uf067</icon></item><item><operator>-</operator><icon>\uf068</icon></item></root>"
+                    xml: "<root><item><operator>*</operator><icon>\uf00d</icon></item><item><operator>/</operator><icon>\uf529</icon></item><item><operator>+</operator><icon>\uf067</icon></item><item><operator>-</operator><icon>\uf068</icon></item></root>"
                     query: "/root/item"
                     XmlRole { name: "icon"; query: "icon/string()" }
                 }
@@ -103,9 +104,10 @@ EaComponents.SideBarColumn {
             EaElements.ComboBox {
                 id: independentPar
                 width: dependentPar.width
-                currentIndex: 0
+                currentIndex: -1
+                displayText: currentIndex === -1 ? "Select parameter" : currentText
                 model: XmlListModel {
-                    xml: ExGlobals.Constants.proxy.fitablesListAsXml.replace("<root>", "<root><item><label></label></item>")
+                    xml: ExGlobals.Constants.proxy.fitablesListAsXml
                     query: "/root/item"
                     XmlRole { name: "label"; query: "label/string()" }
                     onXmlChanged: independentParCurrentIndex = independentPar.currentIndex
@@ -115,10 +117,83 @@ EaComponents.SideBarColumn {
                         independentPar.currentIndex = independentParCurrentIndex
                 }
             }
+
+            EaElements.SideBarButton {
+                id: addConstraint
+                width: 35
+                fontIcon: "plus-circle"
+                ToolTip.text: qsTr("Add constraint between two parameters")
+                onClicked: {
+                    ExGlobals.Constants.proxy.addConstraint(
+                               dependentPar.currentIndex,
+                               relationalOperator.currentText.replace("\uf52c", "=").replace("\uf531", ">").replace("\uf536", "<"),
+                               value.text,
+                               arithmeticOperator.currentText.replace("\uf00d", "*").replace("\uf529", "/").replace("\uf067", "+").replace("\uf068", "-"),
+                               independentPar.currentIndex
+                               )
+                }
+            }
+
+
+
+
+            EaElements.ComboBox {
+                id: dependentPar2
+                width: 140
+                currentIndex: -1
+                displayText: currentIndex === -1 ? "Select parameter" : currentText
+                model: XmlListModel {
+                    xml: ExGlobals.Constants.proxy.fitablesListAsXml
+                    query: "/root/item"
+                    XmlRole { name: "label"; query: "label/string()" }
+                    onXmlChanged: dependentParCurrentIndex2 = dependentPar2.currentIndex
+                }
+                onCurrentIndexChanged: {
+                    if (dependentPar2.currentIndex === -1 && model.count > 0)
+                        dependentPar2.currentIndex = dependentParCurrentIndex2
+                }
+            }
+
+            EaElements.ComboBox {
+                id: relationalOperator2
+                width: 47
+                currentIndex: 0
+                //model: ["=", ">", "<"]
+                font.family: EaStyle.Fonts.iconsFamily
+                model: XmlListModel {
+                    xml: "<root><item><operator>=</operator><icon>\uf52c</icon></item><item><operator>&gt;</operator><icon>\uf531</icon></item><item><operator>&lt;</operator><icon>\uf536</icon></item></root>"
+                    query: "/root/item"
+                    XmlRole { name: "icon"; query: "icon/string()" }
+                }
+            }
+
+            EaElements.TextField {
+                id: value2
+                width: 65
+                horizontalAlignment: Text.AlignRight
+                text: "1.0000"
+            }
+
+            EaElements.SideBarButton {
+                id: addConstraint2
+                width: 35
+                fontIcon: "plus-circle"
+                ToolTip.text: qsTr("Add numeric constraint for single parameter")
+                onClicked: {
+                    ExGlobals.Constants.proxy.addConstraint(
+                               dependentPar2.currentIndex,
+                               relationalOperator2.currentText.replace("\uf52c", "=").replace("\uf531", ">").replace("\uf536", "<"),
+                               value2.text,
+                               "",
+                               -1
+                               )
+                }
+            }
         }
 
+        /*
         EaElements.SideBarButton {
-            id: addConstraint
+            id: addConstraint2
             fontIcon: "plus-circle"
             text: qsTr("Add constraint")
             onClicked: {
@@ -131,6 +206,7 @@ EaComponents.SideBarColumn {
                            )
             }
         }
+        */
     }
 
 }
