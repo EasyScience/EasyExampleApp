@@ -74,8 +74,9 @@ EaComponents.SideBarColumn {
                 id: operator
                 width: 50
                 currentIndex: 0
-                //font.family: EaStyle.Fonts.iconsFamily
                 model: ["*", "/", "+", "-"]
+                font.pixelSize: EaStyle.Sizes.fontPixelSize * 1.25
+                //font.family: EaStyle.Fonts.iconsFamily
                 //model: ["\uf00d", "\uf529", "\uf067", "\uf068"]
                 /*
                 model: XmlListModel {
