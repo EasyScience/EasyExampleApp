@@ -49,7 +49,7 @@ EaComponents.SideBarColumn {
 
             EaElements.ComboBox {
                 id: dependentPar
-                width: 159
+                width: 137
                 currentIndex: -1
                 displayText: currentIndex === -1 ? "Select parameter" : currentText
                 model: XmlListModel {
@@ -59,42 +59,59 @@ EaComponents.SideBarColumn {
                 }
             }
 
-            EaElements.Label {
-                text: "="
+            EaElements.ComboBox {
+                id: relationalOperator
+                width: 50
+                currentIndex: 0
+                //model: ["=", ">", "<"]
+                //font.pixelSize: EaStyle.Sizes.fontPixelSize * 1.25
+                font.family: EaStyle.Fonts.iconsFamily
+                model: XmlListModel {
+                    xml: "<root><item><operator>=</operator><icon>\uf52c</icon></item><item><operator>&gt;</operator><icon>\uf531</icon></item><item><operator>&lt;</operator><icon>\uf536</icon></item></root>"
+                    query: "/root/item"
+                    XmlRole { name: "icon"; query: "icon/string()" }
+                }
             }
 
             EaElements.TextField {
-                id: coefficient
+                id: value
                 width: 61
                 horizontalAlignment: Text.AlignRight
                 text: "1.0000"
             }
 
             EaElements.ComboBox {
-                id: operator
+                id: arithmeticOperator
                 width: 50
                 currentIndex: 0
-                model: ["*", "/", "+", "-"]
-                font.pixelSize: EaStyle.Sizes.fontPixelSize * 1.25
-                //font.family: EaStyle.Fonts.iconsFamily
+                //model: ["", "*", "/", "+", "-"]
+                //font.pixelSize: EaStyle.Sizes.fontPixelSize * 1.25
+                font.family: EaStyle.Fonts.iconsFamily
                 //model: ["\uf00d", "\uf529", "\uf067", "\uf068"]
-                /*
                 model: XmlListModel {
-                    xml: "<root><item><operator>*</operator><icon>\uf00d</icon></item><item><operator>/</operator><icon>\uf529</icon></item><item><operator>+</operator><icon>\uf067</icon></item><item><operator>-</operator><icon>\uf068</icon></item></root>"
+                    xml: "<root><item><operator></operator><icon></icon></item><item><operator>*</operator><icon>\uf00d</icon></item><item><operator>/</operator><icon>\uf529</icon></item><item><operator>+</operator><icon>\uf067</icon></item><item><operator>-</operator><icon>\uf068</icon></item></root>"
                     query: "/root/item"
                     XmlRole { name: "icon"; query: "icon/string()" }
                 }
-                */
             }
 
             EaElements.ComboBox {
                 id: independentPar
                 width: dependentPar.width
-                displayText: currentIndex === -1 ? "Select parameter" : currentText
+                currentIndex: 0
                 model: XmlListModel {
-                    xml: ExGlobals.Constants.proxy.fitablesListAsXml
+                    xml: ExGlobals.Constants.proxy.fitablesListAsXml.replace("<root>", "<root><item><label></label></item>")
                     query: "/root/item"
                     XmlRole { name: "label"; query: "label/string()" }
+                    onXmlChanged: {
+                        //print("1 onXmlChanged", independentPar.currentIndex)
+                        independentPar.currentIndex = 0
+                        //print("2 onXmlChanged", independentPar.currentIndex)
+                    }
+                }
+                onCurrentIndexChanged: {
+                    if (independentPar.currentIndex === -1 && model.count > 0)
+                        independentPar.currentIndex = 0
                 }
             }
         }
@@ -104,13 +121,12 @@ EaComponents.SideBarColumn {
             fontIcon: "plus-circle"
             text: qsTr("Add constraint")
             onClicked: {
-                if (dependentPar.currentIndex === -1 || independentPar.currentIndex === -1)
-                    return
                 ExGlobals.Constants.proxy.addConstraint(
                            dependentPar.currentIndex,
-                           //coefficient.text + operator.currentText.replace("\uf00d", "*").replace("\uf529", "/").replace("\uf067", "+").replace("\uf068", "-"),
-                           coefficient.text + operator.currentText,
-                           independentPar.currentIndex
+                           relationalOperator.currentText.replace("\uf52c", "=").replace("\uf531", ">").replace("\uf536", "<"),
+                           value.text,
+                           arithmeticOperator.currentText.replace("\uf00d", "*").replace("\uf529", "/").replace("\uf067", "+").replace("\uf068", "-"),
+                           independentPar.currentIndex - 1
                            )
             }
         }

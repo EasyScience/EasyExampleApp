@@ -6,7 +6,7 @@ from PySide2.QtCharts import QtCharts
 
 from easyCore import borg
 from easyCore.Fitting.Fitting import Fitter
-from easyCore.Fitting.Constraints import ObjConstraint
+from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 from easyCore.Utils.classTools import generatePath
 
 from easyExampleLib.interface import InterfaceFactory
@@ -264,28 +264,62 @@ class PyQmlProxy(QObject):
 
     # Constraints
 
-    @Slot(int, str, int)
-    def addConstraint(self, dependent_par_idx, operator, independent_par_idx):
+    @Slot(int, str, str, str, int)
+    def addConstraint(self, dependent_par_idx, relational_operator,
+                      value, arithmetic_operator, independent_par_idx):
+        if dependent_par_idx == -1 or value == "":
+            print("Failed to add constraint: Unsupported type")
+            return
+        if independent_par_idx == -1:
+            print(f"Add constraint: {self.fitablesList()[dependent_par_idx]['label']}{relational_operator}{value}")
+        else:
+            print(f"Add constraint: {self.fitablesList()[dependent_par_idx]['label']}{relational_operator}{value}{arithmetic_operator}{self.fitablesList()[independent_par_idx]['label']}")
         pars = self.model.get_parameters()
-        self.fitter.add_fit_constraint(
-            ObjConstraint(pars[dependent_par_idx],
-                          operator,
-                          pars[independent_par_idx])
-        )
+        if arithmetic_operator != "" and independent_par_idx > -1:
+            c = ObjConstraint(pars[dependent_par_idx],
+                              str(float(value)) + arithmetic_operator,
+                              pars[independent_par_idx])
+        elif arithmetic_operator == "" and independent_par_idx == -1:
+            c = NumericConstraint(pars[dependent_par_idx],
+                                  relational_operator.replace("=", "=="),
+                                  float(value))
+        else:
+            print("Failed to add constraint: Unsupported type")
+            return
+        print(c)
+        #c()
+        self.fitter.add_fit_constraint(c)
         self.constraintsChanged.emit()
-        #print(f"Add constraint: {self.fitablesList()[dependent_par_idx]['label']} = {operator} {self.fitablesList()[independent_par_idx]['label']}")
+        self.modelChanged.emit()
 
     def constraintsList(self):
         constraint_list = []
         for index, constraint in enumerate(self.fitter.fit_constraints()):
-            independent = constraint.get_obj(constraint.independent_obj_ids)
-            dependent = constraint.get_obj(constraint.dependent_obj_ids)
+            if type(constraint) is ObjConstraint:
+                independent_name = constraint.get_obj(constraint.independent_obj_ids).name
+                relational_operator = "="
+                value = float(constraint.operator[:-1])
+                arithmetic_operator = constraint.operator[-1]
+            elif type(constraint) is NumericConstraint:
+                independent_name = ""
+                relational_operator = constraint.operator.replace("==", "=")
+                value = constraint.value
+                arithmetic_operator = ""
+            else:
+                print(f"Failed to get constraint: Unsupported type {type(constraint)}")
+                return
+            number = index + 1
+            dependent_name = constraint.get_obj(constraint.dependent_obj_ids).name
+            enabled = int(constraint.enabled)
+            print("AAA", type(value))
             constraint_list.append(
-                { "number": index + 1,
-                  "dependentName": dependent.name,
-                  "operator": constraint.operator,
-                  "independentName": independent.name,
-                  "enabled": int(constraint.enabled) }
+                { "number": number,
+                  "dependentName": dependent_name,
+                  "relationalOperator": relational_operator,
+                  "value": value,
+                  "arithmeticOperator": arithmetic_operator,
+                  "independentName": independent_name,
+                  "enabled": enabled }
             )
         return constraint_list
 
