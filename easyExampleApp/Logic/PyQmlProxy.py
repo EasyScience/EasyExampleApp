@@ -286,11 +286,11 @@ class PyQmlProxy(QObject):
         else:
             print("Failed to add constraint: Unsupported type")
             return
-        print(c)
-        #c()
+        #print(c)
+        c()
         self.fitter.add_fit_constraint(c)
         self.constraintsChanged.emit()
-        self.modelChanged.emit()
+        self.updateCalculatedData()
 
     def constraintsList(self):
         constraint_list = []
