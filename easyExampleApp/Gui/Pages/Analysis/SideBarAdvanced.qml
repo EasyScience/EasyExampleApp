@@ -9,6 +9,8 @@ import easyAppGui.Components 1.0 as EaComponents
 import Gui.Globals 1.0 as ExGlobals
 
 EaComponents.SideBarColumn {
+    property int independentParCurrentIndex: 0
+    property int dependentParCurrentIndex: 0
 
     EaElements.GroupBox {
         title: qsTr("Calculator")
@@ -56,6 +58,11 @@ EaComponents.SideBarColumn {
                     xml: ExGlobals.Constants.proxy.fitablesListAsXml
                     query: "/root/item"
                     XmlRole { name: "label"; query: "label/string()" }
+                    onXmlChanged: dependentParCurrentIndex = dependentPar.currentIndex
+                }
+                onCurrentIndexChanged: {
+                    if (dependentPar.currentIndex === -1 && model.count > 0)
+                        dependentPar.currentIndex = dependentParCurrentIndex
                 }
             }
 
@@ -64,7 +71,6 @@ EaComponents.SideBarColumn {
                 width: 50
                 currentIndex: 0
                 //model: ["=", ">", "<"]
-                //font.pixelSize: EaStyle.Sizes.fontPixelSize * 1.25
                 font.family: EaStyle.Fonts.iconsFamily
                 model: XmlListModel {
                     xml: "<root><item><operator>=</operator><icon>\uf52c</icon></item><item><operator>&gt;</operator><icon>\uf531</icon></item><item><operator>&lt;</operator><icon>\uf536</icon></item></root>"
@@ -85,7 +91,6 @@ EaComponents.SideBarColumn {
                 width: 50
                 currentIndex: 0
                 //model: ["", "*", "/", "+", "-"]
-                //font.pixelSize: EaStyle.Sizes.fontPixelSize * 1.25
                 font.family: EaStyle.Fonts.iconsFamily
                 //model: ["\uf00d", "\uf529", "\uf067", "\uf068"]
                 model: XmlListModel {
@@ -103,15 +108,11 @@ EaComponents.SideBarColumn {
                     xml: ExGlobals.Constants.proxy.fitablesListAsXml.replace("<root>", "<root><item><label></label></item>")
                     query: "/root/item"
                     XmlRole { name: "label"; query: "label/string()" }
-                    onXmlChanged: {
-                        //print("1 onXmlChanged", independentPar.currentIndex)
-                        independentPar.currentIndex = 0
-                        //print("2 onXmlChanged", independentPar.currentIndex)
-                    }
+                    onXmlChanged: independentParCurrentIndex = independentPar.currentIndex
                 }
                 onCurrentIndexChanged: {
                     if (independentPar.currentIndex === -1 && model.count > 0)
-                        independentPar.currentIndex = 0
+                        independentPar.currentIndex = independentParCurrentIndex
                 }
             }
         }
