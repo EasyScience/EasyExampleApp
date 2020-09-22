@@ -270,10 +270,10 @@ class PyQmlProxy(QObject):
         if dependent_par_idx == -1 or value == "":
             print("Failed to add constraint: Unsupported type")
             return
-        if independent_par_idx == -1:
-            print(f"Add constraint: {self.fitablesList()[dependent_par_idx]['label']}{relational_operator}{value}")
-        else:
-            print(f"Add constraint: {self.fitablesList()[dependent_par_idx]['label']}{relational_operator}{value}{arithmetic_operator}{self.fitablesList()[independent_par_idx]['label']}")
+        #if independent_par_idx == -1:
+        #    print(f"Add constraint: {self.fitablesList()[dependent_par_idx]['label']}{relational_operator}{value}")
+        #else:
+        #    print(f"Add constraint: {self.fitablesList()[dependent_par_idx]['label']}{relational_operator}{value}{arithmetic_operator}{self.fitablesList()[independent_par_idx]['label']}")
         pars = self.model.get_parameters()
         if arithmetic_operator != "" and independent_par_idx > -1:
             c = ObjConstraint(pars[dependent_par_idx],
@@ -311,7 +311,6 @@ class PyQmlProxy(QObject):
             number = index + 1
             dependent_name = constraint.get_obj(constraint.dependent_obj_ids).name
             enabled = int(constraint.enabled)
-            print("AAA", type(value))
             constraint_list.append(
                 { "number": number,
                   "dependentName": dependent_name,
