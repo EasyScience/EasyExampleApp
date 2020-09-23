@@ -50,6 +50,10 @@ class PyQmlProxy {
         return "<root><item><number>1</number><dependentName>amplitude</dependentName><relationalOperator>=</relationalOperator><value>1.0000</value><arithmeticOperator>*</arithmeticOperator><independentName>period</independentName><enabled>1</enabled></item><item><number>2</number><dependentName>amplitude</dependentName><relationalOperator>&lt;</relationalOperator><value>4.0000</value><arithmeticOperator></arithmeticOperator><independentName></independentName><enabled>1</enabled></item></root>"
     }
 
+    get projectInfoAsJson() {
+        return {"calculations":"experiments.cif","experiments":"experiments.cif","keywords":"sine, cosine, lmfit, bumps","modified":"18.09.2020, 09:24","name":"Example Project","samples":"samples.cif"}
+    }
+
     // Functions
 
     addLowerMeasuredSeriesRef(series) {}
@@ -73,5 +77,7 @@ class PyQmlProxy {
     removeConstraintByIndex(index) {}
 
     toggleConstraintByIndex(index, enabled) {}
+
+    editProjectInfoByKey(key, value) {}
 
 }

@@ -152,12 +152,12 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Description") },
-                    EaElements.TabButton { text: "project.cif" }
+                    EaElements.TabButton { text: qsTr("Text view") }
                 ]
 
                 items: [
                     ExProjectPage.MainContentDescription {},
-                    ExProjectPage.MainContentCifEdit {}
+                    ExProjectPage.MainContentTextView {}
                 ]
             }
 
@@ -181,12 +181,12 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Structure view") },
-                    EaElements.TabButton { text: "samples.cif" }
+                    EaElements.TabButton { text: qsTr("Text view") }
                 ]
 
                 items: [
                     ExSamplePage.MainContentStructureView {},
-                    ExSamplePage.MainContentCifEdit {}
+                    ExSamplePage.MainContentTextView {}
                 ]
             }
 
@@ -211,13 +211,13 @@ EaComponents.ApplicationWindow {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Plot view") },
                     EaElements.TabButton { text: qsTr("Table view") },
-                    EaElements.TabButton { text: "experiments.cif" }
+                    EaElements.TabButton { text: qsTr("Text view") }
                 ]
 
                 items: [
                     ExExperimentPage.MainContentPlotView {},
                     ExExperimentPage.MainContentTableView {},
-                    ExExperimentPage.MainContentCifEdit {}
+                    ExExperimentPage.MainContentTextView {}
                 ]
             }
 
@@ -239,12 +239,12 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Fitting") },
-                    EaElements.TabButton { text: "calculations.cif" }
+                    EaElements.TabButton { text: qsTr("Text view") }
                 ]
 
                 items: [
                     ExAnalysisPage.MainContentFitting {},
-                    ExAnalysisPage.MainContentCifEdit {}
+                    ExAnalysisPage.MainContentTextView {}
                 ]
             }
 

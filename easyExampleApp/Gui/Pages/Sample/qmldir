@@ -1,6 +1,6 @@
 module Sample
 
-MainContentCifEdit 1.0 MainContentCifEdit.qml
+MainContentTextView 1.0 MainContentTextView.qml
 MainContentStructureView 1.0 MainContentStructureView.qml
 
 SideBarAdvanced 1.0 SideBarAdvanced.qml

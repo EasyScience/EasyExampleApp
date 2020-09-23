@@ -5,6 +5,8 @@ import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Elements 1.0 as EaElements
 import easyAppGui.Components 1.0 as EaComponents
 
+import Gui.Globals 1.0 as ExGlobals
+
 Item {
     readonly property int commonSpacing: EaStyle.Sizes.fontPixelSize * 1.5
 
@@ -16,11 +18,12 @@ Item {
         anchors.topMargin: commonSpacing * 0.5
         spacing: commonSpacing
 
-        EaElements.Label {
+        EaElements.TextInput {
             font.family: EaStyle.Fonts.secondFontFamily
             font.pixelSize: EaStyle.Sizes.fontPixelSize * 3
             font.weight: Font.ExtraLight
-            text: "Project Name"
+            text: ExGlobals.Constants.proxy.projectInfoAsJson.name
+            onEditingFinished: ExGlobals.Constants.proxy.editProjectInfoByKey("name", text)
         }
 
         Grid {
@@ -32,32 +35,36 @@ Item {
                 font.bold: true
                 text: qsTr("Keywords:")
             }
-            EaElements.Label {
-                text: "sine, cosine, lmfit, bumps"
+            EaElements.TextInput {
+                text: ExGlobals.Constants.proxy.projectInfoAsJson.keywords
+                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfoByKey("keywords", text)
             }
 
             EaElements.Label {
                 font.bold: true
                 text: qsTr("Samples:")
             }
-            EaElements.Label {
-                text: "samples.cif"
+            EaElements.TextInput {
+                text: ExGlobals.Constants.proxy.projectInfoAsJson.samples
+                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfoByKey("samples", text)
             }
 
             EaElements.Label {
                 font.bold: true
                 text: qsTr("Experiments:")
             }
-            EaElements.Label {
-                text: "experiments.cif"
+            EaElements.TextInput {
+                text: ExGlobals.Constants.proxy.projectInfoAsJson.experiments
+                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfoByKey("experiments", text)
             }
 
             EaElements.Label {
                 font.bold: true
                 text: qsTr("Calculations:")
             }
-            EaElements.Label {
-                text: "calculations.cif"
+            EaElements.TextInput {
+                text: ExGlobals.Constants.proxy.projectInfoAsJson.calculations
+                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfoByKey("calculations", text)
             }
 
             EaElements.Label {
@@ -65,7 +72,7 @@ Item {
                 text: qsTr("Modified:")
             }
             EaElements.Label {
-                text: "18.09.2020, 09:24"
+                text: ExGlobals.Constants.proxy.projectInfoAsJson.modified
             }
         }
 

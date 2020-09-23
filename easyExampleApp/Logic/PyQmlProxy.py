@@ -1,3 +1,4 @@
+import json
 from dicttoxml import dicttoxml
 from distutils.util import strtobool
 
@@ -18,6 +19,7 @@ from easyExampleApp.Logic.DisplayModels.DataModels import MeasuredDataModel, Cal
 
 class PyQmlProxy(QObject):
     _borg = borg
+    projectInfoChanged = Signal()
     modelChanged = Signal()
     constraintsChanged = Signal()
     calculatorChanged = Signal()
@@ -26,6 +28,7 @@ class PyQmlProxy(QObject):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.project_info = self.initProjectInfo()
         self.interface = InterfaceFactory()
         self.model = Sin(self.interface)
         self.fitter = Fitter(self.model, self.interface.fit_func)
@@ -338,3 +341,27 @@ class PyQmlProxy(QObject):
         constraint = self.fitter.fit_constraints()[index]
         constraint.enabled = bool(strtobool(enabled))
         self.constraintsChanged.emit()
+
+    # App project info
+
+    def initProjectInfo(self):
+        return { "name": "Example Project",
+                 "keywords": "sine, cosine, lmfit, bumps",
+                 "samples": "samples.cif",
+                 "experiments": "experiments.cif",
+                 "calculations": "experiments.cif",
+                 "modified": "18.09.2020, 09:24" }
+
+    @Property('QVariant', notify=projectInfoChanged)
+    def projectInfoAsJson(self):
+        return self.project_info
+
+    @projectInfoAsJson.setter
+    def setProjectInfoAsJson(self, json_str):
+        self.project_info = json.loads(json_str)
+        self.projectInfoChanged.emit()
+
+    @Slot(str, str)
+    def editProjectInfoByKey(self, key, value):
+        self.project_info[key] = value
+        self.projectInfoChanged.emit()
