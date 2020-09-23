@@ -30,7 +30,7 @@ EaComponents.SideBarColumn {
 
         title: qsTr("Fit parameters")
         visible: ExGlobals.Variables.analysisPageEnabled
-        collapsed: false
+        collapsible: false
 
         EaComponents.FitablesView {}
 

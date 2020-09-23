@@ -164,7 +164,7 @@ EaComponents.ApplicationWindow {
             sideBar: EaComponents.SideBar {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Basic controls") },
-                    EaElements.TabButton { text: qsTr("Advanced controls") }
+                    EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false }
                 ]
 
                 items: [
@@ -193,7 +193,7 @@ EaComponents.ApplicationWindow {
             sideBar: EaComponents.SideBar {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Basic controls") },
-                    EaElements.TabButton { text: qsTr("Advanced controls") }
+                    EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false }
                 ]
 
                 items: [
@@ -224,7 +224,7 @@ EaComponents.ApplicationWindow {
             sideBar: EaComponents.SideBar {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Basic controls") },
-                    EaElements.TabButton { text: qsTr("Advanced controls") }
+                    EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false }
                 ]
 
                 items: [
@@ -276,7 +276,7 @@ EaComponents.ApplicationWindow {
             sideBar: EaComponents.SideBar {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Basic controls") },
-                    EaElements.TabButton { text: qsTr("Advanced controls") }
+                    EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false }
                 ]
 
                 items: [
