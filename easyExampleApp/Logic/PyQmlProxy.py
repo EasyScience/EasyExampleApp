@@ -345,12 +345,12 @@ class PyQmlProxy(QObject):
     # App project info
 
     def initProjectInfo(self):
-        return { "name": "Example Project",
-                 "keywords": "sine, cosine, lmfit, bumps",
-                 "samples": "samples.cif",
-                 "experiments": "experiments.cif",
-                 "calculations": "experiments.cif",
-                 "modified": "18.09.2020, 09:24" }
+        return dict(name = "Example Project",
+                    keywords = "sine, cosine, lmfit, bumps",
+                    samples = "samples.json",
+                    experiments = "experiments.json",
+                    calculations = "calculation.json",
+                    modified = "18.09.2020, 09:24")
 
     @Property('QVariant', notify=projectInfoChanged)
     def projectInfoAsJson(self):

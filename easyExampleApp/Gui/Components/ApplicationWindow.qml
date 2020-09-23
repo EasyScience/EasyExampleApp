@@ -152,7 +152,7 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Description") },
-                    EaElements.TabButton { text: qsTr("Text view") }
+                    EaElements.TabButton { text: "project.json" }
                 ]
 
                 items: [
@@ -181,7 +181,7 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Structure view") },
-                    EaElements.TabButton { text: qsTr("Text view") }
+                    EaElements.TabButton { text: ExGlobals.Constants.proxy.projectInfoAsJson.samples }
                 ]
 
                 items: [
@@ -211,7 +211,7 @@ EaComponents.ApplicationWindow {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Plot view") },
                     EaElements.TabButton { text: qsTr("Table view") },
-                    EaElements.TabButton { text: qsTr("Text view") }
+                    EaElements.TabButton { text: ExGlobals.Constants.proxy.projectInfoAsJson.experiments }
                 ]
 
                 items: [
@@ -239,7 +239,7 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Fitting") },
-                    EaElements.TabButton { text: qsTr("Text view") }
+                    EaElements.TabButton { text: ExGlobals.Constants.proxy.projectInfoAsJson.calculations }
                 ]
 
                 items: [
