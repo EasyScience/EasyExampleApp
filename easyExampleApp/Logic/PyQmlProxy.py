@@ -341,6 +341,7 @@ class PyQmlProxy(QObject):
         constraint = self.fitter.fit_constraints()[index]
         constraint.enabled = bool(strtobool(enabled))
         self.constraintsChanged.emit()
+        self.updateCalculatedData()
 
     # App project info
 
