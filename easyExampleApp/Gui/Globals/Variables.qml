@@ -53,4 +53,10 @@ QtObject {
     // Comboboxes
     property var themeSelector
 
+    // Tables
+    property var phasesTable
+    property var parametersTable
+    property int phasesCurrentIndex: 0
+    property int parametersCurrentIndex: 0
+
 }

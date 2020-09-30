@@ -54,6 +54,22 @@ class PyQmlProxy {
         return {"calculations":"experiments.cif","experiments":"experiments.cif","keywords":"sine, cosine, lmfit, bumps","modified":"18.09.2020, 09:24","name":"Example Project","samples":"samples.cif"}
     }
 
+    get phasesXml() {
+        //return "<root><item><label>Fe3O4</label><atoms><item><label>Fe1</label><type>Fe</type><x>0</x><y>0</y><z>0</z></item><item><label>Fe2</label><type>Fe</type><x>0.5</x><y>0</y><z>0</z></item><item><label>O</label><type>O</type><x>0.3421</x><y>0</y><z>0.5</z></item></atoms></item><item><label>CoO</label><atoms><item><label>Co</label><type>Co</type><x>0.5</x><y>0.25</y><z>0.5</z></item><item><label>O</label><type>O</type><x>0.75</x><y>0.75</y><z>0.75</z></item></atoms></item></root>"
+        return "<root><item><label>Sin_1</label><color>darkolivegreen</color><parameters><item><amplitude>3.2</amplitude><period>2.1</period></item></parameters></item><item><label>Sin_2</label><color>steelblue</color><parameters><item><amplitude>2.5</amplitude><period>2.7</period></item></parameters></item></root>"
+    }
+
+    get phasesDict() {
+        return [{"color":"darkolivegreen","label":"Sin_1","parameters":[{"amplitude":3.2,"period":2.1}]},{"color":"steelblue","label":"Sin_2","parameters":[{"amplitude":2.5,"period":2.7}]}]
+    }
+
+    get phasesCurrentIndex() {
+        return 0
+    }
+
+    get parametersCurrentIndex() {
+        return 0
+    }
     // Functions
 
     addLowerMeasuredSeriesRef(series) {}
@@ -80,4 +96,5 @@ class PyQmlProxy {
 
     editProjectInfoByKey(key, value) {}
 
+    editPhase(p1, p2, p3) {}
 }

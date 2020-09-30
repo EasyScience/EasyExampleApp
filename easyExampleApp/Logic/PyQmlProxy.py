@@ -25,9 +25,11 @@ class PyQmlProxy(QObject):
     calculatorChanged = Signal()
     minimizerChanged = Signal()
     statusChanged = Signal()
+    phasesChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.phases = self.initPhases()
         self.project_info = self.initProjectInfo()
         self.interface = InterfaceFactory()
         self.model = Sin(self.interface)
@@ -366,3 +368,43 @@ class PyQmlProxy(QObject):
     def editProjectInfoByKey(self, key, value):
         self.project_info[key] = value
         self.projectInfoChanged.emit()
+
+    # Test phases dict
+
+    def initPhases(self):
+        return [dict(label = "Sin_1",
+                     color = "darkolivegreen",
+                     parameters = [dict(amplitude = 3.2, period = 2.1)]
+                ),
+                dict(label = "Sin_2",
+                     color = "steelblue",
+                     parameters = [dict(amplitude = 2.5, period = 2.7)]
+                )
+               ]
+
+    @Property('QVariant', notify=phasesChanged)
+    def phasesDict(self):
+        return self.phases
+
+    @phasesDict.setter
+    def setPhasesDict(self, json_str):
+        self.phases = json.loads(json_str)
+        self.phasesChanged.emit()
+
+    @Property(str, notify=phasesChanged)
+    def phasesXml(self):
+        xml = dicttoxml(self.phases, attr_type=False)
+        xml = xml.decode()
+        return xml
+
+    @Slot(int, str, str)
+    def editPhase(self, phase_index, parameter_name, new_value):
+        #print("----", phase_index, parameter_name, new_value)
+        self.phases[phase_index][parameter_name] = new_value
+        self.phasesChanged.emit()
+
+    @Slot(int, int, str, str)
+    def editPhaseParameter(self, phase_index, parameter_index, parameter_name, new_value):
+        #print("----", phase_index, parameter_index, parameter_name, new_value)
+        self.phases[phase_index]['parameters'][parameter_index][parameter_name] = new_value
+        self.phasesChanged.emit()
