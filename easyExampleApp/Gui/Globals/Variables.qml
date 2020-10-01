@@ -47,8 +47,8 @@ QtObject {
     // Sidebar text inputs
     property var amplitudeTextInput
     property var periodTextInput
-    property var xShiftTextInput
-    property var yShiftTextInput
+    property var xShiftValueTextInput
+    property var xShiftFitCheckBox
 
     // Comboboxes
     property var themeSelector

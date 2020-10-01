@@ -77,8 +77,11 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
+        id: sampleParametersGroup
         title: qsTr("Sample parameters")
         enabled: ExGlobals.Variables.sampleLoaded
+
+        Component.onCompleted: ExGlobals.Variables.sampleParametersGroup = sampleParametersGroup
 
         EaComponents.TableView {
             id: parametersTable
@@ -98,6 +101,7 @@ EaComponents.SideBarColumn {
                     text: model.index + 1
                 }
                 EaComponents.TableViewTextInput {
+                    id: amplitudeTextInput
                     width: 100
                     headerText: "Amplitude"
                     text: model.amplitude
@@ -107,8 +111,10 @@ EaComponents.SideBarColumn {
                                                                      "amplitude",
                                                                      text)
                     }
+                    Component.onCompleted: ExGlobals.Variables.amplitudeTextInput = amplitudeTextInput
                 }
                 EaComponents.TableViewTextInput {
+                    id: periodTextInput
                     width: 100
                     headerText: "Period"
                     text: model.period
@@ -119,6 +125,7 @@ EaComponents.SideBarColumn {
                                                                      "period",
                                                                      text)
                     }
+                    Component.onCompleted: ExGlobals.Variables.periodTextInput = periodTextInput
                 }
             }
             onCurrentIndexChanged: ExGlobals.Variables.parametersCurrentIndex = currentIndex
@@ -127,13 +134,13 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
-        id: sampleParametersGroup
+        //id: sampleParametersGroup
         title: qsTr("Sample parameters (old)")
         //visible: ExGlobals.Variables.experimentPageEnabled
         enabled: ExGlobals.Variables.sampleLoaded
         //collapsed: false
 
-        Component.onCompleted: ExGlobals.Variables.sampleParametersGroup = sampleParametersGroup
+        //Component.onCompleted: ExGlobals.Variables.sampleParametersGroup = sampleParametersGroup
 
         Grid {
             columns: 4
@@ -146,11 +153,11 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.TextField {
-                id: amplitudeTextInput
+                //id: amplitudeTextInput
                 width: 130
                 text: parseFloat(ExGlobals.Constants.proxy.amplitude).toFixed(4)
                 onEditingFinished: ExGlobals.Constants.proxy.amplitude = text
-                Component.onCompleted: ExGlobals.Variables.amplitudeTextInput = amplitudeTextInput
+                //Component.onCompleted: ExGlobals.Variables.amplitudeTextInput = amplitudeTextInput
             }
 
             EaElements.Label {
@@ -158,14 +165,13 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.TextField {
-                id: periodTextInput
+                //id: periodTextInput
                 width: 130
                 text: parseFloat(ExGlobals.Constants.proxy.period).toFixed(4)
                 onEditingFinished: ExGlobals.Constants.proxy.period = text
-                Component.onCompleted: ExGlobals.Variables.periodTextInput = periodTextInput
+                //Component.onCompleted: ExGlobals.Variables.periodTextInput = periodTextInput
             }
         }
-
 
         Grid {
             columns: 4
@@ -194,13 +200,5 @@ EaComponents.SideBarColumn {
             }
         }
     }
-
-
-
-
-
-
-
-
 
 }

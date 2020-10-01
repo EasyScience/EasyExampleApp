@@ -372,7 +372,7 @@ class PyQmlProxy(QObject):
     # Test phases dict
 
     def initPhases(self):
-        return [dict(label = "Sin_1",
+        phases = [dict(label = "Sin_1",
                      color = "darkolivegreen",
                      parameters = [dict(amplitude = 3.2, period = 2.1)]
                 ),
@@ -381,6 +381,7 @@ class PyQmlProxy(QObject):
                      parameters = [dict(amplitude = 2.5, period = 2.7)]
                 )
                ]
+        return phases
 
     @Property('QVariant', notify=phasesChanged)
     def phasesDict(self):

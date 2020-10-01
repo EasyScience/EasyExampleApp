@@ -10,7 +10,7 @@ import easyAppGui.Components 1.0 as EaComponents
 import Gui.Globals 1.0 as ExGlobals
 
 EaComponents.TableView {
-    id: listView
+    id: table
 
     // Table model
 
@@ -41,7 +41,7 @@ EaComponents.TableView {
         EaComponents.TableViewLabel {
             id: labelColumn
             horizontalAlignment: Text.AlignLeft
-            width: listView.width -
+            width: table.width -
                    (parent.children.length - 1) * EaStyle.Sizes.tableColumnSpacing -
                    numberColumn.width -
                    valueColumn.width -
@@ -59,6 +59,10 @@ EaComponents.TableView {
             headerText: "Value"
             text: model.value.toFixed(4)
             onEditingFinished: ExGlobals.Constants.proxy.editFitableByIndexAndName(model.index, "value", text)
+            Component.onCompleted: {
+                if (model.label === "Sin.x_shift")
+                    ExGlobals.Variables.xShiftValueTextInput = valueColumn
+            }
         }
 
         EaComponents.TableViewLabel {
@@ -82,6 +86,10 @@ EaComponents.TableView {
             headerText: "Fit"
             checked: model.fit
             onToggled: ExGlobals.Constants.proxy.editFitableByIndexAndName(model.index, "fit", checked)
+            Component.onCompleted: {
+                if (model.label === "Sin.x_shift")
+                    ExGlobals.Variables.xShiftFitCheckBox = fitColumn
+            }
         }
     }
 
