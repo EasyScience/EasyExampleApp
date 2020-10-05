@@ -24,7 +24,7 @@ jobs:
     - name: Clean up
       shell: bash
       run: |
-        git rm ./.github/workflows/on_create.yaml
+        git rm ./.github/workflows/on_create.yml
         git rm -f --cached ./.github/defaults/probot-settings.yml
 
     - name: Commit changes
