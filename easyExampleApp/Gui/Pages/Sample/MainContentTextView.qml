@@ -13,9 +13,8 @@ Item {
         anchors.fill: parent
 
         EaElements.TextArea {
-            text: EaLogic.Utils.prettyXml(ExGlobals.Constants.proxy.fitablesListAsXml)
-            //text: prettyJson(ExGlobals.Constants.proxy.fitablesDict)
-            //text: prettyJson(ExGlobals.Constants.proxy.fitablesList)
+            text: EaLogic.Utils.prettyJson(ExGlobals.Constants.proxy.phasesDict)
+            onEditingFinished: ExGlobals.Constants.proxy.phasesDict = text
         }
     }
 

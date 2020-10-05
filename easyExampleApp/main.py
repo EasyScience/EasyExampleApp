@@ -20,6 +20,8 @@ def isTestMode():
 def main():
     current_path = os.path.dirname(sys.argv[0])
     package_path = os.path.join(current_path, "easyExampleApp")
+    if not os.path.exists(package_path):
+        package_path = current_path
 
     main_qml_path = QUrl.fromLocalFile(os.path.join(package_path, "Gui", "main.qml"))
     gui_path = str(QUrl.fromLocalFile(package_path).toString())

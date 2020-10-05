@@ -53,7 +53,7 @@ Item {
             EaElements.Label {
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.family: EaStyle.Fonts.secondExpandedFontFamily
-                text: "Version %1 (%2)".arg(ExGlobals.Constants.appVersion).arg(ExGlobals.Constants.appDate)
+                text: qsTr("Version %1 (%2)".arg(ExGlobals.Constants.appVersion).arg(ExGlobals.Constants.appDate))
             }
         }
 
@@ -95,11 +95,11 @@ Item {
 
                 EaElements.Button {
                     text: qsTr("Tutorial 1: Data fitting")
-                    onClicked: runTutorial1()
+                    onPressed: runTutorial1()
                 }
                 EaElements.Button {
                     text: qsTr("Tutorial 2: App settings")
-                    onClicked: runTutorial2()
+                    onPressed: runTutorial2()
                 }
             }
         }
@@ -147,8 +147,8 @@ Item {
         print("* run Tutorial 1")
 
         startSavingScreenshots()
-
         rc.wait(1000)
+        rc.posToCenter()
         rc.show()
 
         rc.mouseClick(ExGlobals.Variables.startButton)
@@ -156,33 +156,51 @@ Item {
         rc.mouseClick(ExGlobals.Variables.sampleTabButton)
         rc.mouseClick(ExGlobals.Variables.addNewSampleButton)
         rc.mouseClick(ExGlobals.Variables.sampleParametersGroup)
+
         rc.mouseClick(ExGlobals.Variables.amplitudeTextInput)
-        rc.clearText(4)
-        rc.typeText("2.10")
-        rc.mouseClick(ExGlobals.Variables.periodTextInput)
-        rc.clearText(2)
-        rc.typeText("30")
+        rc.hide()
+        rc.keyClick(Qt.Key_Right)
+        rc.clearText(6)
+        rc.typeText("2.1234")
         rc.keyClick(Qt.Key_Enter)
+        rc.show()
+
+        rc.mouseClick(ExGlobals.Variables.periodTextInput)
+        rc.hide()
+        rc.keyClick(Qt.Key_Right)
+        rc.clearText(1)
+        rc.typeText("6")
+        rc.keyClick(Qt.Key_Enter)
+        rc.show()
 
         rc.wait(2000)
+
         rc.mouseClick(ExGlobals.Variables.experimentTabButton)
         rc.mouseClick(ExGlobals.Variables.generateMeasuredDataButton)
 
         rc.wait(1000)
+
         rc.mouseClick(ExGlobals.Variables.analysisTabButton)
-        rc.mouseClick(ExGlobals.Variables.xShiftTextInput)
-        rc.clearText(4)
-        rc.typeText("-0.30")
-        rc.mouseClick(ExGlobals.Variables.yShiftTextInput)
-        rc.clearText(2)
-        rc.typeText("40")
+        rc.mouseClick(ExGlobals.Variables.xShiftFitCheckBox)
+
+        rc.mouseClick(ExGlobals.Variables.xShiftValueTextInput)
+        rc.hide()
+        rc.keyClick(Qt.Key_Right)
+        rc.keyClick(Qt.Key_Right)
+        rc.keyClick(Qt.Key_Right)
+        rc.keyClick(Qt.Key_Right)
+        rc.clearText(6)
+        rc.typeText("-0.3")
         rc.keyClick(Qt.Key_Enter)
-        rc.wait(1000)
+        rc.show()
+
+        rc.mouseClick(ExGlobals.Variables.startFittingButton)
+        rc.mouseClick(ExGlobals.Variables.xShiftFitCheckBox)
         rc.mouseClick(ExGlobals.Variables.startFittingButton)
 
         rc.wait(1000)
-        rc.hide()
 
+        rc.hide()
         rc.wait(1000)
         endSavingScreenshots()
     }
@@ -191,8 +209,8 @@ Item {
         print("* run Tutorial 2")
 
         startSavingScreenshots()
-
         rc.wait(1000)
+        rc.posToCenter()
         rc.show()
 
         rc.mouseClick(ExGlobals.Variables.preferencesButton)
@@ -203,6 +221,7 @@ Item {
         rc.mouseClick(ExGlobals.Variables.themeSelector, x_pos, y_pos)
 
         rc.wait(1000)
+
         rc.mouseClick(ExGlobals.Variables.themeSelector)
         y_pos = EaStyle.Colors.isDarkTheme ? EaStyle.Sizes.comboBoxHeight * 1.5 : undefined
         rc.mouseClick(ExGlobals.Variables.themeSelector, x_pos, y_pos)
@@ -211,8 +230,8 @@ Item {
         rc.keyClick(Qt.Key_Escape)
 
         rc.wait(1000)
-        rc.hide()
 
+        rc.hide()
         rc.wait(1000)
         endSavingScreenshots()
     }

@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQuick.XmlListModel 2.13
 
 import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Globals 1.0 as EaGlobals
@@ -30,15 +31,17 @@ EaComponents.ApplicationWindow {
         },
 
         EaElements.ToolButton {
-            enabled: false
+            //enabled: ExGlobals.Constants.proxy.canUndo()
             fontIcon: "\uf2ea"
             ToolTip.text: qsTr("Undo")
+            onClicked: ExGlobals.Constants.proxy.undo()
         },
 
         EaElements.ToolButton {
-            enabled: false
+            //enabled: ExGlobals.Constants.proxy.canRedo()
             fontIcon: "\uf2f9"
             ToolTip.text: qsTr("Redo")
+            onClicked: ExGlobals.Constants.proxy.redo()
         }
 
     ]
@@ -149,19 +152,19 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Description") },
-                    EaElements.TabButton { text: "project.cif" }
+                    EaElements.TabButton { text: "project.json" }
                 ]
 
                 items: [
                     ExProjectPage.MainContentDescription {},
-                    ExProjectPage.MainContentCifEdit {}
+                    ExProjectPage.MainContentTextView {}
                 ]
             }
 
             sideBar: EaComponents.SideBar {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Basic controls") },
-                    EaElements.TabButton { text: qsTr("Advanced controls") }
+                    EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false }
                 ]
 
                 items: [
@@ -173,24 +176,24 @@ EaComponents.ApplicationWindow {
 
         // Sample page
         EaComponents.ContentPage {
-            defaultInfo: ExGlobals.Variables.sampleLoaded ? "" : "No Samples Loaded"
+            defaultInfo: ExGlobals.Variables.sampleLoaded ? "" : qsTr("No Samples Added/Loaded")
 
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Structure view") },
-                    EaElements.TabButton { text: "samples.cif" }
+                    EaElements.TabButton { text: ExGlobals.Constants.proxy.projectInfoAsJson.samples }
                 ]
 
                 items: [
                     ExSamplePage.MainContentStructureView {},
-                    ExSamplePage.MainContentCifEdit {}
+                    ExSamplePage.MainContentTextView {}
                 ]
             }
 
             sideBar: EaComponents.SideBar {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Basic controls") },
-                    EaElements.TabButton { text: qsTr("Advanced controls") }
+                    EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false }
                 ]
 
                 items: [
@@ -208,20 +211,20 @@ EaComponents.ApplicationWindow {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Plot view") },
                     EaElements.TabButton { text: qsTr("Table view") },
-                    EaElements.TabButton { text: "experiments.cif" }
+                    EaElements.TabButton { text: ExGlobals.Constants.proxy.projectInfoAsJson.experiments }
                 ]
 
                 items: [
                     ExExperimentPage.MainContentPlotView {},
                     ExExperimentPage.MainContentTableView {},
-                    ExExperimentPage.MainContentCifEdit {}
+                    ExExperimentPage.MainContentTextView {}
                 ]
             }
 
             sideBar: EaComponents.SideBar {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Basic controls") },
-                    EaElements.TabButton { text: qsTr("Advanced controls") }
+                    EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false }
                 ]
 
                 items: [
@@ -236,12 +239,12 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Fitting") },
-                    EaElements.TabButton { text: "calculations.cif" }
+                    EaElements.TabButton { text: ExGlobals.Constants.proxy.projectInfoAsJson.calculations }
                 ]
 
                 items: [
                     ExAnalysisPage.MainContentFitting {},
-                    ExAnalysisPage.MainContentCifEdit {}
+                    ExAnalysisPage.MainContentTextView {}
                 ]
             }
 
@@ -273,7 +276,7 @@ EaComponents.ApplicationWindow {
             sideBar: EaComponents.SideBar {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Basic controls") },
-                    EaElements.TabButton { text: qsTr("Advanced controls") }
+                    EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false }
                 ]
 
                 items: [
@@ -289,6 +292,14 @@ EaComponents.ApplicationWindow {
     /////////////
 
     statusBar: EaElements.StatusBar {
-        text: "Status bar"
+
+        model: XmlListModel {
+            xml: ExGlobals.Constants.proxy.statusModelAsXml
+            query: "/root/item"
+
+            XmlRole { name: "label"; query: "label/string()" }
+            XmlRole { name: "value"; query: "value/string()" }
+        }
     }
+
 }

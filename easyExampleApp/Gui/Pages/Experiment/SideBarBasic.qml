@@ -16,11 +16,11 @@ EaComponents.SideBarColumn {
         EaElements.SideBarButton {
             id: generateMeasuredDataButton
             fontIcon: "plus-circle"
-            text: "Generate measured data"
+            text: qsTr("Generate measured data")
             onClicked: {
                 ExGlobals.Variables.analysisPageEnabled = true
                 ExGlobals.Variables.experimentLoaded = true
-                ExGlobals.Variables.proxy.generateMeasuredData()
+                ExGlobals.Constants.proxy.generateMeasuredData()
             }
             Component.onCompleted: ExGlobals.Variables.generateMeasuredDataButton = generateMeasuredDataButton
         }
@@ -43,9 +43,9 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.TextField {
-                width: 125
-                text: parseFloat(ExGlobals.Variables.proxy.xShift).toFixed(2)
-                onEditingFinished: ExGlobals.Variables.proxy.xShift = text
+                width: 140
+                text: parseFloat(ExGlobals.Constants.proxy.xShift).toFixed(4)
+                onEditingFinished: ExGlobals.Constants.proxy.xShift = text
             }
 
             EaElements.Label {
@@ -53,9 +53,36 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.TextField {
-                width: 125
-                text: parseFloat(ExGlobals.Variables.proxy.yShift).toFixed(2)
-                onEditingFinished: ExGlobals.Variables.proxy.yShift = text
+                width: 140
+                text: parseFloat(ExGlobals.Constants.proxy.yShift).toFixed(4)
+                onEditingFinished: ExGlobals.Constants.proxy.yShift = text
+            }
+        }
+
+        Grid {
+            columns: 4
+            columnSpacing: 20
+            rowSpacing: 10
+            verticalItemAlignment: Grid.AlignVCenter
+
+            EaElements.Label {
+                text: "x_shift"
+            }
+
+            EaElements.TextField {
+                width: 140
+                text: ExGlobals.Constants.proxy.fitablesDict.x_shift.toFixed(4)
+                onEditingFinished: ExGlobals.Constants.proxy.editFitableValueByName("x_shift", text)
+            }
+
+            EaElements.Label {
+                text: "y_shift"
+            }
+
+            EaElements.TextField {
+                width: 140
+                text: ExGlobals.Constants.proxy.fitablesDict.y_shift.toFixed(4)
+                onEditingFinished: ExGlobals.Constants.proxy.editFitableValueByName("y_shift", text)
             }
         }
     }

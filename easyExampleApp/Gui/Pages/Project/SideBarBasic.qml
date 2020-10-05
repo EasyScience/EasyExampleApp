@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 
 import easyAppGui.Globals 1.0 as EaGlobals
+import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Elements 1.0 as EaElements
 import easyAppGui.Components 1.0 as EaComponents
 
@@ -35,25 +36,25 @@ EaComponents.SideBarColumn {
             rowSpacing: 10
             verticalItemAlignment: Grid.AlignVCenter
 
-            EaElements.Label { text: "First Parameter: 200" }
-            EaElements.Label { text: "Parameter: 100" }
-            EaElements.Label { text: "Parameter: 100" }
-            EaElements.Label { text: "Parameter: 100" }
-            EaElements.Label { text: "Parameter: 100" }
-            EaElements.Label { text: "Parameter: 100" }
-            EaElements.Label { text: "Parameter: 100" }
-            EaElements.Label { text: "Parameter: 100" }
-            EaElements.Label { text: "Parameter: 100" }
-            EaElements.Label { text: "Parameter: 100" }
-            EaElements.Label { text: "Parameter: 100" }
-            EaElements.Label { text: "Parameter: 100" }
-            EaElements.Label { text: "Parameter: 100" }
-            EaElements.Label { text: "Parameter: 100" }
-            EaElements.Label { text: "Parameter: 100" }
-            EaElements.Label { text: "Parameter: 100" }
-            EaElements.Label { text: "Parameter: 100" }
-            EaElements.Label { text: "Parameter: 100" }
-            EaElements.Label { text: "Last Parameter: 300" }
+            EaElements.Label { text: qsTr("First Parameter: 200") }
+            EaElements.Label { text: qsTr("Parameter: 100") }
+            EaElements.Label { text: qsTr("Parameter: 100") }
+            EaElements.Label { text: qsTr("Parameter: 100") }
+            EaElements.Label { text: qsTr("Parameter: 100") }
+            EaElements.Label { text: qsTr("Parameter: 100") }
+            EaElements.Label { text: qsTr("Parameter: 100") }
+            EaElements.Label { text: qsTr("Parameter: 100") }
+            EaElements.Label { text: qsTr("Parameter: 100") }
+            EaElements.Label { text: qsTr("Parameter: 100") }
+            EaElements.Label { text: qsTr("Parameter: 100") }
+            EaElements.Label { text: qsTr("Parameter: 100") }
+            EaElements.Label { text: qsTr("Parameter: 100") }
+            EaElements.Label { text: qsTr("Parameter: 100") }
+            EaElements.Label { text: qsTr("Parameter: 100") }
+            EaElements.Label { text: qsTr("Parameter: 100") }
+            EaElements.Label { text: qsTr("Parameter: 100") }
+            EaElements.Label { text: qsTr("Parameter: 100") }
+            EaElements.Label { text: qsTr("Last Parameter: 300") }
         }
     }
 

@@ -7,6 +7,14 @@ python-versions = "*"
 version = "0.17"
 
 [[package]]
+category = "main"
+description = "Safe, minimalistic evaluator of python expression using ast module"
+name = "asteval"
+optional = false
+python-versions = ">=3.5"
+version = "0.9.19"
+
+[[package]]
 category = "dev"
 description = "Classes Without Boilerplate"
 name = "attrs"
@@ -19,6 +27,17 @@ dev = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six",
 docs = ["sphinx", "sphinx-rtd-theme", "zope.interface"]
 tests = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface"]
 tests_no_zope = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six"]
+
+[[package]]
+category = "main"
+description = "Data fitting with bayesian uncertainty analysis"
+name = "bumps"
+optional = false
+python-versions = "*"
+version = "0.7.16"
+
+[package.dependencies]
+six = "*"
 
 [[package]]
 category = "dev"
@@ -68,7 +87,7 @@ version = "0.2.3"
 PySide2 = "^5.15"
 
 [package.source]
-reference = "e18fd235374072b00ade67648e04b2b33ecc4494"
+reference = "ddda01af17e5c1eab6262c8b6ab0ec392a942510"
 type = "git"
 url = "https://github.com/easyScience/easyAppGui.git"
 [[package]]
@@ -89,19 +108,34 @@ url = "https://github.com/easyScience/easyAppLogic.git"
 [[package]]
 category = "main"
 description = ""
-name = "easytemplatelib"
+name = "easycore"
 optional = false
-python-versions = "^3.6, >=3.6.1"
+python-versions = "^3.6, >=3.6.1" # "^3.8" generates error when installing PySide2 in easyAppGui
 version = "0.0.1"
 
 [package.dependencies]
-numpy = "^1.18.5"
-scipy = "^1.4.1"
+bumps = "^0.7"
+lmfit = "^1.0"
+numpy = "^1.19"
+pint = "^0.16"
+uncertainties = "^3.1"
 
 [package.source]
-reference = "cd69e45146ca03b3c40416695624c1a9e1175373"
+reference = "a0539466569344566fc02d8acfa5369d5ba3b3e8"
 type = "git"
-url = "https://github.com/tempScience/easyTemplateLib.git"
+url = "https://github.com/easyScience/easyCore.git"
+[[package]]
+category = "main"
+description = ""
+name = "easyexamplelib"
+optional = false
+python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
+version = "0.0.1"
+
+[package.source]
+reference = "43334405ef99cf1c308ad6cafda981673c05cf4e"
+type = "git"
+url = "https://github.com/easyScience/easyExampleLib.git"
 [[package]]
 category = "dev"
 description = "Python bindings for FFmpeg - with complex filtering support"
@@ -117,7 +151,7 @@ future = "*"
 dev = ["future (0.17.1)", "numpy (1.16.4)", "pytest-mock (1.10.4)", "pytest (4.6.1)", "Sphinx (2.1.0)", "tox (3.12.1)"]
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Clean single-source support for Python 3 and 2"
 name = "future"
 optional = false
@@ -169,7 +203,7 @@ description = "Chromium HSTS Preload list as a Python package and updated daily"
 name = "hstspreload"
 optional = false
 python-versions = ">=3.6"
-version = "2020.9.9"
+version = "2020.9.15"
 
 [[package]]
 category = "dev"
@@ -218,6 +252,20 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "2.10"
 
 [[package]]
+category = "main"
+description = "Least-Squares Minimization with Bounds and Constraints"
+name = "lmfit"
+optional = false
+python-versions = ">=3.5"
+version = "1.0.1"
+
+[package.dependencies]
+asteval = ">=0.9.16"
+numpy = ">=1.16"
+scipy = ">=1.2"
+uncertainties = ">=3.0.1"
+
+[[package]]
 category = "dev"
 description = "Mach-O header analysis and editing"
 name = "macholib"
@@ -237,6 +285,18 @@ python-versions = ">=3.6"
 version = "1.19.2"
 
 [[package]]
+category = "main"
+description = "Core utilities for Python packages"
+name = "packaging"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "20.4"
+
+[package.dependencies]
+pyparsing = ">=2.0.2"
+six = "*"
+
+[[package]]
 category = "dev"
 description = "Python PE parsing module"
 marker = "sys_platform == \"win32\""
@@ -247,6 +307,22 @@ version = "2019.4.18"
 
 [package.dependencies]
 future = "*"
+
+[[package]]
+category = "main"
+description = "Physical quantities module"
+name = "pint"
+optional = false
+python-versions = ">=3.6"
+version = "0.16"
+
+[package.dependencies]
+packaging = "*"
+
+[package.extras]
+numpy = ["numpy (>=1.14)"]
+test = ["pytest", "pytest-mpl", "pytest-cov"]
+uncertainties = ["uncertainties (>=3.0)"]
 
 [[package]]
 category = "dev"
@@ -269,7 +345,7 @@ encryption = ["tinyaes (>=1.0.0)"]
 hook_testing = ["pytest (>=2.7.3)", "execnet (>=1.5.0)", "psutil"]
 
 [package.source]
-reference = "a755b4ea9d4f75f3e1916997f4555b24512ad74d"
+reference = "90012221f89278952d0b1c81a7c31a05f50f4abe"
 type = "git"
 url = "https://github.com/pyinstaller/pyinstaller.git"
 [[package]]
@@ -278,7 +354,15 @@ description = "Community maintained hooks for PyInstaller"
 name = "pyinstaller-hooks-contrib"
 optional = false
 python-versions = "*"
-version = "2020.7"
+version = "2020.8"
+
+[[package]]
+category = "main"
+description = "Python parsing module"
+name = "pyparsing"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
+version = "2.4.7"
 
 [[package]]
 category = "dev"
@@ -370,6 +454,14 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <3.10"
 version = "5.15.1"
 
 [[package]]
+category = "main"
+description = "Python 2 and 3 compatibility utilities"
+name = "six"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+version = "1.15.0"
+
+[[package]]
 category = "dev"
 description = "Sniff out which async library your code is running under"
 name = "sniffio"
@@ -386,6 +478,23 @@ python-versions = "*"
 version = "0.10.1"
 
 [[package]]
+category = "main"
+description = "Transparent calculations with uncertainties on the quantities involved (aka error propagation); fast calculation of derivatives"
+name = "uncertainties"
+optional = false
+python-versions = "*"
+version = "3.1.4"
+
+[package.dependencies]
+future = "*"
+
+[package.extras]
+all = ["numpy", "sphinx", "nose"]
+docs = ["sphinx"]
+optional = ["numpy"]
+tests = ["nose", "numpy"]
+
+[[package]]
 category = "dev"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 name = "urllib3"
@@ -399,7 +508,7 @@ secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "pyOpenSSL (>=0
 socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
 
 [metadata]
-content-hash = "8687c012e47cd292789c31db3debca632a98b5cf1c8e23cf7fc1f6dcb84cb721"
+content-hash = "3c4059b28619db3f67fb628d54ab9c6e529553c81eac8af778d34dd3ca3f9a75"
 lock-version = "1.0"
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
 
@@ -408,9 +517,15 @@ altgraph = [
     {file = "altgraph-0.17-py2.py3-none-any.whl", hash = "sha256:c623e5f3408ca61d4016f23a681b9adb100802ca3e3da5e718915a9e4052cebe"},
     {file = "altgraph-0.17.tar.gz", hash = "sha256:1f05a47122542f97028caf78775a095fbe6a2699b5089de8477eb583167d69aa"},
 ]
+asteval = [
+    {file = "asteval-0.9.19.tar.gz", hash = "sha256:445f3a59df692c0c0ff2868c0bbf9b293884db4a9f9a13c73555485ba75ed08b"},
+]
 attrs = [
     {file = "attrs-20.2.0-py2.py3-none-any.whl", hash = "sha256:fce7fc47dfc976152e82d53ff92fa0407700c21acd20886a13777a0d20e655dc"},
     {file = "attrs-20.2.0.tar.gz", hash = "sha256:26b54ddbbb9ee1d34d5d3668dd37d6cf74990ab23c828c2888dccdceee395594"},
+]
+bumps = [
+    {file = "bumps-0.7.16.tar.gz", hash = "sha256:3594452487b8404f1efaace9b70aefaeb345fa44dd74349f7829a61161d2f69a"},
 ]
 certifi = [
     {file = "certifi-2020.6.20-py2.py3-none-any.whl", hash = "sha256:8fc0819f1f30ba15bdb34cceffb9ef04d99f420f68eb75d901e9560b8749fc41"},
@@ -429,7 +544,8 @@ dicttoxml = [
 ]
 easyappgui = []
 easyapplogic = []
-easytemplatelib = []
+easycore = []
+easyexamplelib = []
 ffmpeg-python = [
     {file = "ffmpeg-python-0.2.0.tar.gz", hash = "sha256:65225db34627c578ef0e11c8b1eb528bb35e024752f6f10b78c011f6f64c4127"},
     {file = "ffmpeg_python-0.2.0-py3-none-any.whl", hash = "sha256:ac441a0404e053f8b6a1113a77c0f452f1cfc62f6344a769475ffdc0f56c23c5"},
@@ -453,8 +569,8 @@ hpack = [
     {file = "hpack-3.0.0.tar.gz", hash = "sha256:8eec9c1f4bfae3408a3f30500261f7e6a65912dc138526ea054f9ad98892e9d2"},
 ]
 hstspreload = [
-    {file = "hstspreload-2020.9.9-py3-none-any.whl", hash = "sha256:dcaa0cdc68e3cc581817c72adb5e9dacc992574397e01c9bab66759d41af72f5"},
-    {file = "hstspreload-2020.9.9.tar.gz", hash = "sha256:61bcfe25cd4c97f014292576863fe142e962fbff6157ea567188a10341b134ef"},
+    {file = "hstspreload-2020.9.15-py3-none-any.whl", hash = "sha256:c09f02dd4b7e3953a8353836aea964b868b22905bdb6d8932ca4b273df0f820f"},
+    {file = "hstspreload-2020.9.15.tar.gz", hash = "sha256:059fc2ead7bb83ea9e85d06c1afc7112413f1d2a81e6448bd276af6bced035ac"},
 ]
 httpcore = [
     {file = "httpcore-0.9.1-py3-none-any.whl", hash = "sha256:9850fe97a166a794d7e920590d5ec49a05488884c9fc8b5dba8561effab0c2a0"},
@@ -471,6 +587,9 @@ hyperframe = [
 idna = [
     {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},
     {file = "idna-2.10.tar.gz", hash = "sha256:b307872f855b18632ce0c21c5e45be78c0ea7ae4c15c828c20788b26921eb3f6"},
+]
+lmfit = [
+    {file = "lmfit-1.0.1.tar.gz", hash = "sha256:d249eb756899360f4d2a544c9458f47fc8f765ac22c09e099530585fd64e286e"},
 ]
 macholib = [
     {file = "macholib-1.14-py2.py3-none-any.whl", hash = "sha256:c500f02867515e6c60a27875b408920d18332ddf96b4035ef03beddd782d4281"},
@@ -504,13 +623,25 @@ numpy = [
     {file = "numpy-1.19.2-pp36-pypy36_pp73-manylinux2010_x86_64.whl", hash = "sha256:0bfd85053d1e9f60234f28f63d4a5147ada7f432943c113a11afcf3e65d9d4c8"},
     {file = "numpy-1.19.2.zip", hash = "sha256:0d310730e1e793527065ad7dde736197b705d0e4c9999775f212b03c44a8484c"},
 ]
+packaging = [
+    {file = "packaging-20.4-py2.py3-none-any.whl", hash = "sha256:998416ba6962ae7fbd6596850b80e17859a5753ba17c32284f67bfff33784181"},
+    {file = "packaging-20.4.tar.gz", hash = "sha256:4357f74f47b9c12db93624a82154e9b120fa8293699949152b22065d556079f8"},
+]
 pefile = [
     {file = "pefile-2019.4.18.tar.gz", hash = "sha256:a5d6e8305c6b210849b47a6174ddf9c452b2888340b8177874b862ba6c207645"},
 ]
+pint = [
+    {file = "Pint-0.16-py2.py3-none-any.whl", hash = "sha256:703db26c4780b3c10ec92961d5bb20252f11aab311ff820714d343178c29bf84"},
+    {file = "Pint-0.16.tar.gz", hash = "sha256:e437420e65fa72a2805f4036f986669c48d54944eeb0e47c8ba16f98cbdcd599"},
+]
 pyinstaller = []
 pyinstaller-hooks-contrib = [
-    {file = "pyinstaller-hooks-contrib-2020.7.tar.gz", hash = "sha256:74936d044f319cd7a9dca322b46a818fcb6e2af1c67af62e8a6a3121eb2863d2"},
-    {file = "pyinstaller_hooks_contrib-2020.7-py2.py3-none-any.whl", hash = "sha256:5b6e06ba6072499189f5b8e1623d5f0414962941aac370ee4f842de25455be5b"},
+    {file = "pyinstaller-hooks-contrib-2020.8.tar.gz", hash = "sha256:71982f32883309e89675bfd10093cdcaca4f894bce11a91a34559b8224cf5e63"},
+    {file = "pyinstaller_hooks_contrib-2020.8-py2.py3-none-any.whl", hash = "sha256:4935b2b48c2a38ab4f8f80d77147781642bff7d31748fca07d26dbdeeefb560d"},
+]
+pyparsing = [
+    {file = "pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"},
+    {file = "pyparsing-2.4.7.tar.gz", hash = "sha256:c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1"},
 ]
 pypiwin32 = [
     {file = "pypiwin32-223-py3-none-any.whl", hash = "sha256:67adf399debc1d5d14dffc1ab5acacb800da569754fafdc576b2a039485aa775"},
@@ -576,6 +707,10 @@ shiboken2 = [
     {file = "shiboken2-5.15.1-5.15.1-cp35.cp36.cp37.cp38.cp39-none-win32.whl", hash = "sha256:4c112b5758a39ffa5473d2c6995e2594eb6e002332d9dac35e2efd9debf157a2"},
     {file = "shiboken2-5.15.1-5.15.1-cp35.cp36.cp37.cp38.cp39-none-win_amd64.whl", hash = "sha256:55249cad55541471b60256179d92be08d520873b76f9cff595bae775dbb06aba"},
 ]
+six = [
+    {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},
+    {file = "six-1.15.0.tar.gz", hash = "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259"},
+]
 sniffio = [
     {file = "sniffio-1.1.0-py3-none-any.whl", hash = "sha256:20ed6d5b46f8ae136d00b9dcb807615d83ed82ceea6b2058cecb696765246da5"},
     {file = "sniffio-1.1.0.tar.gz", hash = "sha256:8e3810100f69fe0edd463d02ad407112542a11ffdc29f67db2bf3771afb87a21"},
@@ -583,6 +718,10 @@ sniffio = [
 toml = [
     {file = "toml-0.10.1-py2.py3-none-any.whl", hash = "sha256:bda89d5935c2eac546d648028b9901107a595863cb36bae0c73ac804a9b4ce88"},
     {file = "toml-0.10.1.tar.gz", hash = "sha256:926b612be1e5ce0634a2ca03470f95169cf16f939018233a670519cb4ac58b0f"},
+]
+uncertainties = [
+    {file = "uncertainties-3.1.4-py2.py3-none-any.whl", hash = "sha256:342703c36eabf99251b35fbd30d748d6220451fc88f586924bdec91cfe6bc6c0"},
+    {file = "uncertainties-3.1.4.tar.gz", hash = "sha256:63548a94899f2a51eeb89b640f6ac311f481a8016b37dce157186e44619bc968"},
 ]
 urllib3 = [
     {file = "urllib3-1.25.10-py2.py3-none-any.whl", hash = "sha256:e7983572181f5e1522d9c98453462384ee92a0be7fac5f1413a1e35c56cc0461"},

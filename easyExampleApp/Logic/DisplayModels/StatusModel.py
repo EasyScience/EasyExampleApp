@@ -1,4 +1,4 @@
-__author__ = 'github.com/wardsimon'
+__author__ = 'github.com/andrewsazonov'
 __version__ = '0.0.1'
 
 from random import random
@@ -7,11 +7,9 @@ from PySide2.QtCore import QPointF
 from PySide2.QtCharts import QtCharts
 
 
-class MeasuredDataModel:
-    def __init__(self, dataObj=None):
-        self._dataObj = dataObj
-        self._lowerSeriesRefs = []
-        self._upperSeriesRefs = []
+class StatusModel:
+    def __init__(self, paren=None):
+        super().__init__(parent)
 
     def updateSeries(self):
         """

@@ -7,7 +7,7 @@ build-backend = "poetry.masonry.api"
 [tool.poetry]
 name = "easyExample"
 version = "0.1.5"
-description = "Template for easyScience applications"
+description = "Advanced example of easyScience applications"
 license = "GPL-3.0-only"
 authors = ["Andrew Sazonov", "Simon Ward"]
 readme = "README.md"
@@ -21,13 +21,15 @@ packages = [ { include = "easyExampleApp" } ]
 python = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
 #python = "3.7" # PyInstaller 3.6 doesn't support Python 3.8
 # easyScience
+easyCore = { git = "https://github.com/easyScience/easyCore.git", rev = "develop" }
+easyExampleLib = { git = "https://github.com/easyScience/easyExampleLib.git", rev = "master" }
 easyAppLogic = { git = "https://github.com/easyScience/easyAppLogic.git", rev = "master" }
 easyAppGui = { git = "https://github.com/easyScience/easyAppGui.git", rev = "master" }
-easyTemplateLib = { git = "https://github.com/tempScience/easyTemplateLib.git", rev = "master" }
 
 [tool.poetry.dev-dependencies]
 # easyScience
-#easyTemplateLib = { path = '../easyTemplateLib/' }
+#easyCore = { path = '../easyCore/' }
+#easyExampleLib = { path = '../easyExampleLib/' }
 #easyAppLogic = { path = "../easyAppLogic/" }
 #easyAppGui = { path = "../easyAppGui/" }
 # PyInstaller

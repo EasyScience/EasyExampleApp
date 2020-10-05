@@ -3,8 +3,6 @@ pragma Singleton
 import QtQuick 2.13
 
 QtObject {
-    property var proxy: _pyQmlProxyObj
-
     // Debug mode
     property bool isDebugMode: false
 
@@ -21,7 +19,9 @@ QtObject {
     property bool sampleLoaded: false
     property bool experimentLoaded: false
 
+    // //////////////////////////
     // References to GUI elements
+    // //////////////////////////
 
     // Application bar tab buttons
     property var homeTabButton
@@ -47,9 +47,16 @@ QtObject {
     // Sidebar text inputs
     property var amplitudeTextInput
     property var periodTextInput
-    property var xShiftTextInput
-    property var yShiftTextInput
+    property var xShiftValueTextInput
+    property var xShiftFitCheckBox
 
     // Comboboxes
     property var themeSelector
+
+    // Tables
+    property var phasesTable
+    property var parametersTable
+    property int phasesCurrentIndex: 0
+    property int parametersCurrentIndex: 0
+
 }
