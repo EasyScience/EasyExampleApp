@@ -1,4 +1,4 @@
-name: Build macOS, Linux, Windows
+name: build macOS, Linux, Windows
 
 # Trigger the workflow on push or pull request
 on: [push, pull_request]
@@ -10,7 +10,7 @@ jobs:
   build:
 
     # Rename job "build"
-    name: App Build
+    #name: App Build
 
     # CI skip conditions
     #if: "!contains(github.event.head_commit.message, '[ci skip]')"

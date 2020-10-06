@@ -1,4 +1,4 @@
-name: Create Repo
+name: create repo
 
 on: [create]
 
