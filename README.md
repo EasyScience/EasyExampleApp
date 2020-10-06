@@ -66,7 +66,7 @@
 
 <!---CI Build Status--->
 [20]: https://github.com/easyScience/easyExampleApp/workflows/build%20macOS,%20Linux,%20Windows/badge.svg
-[21]: https://github.com/easyScience/easyExampleApp/actions
+[21]: https://github.com/easyScience/easyExampleApp/actions?query=workflow%3A%22build+macOS%2C+Linux%2C+Windows%22
 
 <!---Release--->
 [30]: https://img.shields.io/github/release/easyScience/easyExampleApp.svg
