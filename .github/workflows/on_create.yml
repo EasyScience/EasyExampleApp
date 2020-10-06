@@ -17,9 +17,11 @@ jobs:
       shell: bash
       run: |
         export REPOSITORY_NAME=$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}' | sed -e "s/:refs//")
+        export APP_NAME=$(echo "$REPOSITORY_NAME" | sed -e "s/App//")
         git mv easyExampleApp $REPOSITORY_NAME
         cp ./.github/defaults/probot-settings.yml ./
         find . -path '*/.git*' -prune -o -type f -exec sed -i 's/easyExampleApp\b/'$REPOSITORY_NAME'/g' {} +
+        find . -path '*/.git*' -prune -o -type f -exec sed -i 's/easyExample\b/'$APP_NAME'/g' {} +
 
     - name: Clean up
       shell: bash
