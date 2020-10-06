@@ -45,7 +45,7 @@
   poetry run easyExample
   ```
 
-## Update easyExampleApp dependencies
+### Update easyExampleApp dependencies
 * Open **Terminal**
 * Go to **easyExampleApp** directory
 * Update **easyExampleApp** using **poetry** (configuration file: **pyproject.toml**)
@@ -53,7 +53,7 @@
   poetry update
   ```
 
-## Delete easyExampleApp
+### Delete easyExampleApp
 * Delete **easyExampleApp** directory
 * Uninstall **Poetry**
    * osx / linux / bashonwindows
