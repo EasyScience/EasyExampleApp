@@ -4,7 +4,7 @@
 
 [![Release][30]][31]
 
-[![Downloads][70]][71] [![Lines of code][80]][82] [![Total lines][80]][81] [![Files][80]][83]
+[![Downloads][70]][71] [![Lines of code][82]][80] [![Total lines][81]][80] [![Files][83]][80]
 
 [![License][50]][51]
 
