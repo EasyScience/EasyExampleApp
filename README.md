@@ -65,7 +65,7 @@
 <!---https://naereen.github.io/badges/--->
 
 <!---CI Build Status--->
-[20]: https://github.com/easyScience/easyExampleApp/workflows/build,%20macOS,%20Linux,%20Windows/badge.svg
+[20]: https://github.com/easyScience/easyExampleApp/workflows/build%20macOS,%20Linux,%20Windows/badge.svg
 [21]: https://github.com/easyScience/easyExampleApp/actions
 
 <!---Release--->
