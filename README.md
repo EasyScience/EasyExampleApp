@@ -4,7 +4,7 @@
 
 [![Release][30]][31]
 
-[![Downloads][70]][71] [![Lines of code][81]]() [![Total lines][80]]() [![Files][82]]()
+[![Downloads][70]][71] [![Lines of code][80]][82] [![Total lines][80]][81] [![Files][80]][83]
 
 [![License][50]][51]
 
@@ -85,9 +85,10 @@
 [71]: https://github.com/easyScience/easyExampleApp/releases
 
 <!---Code statistics--->
-[80]: https://tokei.rs/b1/github/easyScience/easyExampleApp
-[81]: https://tokei.rs/b1/github/easyScience/easyExampleApp?category=code
-[82]: https://tokei.rs/b1/github/easyScience/easyExampleApp?category=files
+[80]: https://github.com/easyScience/easyExampleApp
+[81]: https://tokei.rs/b1/github/easyScience/easyExampleApp
+[82]: https://tokei.rs/b1/github/easyScience/easyExampleApp?category=code
+[83]: https://tokei.rs/b1/github/easyScience/easyExampleApp?category=files
 
 <!---W3C validation--->
 [90]: https://img.shields.io/w3c-validation/default?targetUrl=https://easyscience.github.io/easyExampleApp
