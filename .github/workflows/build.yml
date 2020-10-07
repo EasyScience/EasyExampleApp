@@ -39,13 +39,13 @@ jobs:
       shell: bash
       run: |
         pip install toml
-        echo ::set-env name=SHORT_GITHUB_REF::${GITHUB_REF#refs/*/}
-        echo ::set-env name=SCRIPTS_PATH::$(python pyproject.py ci.project.subdirs.scripts)
-        echo ::set-env name=DOWNLOAD_PATH::$(python pyproject.py ci.project.subdirs.download)
-        echo ::set-env name=DISTRIBUTION_PATH::$(python pyproject.py ci.project.subdirs.distribution)
-        echo ::set-env name=APP_NAME::$(python pyproject.py tool.poetry.name)
-        echo ::set-env name=POETRY_VENV_PATH::$(python pyproject.py ci.poetry.venv_path.${{ matrix.os }})
-        echo ::set-env name=QTIFW_PATH::$(python pyproject.py ci.qtifw.setup.installation_path.${{ matrix.os }})
+        echo "SHORT_GITHUB_REF=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+        echo "SCRIPTS_PATH=$(python pyproject.py ci.project.subdirs.scripts)" >> $GITHUB_ENV
+        echo "DOWNLOAD_PATH=$(python pyproject.py ci.project.subdirs.download)" >> $GITHUB_ENV
+        echo "DISTRIBUTION_PATH=$(python pyproject.py ci.project.subdirs.distribution)" >> $GITHUB_ENV
+        echo "APP_NAME=$(python pyproject.py tool.poetry.name)" >> $GITHUB_ENV
+        echo "POETRY_VENV_PATH=$(python pyproject.py ci.poetry.venv_path.${{ matrix.os }})" >> $GITHUB_ENV
+        echo "QTIFW_PATH=$(python pyproject.py ci.qtifw.setup.installation_path.${{ matrix.os }})" >> $GITHUB_ENV
 
     - name: Cache dependencies
       uses: actions/cache@v2
