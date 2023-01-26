@@ -1,4 +1,4 @@
-import easyAppGui.Globals 1.0 as EaGlobals
+import easyApp.Gui.Globals 1.0 as EaGlobals
 
 import Gui.Globals 1.0 as ExGlobals
 import Gui.Components 1.0 as ExComponents

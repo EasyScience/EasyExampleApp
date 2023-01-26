@@ -2,12 +2,13 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.XmlListModel 2.13
 
-import easyAppGui.Style 1.0 as EaStyle
-import easyAppGui.Globals 1.0 as EaGlobals
-import easyAppGui.Elements 1.0 as EaElements
-import easyAppGui.Components 1.0 as EaComponents
+import easyApp.Gui.Style 1.0 as EaStyle
+import easyApp.Gui.Globals 1.0 as EaGlobals
+import easyApp.Gui.Elements 1.0 as EaElements
+import easyApp.Gui.Components 1.0 as EaComponents
 
 import Gui.Globals 1.0 as ExGlobals
+import Gui.Components 1.0 as ExComponents
 import Gui.Pages.Home 1.0 as ExHomePage
 import Gui.Pages.Project 1.0 as ExProjectPage
 import Gui.Pages.Sample 1.0 as ExSamplePage
