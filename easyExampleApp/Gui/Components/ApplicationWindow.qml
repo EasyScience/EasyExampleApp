@@ -72,7 +72,7 @@ EaComponents.ApplicationWindow {
 
     // Central group of application bar tab buttons (workflow tabs)
     // Tab buttons for the pages described below
-    appBarCentralTabs: [
+    appBarCentralTabs.contentData: [
 
         // Home tab
         EaElements.AppBarTabButton {
