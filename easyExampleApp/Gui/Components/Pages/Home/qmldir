@@ -1,0 +1,5 @@
+module Project
+
+MainContent 1.0 MainContent.qml
+
+AboutDialog 1.0 AboutDialog.qml

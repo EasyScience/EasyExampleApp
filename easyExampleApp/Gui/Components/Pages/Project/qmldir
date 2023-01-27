@@ -1,0 +1,8 @@
+module Project
+
+MainContent 1.0 MainContent.qml
+
+SideBarBasic 1.0 SideBarBasic.qml
+SideBarAdvanced 1.0 SideBarAdvanced.qml
+
+ProjectDescriptionDialog 1.0 ProjectDescriptionDialog.qml

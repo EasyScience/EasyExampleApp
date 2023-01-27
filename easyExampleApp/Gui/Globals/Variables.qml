@@ -1,62 +1,43 @@
+// SPDX-FileCopyrightText: 2023 EasyExample contributors
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
+
 pragma Singleton
 
-import QtQuick 2.13
+import QtQuick 2.15
 
 QtObject {
     // Debug mode
-    property bool isDebugMode: false
+    property bool isDebugMode: typeof _pyQmlProxyObj === "undefined"
 
-    // Initial application components accessibility
+    // Initial application pages accessibility
     property bool homePageEnabled: isDebugMode ? true : true
     property bool projectPageEnabled: isDebugMode ? true : false
-    property bool samplePageEnabled: isDebugMode ? true : false
-    property bool experimentPageEnabled: isDebugMode ? true : false
-    property bool analysisPageEnabled: isDebugMode ? true : false
+    property bool step1PageEnabled: isDebugMode ? true : false
+    property bool step2PageEnabled: isDebugMode ? true : false
+    property bool step3PageEnabled: isDebugMode ? true : false
+    property bool step4PageEnabled: isDebugMode ? true : false
+    property bool step5PageEnabled: isDebugMode ? true : false
     property bool summaryPageEnabled: isDebugMode ? true : false
-
-    // Workflow states
-    property bool projectCreated: false
-    property bool sampleLoaded: false
-    property bool experimentLoaded: false
 
     // //////////////////////////
     // References to GUI elements
     // //////////////////////////
 
+    // Application bar
+    property var appBarCentralTabs
+
     // Application bar tab buttons
     property var homeTabButton
     property var projectTabButton
-    property var sampleTabButton
-    property var experimentTabButton
-    property var analysisTabButton
+    property var step1TabButton
+    property var step2TabButton
+    property var step3TabButton
+    property var step4TabButton
+    property var step5TabButton
     property var summaryTabButton
 
-    // Application bar tool buttons
-    property var preferencesButton
-
-    // Main content and sidebar buttons
-    property var startButton
-    property var createProjectButton
-    property var addNewSampleButton
-    property var generateMeasuredDataButton
-    property var startFittingButton
-
-    // Sidebar group boxes
-    property var sampleParametersGroup
-
-    // Sidebar text inputs
-    property var amplitudeTextInput
-    property var periodTextInput
-    property var xShiftValueTextInput
-    property var xShiftFitCheckBox
-
-    // Comboboxes
-    property var themeSelector
-
-    // Tables
-    property var phasesTable
-    property var parametersTable
-    property int phasesCurrentIndex: 0
-    property int parametersCurrentIndex: 0
-
+    // Charts
+    property var chartViewSimple1dPlotly
+    property var chartViewHeatmap2dPlotly
 }
