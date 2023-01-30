@@ -7,6 +7,9 @@ import QtQuick 2.15
 import easyApp.Gui.Elements 1.0 as EaElements
 import easyApp.Gui.Components 1.0 as EaComponents
 
+import Gui.Globals 1.0 as ExGlobals
+
+
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {

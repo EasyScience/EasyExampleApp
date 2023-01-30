@@ -6,38 +6,30 @@ pragma Singleton
 
 import QtQuick 2.15
 
+
 QtObject {
+
     // Debug mode
-    property bool isDebugMode: typeof _pyQmlProxyObj === "undefined"
+    property bool isDebugMode: false
 
     // Initial application pages accessibility
     property bool homePageEnabled: isDebugMode ? true : true
     property bool projectPageEnabled: isDebugMode ? true : false
-    property bool step1PageEnabled: isDebugMode ? true : false
-    property bool step2PageEnabled: isDebugMode ? true : false
-    property bool step3PageEnabled: isDebugMode ? true : false
-    property bool step4PageEnabled: isDebugMode ? true : false
-    property bool step5PageEnabled: isDebugMode ? true : false
+    property bool modelPageEnabled: isDebugMode ? true : false
+    property bool experimentPageEnabled: isDebugMode ? true : false
+    property bool analysisPageEnabled: isDebugMode ? true : false
     property bool summaryPageEnabled: isDebugMode ? true : false
 
     // //////////////////////////
     // References to GUI elements
     // //////////////////////////
 
-    // Application bar
-    property var appBarCentralTabs
-
     // Application bar tab buttons
-    property var homeTabButton
-    property var projectTabButton
-    property var step1TabButton
-    property var step2TabButton
-    property var step3TabButton
-    property var step4TabButton
-    property var step5TabButton
-    property var summaryTabButton
+    property var homeAppbarButton
+    property var projectAppbarButton
+    property var modelAppbarButton
+    property var experimentAppbarButton
+    property var analysisAppbarButton
+    property var summaryAppbarButton
 
-    // Charts
-    property var chartViewSimple1dPlotly
-    property var chartViewHeatmap2dPlotly
 }

@@ -1,6 +1,6 @@
-// SPDX-FileCopyrightText: 2022 EasyTexture contributors
+// SPDX-FileCopyrightText: 2022 EasyExample contributors
 // SPDX-License-Identifier: BSD-3-Clause
-// © 2022 Contributors to the EasyTexture project <https://github.com/EasyScience/EasyTextureApp>
+// © 2022 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -35,16 +35,6 @@ Grid {
     }
 
     EaElements.SideBarButton {
-        fontIcon: "arrow-circle-right"
-        text: qsTr("Continue without a project")
-
-        onClicked: {
-            ExGlobals.Variables.step1PageEnabled = true
-            ExGlobals.Variables.step1TabButton.toggle()
-        }
-    }
-
-    EaElements.SideBarButton {
         enabled: false
         fontIcon: "upload"
         text: qsTr("Open an existing project")
@@ -59,5 +49,13 @@ Grid {
         fontIcon: "download"
         text: qsTr("Save project as...")
     }
+
+    EaElements.SideBarButton {
+        enabled: false
+
+        fontIcon: "times-circle"
+        text: qsTr("Close current project")
+    }
+
 }
 

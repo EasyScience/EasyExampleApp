@@ -39,8 +39,6 @@ Rectangle {
             EaElements.Label {
                 font.bold: true
                 text: qsTr("Short description:")
-
-                Component.onCompleted: print("?????? test", this)
             }
             EaElements.TextInput {
                 text: ExGlobals.Constants.proxy.project.projectInfoAsJson.short_description
@@ -51,7 +49,7 @@ Rectangle {
                 text: qsTr("Location:")
             }
             EaElements.Label {
-                ///text: ExGlobals.Constants.proxy.project.currentProjectPath
+                text: ExGlobals.Constants.proxy.project.currentProjectPath
             }
 
             EaElements.Label {

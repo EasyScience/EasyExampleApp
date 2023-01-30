@@ -18,9 +18,9 @@ import Gui.Components 1.0 as ExComponents
 EaComponents.ContentPage {
     defaultInfo: ExGlobals.Constants.proxy.project.projectCreated ?
                      "" :
-                     ""//qsTr("No Project Created/Opened")
+                     qsTr("No Project Created/Opened")
 
-    mainContent: EaComponents.MainContent {
+    mainView: EaComponents.MainContent {
         tabs: [
             EaElements.TabButton { text: qsTr("Description") }
         ]
@@ -40,5 +40,13 @@ EaComponents.ContentPage {
             Loader { source: 'SideBarBasic.qml' },
             Loader { source: 'SideBarAdvanced.qml' }
         ]
+
+        continueButton.onClicked: {
+            ExGlobals.Variables.modelPageEnabled = true
+            ExGlobals.Variables.modelAppbarButton.toggle()
+        }
     }
+
+    Component.onCompleted: print("Project page loaded:", this)
+    Component.onDestruction: print("Project page destroyed:", this)
 }

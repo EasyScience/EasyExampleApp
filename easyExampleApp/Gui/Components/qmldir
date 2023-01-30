@@ -1,4 +1,4 @@
 module Components
 
 ApplicationWindow 1.0 ApplicationWindow.qml
-CloseDialog 1.0 CloseDialog.qml
+StatusBar 1.0 StatusBar.qml

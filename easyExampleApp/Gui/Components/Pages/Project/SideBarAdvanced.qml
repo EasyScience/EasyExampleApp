@@ -10,8 +10,11 @@ import easyApp.Gui.Components 1.0 as EaComponents
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
-        title: qsTr("Empty group")
+        title: qsTr("Scrolling")
+        collapsed: false
         last: true
+
+        Loader { source: 'SideBarAdvanced/ScrollingGroup.qml' }
     }
 
 }

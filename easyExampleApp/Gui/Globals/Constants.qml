@@ -6,16 +6,48 @@ pragma Singleton
 
 import QtQuick 2.15
 
-import easyApp.Gui.Globals 1.0 as EaGlobals
-import Gui.Logic 1.0 as ExLogic
 
 QtObject {
-    readonly property var proxy: typeof _pyQmlProxyObj !== "undefined" && _pyQmlProxyObj !== null ?
-                                     _pyQmlProxyObj :
-                                     new ExLogic.PyQmlProxy.PyQmlProxy()
-    readonly property var projectConfig: typeof _projectConfig !== "undefined" && _projectConfig !== null ?
-                                             _projectConfig :
-                                             ExLogic.ProjectConfig.projectConfig()
+
+    property var proxy: QtObject {
+        property var project: QtObject {
+            property bool projectCreated: false
+            property string currentProjectPath: '_path_'
+            property var projectInfoAsJson: QtObject {
+                property string name: '_name_'
+                property string short_description: '_short_description_'
+                property string modified: '_modified_'
+            }
+            property string statusModelAsXml:
+`<root>
+   <item>
+     <label>Minimization</label>
+     <value>lmfit</value>
+   </item>
+</root>`
+            function createProject() { projectCreated = true }
+        }
+        property var plotting1d: QtObject {
+            property var libs: ['Plotly']
+            property string currentLib: 'Plotly'
+        }
+    }
+
+    property var projectConfig: QtObject {
+        property var release: QtObject {
+            property string app_name: 'EasyExample'
+            property string app_issues_url: 'https://github.com/EasyScience/EasyExampleApp/issues'
+        }
+        property var tool: QtObject {
+            property var poetry: QtObject {
+                property string homepage: 'https://github.com/EasyScience/EasyExampleApp'
+                property string version: '0.0.1-alpha.1'
+            }
+        }
+        property var ci: QtObject {
+            property var app: QtObject {}
+        }
+    }
 
     readonly property bool remote: typeof projectConfig.ci.app.info !== 'undefined'
 
@@ -65,6 +97,6 @@ the European Spallation Source ERIC, Sweden.`
     }
 
     function githubRawContent(branch, file) {
-        return `https://raw.githubusercontent.com/easyScience/easyDiffractionApp/${branch}/${file}`
+        return `https://raw.githubusercontent.com/easyScience/EasyExampleApp/${branch}/${file}`
     }
 }

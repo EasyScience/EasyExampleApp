@@ -20,13 +20,17 @@ EaComponents.ContentPage {
                      "" :
                      ""//qsTr("No Project Created/Opened")
 
-    mainContent: EaComponents.MainContent {
+    mainView: EaComponents.MainContent {
         tabs: [
-            EaElements.TabButton { text: qsTr("Description") }
+            EaElements.TabButton { text: qsTr("Plot View 1D") },
+            EaElements.TabButton { text: qsTr("Plot View 2D") },
+            EaElements.TabButton { text: qsTr("Plot View 3D") }
         ]
 
         items: [
-            Loader { source: 'MainContent/DescriptionTab.qml' }
+            Loader { source: 'MainContent/PlotView1dTab.qml' },
+            Loader { source: 'MainContent/PlotView2dTab.qml' },
+            Loader { source: 'MainContent/PlotView3dTab.qml' }
         ]
     }
 
@@ -40,5 +44,13 @@ EaComponents.ContentPage {
             Loader { source: 'SideBarBasic.qml' },
             Loader { source: 'SideBarAdvanced.qml' }
         ]
+
+        continueButton.onClicked: {
+            ExGlobals.Variables.analysisPageEnabled = true
+            ExGlobals.Variables.analysisAppbarButton.toggle()
+        }
     }
+
+    Component.onCompleted: print("Experiment page loaded:", this)
+    Component.onDestruction: print("Experiment page destroyed:", this)
 }

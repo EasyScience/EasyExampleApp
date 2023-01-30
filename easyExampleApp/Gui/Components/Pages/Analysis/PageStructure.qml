@@ -20,7 +20,7 @@ EaComponents.ContentPage {
                      "" :
                      ""//qsTr("No Project Created/Opened")
 
-    mainContent: EaComponents.MainContent {
+    mainView: EaComponents.MainContent {
         tabs: [
             EaElements.TabButton { text: qsTr("Description") }
         ]
@@ -40,5 +40,13 @@ EaComponents.ContentPage {
             Loader { source: 'SideBarBasic.qml' },
             Loader { source: 'SideBarAdvanced.qml' }
         ]
+
+        continueButton.onClicked: {
+            ExGlobals.Variables.summaryPageEnabled = true
+            ExGlobals.Variables.summaryAppbarButton.toggle()
+        }
     }
+
+    Component.onCompleted: print("Analysis page loaded:", this)
+    Component.onDestruction: print("Analysis page destroyed:", this)
 }

@@ -3,9 +3,9 @@ import QtQuick 2.15
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Components 1.0 as EaComponents
 
-// SPDX-FileCopyrightText: 2022 EasyTexture contributors
+// SPDX-FileCopyrightText: 2022 EasyExample contributors
 // SPDX-License-Identifier: BSD-3-Clause
-// © 2022 Contributors to the EasyTexture project <https://github.com/EasyScience/EasyTextureApp>
+// © 2022 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 import Gui.Globals 1.0 as ExGlobals
 
@@ -20,6 +20,7 @@ EaComponents.ProjectDescriptionDialog {
     onAccepted: {
         ExGlobals.Constants.proxy.project.currentProjectPath = projectLocation
         ExGlobals.Constants.proxy.project.createProject()
+
     }
 
     Component.onCompleted: {

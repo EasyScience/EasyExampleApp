@@ -8,16 +8,12 @@ import QtQuick.Controls 2.15
 import easyApp.Gui.Style 1.0 as EaStyle
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Elements 1.0 as EaElements
-import easyApp.Gui.Components 1.0 as EaComponents
 
 import Gui.Globals 1.0 as ExGlobals
-import Gui.Components 1.0 as ExComponents
 
 
 Item {
     id: root
-
-    Component.onCompleted: startAnimo.restart()
 
     Column {
         anchors.centerIn: parent
@@ -29,21 +25,18 @@ Item {
             source: ExGlobals.Constants.appLogo
             anchors.horizontalCenter: parent.horizontalCenter
             width: EaStyle.Sizes.fontPixelSize * 5
-//            fillMode: Image.PreserveAspeMainContentctFit
+            fillMode: Image.PreserveAspectFit
             antialiasing: true
-            opacity: 0
-
         }
 
         // Application name
         Row {
             id: appName
 
-            property var fontFamily: EaStyle.Fonts.thirdFontFamily
-            property var fontPixelSize: EaStyle.Sizes.fontPixelSize * 4
+            property string fontFamily: EaStyle.Fonts.thirdFontFamily
+            property string fontPixelSize: EaStyle.Sizes.fontPixelSize * 4
 
             anchors.horizontalCenter: parent.horizontalCenter
-            opacity: 0
 
             EaElements.Label {
                 font.family: parent.fontFamily
@@ -64,7 +57,6 @@ Item {
             id: appVersion
 
             anchors.horizontalCenter: parent.horizontalCenter
-            opacity: 0
 
             text: ExGlobals.Constants.branch && ExGlobals.Constants.branch !== 'master'
                   ? qsTr('Version') + ` <a href="${ExGlobals.Constants.commitUrl}">${ExGlobals.Constants.appVersion}-${ExGlobals.Constants.commit}</a> (${ExGlobals.Constants.appDate})`
@@ -92,13 +84,12 @@ Item {
 
             width: EaStyle.Sizes.fontPixelSize * 15
             anchors.horizontalCenter: parent.horizontalCenter
-            opacity: 0
 
             fontIcon: "rocket"
             text: qsTr("Start")
             onClicked: {
                 ExGlobals.Variables.projectPageEnabled = true
-                ExGlobals.Variables.projectTabButton.toggle()
+                ExGlobals.Variables.projectAppbarButton.toggle()
             }
             Component.onCompleted: ExGlobals.Variables.startButton = this
         }
@@ -112,7 +103,6 @@ Item {
 
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: EaStyle.Sizes.fontPixelSize * 3
-            opacity: 0
 
             Column {
                 spacing: EaStyle.Sizes.fontPixelSize
@@ -123,7 +113,7 @@ Item {
                 }
                 EaElements.Button {
                     text: qsTr("Online documentation")
-                    onClicked: Qt.openUrlExternally("https://github.com/EasyScience/EasyTextureApp")
+                    onClicked: Qt.openUrlExternally("https://github.com/EasyScience/EasyExampleApp")
                 }
                 EaElements.Button {
                     enabled: false
@@ -141,43 +131,18 @@ Item {
                 }
                 EaElements.Button {
                     enabled: false
-                    text: qsTr("Tutorial") + " 2: " + qsTr("Basic reduction")
+                    text: qsTr("Tutorial") + " 2: " + qsTr("Basic usage")
                     onClicked: print("Tutorial 2 button clicked")
                 }
                 EaElements.Button {
                     enabled: false
-                    text: qsTr("Tutorial") + " 3: " + qsTr("Advanced reduction")
+                    text: qsTr("Tutorial") + " 3: " + qsTr("Advanced usage")
                     onClicked: print("Tutorial 3 button clicked")
                 }
             }
         }
     }
 
-    // Start animation
-    SequentialAnimation {
-        id: startAnimo
-
-        property int duration: 1000
-
-        // app name opacity
-        NumberAnimation { easing.type: Easing.Linear; target: appName; property: "opacity"; to: 1; duration: startAnimo.duration }
-
-        // other elements
-        ParallelAnimation {
-            // opacity
-            PropertyAnimation { easing.type: Easing.OutExpo; target: appLogo;       property: "opacity"; to: 1; duration: startAnimo.duration }
-            PropertyAnimation { easing.type: Easing.OutExpo; target: appVersion;    property: "opacity"; to: 1; duration: startAnimo.duration }
-            PropertyAnimation { easing.type: Easing.OutExpo; target: githubBranch;  property: "opacity"; to: 1; duration: startAnimo.duration }
-            PropertyAnimation { easing.type: Easing.OutExpo; target: startButton;   property: "opacity"; to: 1; duration: startAnimo.duration }
-            PropertyAnimation { easing.type: Easing.OutExpo; target: links;         property: "opacity"; to: 1; duration: startAnimo.duration }
-            PropertyAnimation { easing.type: Easing.OutExpo; target: window.appBar; property: "opacity"; to: 1; duration: startAnimo.duration * 5 }
-            // moving
-            PropertyAnimation { easing.type: Easing.OutExpo; target: appLogo;       property: "y"; from: -appLogo.height; to: appLogo.y;      duration: startAnimo.duration }
-            PropertyAnimation { easing.type: Easing.OutExpo; target: appVersion;    property: "y"; from: window.height;   to: appVersion.y;   duration: startAnimo.duration }
-            PropertyAnimation { easing.type: Easing.OutExpo; target: githubBranch;  property: "y"; from: window.height;   to: githubBranch.y; duration: startAnimo.duration }
-            PropertyAnimation { easing.type: Easing.OutExpo; target: startButton;   property: "y"; from: window.height;   to: startButton.y;  duration: startAnimo.duration }
-            PropertyAnimation { easing.type: Easing.OutExpo; target: links;         property: "y"; from: window.height;   to: links.y;        duration: startAnimo.duration }
-        }
-    }
-
+    Component.onCompleted: print("Home page loaded:", this)
+    Component.onDestruction: print("Home page destroyed:", this)
 }

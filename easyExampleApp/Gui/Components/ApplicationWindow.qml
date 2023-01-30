@@ -4,24 +4,14 @@
 
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Dialogs 1.3 as Dialogs1
-import QtQuick.XmlListModel 2.15
 
-import easyApp.Gui.Style 1.0 as EaStyle
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Elements 1.0 as EaElements
 import easyApp.Gui.Components 1.0 as EaComponents
 
 import Gui.Globals 1.0 as ExGlobals
 import Gui.Components 1.0 as ExComponents
-import Gui.Components.Pages.Home 1.0 as ExHomePage
 
-//import Gui.Pages.Home 1.0 as ExHomePage
-//import Gui.Pages.Project 1.0 as ExProjectPage
-//import Gui.Pages.Step1 1.0 as ExStep1
-//import Gui.Pages.Step2 1.0 as ExStep2
-//import Gui.Pages.Step3 1.0 as ExStep3
-//import Gui.Pages.Summary 1.0 as ExLiveViewPage
 
 EaComponents.ApplicationWindow {
 
@@ -91,38 +81,57 @@ EaComponents.ApplicationWindow {
             fontIcon: "home"
             text: qsTr("Home")
             ToolTip.text: qsTr("Home page")
+            Component.onCompleted: homePageLoader.source = 'Pages/Home/PageStructure.qml'
         },
 
         // Project tab
         EaElements.AppBarTabButton {
+            id: projectTabButton
+
             enabled: ExGlobals.Variables.projectPageEnabled
             fontIcon: "archive"
             text: qsTr("Project")
             ToolTip.text: qsTr("Project description page")
+            onCheckedChanged: checked ?
+                                  projectPageLoader.source = 'Pages/Project/PageStructure.qml' :
+                                  projectPageLoader.source = ''
+            Component.onCompleted: ExGlobals.Variables.projectAppbarButton = this
         },
 
         // Model tab
         EaElements.AppBarTabButton {
-  //          enabled: ExGlobals.Variables.modelPageEnabled
+            enabled: ExGlobals.Variables.modelPageEnabled
             fontIcon: "gem"
             text: qsTr("Model")
             ToolTip.text: qsTr("Model description page")
+            onCheckedChanged: checked ?
+                                  modelPageLoader.source = 'Pages/Model/PageStructure.qml' :
+                                  modelPageLoader.source = ''
+            Component.onCompleted: ExGlobals.Variables.modelAppbarButton = this
         },
 
         // Experiment tab
         EaElements.AppBarTabButton {
- //           enabled: ExGlobals.Variables.experimentPageEnabled
+            enabled: ExGlobals.Variables.experimentPageEnabled
             fontIcon: "microscope"
             text: qsTr("Experiment")
             ToolTip.text: qsTr("Experimental settings and measured data page")
+            onCheckedChanged: checked ?
+                                  experimentPageLoader.source = 'Pages/Experiment/PageStructure.qml' :
+                                  experimentPageLoader.source = ''
+            Component.onCompleted: ExGlobals.Variables.experimentAppbarButton = this
         },
 
         // Analysis tab
         EaElements.AppBarTabButton {
- //           enabled: ExGlobals.Variables.analysisPageEnabled
+            enabled: ExGlobals.Variables.analysisPageEnabled
             fontIcon: "calculator"
             text: qsTr("Analysis")
             ToolTip.text: qsTr("Simulation and fitting page")
+            onCheckedChanged: checked ?
+                                  analysisPageLoader.source = 'Pages/Analysis/PageStructure.qml' :
+                                  analysisPageLoader.source = ''
+            Component.onCompleted: ExGlobals.Variables.analysisAppbarButton = this
         },
 
         // Summary tab
@@ -131,97 +140,32 @@ EaComponents.ApplicationWindow {
             fontIcon: "clipboard-list"
             text: qsTr("Summary")
             ToolTip.text: qsTr("Summary of the work done")
+            onCheckedChanged: checked ?
+                                  summaryPageLoader.source = 'Pages/Summary/PageStructure.qml' :
+                                  summaryPageLoader.source = ''
+            Component.onCompleted: ExGlobals.Variables.summaryAppbarButton = this
         }
 
     ]
 
-    /////////////////////////
-    // MAIN CONTENT + SIDEBAR
-    /////////////////////////
+    //////////////////////
+    // MAIN VIEW + SIDEBAR
+    //////////////////////
 
     // Pages for the tab buttons described above
     contentArea: [
-
-        // Home page
-        ExHomePage.MainContent {},
-        //Loader { source: 'Pages/Project/MainContent.qml' },
-        Loader { source: 'Pages/Project/MainContent.qml' },
-        Loader { source: 'Pages/Model/MainContent.qml' },
-        Loader { source: 'Pages/Experiment/MainContent.qml' },
-        Loader { source: 'Pages/Analysis/MainContent.qml' },
-        Loader { source: 'Pages/Summary/MainContent.qml' }
-
+        Loader { id: homePageLoader },
+        Loader { id: projectPageLoader },
+        Loader { id: modelPageLoader },
+        Loader { id: experimentPageLoader },
+        Loader { id: analysisPageLoader },
+        Loader { id: summaryPageLoader }
     ]
 
     /////////////
     // STATUS BAR
     /////////////
 
-    statusBar: EaElements.StatusBar {
-        visible: EaGlobals.Variables.appBarCurrentIndex !== 0
-
-        model: XmlListModel {
-            ///xml: ExGlobals.Constants.proxy.project.statusModelAsXml
-            query: "/root/item"
-
-            XmlRole { name: "label"; query: "label/string()" }
-            XmlRole { name: "value"; query: "value/string()" }
-        }
-    }
-
-    ///////////////
-    // Init dialogs
-    ///////////////
-
-    // Application dialogs (invisible at the beginning)
-
-    ExComponents.CloseDialog {
-        id: closeDialog
-    }
-
-    EaElements.Dialog {
-        id: resetStateDialog
-
-        title: qsTr("Reset state")
-
-        EaElements.Label {
-            horizontalAlignment: Text.AlignHCenter
-            text: qsTr("Are you sure you want to reset the application to its\noriginal state without project, phases and data?\n\nThis operation cannot be undone.")
-        }
-
-        footer: EaElements.DialogButtonBox {
-            EaElements.Button {
-                text: qsTr("Cancel")
-                onClicked: resetStateDialog.close()
-            }
-
-            EaElements.Button {
-                text: qsTr("OK")
-                onClicked: {
-                    EaGlobals.Variables.appBarCurrentIndex = 0
-                    ExGlobals.Variables.projectPageEnabled = false
-                    ExGlobals.Variables.step1PageEnabled = false
-                    ExGlobals.Constants.proxy.project.resetState()
-                    resetStateDialog.close()
-                }
-                Component.onCompleted: ExGlobals.Variables.resetStateOkButton = this
-            }
-        }
-    }
-
-    ////////
-    // Misc
-    ////////
-
-    onClosing: {
-        window.quit()
-    }
-
-    Component.onCompleted: {
-        ExGlobals.Variables.appBarCentralTabs = appBarCentralTabs
-
-        // DEBUG:
-        //EaStyle.Sizes.defaultScale = parseInt("150%")
-    }
+    statusBar: ExComponents.StatusBar {}
 
 }
