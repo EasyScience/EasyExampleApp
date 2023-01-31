@@ -16,17 +16,15 @@ import Gui.Globals 1.0 as ExGlobals
 import Gui.Components 1.0 as ExComponents
 
 EaComponents.ContentPage {
-    defaultInfo: ExGlobals.Proxies.mainProxy.project.projectCreated ?
+    defaultInfo: ExGlobals.Proxies.mainProxy.project.modelAdded ?
                      "" :
-                     ""//qsTr("No Project Created/Opened")
+                     qsTr("No Model Added")
 
     mainView: EaComponents.MainContent {
         tabs: [
-            EaElements.TabButton { text: qsTr("Description") }
         ]
 
         items: [
-            Loader { source: 'MainContent/DescriptionTab.qml' }
         ]
     }
 

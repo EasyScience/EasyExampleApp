@@ -20,7 +20,6 @@ Grid {
     spacing: EaStyle.Sizes.fontPixelSize
 
     EaElements.SideBarButton {
-        //enabled: false
         fontIcon: "plus-circle"
         text: qsTr("Create a new project")
 

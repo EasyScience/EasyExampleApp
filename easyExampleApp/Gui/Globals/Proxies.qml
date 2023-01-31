@@ -10,8 +10,12 @@ import QtQuick 2.15
 QtObject {
 
     readonly property var mainProxy: QtObject {
+
         readonly property var project: QtObject {
             property bool projectCreated: false
+            property bool modelAdded: false
+            property bool experimentsLoaded: false
+            property bool summaryGenerated: false
             property string currentProjectPath: '_path_'
             property var projectInfoAsJson: QtObject {
                 property string name: '_name_'
@@ -29,7 +33,7 @@ QtObject {
      <value>lmfit</value>
   </item>
 </root>`
-        property string projectExamplesAsXml:
+            property string projectExamplesAsXml:
 `<root>
   <item>
     <name>PbSO4</name>
@@ -50,6 +54,16 @@ QtObject {
             function createProject() { projectCreated = true }
             function loadExampleProject(fileUrl) {}
         }
+
+        readonly property var experiment: QtObject {
+            property string experimentDataAsXml:
+`<root>
+  <item>
+    <name>D1A@ILL</name>
+  </item>
+</root>`
+        }
+
         readonly property var plotting1d: QtObject {
             property var libs: ['Plotly']
             property string currentLib: 'Plotly'

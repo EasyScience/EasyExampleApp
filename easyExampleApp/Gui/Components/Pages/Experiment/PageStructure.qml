@@ -16,9 +16,9 @@ import Gui.Globals 1.0 as ExGlobals
 import Gui.Components 1.0 as ExComponents
 
 EaComponents.ContentPage {
-    defaultInfo: ExGlobals.Proxies.mainProxy.project.projectCreated ?
+    defaultInfo: ExGlobals.Proxies.mainProxy.project.experimentsLoaded ?
                      "" :
-                     ""//qsTr("No Project Created/Opened")
+                     qsTr("No Experiments Loaded")
 
     mainView: EaComponents.MainContent {
         tabs: [

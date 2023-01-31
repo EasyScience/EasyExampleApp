@@ -7,6 +7,8 @@ import QtQuick 2.15
 import easyApp.Gui.Charts 1.0 as EaCharts
 
 EaCharts.Plotly1dLine {
+
     xAxisTitle: "New x-axis"
     yAxisTitle: "New y-axis"
+
 }

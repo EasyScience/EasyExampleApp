@@ -7,7 +7,9 @@ import QtQuick 2.15
 import easyApp.Gui.Charts 1.0 as EaCharts
 
 EaCharts.Plotly3dSurface {
+
     xAxisTitle: "New x-axis"
     yAxisTitle: "New y-axis"
     zAxisTitle: "New z-axis"
+
 }

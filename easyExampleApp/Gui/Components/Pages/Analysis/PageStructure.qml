@@ -18,15 +18,13 @@ import Gui.Components 1.0 as ExComponents
 EaComponents.ContentPage {
     defaultInfo: ExGlobals.Proxies.mainProxy.project.projectCreated ?
                      "" :
-                     ""//qsTr("No Project Created/Opened")
+                     qsTr("No Analysis Done")
 
     mainView: EaComponents.MainContent {
         tabs: [
-            EaElements.TabButton { text: qsTr("Description") }
         ]
 
         items: [
-            Loader { source: 'MainContent/DescriptionTab.qml' }
         ]
     }
 
