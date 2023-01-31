@@ -24,7 +24,7 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        ///xml: ExGlobals.Proxies.mainProxy.project.projectExamplesAsXml
+        xml: ExGlobals.Proxies.mainProxy.project.projectExamplesAsXml
         query: "/root/item"
 
         XmlRole { name: "name"; query: "name/string()" }

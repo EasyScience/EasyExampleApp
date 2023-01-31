@@ -20,12 +20,35 @@ QtObject {
             }
             property string statusModelAsXml:
 `<root>
-   <item>
+  <item>
+    <label>Calculations</label>
+    <value>CrysPy</value>
+  </item>
+  <item>
      <label>Minimization</label>
      <value>lmfit</value>
-   </item>
+  </item>
+</root>`
+        property string projectExamplesAsXml:
+`<root>
+  <item>
+    <name>PbSO4</name>
+    <description>neutrons, powder, constant wavelength, D1A@ILL</description>
+    <path>../Resources/Examples/PbSO4/project.json</path>
+  </item>
+  <item>
+    <name>Co2SiO4</name>
+    <description>neutrons, powder, constant wavelength, D20@ILL</description>
+    <path>../Resources/Examples/Co2SiO4/project.json</path>
+  </item>
+  <item>
+    <name>Dy3Al5O12</name>
+    <description>neutrons, powder, constant wavelength, G41@LLB</description>
+    <path>../Resources/Examples/Dy3Al5O12/project.json</path>
+  </item>
 </root>`
             function createProject() { projectCreated = true }
+            function loadExampleProject(fileUrl) {}
         }
         readonly property var plotting1d: QtObject {
             property var libs: ['Plotly']
