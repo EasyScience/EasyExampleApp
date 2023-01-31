@@ -38,5 +38,6 @@ build
 ..*
 *.log
 *.zip
+settings.ini*
 .ci/
 .idea/
