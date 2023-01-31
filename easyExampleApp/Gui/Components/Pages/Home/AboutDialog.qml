@@ -13,24 +13,24 @@ EaComponents.AboutDialog {
     visible: EaGlobals.Variables.showAppAboutDialog
     onClosed: EaGlobals.Variables.showAppAboutDialog = false
 
-    appIconPath: ExGlobals.Constants.appLogo
-    appUrl: ExGlobals.Constants.appUrl
+    appIconPath: ExGlobals.Configs.appConfig.icon
+    appUrl: ExGlobals.Configs.appConfig.homePageUrl
 
-    appPrefixName: ExGlobals.Constants.appPrefixNameLogo
-    appSuffixName: ExGlobals.Constants.appSuffixNameLogo
-    appVersion: ExGlobals.Constants.appVersion
-    appDate: ExGlobals.Constants.appDate
+    appPrefixName: ExGlobals.Configs.appConfig.namePrefixForLogo
+    appSuffixName: ExGlobals.Configs.appConfig.nameSuffixForLogo
+    appVersion: ExGlobals.Configs.appConfig.version
+    appDate: ExGlobals.Configs.appConfig.date
 
-    commit: ExGlobals.Constants.commit
-    commitUrl: ExGlobals.Constants.commitUrl
+    commit: ExGlobals.Configs.appConfig.commit
+    commitUrl: ExGlobals.Configs.appConfig.commitUrl
+    branch: ExGlobals.Configs.appConfig.branch
+    branchUrl: ExGlobals.Configs.appConfig.branchUrl
 
-    branch: ExGlobals.Constants.branch
-    branchUrl: ExGlobals.Constants.branchUrl
+    eulaUrl: ExGlobals.Configs.appConfig.licenseUrl
+    oslUrl: ExGlobals.Configs.appConfig.dependenciesUrl
 
-    eulaUrl: ExGlobals.Constants.eulaUrl
-    oslUrl: ExGlobals.Constants.oslUrl
-
-    description: ExGlobals.Constants.description
-
-    essIconPath: ExGlobals.Constants.essLogo
+    description: ExGlobals.Configs.appConfig.description
+    developerIcons: ExGlobals.Configs.appConfig.developerIcons
+    developerYearsFrom: ExGlobals.Configs.appConfig.developerYearsFrom
+    developerYearsTo: ExGlobals.Configs.appConfig.developerYearsTo
 }
