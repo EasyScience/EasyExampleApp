@@ -13,7 +13,7 @@ QtObject {
 
         readonly property var project: QtObject {
             property bool projectCreated: false
-            property bool modelAdded: false
+            property bool modelsAdded: false
             property bool experimentsLoaded: false
             property bool summaryGenerated: false
             property string currentProjectPath: '_path_'

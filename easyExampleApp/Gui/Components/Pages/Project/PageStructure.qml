@@ -41,6 +41,10 @@ EaComponents.ContentPage {
             Loader { source: 'SideBarAdvanced.qml' }
         ]
 
+        continueButton.text: ExGlobals.Proxies.mainProxy.project.projectCreated ?
+                                 qsTr("Continue") :
+                                 qsTr("Continue without project")
+
         continueButton.onClicked: {
             ExGlobals.Variables.modelPageEnabled = true
             ExGlobals.References.modelAppbarButton.toggle()

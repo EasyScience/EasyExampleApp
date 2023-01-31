@@ -10,7 +10,7 @@ import easyApp.Gui.Components 1.0 as EaComponents
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
-        title: qsTr("Experimental Data")
+        title: qsTr("Experimental data")
         collapsible: false
         last: true
 

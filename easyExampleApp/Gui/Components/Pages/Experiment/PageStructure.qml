@@ -45,6 +45,10 @@ EaComponents.ContentPage {
             Loader { source: 'SideBarAdvanced.qml' }
         ]
 
+        continueButton.text: ExGlobals.Proxies.mainProxy.project.experimentsLoaded ?
+                                 qsTr("Continue") :
+                                 qsTr("Continue without experiment data")
+
         continueButton.onClicked: {
             ExGlobals.Variables.analysisPageEnabled = true
             ExGlobals.References.analysisAppbarButton.toggle()
