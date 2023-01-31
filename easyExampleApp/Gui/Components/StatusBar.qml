@@ -16,7 +16,7 @@ EaElements.StatusBar {
     visible: EaGlobals.Variables.appBarCurrentIndex !== 0
 
     model: XmlListModel {
-        xml: ExGlobals.Constants.proxy.project.statusModelAsXml
+        xml: ExGlobals.Proxies.mainProxy.project.statusModelAsXml
         query: "/root/item"
 
         XmlRole { name: "label"; query: "label/string()" }

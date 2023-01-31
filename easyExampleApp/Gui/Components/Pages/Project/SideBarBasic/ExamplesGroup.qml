@@ -14,6 +14,7 @@ import easyApp.Gui.Logic 1.0 as EaLogic
 
 import Gui.Globals 1.0 as ExGlobals
 
+
 EaComponents.TableView {
     id: tableView
 
@@ -23,7 +24,7 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        ///xml: ExGlobals.Constants.proxy.project.projectExamplesAsXml
+        ///xml: ExGlobals.Proxies.mainProxy.project.projectExamplesAsXml
         query: "/root/item"
 
         XmlRole { name: "name"; query: "name/string()" }
@@ -78,7 +79,7 @@ EaComponents.TableView {
 
             onClicked: {
                 const fileUrl = Qt.resolvedUrl(model.path)
-                ExGlobals.Constants.proxy.project.loadExampleProject(fileUrl)
+                ExGlobals.Proxies.mainProxy.project.loadExampleProject(fileUrl)
 
                 ExGlobals.Variables.step1PageEnabled = true
                 ExGlobals.Variables.step2PageEnabled = true

@@ -22,12 +22,13 @@ Item {
         Image {
             id: appLogo
 
-            source: ExGlobals.Constants.appLogo
+            source: ExGlobals.Configs.appConfig.icon
             anchors.horizontalCenter: parent.horizontalCenter
             width: EaStyle.Sizes.fontPixelSize * 5
             fillMode: Image.PreserveAspectFit
             antialiasing: true
         }
+
 
         // Application name
         Row {
@@ -42,13 +43,13 @@ Item {
                 font.family: parent.fontFamily
                 font.pixelSize: parent.fontPixelSize
                 font.weight: Font.Light
-                text: ExGlobals.Constants.appPrefixNameLogo
+                text: ExGlobals.Configs.appConfig.namePrefixForLogo
             }
             EaElements.Label {
                 font.family: parent.fontFamily
                 font.pixelSize: parent.fontPixelSize
                 font.weight: Font.DemiBold
-                text: ExGlobals.Constants.appSuffixNameLogo
+                text: ExGlobals.Configs.appConfig.nameSuffixForLogo
             }
         }
 
@@ -58,21 +59,21 @@ Item {
 
             anchors.horizontalCenter: parent.horizontalCenter
 
-            text: ExGlobals.Constants.branch && ExGlobals.Constants.branch !== 'master'
-                  ? qsTr('Version') + ` <a href="${ExGlobals.Constants.commitUrl}">${ExGlobals.Constants.appVersion}-${ExGlobals.Constants.commit}</a> (${ExGlobals.Constants.appDate})`
-                  : qsTr('Version') + ` ${ExGlobals.Constants.appVersion} (${ExGlobals.Constants.appDate})`
+            text: ExGlobals.Configs.branch && ExGlobals.Configs.branch !== 'master'
+                  ? qsTr('Version') + ` <a href="${ExGlobals.Configs.appConfig.commitUrl}">${ExGlobals.Configs.appConfig.version}-${ExGlobals.Configs.appConfig.commit}</a> (${ExGlobals.Configs.appConfig.date})`
+                  : qsTr('Version') + ` ${ExGlobals.Configs.appConfig.version} (${ExGlobals.Configs.appConfig.date})`
         }
 
         // Github branch
         EaElements.Label {
             id: githubBranch
 
-            visible: ExGlobals.Constants.branch && ExGlobals.Constants.branch !== 'master'
+            visible: ExGlobals.Configs.appConfig.branch && ExGlobals.Configs.appConfig.branch !== 'master'
             topPadding: EaStyle.Sizes.fontPixelSize * 0.5
             anchors.horizontalCenter: parent.horizontalCenter
             opacity: 0
 
-            text: qsTr('Branch') + ` <a href="${ExGlobals.Constants.branchUrl}">${ExGlobals.Constants.branch}</a>`
+            text: qsTr('Branch') + ` <a href="${ExGlobals.Configs.appConfig.branchUrl}">${ExGlobals.Configs.appConfig.branch}</a>`
         }
 
         // Vertical spacer
@@ -89,7 +90,7 @@ Item {
             text: qsTr("Start")
             onClicked: {
                 ExGlobals.Variables.projectPageEnabled = true
-                ExGlobals.Variables.projectAppbarButton.toggle()
+                ExGlobals.References.projectAppbarButton.toggle()
             }
             Component.onCompleted: ExGlobals.Variables.startButton = this
         }
@@ -108,8 +109,10 @@ Item {
                 spacing: EaStyle.Sizes.fontPixelSize
 
                 EaElements.Button {
-                    text: qsTr("About %1".arg(ExGlobals.Constants.appName))
+                    text: qsTr("About %1".arg(ExGlobals.Configs.appConfig.name))
                     onClicked: EaGlobals.Variables.showAppAboutDialog = true
+                    Loader { id: aboutDialogLoader }
+                    Component.onCompleted: aboutDialogLoader.source = "AboutDialog.qml"
                 }
                 EaElements.Button {
                     text: qsTr("Online documentation")

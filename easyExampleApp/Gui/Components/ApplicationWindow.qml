@@ -60,13 +60,13 @@ EaComponents.ApplicationWindow {
             enabled: false
             fontIcon: "question-circle"
             ToolTip.text: qsTr("Get online help")
-            onClicked: Qt.openUrlExternally(ExGlobals.Constants.appUrl)
+            onClicked: Qt.openUrlExternally(ExGlobals.Configs.appConfig.homePageUrl)
         },
 
         EaElements.ToolButton {
             fontIcon: "bug"
             ToolTip.text: qsTr("Report a bug or issue")
-            onClicked: Qt.openUrlExternally(ExGlobals.Constants.appIssuesUrl)
+            onClicked: Qt.openUrlExternally(ExGlobals.Configs.appConfig.issuesUrl)
         }
 
     ]
@@ -95,7 +95,7 @@ EaComponents.ApplicationWindow {
             onCheckedChanged: checked ?
                                   projectPageLoader.source = 'Pages/Project/PageStructure.qml' :
                                   projectPageLoader.source = ''
-            Component.onCompleted: ExGlobals.Variables.projectAppbarButton = this
+            Component.onCompleted: ExGlobals.References.projectAppbarButton = this
         },
 
         // Model tab
@@ -107,7 +107,7 @@ EaComponents.ApplicationWindow {
             onCheckedChanged: checked ?
                                   modelPageLoader.source = 'Pages/Model/PageStructure.qml' :
                                   modelPageLoader.source = ''
-            Component.onCompleted: ExGlobals.Variables.modelAppbarButton = this
+            Component.onCompleted: ExGlobals.References.modelAppbarButton = this
         },
 
         // Experiment tab
@@ -119,7 +119,7 @@ EaComponents.ApplicationWindow {
             onCheckedChanged: checked ?
                                   experimentPageLoader.source = 'Pages/Experiment/PageStructure.qml' :
                                   experimentPageLoader.source = ''
-            Component.onCompleted: ExGlobals.Variables.experimentAppbarButton = this
+            Component.onCompleted: ExGlobals.References.experimentAppbarButton = this
         },
 
         // Analysis tab
@@ -131,7 +131,7 @@ EaComponents.ApplicationWindow {
             onCheckedChanged: checked ?
                                   analysisPageLoader.source = 'Pages/Analysis/PageStructure.qml' :
                                   analysisPageLoader.source = ''
-            Component.onCompleted: ExGlobals.Variables.analysisAppbarButton = this
+            Component.onCompleted: ExGlobals.References.analysisAppbarButton = this
         },
 
         // Summary tab
@@ -143,7 +143,7 @@ EaComponents.ApplicationWindow {
             onCheckedChanged: checked ?
                                   summaryPageLoader.source = 'Pages/Summary/PageStructure.qml' :
                                   summaryPageLoader.source = ''
-            Component.onCompleted: ExGlobals.Variables.summaryAppbarButton = this
+            Component.onCompleted: ExGlobals.References.summaryAppbarButton = this
         }
 
     ]

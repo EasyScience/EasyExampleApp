@@ -20,16 +20,4 @@ QtObject {
     property bool analysisPageEnabled: isDebugMode ? true : false
     property bool summaryPageEnabled: isDebugMode ? true : false
 
-    // //////////////////////////
-    // References to GUI elements
-    // //////////////////////////
-
-    // Application bar tab buttons
-    property var homeAppbarButton
-    property var projectAppbarButton
-    property var modelAppbarButton
-    property var experimentAppbarButton
-    property var analysisAppbarButton
-    property var summaryAppbarButton
-
 }

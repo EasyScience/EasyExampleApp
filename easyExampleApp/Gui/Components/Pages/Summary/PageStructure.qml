@@ -16,7 +16,7 @@ import Gui.Globals 1.0 as ExGlobals
 import Gui.Components 1.0 as ExComponents
 
 EaComponents.ContentPage {
-    defaultInfo: ExGlobals.Constants.proxy.project.projectCreated ?
+    defaultInfo: ExGlobals.Proxies.mainProxy.project.projectCreated ?
                      "" :
                      ""//qsTr("No Project Created/Opened")
 

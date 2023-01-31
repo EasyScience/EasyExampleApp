@@ -28,7 +28,7 @@ Rectangle {
             font.family: EaStyle.Fonts.secondFontFamily
             font.pixelSize: EaStyle.Sizes.fontPixelSize * 3
             font.weight: Font.ExtraLight
-            text: ExGlobals.Constants.proxy.project.projectInfoAsJson.name
+            text: ExGlobals.Proxies.mainProxy.project.projectInfoAsJson.name
         }
 
         Grid {
@@ -41,7 +41,7 @@ Rectangle {
                 text: qsTr("Short description:")
             }
             EaElements.TextInput {
-                text: ExGlobals.Constants.proxy.project.projectInfoAsJson.short_description
+                text: ExGlobals.Proxies.mainProxy.project.projectInfoAsJson.short_description
             }
 
             EaElements.Label {
@@ -49,7 +49,7 @@ Rectangle {
                 text: qsTr("Location:")
             }
             EaElements.Label {
-                text: ExGlobals.Constants.proxy.project.currentProjectPath
+                text: ExGlobals.Proxies.mainProxy.project.currentProjectPath
             }
 
             EaElements.Label {
@@ -57,7 +57,7 @@ Rectangle {
                 text: qsTr("Modified:")
             }
             EaElements.Label {
-                text: ExGlobals.Constants.proxy.project.projectInfoAsJson.modified
+                text: ExGlobals.Proxies.mainProxy.project.projectInfoAsJson.modified
             }
         }
 

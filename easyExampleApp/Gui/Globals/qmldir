@@ -1,4 +1,6 @@
 module Globals
 
-singleton Constants 1.0 Constants.qml
+singleton Configs 1.0 Configs.qml
+singleton Proxies 1.0 Proxies.qml
+singleton References 1.0 References.qml
 singleton Variables 1.0 Variables.qml
