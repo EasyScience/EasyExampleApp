@@ -22,17 +22,6 @@ QtObject {
                 property string short_description: '_short_description_'
                 property string modified: '_modified_'
             }
-            property string statusModelAsXml:
-`<root>
-  <item>
-    <label>Calculations</label>
-    <value>CrysPy</value>
-  </item>
-  <item>
-     <label>Minimization</label>
-     <value>lmfit</value>
-  </item>
-</root>`
             property string projectExamplesAsXml:
 `<root>
   <item>
@@ -55,11 +44,37 @@ QtObject {
             function loadExampleProject(fileUrl) {}
         }
 
+        readonly property var phase: QtObject {
+            property string phasesAsXml:
+`<root>
+  <item>
+    <name>Si3N4_alpha</name>
+  </item>
+  <item>
+    <name>Si3N4_beta</name>
+  </item>
+</root>`
+        }
+
         readonly property var experiment: QtObject {
             property string experimentDataAsXml:
 `<root>
   <item>
     <name>D1A@ILL</name>
+  </item>
+</root>`
+        }
+
+        readonly property var statusBar: QtObject {
+            property string modelAsXml:
+`<root>
+  <item>
+    <label>Calculations</label>
+    <value>CrysPy</value>
+  </item>
+  <item>
+    <label>Minimization</label>
+    <value>lmfit</value>
   </item>
 </root>`
         }
