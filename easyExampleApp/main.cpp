@@ -1,0 +1,32 @@
+// SPDX-FileCopyrightText: 2023 EasyExample contributors
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
+
+#include <QApplication>
+#include <QQmlApplicationEngine>
+#include <QtWebEngine>
+
+
+int main(int argc, char *argv[])
+{
+    // QtWebEngine initialization for the QML GUI components
+    QtWebEngine::initialize();
+
+    // Create application
+    QApplication app(argc, argv);
+
+    // Create QML application engine
+    QQmlApplicationEngine engine;
+
+    // Add paths to be accessible from the QML components
+    engine.addImportPath("qrc:/easyApp"); // EasyApp qml components (../easyApp/easyApp/... in resources.qrc)
+    engine.addImportPath("qrc:/EasyExampleApp"); // Current app qml components (EasyExampleApp/... in resources.qrc)
+
+    // Load the root QML file
+    engine.load("qrc:/EasyExampleApp/Gui/main.qml");
+
+    // Event loop
+    if (engine.rootObjects().isEmpty())
+        return -1;
+    return app.exec();
+}
