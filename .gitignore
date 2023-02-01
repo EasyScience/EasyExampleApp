@@ -17,10 +17,9 @@ __pycache__
 .venv
 .coverage
 .pyc
+resources.py
 
-# Poetry
-dist
-*.egg-info
+# C++
 
 # PyInstaller
 build
@@ -38,6 +37,8 @@ build
 ..*
 *.log
 *.zip
+*.user
 settings.ini*
 .ci/
 .idea/
+.build/
