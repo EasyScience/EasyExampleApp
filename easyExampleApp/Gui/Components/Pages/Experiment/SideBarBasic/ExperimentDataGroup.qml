@@ -23,6 +23,7 @@ Column {
 
         // Table model
 
+        /*
         model: XmlListModel {
             xml: ExGlobals.Proxies.mainProxy.project.experimentsLoaded ?
                      ExGlobals.Proxies.mainProxy.experiment.experimentDataAsXml :
@@ -30,6 +31,14 @@ Column {
             query: "/root/item"
 
             XmlRole { name: "label"; query: "name/string()" }
+        }
+        */
+
+        model: EaComponents.JsonListModel {
+            json: ExGlobals.Proxies.mainProxy.project.experimentsLoaded ?
+                      JSON.stringify(ExGlobals.Proxies.mainProxy.experiment.experimentDataAsJson) :
+                      ""
+            query: "$[*]"
         }
 
         // Table rows

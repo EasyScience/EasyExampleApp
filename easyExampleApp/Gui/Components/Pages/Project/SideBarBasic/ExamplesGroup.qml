@@ -23,6 +23,7 @@ EaComponents.TableView {
 
     // Table model
 
+    /*
     model: XmlListModel {
         xml: ExGlobals.Proxies.mainProxy.project.projectExamplesAsXml
         query: "/root/item"
@@ -30,6 +31,12 @@ EaComponents.TableView {
         XmlRole { name: "name"; query: "name/string()" }
         XmlRole { name: "description"; query: "description/string()" }
         XmlRole { name: "path"; query: "path/string()" }
+    }
+    */
+
+    model: EaComponents.JsonListModel {
+        json: JSON.stringify(ExGlobals.Proxies.mainProxy.project.projectExamplesAsJson)
+        query: "$[*]"
     }
 
     // Table rows
