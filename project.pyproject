@@ -1,0 +1,7 @@
+{
+"files": [
+    "EasyExampleApp/main.py",
+
+    "EasyExampleApp/Gui/main.qml"
+    ]
+}
