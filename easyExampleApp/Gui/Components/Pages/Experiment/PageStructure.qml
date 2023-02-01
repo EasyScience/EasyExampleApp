@@ -24,13 +24,15 @@ EaComponents.ContentPage {
         tabs: [
             EaElements.TabButton { text: qsTr("Plot View 1D") },
             EaElements.TabButton { text: qsTr("Plot View 2D") },
-            EaElements.TabButton { text: qsTr("Plot View 3D") }
+            EaElements.TabButton { text: qsTr("Plot View 3D (surface)") },
+            EaElements.TabButton { text: qsTr("Plot View 3D (scatter)") }
         ]
 
         items: [
             Loader { source: 'MainContent/PlotView1dTab.qml' },
             Loader { source: 'MainContent/PlotView2dTab.qml' },
-            Loader { source: 'MainContent/PlotView3dTab.qml' }
+            Loader { source: 'MainContent/PlotViewSurface3dTab.qml' },
+            Loader { source: 'MainContent/PlotViewScatter3dTab.qml' }
         ]
     }
 
