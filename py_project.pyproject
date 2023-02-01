@@ -1,0 +1,8 @@
+{
+"files": [
+    "resources.qrc",
+    "EasyExampleApp/main.py",
+    "EasyExampleApp/Gui/main.qml",
+    "../easyApp/easyApp/Gui/Style/Colors.qml"
+    ]
+}
