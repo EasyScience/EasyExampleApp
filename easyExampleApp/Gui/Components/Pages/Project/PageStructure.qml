@@ -4,7 +4,6 @@
 
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Dialogs as Dialogs1
 
 import easyApp.Gui.Style 1.0 as EaStyle
 import easyApp.Gui.Globals 1.0 as EaGlobals
