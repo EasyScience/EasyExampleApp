@@ -1,7 +1,7 @@
 TEMPLATE = app
 
 # Application name
-TARGET = EasyExampleApp
+TARGET = cpp_project #EasyExampleApp doesn't work for WASM
 
 CONFIG += c++14
 
@@ -14,3 +14,13 @@ SOURCES += \
     EasyExampleApp/main.cpp
 
 RESOURCES += resources.qrc
+
+# Additional import path used to resolve QML modules in Qt Creator's code model
+QML_IMPORT_PATH += \
+    EasyExampleApp \
+    ../easyApp
+
+# Additional import path used to resolve QML modules just for Qt Quick Designer
+QML_DESIGNER_IMPORT_PATH += \
+    EasyExampleApp \
+    ../easyApp
