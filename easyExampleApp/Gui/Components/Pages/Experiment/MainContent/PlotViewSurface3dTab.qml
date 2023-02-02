@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2022 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-import QtQuick 2.15
+import QtQuick
 
 import easyApp.Gui.Charts 1.0 as EaCharts
 
