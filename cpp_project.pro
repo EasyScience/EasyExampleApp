@@ -3,12 +3,12 @@ TEMPLATE = app
 # Application name
 TARGET = cpp_project #EasyExampleApp doesn't work for WASM
 
-CONFIG += c++14
+CONFIG += c++17
 
 # Makes compiler emit warnings if deprecated feature is used
 DEFINES += QT_DEPRECATED_WARNINGS
 
-QT += widgets svg qml charts gui quick webengine
+QT += quick gui qml webenginequick
 
 SOURCES += \
     EasyExampleApp/main.cpp

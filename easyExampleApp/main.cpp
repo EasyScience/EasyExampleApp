@@ -2,18 +2,18 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-#include <QApplication>
+#include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QtWebEngine>
+#include <QtWebEngineQuick/qtwebenginequickglobal.h>
 
 
 int main(int argc, char *argv[])
 {
     // QtWebEngine initialization for the QML GUI components
-    QtWebEngine::initialize();
+    QtWebEngineQuick::initialize();
 
     // Create application
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
 
     // Create QML application engine
     QQmlApplicationEngine engine;
