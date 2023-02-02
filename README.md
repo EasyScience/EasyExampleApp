@@ -34,6 +34,9 @@ engine.addImportPath(os.path.join(easyApp.__path__[0], '..'))  # EasyApp qml com
 ```
 
 ### Pre-build with resources.qrc  
+* https://www.pythonguis.com/tutorials/pyside-qresource-system/
+* https://www.pythonguis.com/tutorials/packaging-data-files-pyside6-with-qresource-system/
+* https://doc.qt.io/qtforpython/tutorials/basictutorial/qrcfiles.html
 * python3.9 -m venv .venv
 * source .venv/bin/activate
 * pip install --upgrade pip
@@ -46,3 +49,15 @@ engine.addImportPath('qrc:/easyApp')  # EasyApp qml components
 engine.addImportPath('qrc:/EasyExampleApp')  # Current app qml components
 engine.load('qrc:/EasyExampleApp/Gui/main.qml')
 ```
+
+## C++
+
+## WebAssembly
+
+* https://doc.qt.io/qtcreator/creator-setup-webassembly.html
+* https://doc.qt.io/qt-6/wasm.html
+* https://forum.qt.io/topic/109672/qt-for-webassembly-binaries-for-mac-os/4
+* https://www.qtcentre.org/threads/71184-Webassembly-Project-ERROR-Unknown-module(s)-in-QT-webengine
+
+### Run
+emrun --browser chrome .build_wasm/Debug/cpp_project.html
