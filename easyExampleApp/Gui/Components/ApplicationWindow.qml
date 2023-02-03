@@ -92,7 +92,7 @@ EaComponents.ApplicationWindow {
             fontIcon: "archive"
             text: qsTr("Project")
             ToolTip.text: qsTr("Project description page")
-            onCheckedChanged: checked ?
+            onCheckedChanged: enabled ?
                                   projectPageLoader.source = 'Pages/Project/PageStructure.qml' :
                                   projectPageLoader.source = ''
             Component.onCompleted: ExGlobals.References.projectAppbarButton = this
@@ -104,7 +104,7 @@ EaComponents.ApplicationWindow {
             fontIcon: "gem"
             text: qsTr("Model")
             ToolTip.text: qsTr("Model description page")
-            onCheckedChanged: checked ?
+            onCheckedChanged: enabled ?
                                   modelPageLoader.source = 'Pages/Model/PageStructure.qml' :
                                   modelPageLoader.source = ''
             Component.onCompleted: ExGlobals.References.modelAppbarButton = this
@@ -116,7 +116,7 @@ EaComponents.ApplicationWindow {
             fontIcon: "microscope"
             text: qsTr("Experiment")
             ToolTip.text: qsTr("Experimental settings and measured data page")
-            onCheckedChanged: checked ?
+            onCheckedChanged: enabled ?
                                   experimentPageLoader.source = 'Pages/Experiment/PageStructure.qml' :
                                   experimentPageLoader.source = ''
             Component.onCompleted: ExGlobals.References.experimentAppbarButton = this
@@ -128,7 +128,7 @@ EaComponents.ApplicationWindow {
             fontIcon: "calculator"
             text: qsTr("Analysis")
             ToolTip.text: qsTr("Simulation and fitting page")
-            onCheckedChanged: checked ?
+            onCheckedChanged: enabled ?
                                   analysisPageLoader.source = 'Pages/Analysis/PageStructure.qml' :
                                   analysisPageLoader.source = ''
             Component.onCompleted: ExGlobals.References.analysisAppbarButton = this
@@ -140,7 +140,7 @@ EaComponents.ApplicationWindow {
             fontIcon: "clipboard-list"
             text: qsTr("Summary")
             ToolTip.text: qsTr("Summary of the work done")
-            onCheckedChanged: checked ?
+            onCheckedChanged: enabled ?
                                   summaryPageLoader.source = 'Pages/Summary/PageStructure.qml' :
                                   summaryPageLoader.source = ''
             Component.onCompleted: ExGlobals.References.summaryAppbarButton = this
