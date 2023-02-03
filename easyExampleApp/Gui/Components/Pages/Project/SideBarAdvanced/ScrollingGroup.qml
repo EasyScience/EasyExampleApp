@@ -9,35 +9,14 @@ import easyApp.Gui.Elements as EaElements
 
 
 Column {
+    property int numLabels: 50
+
     spacing: EaStyle.Sizes.fontPixelSize
 
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-    EaElements.Label {}
-
-    Component.onCompleted: {
-        for (let i = 0; i < visibleChildren.length; ++i) {
-            visibleChildren[i].text = `Label ${i+1} of ${visibleChildren.length}`
+    Repeater {
+        model: numLabels
+        EaElements.Label {
+            text: `Label ${index+1} of ${numLabels}`
         }
     }
 

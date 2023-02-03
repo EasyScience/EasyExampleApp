@@ -7,7 +7,7 @@ pragma Singleton
 import QtQuick
 
 
-QtObject {
+QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS > Reset Code Model"
 
     // Application bar tab buttons
     property var homeAppbarButton

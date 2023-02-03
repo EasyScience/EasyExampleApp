@@ -11,6 +11,7 @@ import easyApp.Gui.Components as EaComponents
 
 import Gui.Globals as ExGlobals
 
+
 Rectangle {
     readonly property int commonSpacing: EaStyle.Sizes.fontPixelSize * 1.5
 

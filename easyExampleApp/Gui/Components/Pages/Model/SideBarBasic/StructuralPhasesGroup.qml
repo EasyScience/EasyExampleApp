@@ -14,6 +14,7 @@ import easyApp.Gui.Logic as EaLogic
 
 import Gui.Globals as ExGlobals
 
+
 Column {
     spacing: EaStyle.Sizes.fontPixelSize
 

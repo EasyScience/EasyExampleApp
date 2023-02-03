@@ -9,6 +9,7 @@ import easyApp.Gui.Components as EaComponents
 
 import Gui.Globals as ExGlobals
 
+
 EaComponents.AboutDialog {
     visible: EaGlobals.Variables.showAppAboutDialog
     onClosed: EaGlobals.Variables.showAppAboutDialog = false

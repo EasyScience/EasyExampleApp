@@ -7,7 +7,7 @@ pragma Singleton
 import QtQuick
 
 
-QtObject { // If "Unknown component. (M300)", try: "Tools > QML/JS > Reset Code Model"
+QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS > Reset Code Model"
 
     readonly property var mainProxy: QtObject {
 
