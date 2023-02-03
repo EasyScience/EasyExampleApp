@@ -35,11 +35,9 @@ Grid {
 
     EaElements.SideBarButton {
         enabled: false
+
         fontIcon: "upload"
         text: qsTr("Open an existing project")
-
-        onClicked: fileDialogLoadProject.open()
-        Component.onCompleted: ExGlobals.Variables.openProjectButton = this
     }
 
     EaElements.SideBarButton {
