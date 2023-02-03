@@ -4,10 +4,10 @@
 
 import QtQuick
 
-import easyApp.Gui.Elements 1.0 as EaElements
-import easyApp.Gui.Components 1.0 as EaComponents
+import easyApp.Gui.Elements as EaElements
+import easyApp.Gui.Components as EaComponents
 
-import Gui.Globals 1.0 as ExGlobals
+import Gui.Globals as ExGlobals
 
 
 EaComponents.SideBarColumn {

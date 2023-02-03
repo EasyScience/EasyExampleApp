@@ -5,11 +5,11 @@
 import QtQuick
 import QtQuick.Controls
 
-import easyApp.Gui.Style 1.0 as EaStyle
-import easyApp.Gui.Elements 1.0 as EaElements
-import easyApp.Gui.Components 1.0 as EaComponents
+import easyApp.Gui.Style as EaStyle
+import easyApp.Gui.Elements as EaElements
+import easyApp.Gui.Components as EaComponents
 
-import Gui.Globals 1.0 as ExGlobals
+import Gui.Globals as ExGlobals
 
 Rectangle {
     readonly property int commonSpacing: EaStyle.Sizes.fontPixelSize * 1.5

@@ -4,7 +4,7 @@
 
 import QtQuick
 
-import easyApp.Gui.Charts 1.0 as EaCharts
+import easyApp.Gui.Charts as EaCharts
 
 EaCharts.Plotly3dSurface {
 

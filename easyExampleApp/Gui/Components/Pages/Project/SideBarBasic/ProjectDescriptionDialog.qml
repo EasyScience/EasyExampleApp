@@ -1,13 +1,13 @@
 import QtQuick
 
-import easyApp.Gui.Globals 1.0 as EaGlobals
-import easyApp.Gui.Components 1.0 as EaComponents
+import easyApp.Gui.Globals as EaGlobals
+import easyApp.Gui.Components as EaComponents
 
 // SPDX-FileCopyrightText: 2022 EasyExample contributors
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2022 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-import Gui.Globals 1.0 as ExGlobals
+import Gui.Globals as ExGlobals
 
 EaComponents.ProjectDescriptionDialog {
     visible: EaGlobals.Variables.showProjectDescriptionDialog

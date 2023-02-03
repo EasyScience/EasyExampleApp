@@ -4,8 +4,8 @@
 
 import QtQuick
 
-import easyApp.Gui.Elements 1.0 as EaElements
-import easyApp.Gui.Components 1.0 as EaComponents
+import easyApp.Gui.Elements as EaElements
+import easyApp.Gui.Components as EaComponents
 
 EaComponents.SideBarColumn {
 

@@ -5,13 +5,13 @@
 import QtQuick
 import QtQuick.Controls
 
-import easyApp.Gui.Style 1.0 as EaStyle
-import easyApp.Gui.Globals 1.0 as EaGlobals
-import easyApp.Gui.Elements 1.0 as EaElements
-import easyApp.Gui.Components 1.0 as EaComponents
+import easyApp.Gui.Style as EaStyle
+import easyApp.Gui.Globals as EaGlobals
+import easyApp.Gui.Elements as EaElements
+import easyApp.Gui.Components as EaComponents
 
-import Gui.Globals 1.0 as ExGlobals
-import Gui.Components 1.0 as ExComponents
+import Gui.Globals as ExGlobals
+import Gui.Components as ExComponents
 
 EaComponents.ContentPage {
     defaultInfo: ExGlobals.Proxies.mainProxy.project.modelsAdded ?

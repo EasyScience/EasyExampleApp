@@ -5,8 +5,8 @@
 import QtQuick
 import QtQuick.Controls
 
-import Gui.Globals 1.0 as ExGlobals
-import Gui.Components 1.0 as ExComponents
+import Gui.Globals as ExGlobals
+import Gui.Components as ExComponents
 
 
 ExComponents.ApplicationWindow {
