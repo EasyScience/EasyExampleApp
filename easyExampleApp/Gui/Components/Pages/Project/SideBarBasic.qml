@@ -4,8 +4,8 @@
 
 import QtQuick
 
-import easyApp.Gui.Elements as EaElements
-import easyApp.Gui.Components as EaComponents
+import EasyApp.Gui.Elements as EaElements
+import EasyApp.Gui.Components as EaComponents
 
 import Gui.Globals as ExGlobals
 

@@ -21,9 +21,9 @@ if __name__ == '__main__':
     engine = QQmlApplicationEngine()
 
     # Add paths to be accessible from the QML components
-    #engine.addImportPath('../easyApp')  # EasyApp qml components
+    #engine.addImportPath('../EasyApp')  # EasyApp qml components
     #engine.addImportPath('EasyExampleApp')  # Current app qml components
-    engine.addImportPath('../../easyApp')  # EasyApp qml components
+    engine.addImportPath('../../EasyApp')  # EasyApp qml components
     engine.addImportPath('.')  # Current app qml components
 
     # Load the root QML file

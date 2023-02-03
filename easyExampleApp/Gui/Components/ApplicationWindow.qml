@@ -5,9 +5,9 @@
 import QtQuick
 import QtQuick.Controls
 
-import easyApp.Gui.Globals as EaGlobals
-import easyApp.Gui.Elements as EaElements
-import easyApp.Gui.Components as EaComponents
+import EasyApp.Gui.Globals as EaGlobals
+import EasyApp.Gui.Elements as EaElements
+import EasyApp.Gui.Components as EaComponents
 
 import Gui.Globals as ExGlobals
 import Gui.Components as ExComponents

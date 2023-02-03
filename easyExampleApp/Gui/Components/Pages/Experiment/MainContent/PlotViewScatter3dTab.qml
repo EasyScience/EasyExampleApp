@@ -4,7 +4,7 @@
 
 import QtQuick
 
-import easyApp.Gui.Charts as EaCharts
+import EasyApp.Gui.Charts as EaCharts
 
 
 EaCharts.Plotly3dScatter {

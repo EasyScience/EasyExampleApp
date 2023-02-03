@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     // Add paths to be accessible from the QML components
-    engine.addImportPath("qrc:/easyApp"); // EasyApp qml components (../easyApp/easyApp/... in resources.qrc)
+    engine.addImportPath("qrc:/EasyApp"); // EasyApp qml components (../EasyApp/EasyApp/... in resources.qrc)
     engine.addImportPath("qrc:/EasyExampleApp"); // Current app qml components (EasyExampleApp/... in resources.qrc)
 
     // Load the root QML file

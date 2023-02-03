@@ -6,11 +6,11 @@ import QtQuick
 import QtQuick.Controls
 //import QtQuick.XmlListModel 2.13
 
-import easyApp.Gui.Globals as EaGlobals
-import easyApp.Gui.Style as EaStyle
-import easyApp.Gui.Elements as EaElements
-import easyApp.Gui.Components as EaComponents
-import easyApp.Gui.Logic as EaLogic
+import EasyApp.Gui.Globals as EaGlobals
+import EasyApp.Gui.Style as EaStyle
+import EasyApp.Gui.Elements as EaElements
+import EasyApp.Gui.Components as EaComponents
+import EasyApp.Gui.Logic as EaLogic
 
 import Gui.Globals as ExGlobals
 
