@@ -34,7 +34,7 @@ Window {
 
     Component.onCompleted: {
         print("Base window loaded:", this)
-        applicationWindoeLoader.source = "Components/ApplicationWindow.qml"
+        applicationWindoeLoader.source = "Components/ApplicationWindow.qml"  // Fix non-transparent rounded corners
     }
     Component.onDestruction: print("Base window destroyed:", this)
 
