@@ -41,7 +41,7 @@ engine.addImportPath(os.path.join(easyApp.__path__[0], '..'))  # EasyApp qml com
 * source .venv/bin/activate
 * pip install --upgrade pip
 * pip install PySide2
-* pyside2-rcc resources.qrc -o EasyExampleApp/resources.py
+* pyside6-rcc EasyExampleApp/resources.qrc -o EasyExampleApp/resources.py
 * python EasyExampleApp/main.py
 ```
 import resources  # resources.py created from resources.qrc by pyside2-rcc
