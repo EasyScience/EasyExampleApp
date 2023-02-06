@@ -6,6 +6,7 @@ import QtQuick
 import QtQuick.Controls
 
 import EasyApp.Gui.Globals as EaGlobals
+import EasyApp.Gui.Animations as EaAnimations
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
@@ -14,6 +15,21 @@ import Gui.Components as ExComponents
 
 
 EaComponents.ApplicationWindow {
+
+    appName: ExGlobals.Configs.appConfig.name
+    appVersion: ExGlobals.Configs.appConfig.version
+    appDate: ExGlobals.Configs.appConfig.date
+
+    opacity: ExGlobals.Variables.applicationWindowOpacity
+    Behavior on opacity { EaAnimations.ThemeChange {} }
+
+    onClosing: Qt.quit()
+
+    Component.onCompleted: {
+        print("Application window loaded:", this)
+        ExGlobals.Variables.applicationWindowCompleted = true
+    }
+    Component.onDestruction: print("Application window destroyed:", this)
 
     ///////////////////
     // APPLICATION BAR
@@ -86,8 +102,6 @@ EaComponents.ApplicationWindow {
 
         // Project tab
         EaElements.AppBarTabButton {
-            id: projectTabButton
-
             enabled: ExGlobals.Variables.projectPageEnabled
             fontIcon: "archive"
             text: qsTr("Project")

@@ -29,7 +29,6 @@ Item {
             antialiasing: true
         }
 
-
         // Application name
         Row {
             id: appName
@@ -146,6 +145,9 @@ Item {
         }
     }
 
-    Component.onCompleted: print("Home page loaded:", this)
+    Component.onCompleted: {
+        print("Home page loaded:", this)
+        ExGlobals.Variables.homePageCompleted = true
+    }
     Component.onDestruction: print("Home page destroyed:", this)
 }
