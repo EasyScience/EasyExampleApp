@@ -18,7 +18,7 @@ Window {
 
     property bool initialGuiCompleted: ExGlobals.Variables.applicationWindowCompleted &&
                                        ExGlobals.Variables.homePageCompleted
-    onInitialGuiCompletedChanged: loadingLogoAnimo.loops = 1
+    onInitialGuiCompletedChanged: loadingLogoAnimo.stop()
 
     visible: true
 
@@ -32,7 +32,10 @@ Window {
 
     color: "transparent"
 
-    Component.onCompleted: print("Base window loaded:", this)
+    Component.onCompleted: {
+        print("Base window loaded:", this)
+        applicationWindoeLoader.source = "Components/ApplicationWindow.qml"
+    }
     Component.onDestruction: print("Base window destroyed:", this)
 
     // Start logo with animation
@@ -79,7 +82,9 @@ Window {
     // Application window loader
 
     Loader {
-        source: "Components/ApplicationWindow.qml"
+        id: applicationWindoeLoader
+        visible: status === Loader.Ready
+        asynchronous: true
     }
 
 }
