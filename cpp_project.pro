@@ -13,7 +13,7 @@ QT += quick gui qml webenginequick
 SOURCES += \
     EasyExampleApp/main.cpp
 
-RESOURCES += resources.qrc
+RESOURCES += EasyExampleApp/resources.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH += \
