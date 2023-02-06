@@ -19,11 +19,11 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     // Add paths to be accessible from the QML components
-    engine.addImportPath("qrc:/EasyApp"); // EasyApp qml components (../EasyApp/EasyApp/... in resources.qrc)
-    engine.addImportPath("qrc:/EasyExampleApp"); // Current app qml components (EasyExampleApp/... in resources.qrc)
+    engine.addImportPath("qrc:/EasyApp");
+    engine.addImportPath("qrc:/");
 
     // Load the root QML file
-    engine.load("qrc:/EasyExampleApp/Gui/main.qml");
+    engine.load("qrc:/Gui/main.qml");
 
     // Event loop
     if (engine.rootObjects().isEmpty())
