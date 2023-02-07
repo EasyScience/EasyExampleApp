@@ -12,7 +12,7 @@
         <file>Gui/Components/Pages/Experiment/SideBarAdvanced.qml</file>
         <file>Gui/Components/Pages/Experiment/SideBarBasic.qml</file>
         <file>Gui/Components/Pages/Home/AboutDialog.qml</file>
-        <file>Gui/Components/Pages/Home/PageStructure.qml</file>
+        <file>Gui/Components/Pages/Home/Page.qml</file>
         <file>Gui/Components/Pages/Model/MainContent/StructureView3dTab.qml</file>
         <file>Gui/Components/Pages/Model/SideBarBasic/StructuralPhasesGroup.qml</file>
         <file>Gui/Components/Pages/Model/PageStructure.qml</file>

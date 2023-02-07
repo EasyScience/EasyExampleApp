@@ -8,83 +8,34 @@ import QtQuick.Controls
 import QtQuick.Window
 
 import EasyApp.Gui.Style as EaStyle
+import EasyApp.Gui.Elements as EaElements
 
 import Gui.Globals as ExGlobals
 import Gui.Components as ExComponents
 
 
-Window {
-    id: baseWindow
+EaElements.SplashScreen {
 
-    property bool initialGuiCompleted: ExGlobals.Variables.applicationWindowCompleted &&
-                                       ExGlobals.Variables.homePageCompleted
-    onInitialGuiCompletedChanged: loadingLogoAnimo.stop()
+    appNamePrefix: ExGlobals.Configs.appConfig.namePrefixForLogo
+    appNameSuffix: ExGlobals.Configs.appConfig.nameSuffixForLogo
+    appVersion: ExGlobals.Configs.branch && ExGlobals.Configs.branch !== 'master' ?
+                    qsTr('Version') + ` <a href="${ExGlobals.Configs.appConfig.commitUrl}">${ExGlobals.Configs.appConfig.version}-${ExGlobals.Configs.appConfig.commit}</a> (${ExGlobals.Configs.appConfig.date})` :
+                    qsTr('Version') + ` ${ExGlobals.Configs.appConfig.version} (${ExGlobals.Configs.appConfig.date})`
+    logoSource: ExGlobals.Configs.appConfig.icon
 
-    visible: true
+    initialGuiCompleted: ExGlobals.Variables.applicationWindowCreated &&
+                         ExGlobals.Variables.homePageCreated
 
-    //x: Screen.width / 2 - width / 2
-    //y: Screen.height / 2 - height / 2
+    onAnimationFinishedChanged: ExGlobals.Variables.splashScreenAnimoFinished = animationFinished
 
-    height: EaStyle.Sizes.fontPixelSize * 11
-    width: EaStyle.Sizes.fontPixelSize * 11
-
-    flags: Qt.FramelessWindowHint //Qt.Popup
-
-    color: "transparent"
-
-    Component.onCompleted: {
-        print("Base window loaded:", this)
-        applicationWindoeLoader.source = "Components/ApplicationWindow.qml"  // Fix non-transparent rounded corners
-    }
-    Component.onDestruction: print("Base window destroyed:", this)
-
-    // Start logo with animation
-
-    Rectangle {
-        anchors.fill: parent
-
-        color: EaStyle.Colors.appBarBackground
-        radius: EaStyle.Sizes.fontPixelSize
-
-        Image {
-            id: loadingLogo
-
-            anchors.fill: parent
-            anchors.margins: EaStyle.Sizes.fontPixelSize * 1.5
-
-            source: ExGlobals.Configs.appConfig.icon
-            fillMode: Image.PreserveAspectFit
-            antialiasing: true
-
-            RotationAnimation {
-                id: loadingLogoAnimo
-
-                target: loadingLogo
-
-                running: true
-                alwaysRunToEnd: true
-
-                loops: Animation.Infinite
-                from: 0
-                to: 360 * 4
-                duration: 2000
-
-                easing.type: Easing.OutInElastic
-
-                onFinished: {
-                    baseWindow.visible = false
-                    ExGlobals.Variables.applicationWindowOpacity = 1.0
-                }
-            }
-        }
-    }
+    Component.onCompleted: print("Splash screen loaded:", this)
+    Component.onDestruction: print("Splash screen destroyed:", this)
 
     // Application window loader
 
     Loader {
-        id: applicationWindoeLoader
-        visible: status === Loader.Ready
         asynchronous: true
+        source: "Components/ApplicationWindow.qml"
     }
 
 }

@@ -147,7 +147,7 @@ Item {
 
     Component.onCompleted: {
         print("Home page loaded:", this)
-        ExGlobals.Variables.homePageCompleted = true
+        ExGlobals.Variables.homePageCreated = true
     }
     Component.onDestruction: print("Home page destroyed:", this)
 }

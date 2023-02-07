@@ -11,7 +11,7 @@ from PySide6.QtWebEngineQuick import QtWebEngineQuick
 
 class ResourcePaths:
     def __init__(self):
-        self.main_qml_path = ''  # main.qml file
+        self.main_qml_path = ''  # Current app main.qml file
         self.import_paths = []   # EasyApp qml components (EasyApp/...) & Current app qml components (Gui/...)
         self.setPaths()
 

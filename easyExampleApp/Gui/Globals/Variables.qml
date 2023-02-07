@@ -21,8 +21,8 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     property bool summaryPageEnabled: isDebugMode ? true : false
 
     // Misc
-    property real applicationWindowOpacity: 0.0
-    property bool applicationWindowCompleted: false
-    property bool homePageCompleted: false
+    property bool splashScreenAnimoFinished: isDebugMode ? true : false
+    property bool applicationWindowCreated: false
+    property bool homePageCreated: false
 
 }
