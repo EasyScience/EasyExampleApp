@@ -18,9 +18,7 @@ EaElements.SplashScreen {
 
     appNamePrefix: ExGlobals.Configs.appConfig.namePrefixForLogo
     appNameSuffix: ExGlobals.Configs.appConfig.nameSuffixForLogo
-    appVersion: ExGlobals.Configs.branch && ExGlobals.Configs.branch !== 'master' ?
-                    qsTr('Version') + ` <a href="${ExGlobals.Configs.appConfig.commitUrl}">${ExGlobals.Configs.appConfig.version}-${ExGlobals.Configs.appConfig.commit}</a> (${ExGlobals.Configs.appConfig.date})` :
-                    qsTr('Version') + ` ${ExGlobals.Configs.appConfig.version} (${ExGlobals.Configs.appConfig.date})`
+    appVersion: qsTr('Version') + ` ${ExGlobals.Configs.appConfig.version} (${ExGlobals.Configs.appConfig.date})`
     logoSource: ExGlobals.Configs.appConfig.icon
 
     initialGuiCompleted: ExGlobals.Variables.applicationWindowCreated &&

@@ -11,7 +11,7 @@ import EasyApp.Gui.Components as EaComponents
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
-        title: qsTr("Scrolling")
+        title: qsTr("Scrolling example")
         collapsed: false
         last: true
 

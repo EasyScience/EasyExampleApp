@@ -58,9 +58,7 @@ Item {
 
             anchors.horizontalCenter: parent.horizontalCenter
 
-            text: ExGlobals.Configs.branch && ExGlobals.Configs.branch !== 'master'
-                  ? qsTr('Version') + ` <a href="${ExGlobals.Configs.appConfig.commitUrl}">${ExGlobals.Configs.appConfig.version}-${ExGlobals.Configs.appConfig.commit}</a> (${ExGlobals.Configs.appConfig.date})`
-                  : qsTr('Version') + ` ${ExGlobals.Configs.appConfig.version} (${ExGlobals.Configs.appConfig.date})`
+            text: qsTr('Version') + ` ${ExGlobals.Configs.appConfig.version} (${ExGlobals.Configs.appConfig.date})`
         }
 
         // Github branch
