@@ -4,7 +4,6 @@
 
 import QtQuick
 import QtQuick.Controls
-//import QtQuick.XmlListModel 2.15
 
 import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Globals as EaGlobals
@@ -16,23 +15,23 @@ import Gui.Components as ExComponents
 
 
 EaComponents.ContentPage {
-    defaultInfo: ExGlobals.Proxies.mainProxy.project.experimentsLoaded ?
+    defaultInfo: ExGlobals.Proxies.mainProxy.experiment.experimentsLoaded ?
                      "" :
-                     qsTr("No Experiments Loaded")
+                     qsTr("No experiments loaded")
 
     mainView: EaComponents.MainContent {
         tabs: [
-            EaElements.TabButton { text: qsTr("Plot View 1D") },
-            EaElements.TabButton { text: qsTr("Plot View 2D") },
-            EaElements.TabButton { text: qsTr("Plot View 3D (surface)") },
-            EaElements.TabButton { text: qsTr("Plot View 3D (scatter)") }
+            EaElements.TabButton { text: qsTr("Data view 1D") },
+            EaElements.TabButton { text: qsTr("Data view 2D") },
+            EaElements.TabButton { text: qsTr("Data view 3D (surface)") },
+            EaElements.TabButton { text: qsTr("Data view 3D (scatter)") }
         ]
 
         items: [
-            Loader { source: 'MainContent/PlotView1dTab.qml' },
-            Loader { source: 'MainContent/PlotView2dTab.qml' },
-            Loader { source: 'MainContent/PlotViewSurface3dTab.qml' },
-            Loader { source: 'MainContent/PlotViewScatter3dTab.qml' }
+            Loader { source: 'MainContent/DataView1dTab.qml' },
+            Loader { source: 'MainContent/DataView2dTab.qml' },
+            Loader { source: 'MainContent/DataViewSurface3dTab.qml' },
+            Loader { source: 'MainContent/DataViewScatter3dTab.qml' }
         ]
     }
 
@@ -47,7 +46,7 @@ EaComponents.ContentPage {
             Loader { source: 'SideBarAdvanced.qml' }
         ]
 
-        continueButton.text: ExGlobals.Proxies.mainProxy.project.experimentsLoaded ?
+        continueButton.text: ExGlobals.Proxies.mainProxy.experiment.experimentsLoaded ?
                                  qsTr("Continue") :
                                  qsTr("Continue without experiment data")
 

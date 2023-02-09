@@ -80,7 +80,6 @@ Item {
         EaElements.SideBarButton {
             id: startButton
 
-            width: EaStyle.Sizes.fontPixelSize * 15
             anchors.horizontalCenter: parent.horizontalCenter
 
             fontIcon: "rocket"

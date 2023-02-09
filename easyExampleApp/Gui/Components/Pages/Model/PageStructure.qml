@@ -15,17 +15,17 @@ import Gui.Components as ExComponents
 
 
 EaComponents.ContentPage {
-    defaultInfo: ExGlobals.Proxies.mainProxy.project.modelsAdded ?
+    defaultInfo: ExGlobals.Proxies.mainProxy.model.modelsAdded ?
                      "" :
-                     qsTr("No Models Added")
+                     qsTr("No models added")
 
     mainView: EaComponents.MainContent {
         tabs: [
-            EaElements.TabButton { text: qsTr("Structure View") }
+            EaElements.TabButton { text: qsTr("Model view 1D") }
         ]
 
         items: [
-            Loader { source: 'MainContent/StructureView3dTab.qml' }
+            Loader { source: 'MainContent/ModelView1dTab.qml' }
         ]
     }
 
@@ -40,7 +40,7 @@ EaComponents.ContentPage {
             Loader { source: 'SideBarAdvanced.qml' }
         ]
 
-        continueButton.enabled: ExGlobals.Proxies.mainProxy.project.modelsAdded
+        continueButton.enabled: ExGlobals.Proxies.mainProxy.model.modelsAdded
 
         continueButton.onClicked: {
             ExGlobals.Variables.experimentPageEnabled = true

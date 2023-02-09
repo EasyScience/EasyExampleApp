@@ -3,14 +3,17 @@
 // © 2022 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 import QtQuick
+import QtQuick.Controls
 
 import EasyApp.Gui.Charts as EaCharts
 
+import Gui.Globals as ExGlobals
 
-EaCharts.Plotly3dScatter {
 
-    xAxisTitle: "a"
-    yAxisTitle: "b"
-    zAxisTitle: "c"
+EaCharts.Plotly1dMeasVsCalc {
 
+    xAxisTitle: "x"
+    yAxisTitle: "y"
+
+    measuredXYData: ExGlobals.Proxies.mainProxy.experiment.measuredDataObj
 }

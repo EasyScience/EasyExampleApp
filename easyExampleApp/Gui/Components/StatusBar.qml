@@ -18,7 +18,7 @@ EaElements.StatusBar {
 
     /*
     model: XmlListModel {
-        xml: ExGlobals.Proxies.mainProxy.statusBar.modelAsXml
+        xml: ExGlobals.Proxies.miscProxy.statusBar.modelAsXml
         query: "/root/item"
 
         XmlRole { name: "label"; query: "label/string()" }

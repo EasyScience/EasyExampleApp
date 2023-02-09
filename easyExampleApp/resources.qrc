@@ -1,20 +1,24 @@
 <RCC>
     <qresource prefix="/">
+        <file>Gui/Components/Pages/Analysis/MainContent/AnalysisTab.qml</file>
+        <file>Gui/Components/Pages/Analysis/SideBarBasic/ParametersGroup.qml</file>
         <file>Gui/Components/Pages/Analysis/PageStructure.qml</file>
         <file>Gui/Components/Pages/Analysis/SideBarAdvanced.qml</file>
         <file>Gui/Components/Pages/Analysis/SideBarBasic.qml</file>
-        <file>Gui/Components/Pages/Experiment/MainContent/PlotView1dTab.qml</file>
-        <file>Gui/Components/Pages/Experiment/MainContent/PlotView2dTab.qml</file>
-        <file>Gui/Components/Pages/Experiment/MainContent/PlotViewScatter3dTab.qml</file>
-        <file>Gui/Components/Pages/Experiment/MainContent/PlotViewSurface3dTab.qml</file>
-        <file>Gui/Components/Pages/Experiment/SideBarBasic/ExperimentDataGroup.qml</file>
+        <file>Gui/Components/Pages/Experiment/MainContent/DataView1dTab.qml</file>
+        <file>Gui/Components/Pages/Experiment/MainContent/DataView2dTab.qml</file>
+        <file>Gui/Components/Pages/Experiment/MainContent/DataViewScatter3dTab.qml</file>
+        <file>Gui/Components/Pages/Experiment/MainContent/DataViewSurface3dTab.qml</file>
+        <file>Gui/Components/Pages/Experiment/SideBarBasic/ExperimentalDataExplorerGroup.qml</file>
+        <file>Gui/Components/Pages/Experiment/SideBarBasic/GenerateDataGroup.qml</file>
         <file>Gui/Components/Pages/Experiment/PageStructure.qml</file>
         <file>Gui/Components/Pages/Experiment/SideBarAdvanced.qml</file>
         <file>Gui/Components/Pages/Experiment/SideBarBasic.qml</file>
         <file>Gui/Components/Pages/Home/AboutDialog.qml</file>
         <file>Gui/Components/Pages/Home/Page.qml</file>
-        <file>Gui/Components/Pages/Model/MainContent/StructureView3dTab.qml</file>
-        <file>Gui/Components/Pages/Model/SideBarBasic/StructuralPhasesGroup.qml</file>
+        <file>Gui/Components/Pages/Model/MainContent/ModelView1dTab.qml</file>
+        <file>Gui/Components/Pages/Model/SideBarBasic/ModelParametersGroup.qml</file>
+        <file>Gui/Components/Pages/Model/SideBarBasic/ModelsExplorerGroup.qml</file>
         <file>Gui/Components/Pages/Model/PageStructure.qml</file>
         <file>Gui/Components/Pages/Model/SideBarAdvanced.qml</file>
         <file>Gui/Components/Pages/Model/SideBarBasic.qml</file>
@@ -47,28 +51,11 @@
         <file>../../EasyApp/EasyApp/Gui/Animations/qmldir</file>
         <file>../../EasyApp/EasyApp/Gui/Animations/ThemeChange.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Animations/TranslationChange.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/AreaSeries.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/BaseBokeh.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/BaseChemDoodle.html</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/BaseChemDoodle.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/BasePlot.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/BaseQtCharts.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/ChartTemplateBasic1dPlotly.html</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/ChartTemplateHeatmap2dPlotly.html</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/ChartTemplateSimple1dPlotly.html</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/ChartView.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/ChartViewBasic1dPlotly.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/ChartViewDiffraction1dPlotly.html</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/ChartViewDiffraction1dPlotly.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/ChartViewHeatmap2dPlotly.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/ChartViewSimple1dPlotly.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/ChemDoodleWeb-9.2.0.min.js</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/ChemDoodleWeb-9.2.0.unpacked.js</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/ChemDoodleWeb-9.2.0.unpacked.modified.js</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/LineSeries.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Charts/plotly-1.58.5.min.js</file>
         <file>../../EasyApp/EasyApp/Gui/Charts/Plotly1dLine.html</file>
         <file>../../EasyApp/EasyApp/Gui/Charts/Plotly1dLine.qml</file>
+        <file>../../EasyApp/EasyApp/Gui/Charts/Plotly1dMeasVsCalc.html</file>
+        <file>../../EasyApp/EasyApp/Gui/Charts/Plotly1dMeasVsCalc.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Charts/Plotly2dHeatmap.html</file>
         <file>../../EasyApp/EasyApp/Gui/Charts/Plotly2dHeatmap.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Charts/Plotly3dMesh.html</file>
@@ -76,9 +63,8 @@
         <file>../../EasyApp/EasyApp/Gui/Charts/Plotly3dScatter.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Charts/Plotly3dSurface.html</file>
         <file>../../EasyApp/EasyApp/Gui/Charts/Plotly3dSurface.qml</file>
+        <file>../../EasyApp/EasyApp/Gui/Charts/PTSans-Regular.ttf</file>
         <file>../../EasyApp/EasyApp/Gui/Charts/qmldir</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/ScatterSeries.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/ValueAxis.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Components/AboutDialog.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Components/AppBarCentralTabs.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Components/AppBarLeftButtons.qml</file>
@@ -136,6 +122,7 @@
         <file>../../EasyApp/EasyApp/Gui/Elements/Slider.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Elements/SliderHandle.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Elements/SpinBox.qml</file>
+        <file>../../EasyApp/EasyApp/Gui/Elements/SplashScreen.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Elements/StatusBar.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Elements/TabBar.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Elements/TabButton.qml</file>

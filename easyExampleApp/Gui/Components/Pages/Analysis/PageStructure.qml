@@ -16,15 +16,21 @@ import Gui.Components as ExComponents
 
 
 EaComponents.ContentPage {
-    defaultInfo: ExGlobals.Proxies.mainProxy.project.projectCreated ?
+    defaultInfo: ExGlobals.Proxies.mainProxy.model.modelsAdded ?
                      "" :
-                     qsTr("No Analysis Done")
+                     qsTr("No analysis done")
 
     mainView: EaComponents.MainContent {
         tabs: [
+            EaElements.TabButton {
+                text: ExGlobals.Proxies.mainProxy.experiment.experimentsLoaded ?
+                          qsTr("Fitting") :
+                          qsTr("Simulation")
+            }
         ]
 
         items: [
+            Loader { source: 'MainContent/AnalysisTab.qml' }
         ]
     }
 

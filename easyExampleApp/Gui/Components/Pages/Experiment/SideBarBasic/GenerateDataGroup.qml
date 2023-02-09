@@ -1,0 +1,40 @@
+// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
+import QtQuick
+import QtQuick.Controls
+
+import EasyApp.Gui.Style as EaStyle
+import EasyApp.Gui.Elements as EaElements
+
+import Gui.Globals as ExGlobals
+
+
+Row {
+    spacing: EaStyle.Sizes.fontPixelSize
+
+    EaElements.Parameter {
+        id: inputField
+
+        width: generateDataButton.width
+        focus: true
+
+        units: 'points'
+        validator: IntValidator { bottom: 2; top: 1000000 }
+
+        onEditingFinished: ExGlobals.Proxies.mainProxy.experiment.measuredDataLength = parseInt(text)
+        Component.onCompleted: text = ExGlobals.Proxies.mainProxy.experiment.measuredDataLength
+    }
+
+    EaElements.SideBarButton {
+        id: generateDataButton
+
+        text: 'Generate data'
+        onClicked:{
+            focus = true
+            ExGlobals.Proxies.mainProxy.experiment.setMeasuredDataObj()
+        }
+    }
+
+}

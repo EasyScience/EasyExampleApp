@@ -8,6 +8,10 @@ from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtWebEngineQuick import QtWebEngineQuick
 
+import numpy as np
+
+from PySide6.QtCore import QObject, Signal, Slot, Property
+
 
 class ResourcePaths:
     def __init__(self):
@@ -46,10 +50,44 @@ class ResourcePaths:
             print('No EasyApp directory is found.')
 
 
-if __name__ == '__main__':
-    # Resource paths
-    resource_paths = ResourcePaths()
+class BackendProxy(QObject):
+    measuredDataLengthChanged = Signal()
+    measuredDataChanged = Signal()
 
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._measured_data_length = 10
+        self._measured_data_obj = {}
+        self._setMeasuredDataObj()
+
+    def _setMeasuredDataObj(self):
+        length = self._measured_data_length
+        self._measured_data_obj = {
+            'x': np.arange(0, length + 1, 1).tolist(),
+            'y': np.random.randint(100, size=(length + 1)).tolist()
+        }
+        self.measuredDataChanged.emit()
+
+    @Property(int, notify=measuredDataLengthChanged)
+    def measuredDataLength(self):
+        return self._measured_data_length
+
+    @measuredDataLength.setter
+    def measuredDataLength(self, new_length):
+        if self._measured_data_length != new_length:
+            self._measured_data_length = new_length
+            self.measuredDataLengthChanged.emit()
+
+    @Property('QVariant', notify=measuredDataChanged)
+    def measuredDataObj(self):
+        return self._measured_data_obj
+
+    @Slot()
+    def generateMeasuredDataObj(self):
+        self._setMeasuredDataObj()
+
+
+if __name__ == '__main__':
     # QtWebEngine initialization for the QML GUI components
     QtWebEngineQuick.initialize()
 
@@ -59,12 +97,19 @@ if __name__ == '__main__':
     # Create QML application engine
     engine = QQmlApplicationEngine()
 
+    # Python objects to be exposed to QML
+
+    # Expose the Python objects to QML
+    backendProxy = BackendProxy()
+    engine.rootContext().setContextProperty('pyProxy', backendProxy)
+
     # Add paths to be accessible from the QML components
-    for p in resource_paths.import_paths:
+    resourcePaths = ResourcePaths()
+    for p in resourcePaths.import_paths:
         engine.addImportPath(p)
 
     # Load the root QML file
-    engine.load(resource_paths.main_qml)
+    engine.load(resourcePaths.main_qml)
 
     # Event loop
     if not engine.rootObjects():

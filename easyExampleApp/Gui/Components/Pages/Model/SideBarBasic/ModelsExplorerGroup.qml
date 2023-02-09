@@ -4,7 +4,6 @@
 
 import QtQuick
 import QtQuick.Controls
-//import QtQuick.XmlListModel 2.15
 
 import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Style as EaStyle
@@ -14,29 +13,21 @@ import EasyApp.Gui.Logic as EaLogic
 
 import Gui.Globals as ExGlobals
 
+
 Column {
     spacing: EaStyle.Sizes.fontPixelSize
 
+    // Table
+
     EaComponents.TableView {
 
-        defaultInfoText: qsTr("No Experiments Loaded")
+        defaultInfoText: qsTr("No models loaded")
 
         // Table model
 
-        /*
-        model: XmlListModel {
-            xml: ExGlobals.Proxies.mainProxy.project.experimentsLoaded ?
-                     ExGlobals.Proxies.mainProxy.experiment.experimentDataAsXml :
-                     ""
-            query: "/root/item"
-
-            XmlRole { name: "label"; query: "name/string()" }
-        }
-        */
-
         model: EaComponents.JsonListModel {
-            json: ExGlobals.Proxies.mainProxy.project.experimentsLoaded ?
-                      JSON.stringify(ExGlobals.Proxies.mainProxy.experiment.experimentDataAsJson) :
+            json: ExGlobals.Proxies.mainProxy.model.modelsAdded ?
+                      JSON.stringify(ExGlobals.Proxies.mainProxy.model.modelsAsJson) :
                       ""
             query: "$[*]"
         }
@@ -60,34 +51,46 @@ Column {
 
             EaComponents.TableViewLabel {
                 headerText: "Color"
-                //backgroundColor: model.color ? model.color : "transparent"
-                backgroundColor: EaStyle.Colors.chartForegrounds[1]
+                backgroundColor: model.color
             }
 
             EaComponents.TableViewButton {
                 id: deleteRowColumn
                 headerText: "Del."
                 fontIcon: "minus-circle"
-                ToolTip.text: qsTr("Remove this dataset")
+                ToolTip.text: qsTr("Remove this model")
+                onClicked: {
+                    ExGlobals.Proxies.mainProxy.experiment.emptyMeasuredDataObj()
+                    ExGlobals.Proxies.mainProxy.experiment.experimentsLoaded = false
+                    ExGlobals.Proxies.mainProxy.model.modelsAdded = false
+                    ExGlobals.Variables.experimentPageEnabled = false
+                    ExGlobals.Variables.analysisPageEnabled = false
+                    ExGlobals.Variables.summaryPageEnabled = false
+                }
             }
 
         }
 
     }
 
+    // Control buttons below table
+
     Row {
         spacing: EaStyle.Sizes.fontPixelSize
 
         EaElements.SideBarButton {
+            enabled: false
             fontIcon: "upload"
-            text: qsTr("Import data from local drive")
-            onClicked: ExGlobals.Proxies.mainProxy.project.experimentsLoaded = true
+            text: qsTr("Load new model from file")
         }
 
         EaElements.SideBarButton {
-            enabled: false
-            fontIcon: "download"
-            text: qsTr("Download data from SciCat")
+            enabled: !ExGlobals.Proxies.mainProxy.model.modelsAdded
+            fontIcon: "plus-circle"
+            text: qsTr("Add new model manually")
+            onClicked: {
+                ExGlobals.Proxies.mainProxy.model.modelsAdded = true
+            }
         }
     }
 

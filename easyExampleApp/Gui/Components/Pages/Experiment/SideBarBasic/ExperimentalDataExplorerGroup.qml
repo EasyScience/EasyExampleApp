@@ -4,7 +4,6 @@
 
 import QtQuick
 import QtQuick.Controls
-//import QtQuick.XmlListModel 2.13
 
 import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Style as EaStyle
@@ -18,26 +17,17 @@ import Gui.Globals as ExGlobals
 Column {
     spacing: EaStyle.Sizes.fontPixelSize
 
+    // Table
+
     EaComponents.TableView {
 
-        defaultInfoText: qsTr("No Phases Added/Loaded")
+        defaultInfoText: qsTr("No experiments loaded")
 
         // Table model
 
-        /*
-        model: XmlListModel {
-            xml: ExGlobals.Proxies.mainProxy.project.modelsAdded ?
-                     ExGlobals.Proxies.mainProxy.phase.phasesAsXml :
-                     ""
-            query: "/root/item"
-
-            XmlRole { name: "label"; query: "name/string()" }
-        }
-        */
-
         model: EaComponents.JsonListModel {
-            json: ExGlobals.Proxies.mainProxy.project.modelsAdded ?
-                      JSON.stringify(ExGlobals.Proxies.mainProxy.phase.phasesAsJson) :
+            json: ExGlobals.Proxies.mainProxy.experiment.experimentsLoaded ?
+                      JSON.stringify(ExGlobals.Proxies.mainProxy.experiment.experimentDataAsJson) :
                       ""
             query: "$[*]"
         }
@@ -61,34 +51,42 @@ Column {
 
             EaComponents.TableViewLabel {
                 headerText: "Color"
-                //backgroundColor: model.color ? model.color : "transparent"
-                backgroundColor: EaStyle.Colors.chartForegroundsExtra[model.index]
+                backgroundColor: model.color
             }
 
             EaComponents.TableViewButton {
                 id: deleteRowColumn
                 headerText: "Del."
                 fontIcon: "minus-circle"
-                ToolTip.text: qsTr("Remove this phase")
+                ToolTip.text: qsTr("Remove this dataset")
+                onClicked: {
+                    ExGlobals.Proxies.mainProxy.experiment.emptyMeasuredDataObj()
+                    ExGlobals.Proxies.mainProxy.experiment.experimentsLoaded = false
+                }
             }
-
         }
 
     }
+
+    // Control buttons below table
 
     Row {
         spacing: EaStyle.Sizes.fontPixelSize
 
         EaElements.SideBarButton {
+            enabled: !ExGlobals.Proxies.mainProxy.experiment.experimentsLoaded
             fontIcon: "upload"
-            text: qsTr("Add new phase from CIF")
-            onClicked: ExGlobals.Proxies.mainProxy.project.modelsAdded = true
+            text: qsTr("Import data from local drive")
+            onClicked: {
+                ExGlobals.Proxies.mainProxy.experiment.setMeasuredDataObj()
+                ExGlobals.Proxies.mainProxy.experiment.experimentsLoaded = true
+            }
         }
 
         EaElements.SideBarButton {
             enabled: false
-            fontIcon: "plus-circle"
-            text: qsTr("Add new phase manually")
+            fontIcon: "download"
+            text: qsTr("Download data from SciCat")
         }
     }
 

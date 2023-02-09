@@ -15,14 +15,14 @@ EaComponents.ProjectDescriptionDialog {
     onClosed: EaGlobals.Variables.showProjectDescriptionDialog = false
 
     onAccepted: {
-        ExGlobals.Proxies.mainProxy.project.currentProjectPath = projectLocation
-        ExGlobals.Proxies.mainProxy.project.createProject()
+        ExGlobals.Proxies.miscProxy.project.currentProjectPath = projectLocation
+        ExGlobals.Proxies.miscProxy.project.createProject()
 
     }
 
     Component.onCompleted: {
-        projectName = ExGlobals.Proxies.mainProxy.project.projectInfoAsJson.name
-        projectShortDescription = ExGlobals.Proxies.mainProxy.project.projectInfoAsJson.short_description
+        projectName = ExGlobals.Proxies.miscProxy.project.projectInfoAsJson.name
+        projectShortDescription = ExGlobals.Proxies.miscProxy.project.projectInfoAsJson.short_description
     }
 }
 

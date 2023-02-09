@@ -15,7 +15,7 @@ import Gui.Components as ExComponents
 
 
 EaComponents.ContentPage {
-    defaultInfo: ExGlobals.Proxies.mainProxy.project.projectCreated ?
+    defaultInfo: ExGlobals.Proxies.miscProxy.project.projectCreated ?
                      "" :
                      qsTr("No Project Created/Opened")
 
@@ -40,7 +40,7 @@ EaComponents.ContentPage {
             Loader { source: 'SideBarAdvanced.qml' }
         ]
 
-        continueButton.text: ExGlobals.Proxies.mainProxy.project.projectCreated ?
+        continueButton.text: ExGlobals.Proxies.miscProxy.project.projectCreated ?
                                  qsTr("Continue") :
                                  qsTr("Continue without project")
 

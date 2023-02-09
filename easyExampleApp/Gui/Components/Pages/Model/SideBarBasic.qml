@@ -7,15 +7,25 @@ import QtQuick
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
+import Gui.Globals as ExGlobals
+
 
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
-        title: qsTr("Structural phases")
+        title: qsTr("Models explorer")
         collapsible: false
+        last: !ExGlobals.Proxies.mainProxy.model.modelsAdded
+
+        Loader { source: 'SideBarBasic/ModelsExplorerGroup.qml' }
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Selected model parameters")
+        visible: ExGlobals.Proxies.mainProxy.model.modelsAdded
         last: true
 
-        Loader { source: 'SideBarBasic/StructuralPhasesGroup.qml' }
+        Loader { source: 'SideBarBasic/ModelParametersGroup.qml' }
     }
 
 }

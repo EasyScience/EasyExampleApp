@@ -3,13 +3,19 @@
 // © 2022 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 import QtQuick
+import QtQuick.Controls
 
 import EasyApp.Gui.Charts as EaCharts
 
+import Gui.Globals as ExGlobals
 
-EaCharts.Plotly1dLine {
 
-    xAxisTitle: "New x-axis"
-    yAxisTitle: "New y-axis"
+EaCharts.Plotly1dMeasVsCalc {
+
+    xAxisTitle: "x"
+    yAxisTitle: "y"
+
+    calculatedXYData: ExGlobals.Proxies.mainProxy.model.calculatedDataObj
 
 }
+

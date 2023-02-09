@@ -4,7 +4,6 @@
 
 import QtQuick
 import QtQuick.Controls
-//import QtQuick.XmlListModel 2.15
 
 import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Style as EaStyle
@@ -23,19 +22,8 @@ EaComponents.TableView {
 
     // Table model
 
-    /*
-    model: XmlListModel {
-        xml: ExGlobals.Proxies.mainProxy.project.projectExamplesAsXml
-        query: "/root/item"
-
-        XmlRole { name: "name"; query: "name/string()" }
-        XmlRole { name: "description"; query: "description/string()" }
-        XmlRole { name: "path"; query: "path/string()" }
-    }
-    */
-
     model: EaComponents.JsonListModel {
-        json: JSON.stringify(ExGlobals.Proxies.mainProxy.project.projectExamplesAsJson)
+        json: JSON.stringify(ExGlobals.Proxies.miscProxy.project.projectExamplesAsJson)
         query: "$[*]"
     }
 
@@ -86,7 +74,7 @@ EaComponents.TableView {
 
             onClicked: {
                 const fileUrl = Qt.resolvedUrl(model.path)
-                ExGlobals.Proxies.mainProxy.project.loadExampleProject(fileUrl)
+                ExGlobals.Proxies.miscProxy.project.loadExampleProject(fileUrl)
 
                 ExGlobals.Variables.step1PageEnabled = true
                 ExGlobals.Variables.step2PageEnabled = true
