@@ -22,9 +22,11 @@ EaComponents.ContentPage {
 
     mainView: EaComponents.MainContent {
         tabs: [
+            EaElements.TabButton { text: qsTr("Report") }
         ]
 
         items: [
+            Loader { source: 'MainContent/Report.qml' }
         ]
     }
 

@@ -163,9 +163,9 @@ EaComponents.ApplicationWindow {
             onEnabledChanged: enabled ?
                                   summaryPageLoader.source = 'Pages/Summary/PageStructure.qml' :
                                   summaryPageLoader.source = ''
-            //onCheckedChanged: checked ?
-            //                      summaryPageLoader.source = 'Pages/Summary/PageStructure.qml' :
-            //                      summaryPageLoader.source = ''
+            onCheckedChanged: checked ?
+                                  ExGlobals.Proxies.miscProxy.project.summaryGenerated = true :
+                                  ExGlobals.Proxies.miscProxy.project.summaryGenerated = false
             Component.onCompleted: ExGlobals.References.summaryAppbarButton = this
         }
 
