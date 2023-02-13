@@ -21,14 +21,4 @@ EaComponents.SideBarColumn {
         Loader { source: 'SideBarBasic/ExperimentalDataExplorerGroup.qml' }
     }
 
-    /*
-    EaElements.GroupBox {
-        title: qsTr("Experimental data")
-        visible: ExGlobals.Proxies.mainProxy.experiment.experimentsLoaded
-        last: true
-
-        Loader { source: 'SideBarBasic/GenerateDataGroup.qml' }
-    }
-    */
-
 }

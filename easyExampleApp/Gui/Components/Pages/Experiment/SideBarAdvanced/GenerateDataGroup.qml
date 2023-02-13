@@ -23,7 +23,6 @@ Row {
         units: 'points'
         validator: IntValidator { bottom: 2; top: 1000000 }
 
-        onEditingFinished: ExGlobals.Proxies.mainProxy.experiment.measuredDataLength = parseInt(text)
         Component.onCompleted: text = ExGlobals.Proxies.mainProxy.experiment.measuredDataLength
     }
 
@@ -31,10 +30,7 @@ Row {
         id: generateDataButton
 
         text: 'Generate data'
-        onClicked:{
-            focus = true
-            ExGlobals.Proxies.mainProxy.experiment.setMeasuredDataObj()
-        }
+        onClicked: ExGlobals.Proxies.mainProxy.experiment.measuredDataLength = parseInt(inputField.text)
     }
 
 }

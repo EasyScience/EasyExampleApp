@@ -43,7 +43,9 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             function setCalculatedDataObj() {
                 let xArray = []
                 let yArray = []
-                for (let x = 0; x < 2 * Math.PI; x += 0.1) {
+                for (let i = 0; i < qmlProxy.experiment.measuredDataLength; ++i) {
+                    const xStep = 10 * Math.PI / (qmlProxy.experiment.measuredDataLength - 1)
+                    const x = i * xStep
                     const y = qmlProxy.fitting.sineFunction(x, amplitude, period, phaseShift, verticalShift)
                     xArray.push(x)
                     yArray.push(y)
@@ -53,7 +55,6 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                     'y': yArray
                 }
             }
-
         }
 
         readonly property var experiment: QtObject {
@@ -73,10 +74,18 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             property int measuredDataLength: 7
             property var measuredDataObj: ({})
 
+            onMeasuredDataLengthChanged: {
+                if (qmlProxy.model.modelsAdded) qmlProxy.model.setCalculatedDataObj()
+                if (qmlProxy.experiment.experimentsLoaded) qmlProxy.experiment.setMeasuredDataObj()
+                //if (qmlProxy.fitting.isFitFinished) qmlProxy.fitting.fit()
+            }
+
             function setMeasuredDataObj() {
                 let xArray = []
                 let yArray = []
-                for (let x = 0; x < 2 * Math.PI; x += 0.1) {
+                for (let i = 0; i < measuredDataLength; ++i) {
+                    const xStep = 10 * Math.PI / (measuredDataLength - 1)
+                    const x = i * xStep
                     const randomShift = Math.random() * 0.1 - 0.05
                     const y = qmlProxy.fitting.sineFunction(x, amplitude, period, phaseShift, verticalShift + randomShift)
                     xArray.push(x)
