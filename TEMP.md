@@ -36,44 +36,64 @@ This is the easiest way of prototyping EasyApp-based GUI. Here, no Python back-e
 
 ### Developers of both EasyExampleApp & EasyApp
 
-In this case, `EasyApp` need to be cloned manually and located on the same lavel as `EasyExampleApp`.
-
 * Install Qt 6.4.2 including the following modules:
 	* Qt 5 Compatibility Module
 	* Qt WebEngine
 * Go to the project directory (`EasyScience/EasyExampleApp`)
-* Run `main.qml` by the `qml` tool from QtCreator (`qml_project.qmlproject`) or terminal, e.g.:
-	* `~/Qt/6.4.2/macos/bin/qml -I EasyExampleApp -I ../EasyApp EasyExampleApp/Gui/main.qml`
+* Run `main.qml` by the `qml` tool from QtCreator or terminal, e.g.:
+	* ~/Qt/6.4.2/macos/bin/qml -I EasyExampleApp -I ../EasyApp EasyExampleApp/Gui/main.qml
 
 ## Front-end and back-end development (QML + Python)
 
-This is the second step of the development, when the GUI prototype is approved. Now, we can develop Python back-end and run application directly from Python instead of the Qt `qml` tool.
-
 ### Developers of EasyExampleApp only
 
-In this case, `EasyApp` is installed via PIP from GitHub.
-
-* Go to the project directory (`EasyScience/EasyExampleApp`)
-* Create Python environment and activate it:
-	* `python3.9 -m venv .venv`
-	* `source .venv/bin/activate`
-* Upgrade PIP and install `numpy`
-	* pip install --upgrade pip
-	* pip install numpy
-* Install `EasyApp` from GitHub (`new-easy-app` branch).
-	* pip install git+https://github.com/easyscience/EasyApp.git@new-easy-app
-* Run `main.py` by Python from QtCreator (`py_project.qmlproject`) or terminal, e.g.:
-	* `cd EasyExampleApp` (`EasyScience/EasyExampleApp/EasyExampleApp`)
-	* `python main.py`
+* cd EasyExampleApp
+* python3.9 -m venv .venv
+* source .venv/bin/activate
+* pip install --upgrade pip
+* pip install numpy
+* pip install git+https://github.com/easyscience/EasyApp.git@new-easy-app
+* cd EasyExampleApp
+* python main.py
 
 ### Developers of both EasyExampleApp & EasyApp
 
-In this case, `EasyApp` need to be cloned manually and located on the same lavel as `EasyExampleApp`.
+* cd EasyExampleApp
+* python3.9 -m venv .venv
+* source .venv/bin/activate
+* pip install --upgrade pip
+* pip install PySide2
+* python EasyExampleApp/main.py
+```
+engine.addImportPath('../easyApp')  # EasyApp qml components
+```
 
-* Go to the project directory (`EasyScience/EasyExampleApp`)
-* `python3.9 -m venv .venv`
-* `source .venv/bin/activate`
-* `pip install --upgrade pip`
-* `pip install numpy PySide6`
-* `cd EasyExampleApp`
-* `python EasyExampleApp/main.py`
+
+### Pre-build with resources.qrc  
+* https://www.pythonguis.com/tutorials/pyside-qresource-system/
+* https://www.pythonguis.com/tutorials/packaging-data-files-pyside6-with-qresource-system/
+* https://doc.qt.io/qtforpython/tutorials/basictutorial/qrcfiles.html
+* python3.9 -m venv .venv
+* source .venv/bin/activate
+* pip install --upgrade pip
+* pip install PySide2
+* pyside6-rcc EasyExampleApp/resources.qrc -o EasyExampleApp/resources.py
+* python EasyExampleApp/main.py
+```
+import resources  # resources.py created from resources.qrc by pyside2-rcc
+engine.addImportPath('qrc:/easyApp')  # EasyApp qml components
+engine.addImportPath('qrc:/EasyExampleApp')  # Current app qml components
+engine.load('qrc:/EasyExampleApp/Gui/main.qml')
+```
+
+## C++
+
+## WebAssembly
+
+* https://doc.qt.io/qtcreator/creator-setup-webassembly.html
+* https://doc.qt.io/qt-6/wasm.html
+* https://forum.qt.io/topic/109672/qt-for-webassembly-binaries-for-mac-os/4
+* https://www.qtcentre.org/threads/71184-Webassembly-Project-ERROR-Unknown-module(s)-in-QT-webengine
+
+### Run
+emrun --browser chrome .build_wasm/Debug/cpp_project.html
