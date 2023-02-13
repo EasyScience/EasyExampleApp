@@ -7,12 +7,17 @@ import QtQuick
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
+import Gui.Globals as ExGlobals
+
 
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
-        title: qsTr("Empty group")
+        title: qsTr("Export report")
+        collapsible: false
         last: true
+
+        Loader { source: 'SideBarBasic/ExportReportGroup.qml' }
     }
 
 }

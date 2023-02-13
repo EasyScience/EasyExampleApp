@@ -12,13 +12,17 @@ import Gui.Globals as ExGlobals
 
 EaComponents.BasicReport {
 
-    blank: !ExGlobals.Proxies.miscProxy.project.summaryGenerated
-
     xAxisTitle: "x"
     yAxisTitle: "y"
 
-    measuredXYData: ExGlobals.Proxies.mainProxy.experiment.measuredDataObj
-    calculatedXYData: ExGlobals.Proxies.mainProxy.model.calculatedDataObj
+    measuredXYData: ExGlobals.Proxies.miscProxy.project.summaryGenerated ?
+                        ExGlobals.Proxies.mainProxy.experiment.measuredDataObj :
+                        {}
+    calculatedXYData: ExGlobals.Proxies.miscProxy.project.summaryGenerated ?
+                          ExGlobals.Proxies.mainProxy.model.calculatedDataObj :
+                          {}
+
+    Component.onCompleted: ExGlobals.References.summaryReportWebEngine = this
 
 }
 
