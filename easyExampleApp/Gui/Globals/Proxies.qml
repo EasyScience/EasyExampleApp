@@ -71,7 +71,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             property real verticalShift: Math.random()
             property real phaseShift: Math.random() * Math.PI
 
-            property int measuredDataLength: 7
+            property int measuredDataLength: 100
             property var measuredDataObj: ({})
 
             onMeasuredDataLengthChanged: {
