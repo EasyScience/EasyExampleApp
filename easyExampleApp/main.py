@@ -97,11 +97,9 @@ if __name__ == '__main__':
     # Create QML application engine
     engine = QQmlApplicationEngine()
 
-    # Python objects to be exposed to QML
-
     # Expose the Python objects to QML
-    backendProxy = BackendProxy()
-    engine.rootContext().setContextProperty('pyProxy', backendProxy)
+    #backendProxy = BackendProxy()
+    #engine.rootContext().setContextProperty('pyProxy', backendProxy)
 
     # Add paths to be accessible from the QML components
     resourcePaths = ResourcePaths()
