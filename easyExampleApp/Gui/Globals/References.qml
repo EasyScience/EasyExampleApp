@@ -17,4 +17,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     property var analysisAppbarButton
     property var summaryAppbarButton
 
+    // Misc
+    property var summaryReportWebEngine
+
 }

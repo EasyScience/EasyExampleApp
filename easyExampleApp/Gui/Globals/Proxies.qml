@@ -8,6 +8,8 @@ import QtQuick
 
 import EasyApp.Gui.Style as EaStyle
 
+import Gui.Globals as ExGlobals
+
 
 QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS > Reset Code Model"
 
@@ -166,6 +168,26 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                     qmlProxy.model.phaseShift = value
                 }
                 qmlProxy.model.setCalculatedDataObj()
+            }
+        }
+
+        readonly property var summary: QtObject {
+            // https://stackoverflow.com/questions/17882518/reading-and-writing-files-in-qml-qt
+            // https://stackoverflow.com/questions/57351643/how-to-save-dynamically-generated-web-page-in-qwebengineview
+            function saveFile(fileUrl, text) {
+                const request = new XMLHttpRequest()
+                request.open("PUT", fileUrl, false)
+                request.send(text)
+                return request.status
+            }
+            function saveHtmlReport(fileUrl) {
+                const webEngine = ExGlobals.References.summaryReportWebEngine
+                webEngine.runJavaScript("document.documentElement.outerHTML",
+                                        function(htmlContent) {
+                                            print('!!!!!!!', htmlContent)
+                                            const status = saveFile(fileUrl, htmlContent)
+                                            print(`Save report '${fileUrl}' status: ${status}`)
+                                        })
             }
         }
 
