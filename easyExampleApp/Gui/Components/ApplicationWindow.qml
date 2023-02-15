@@ -39,9 +39,12 @@ EaComponents.ApplicationWindow {
     appBarLeftButtons: [
 
         EaElements.ToolButton {
-            enabled: false
+            enabled: ExGlobals.Proxies.mainProxy.project.isCreated &&
+                    ExGlobals.Proxies.mainProxy.project.needSave
+            highlighted: true
             fontIcon: "save"
             ToolTip.text: qsTr("Save current state of the project")
+            onClicked: ExGlobals.Proxies.mainProxy.project.save()
         },
 
         EaElements.ToolButton {
@@ -164,8 +167,8 @@ EaComponents.ApplicationWindow {
                                   summaryPageLoader.source = 'Pages/Summary/PageStructure.qml' :
                                   summaryPageLoader.source = ''
             onCheckedChanged: checked ?
-                                  ExGlobals.Proxies.miscProxy.project.summaryGenerated = true :
-                                  ExGlobals.Proxies.miscProxy.project.summaryGenerated = false
+                                  ExGlobals.Proxies.mainProxy.summary.isCreated = true :
+                                  ExGlobals.Proxies.mainProxy.summary.isCreated = false
             Component.onCompleted: ExGlobals.References.summaryAppbarButton = this
         }
 

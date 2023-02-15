@@ -97,7 +97,7 @@ Column {
     FolderDialog {
         id: reportParentDirDialog
         title: qsTr("Choose report parent directory")
-        //folder: ExGlobals.Proxies.miscProxy.project.currentProjectPath
+        //folder: ExGlobals.Proxies.mainProxy.project.currentProjectPath
         //Component.onCompleted: selectedFolder = projectPathDict().parent
     }
 

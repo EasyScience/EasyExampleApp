@@ -16,28 +16,28 @@ Grid {
     spacing: EaStyle.Sizes.fontPixelSize
 
     EaElements.Parameter {
-        title: 'Amplitude'
+        title: qsTr('Amplitude')
         width: parameterFieldWidth()
         text: ExGlobals.Proxies.mainProxy.model.amplitude.toFixed(4)
         onEditingFinished: ExGlobals.Proxies.mainProxy.model.amplitude = text
     }
 
     EaElements.Parameter {
-        title: 'Period'
+        title: qsTr('Period')
         width: parameterFieldWidth()
         text: ExGlobals.Proxies.mainProxy.model.period.toFixed(4)
         onEditingFinished: ExGlobals.Proxies.mainProxy.model.period = text
     }
 
     EaElements.Parameter {
-        title: 'Vertical shift'
+        title: qsTr('Vertical shift')
         width: parameterFieldWidth()
         text: ExGlobals.Proxies.mainProxy.model.verticalShift.toFixed(4)
         onEditingFinished: ExGlobals.Proxies.mainProxy.model.verticalShift = text
     }
 
     EaElements.Parameter {
-        title: 'Phase shift'
+        title: qsTr('Phase shift')
         width: parameterFieldWidth()
         text: ExGlobals.Proxies.mainProxy.model.phaseShift.toFixed(4)
         onEditingFinished: ExGlobals.Proxies.mainProxy.model.phaseShift = text

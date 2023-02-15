@@ -19,18 +19,24 @@ Rectangle {
 
     Column {
 
-        anchors.left: parent.left
-        anchors.leftMargin: commonSpacing
         anchors.top: parent.top
-        anchors.topMargin: commonSpacing * 0.5
+        anchors.left: parent.left
+
+        anchors.topMargin: commonSpacing
+        anchors.leftMargin: commonSpacing * 1.5
+
         spacing: commonSpacing
+
+        // Project title
 
         EaElements.TextInput {
             font.family: EaStyle.Fonts.secondFontFamily
             font.pixelSize: EaStyle.Sizes.fontPixelSize * 3
             font.weight: Font.ExtraLight
-            text: ExGlobals.Proxies.miscProxy.project.projectInfoAsJson.name
+            text: ExGlobals.Proxies.mainProxy.project.currentProjectName
         }
+
+        // Project info
 
         Grid {
             columns: 2
@@ -39,10 +45,10 @@ Rectangle {
 
             EaElements.Label {
                 font.bold: true
-                text: qsTr("Short description:")
+                text: qsTr("Description:")
             }
             EaElements.TextInput {
-                text: ExGlobals.Proxies.miscProxy.project.projectInfoAsJson.short_description
+                text: ExGlobals.Proxies.mainProxy.project.currentProjectDescription
             }
 
             EaElements.Label {
@@ -50,7 +56,7 @@ Rectangle {
                 text: qsTr("Location:")
             }
             EaElements.Label {
-                text: ExGlobals.Proxies.miscProxy.project.currentProjectPath
+                text: ExGlobals.Proxies.mainProxy.project.currentProjectLocation
             }
 
             EaElements.Label {
@@ -58,8 +64,18 @@ Rectangle {
                 text: qsTr("Modified:")
             }
             EaElements.Label {
-                text: ExGlobals.Proxies.miscProxy.project.projectInfoAsJson.modified
+                text: ExGlobals.Proxies.mainProxy.project.currentProjectCreatedDate
             }
+        }
+
+        // Project image
+
+        Image {
+            //visible: ExGlobals.Proxies.mainProxy.fitting.isFitFinished
+
+            //source: ExGlobals.Proxies.mainProxy.project.currentProjectImage
+            width: EaStyle.Sizes.fontPixelSize * 25
+            fillMode: Image.PreserveAspectFit
         }
 
     }

@@ -26,8 +26,8 @@ Column {
         // Table model
 
         model: EaComponents.JsonListModel {
-            json: ExGlobals.Proxies.mainProxy.experiment.experimentsLoaded ?
-                      JSON.stringify(ExGlobals.Proxies.mainProxy.experiment.experimentDataAsJson) :
+            json: ExGlobals.Proxies.mainProxy.experiment.isCreated ?
+                      JSON.stringify(ExGlobals.Proxies.mainProxy.experiment.asJson) :
                       ""
             query: "$[*]"
         }
@@ -51,7 +51,7 @@ Column {
 
             EaComponents.TableViewLabel {
                 headerText: "Color"
-                backgroundColor: model.color
+                backgroundColor: EaStyle.Colors.chartForegroundsExtra[2]
             }
 
             EaComponents.TableViewButton {
@@ -59,10 +59,7 @@ Column {
                 headerText: "Del."
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this dataset")
-                onClicked: {
-                    ExGlobals.Proxies.mainProxy.experiment.emptyMeasuredDataObj()
-                    ExGlobals.Proxies.mainProxy.experiment.experimentsLoaded = false
-                }
+                onClicked: ExGlobals.Proxies.mainProxy.experiment.emptyMeasuredData()
             }
         }
 
@@ -74,13 +71,10 @@ Column {
         spacing: EaStyle.Sizes.fontPixelSize
 
         EaElements.SideBarButton {
-            enabled: !ExGlobals.Proxies.mainProxy.experiment.experimentsLoaded
+            enabled: !ExGlobals.Proxies.mainProxy.experiment.isCreated
             fontIcon: "upload"
             text: qsTr("Import data from local drive")
-            onClicked: {
-                ExGlobals.Proxies.mainProxy.experiment.setMeasuredDataObj()
-                ExGlobals.Proxies.mainProxy.experiment.experimentsLoaded = true
-            }
+            onClicked: ExGlobals.Proxies.mainProxy.experiment.loadMeasuredData()
         }
 
         EaElements.SideBarButton {

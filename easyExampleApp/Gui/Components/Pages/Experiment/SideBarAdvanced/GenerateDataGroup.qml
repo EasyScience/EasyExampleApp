@@ -20,8 +20,9 @@ Row {
         width: generateDataButton.width
         focus: true
 
-        units: 'points'
-        validator: IntValidator { bottom: 2; top: 1000000 }
+        placeholderText: qsTr('Array length in')
+        units: qsTr('points')
+        validator: IntValidator { bottom: 2; top: 1000001 }
 
         Component.onCompleted: text = ExGlobals.Proxies.mainProxy.experiment.measuredDataLength
     }
@@ -29,7 +30,7 @@ Row {
     EaElements.SideBarButton {
         id: generateDataButton
 
-        text: 'Generate data'
+        text: qsTr('Generate data')
         onClicked: ExGlobals.Proxies.mainProxy.experiment.measuredDataLength = parseInt(inputField.text)
     }
 

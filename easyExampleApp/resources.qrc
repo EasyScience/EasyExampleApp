@@ -9,8 +9,8 @@
         <file>Gui/Components/Pages/Experiment/MainContent/DataView2dTab.qml</file>
         <file>Gui/Components/Pages/Experiment/MainContent/DataViewScatter3dTab.qml</file>
         <file>Gui/Components/Pages/Experiment/MainContent/DataViewSurface3dTab.qml</file>
+        <file>Gui/Components/Pages/Experiment/SideBarAdvanced/GenerateDataGroup.qml</file>
         <file>Gui/Components/Pages/Experiment/SideBarBasic/ExperimentalDataExplorerGroup.qml</file>
-        <file>Gui/Components/Pages/Experiment/SideBarBasic/GenerateDataGroup.qml</file>
         <file>Gui/Components/Pages/Experiment/PageStructure.qml</file>
         <file>Gui/Components/Pages/Experiment/SideBarAdvanced.qml</file>
         <file>Gui/Components/Pages/Experiment/SideBarBasic.qml</file>
@@ -30,6 +30,8 @@
         <file>Gui/Components/Pages/Project/PageStructure.qml</file>
         <file>Gui/Components/Pages/Project/SideBarAdvanced.qml</file>
         <file>Gui/Components/Pages/Project/SideBarBasic.qml</file>
+        <file>Gui/Components/Pages/Summary/MainContent/Report.qml</file>
+        <file>Gui/Components/Pages/Summary/SideBarBasic/ExportReportGroup.qml</file>
         <file>Gui/Components/Pages/Summary/PageStructure.qml</file>
         <file>Gui/Components/Pages/Summary/SideBarAdvanced.qml</file>
         <file>Gui/Components/Pages/Summary/SideBarBasic.qml</file>
@@ -51,25 +53,18 @@
         <file>../../EasyApp/EasyApp/Gui/Animations/qmldir</file>
         <file>../../EasyApp/EasyApp/Gui/Animations/ThemeChange.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Animations/TranslationChange.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/plotly-1.58.5.min.js</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/Plotly1dLine.html</file>
         <file>../../EasyApp/EasyApp/Gui/Charts/Plotly1dLine.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/Plotly1dMeasVsCalc.html</file>
         <file>../../EasyApp/EasyApp/Gui/Charts/Plotly1dMeasVsCalc.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/Plotly2dHeatmap.html</file>
         <file>../../EasyApp/EasyApp/Gui/Charts/Plotly2dHeatmap.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/Plotly3dMesh.html</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/Plotly3dScatter.html</file>
         <file>../../EasyApp/EasyApp/Gui/Charts/Plotly3dScatter.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/Plotly3dSurface.html</file>
         <file>../../EasyApp/EasyApp/Gui/Charts/Plotly3dSurface.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Charts/PTSans-Regular.ttf</file>
         <file>../../EasyApp/EasyApp/Gui/Charts/qmldir</file>
         <file>../../EasyApp/EasyApp/Gui/Components/AboutDialog.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Components/AppBarCentralTabs.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Components/AppBarLeftButtons.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Components/AppBarRightButtons.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Components/ApplicationWindow.qml</file>
+        <file>../../EasyApp/EasyApp/Gui/Components/BasicReport.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Components/ContentArea.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Components/ContentPage.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Components/GuideWindow.qml</file>
@@ -134,6 +129,17 @@
         <file>../../EasyApp/EasyApp/Gui/Elements/ToolTip.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Globals/qmldir</file>
         <file>../../EasyApp/EasyApp/Gui/Globals/Variables.qml</file>
+        <file>../../EasyApp/EasyApp/Gui/Html/BasicReport.html</file>
+        <file>../../EasyApp/EasyApp/Gui/Html/BlankPage.html</file>
+        <file>../../EasyApp/EasyApp/Gui/Html/plotly-2.18.0.min.js</file>
+        <file>../../EasyApp/EasyApp/Gui/Html/Plotly1dLine.html</file>
+        <file>../../EasyApp/EasyApp/Gui/Html/Plotly1dMeasVsCalc.html</file>
+        <file>../../EasyApp/EasyApp/Gui/Html/Plotly2dHeatmap.html</file>
+        <file>../../EasyApp/EasyApp/Gui/Html/Plotly3dMesh.html</file>
+        <file>../../EasyApp/EasyApp/Gui/Html/Plotly3dScatter.html</file>
+        <file>../../EasyApp/EasyApp/Gui/Html/Plotly3dSurface.html</file>
+        <file>../../EasyApp/EasyApp/Gui/Html/PTSans-Bold.ttf</file>
+        <file>../../EasyApp/EasyApp/Gui/Html/PTSans-Regular.ttf</file>
         <file>../../EasyApp/EasyApp/Gui/Logic/Plotting.js</file>
         <file>../../EasyApp/EasyApp/Gui/Logic/ProjectConfig.js</file>
         <file>../../EasyApp/EasyApp/Gui/Logic/qmldir</file>
@@ -207,6 +213,8 @@
         <file>../../EasyApp/EasyApp/Gui/Style/Times.qml</file>
         <file>../../EasyApp/EasyApp/Logic/Maintenance/qmldir</file>
         <file>../../EasyApp/EasyApp/Logic/Maintenance/Updater.qml</file>
+        <file>../../EasyApp/EasyApp/Logic/Utils/__pycache__/__init__.cpython-38.pyc</file>
+        <file>../../EasyApp/EasyApp/Logic/Utils/__pycache__/Utils.cpython-38.pyc</file>
         <file>../../EasyApp/EasyApp/Logic/Utils/__init__.py</file>
         <file>../../EasyApp/EasyApp/Logic/Utils/Utils.py</file>
         <file>../../EasyApp/EasyApp/Logic/__init__.py</file>

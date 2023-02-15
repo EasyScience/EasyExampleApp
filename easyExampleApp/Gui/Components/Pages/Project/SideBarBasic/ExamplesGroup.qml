@@ -23,7 +23,7 @@ EaComponents.TableView {
     // Table model
 
     model: EaComponents.JsonListModel {
-        json: JSON.stringify(ExGlobals.Proxies.miscProxy.project.projectExamplesAsJson)
+        json: JSON.stringify(ExGlobals.Proxies.mainProxy.project.examplesAsJson)
         query: "$[*]"
     }
 
@@ -71,20 +71,6 @@ EaComponents.TableView {
 
             fontIcon: "upload"
             ToolTip.text: qsTr("Load this example")
-
-            onClicked: {
-                const fileUrl = Qt.resolvedUrl(model.path)
-                ExGlobals.Proxies.miscProxy.project.loadExampleProject(fileUrl)
-
-                ExGlobals.Variables.step1PageEnabled = true
-                ExGlobals.Variables.step2PageEnabled = true
-            }
-
-            Component.onCompleted: {
-                if (model.name === 'PbSO4') {
-                    ExGlobals.Variables.loadExampleProjectButton = this
-                }
-            }
         }
     }
 

@@ -16,7 +16,7 @@ import Gui.Components as ExComponents
 
 
 EaComponents.ContentPage {
-    defaultInfo: ExGlobals.Proxies.miscProxy.project.summaryGenerated ?
+    defaultInfo: ExGlobals.Proxies.mainProxy.summary.isCreated ?
                      "" :
                      qsTr("No Summary Generated")
 

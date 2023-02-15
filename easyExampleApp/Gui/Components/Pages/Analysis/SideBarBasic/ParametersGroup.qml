@@ -25,7 +25,7 @@ Column {
         // Table model
 
         model: EaComponents.JsonListModel {
-            json: JSON.stringify(ExGlobals.Proxies.mainProxy.parameters.parametersAsJson)
+            json: JSON.stringify(ExGlobals.Proxies.mainProxy.parameters.asJson)
             query: "$[*]"
         }
 
@@ -84,7 +84,7 @@ Column {
 
             EaComponents.TableViewCheckBox {
                 id: fitColumn
-                enabled: ExGlobals.Proxies.mainProxy.experiment.experimentsLoaded
+                enabled: ExGlobals.Proxies.mainProxy.experiment.isCreated
                 headerText: "Fit"
                 checked: model.fit
                 //onCheckedChanged: ExGlobals.Proxies.mainProxy.parameters.editParameterFit(model.id, checked)
@@ -96,7 +96,7 @@ Column {
     // Control buttons below table
 
     EaElements.SideBarButton {
-        enabled: ExGlobals.Proxies.mainProxy.experiment.experimentsLoaded
+        enabled: ExGlobals.Proxies.mainProxy.experiment.isCreated
         wide: true
 
         fontIcon: 'play-circle'

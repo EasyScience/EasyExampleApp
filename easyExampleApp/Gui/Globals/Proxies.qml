@@ -19,98 +19,147 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
     readonly property var qmlProxy: QtObject {
 
-        readonly property var model: QtObject {
-            readonly property var modelsAsJson: [
+        readonly property var project: QtObject {
+            property var examplesAsJson: [
                 {
-                    label: 'Sine wave',
-                    color: EaStyle.Colors.chartForegrounds[0]
+                    name: 'PbSO4',
+                    description: 'neutrons, powder, constant wavelength, D1A@ILL',
+                    path: '../Resources/Examples/PbSO4/project.json'
+                },
+                {
+                    name: 'Co2SiO4',
+                    description: 'neutrons, powder, constant wavelength, D20@ILL',
+                    path: '../Resources/Examples/Co2SiO4/project.json'
+                },
+                {
+                    name: 'Dy3Al5O12',
+                    description: 'neutrons, powder, constant wavelength, G41@LLB',
+                    path: '../Resources/Examples/Dy3Al5O12/project.json'
                 }
-              ]
-            property bool modelsAdded: false
+            ]
+
+            property bool isCreated: false
+
+            property string currentProjectName: 'Default project'
+            property string currentProjectDescription: 'Default project description'
+            property string currentProjectLocation: ''
+            property string currentProjectCreatedDate: ''
+            property string currentProjectImage: Qt.resolvedUrl('../Resources/Project/Sine.svg')
+
+            function create() {
+                currentProjectCreatedDate = `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`
+                isCreated = true
+            }
+        }
+
+        readonly property var model: QtObject {
+            readonly property var asJson: [
+                {
+                    label: 'Sine wave'
+                }
+            ]
+
+            property bool isCreated: false
 
             property real amplitude: 1
-            property real period: Math.PI
+            property real period: 3.141592653589793
             property real verticalShift: 0
             property real phaseShift: 0
 
-            property var calculatedDataObj: ({})
+            property var calculatedData: ({})
 
-            onAmplitudeChanged: setCalculatedDataObj()
-            onPeriodChanged: setCalculatedDataObj()
-            onVerticalShiftChanged: setCalculatedDataObj()
-            onPhaseShiftChanged: setCalculatedDataObj()
+            onAmplitudeChanged: generateCalculatedData()
+            onPeriodChanged: generateCalculatedData()
+            onVerticalShiftChanged: generateCalculatedData()
+            onPhaseShiftChanged: generateCalculatedData()
 
-            function setCalculatedDataObj() {
+            function generateCalculatedData() {
                 let xArray = []
                 let yArray = []
                 for (let i = 0; i < qmlProxy.experiment.measuredDataLength; ++i) {
                     const xStep = 10 * Math.PI / (qmlProxy.experiment.measuredDataLength - 1)
                     const x = i * xStep
-                    const y = qmlProxy.fitting.sineFunction(x, amplitude, period, phaseShift, verticalShift)
+                    const y = qmlProxy.calculator.sine(x,
+                                                       amplitude,
+                                                       period,
+                                                       phaseShift,
+                                                       verticalShift
+                                                       )
                     xArray.push(x)
                     yArray.push(y)
                 }
-                calculatedDataObj = {
-                    'x': xArray,
-                    'y': yArray
-                }
+                calculatedData = { 'x': xArray, 'y': yArray }
+                isCreated = true
+            }
+            function emptyCalculatedData() {
+                calculatedData = { 'x': [], 'y': [] }
+                isCreated = false
             }
         }
 
         readonly property var experiment: QtObject {
-            readonly property var experimentDataAsJson: [
+            readonly property var asJson: [
                     {
-                        label: 'D1A@ILL',
-                        color: EaStyle.Colors.chartForegroundsExtra[2]
+                        label: 'D1A@ILL'
                     }
                   ]
-            property bool experimentsLoaded: false
+            property bool isCreated: false
 
-            property real amplitude: Math.abs(Math.random())
-            property real period: Math.abs(Math.random()) * Math.PI * (4 - 3) + 3
-            property real verticalShift: Math.random()
-            property real phaseShift: Math.random() * Math.PI
+            property real amplitude: Math.abs(Math.random())  // [0, 1)
+            property real period: Math.abs(Math.random()) * Math.PI * (4 - 3) + 3  // (3, 4) * pi
+            property real verticalShift: Math.random()  // (-1, 1)
+            property real phaseShift: Math.random() * Math.PI  // (-1, 1) * pi
 
             property int measuredDataLength: 100
-            property var measuredDataObj: ({})
+            property var measuredData: ({})
 
             onMeasuredDataLengthChanged: {
-                if (qmlProxy.model.modelsAdded) qmlProxy.model.setCalculatedDataObj()
-                if (qmlProxy.experiment.experimentsLoaded) qmlProxy.experiment.setMeasuredDataObj()
-                //if (qmlProxy.fitting.isFitFinished) qmlProxy.fitting.fit()
+                if (qmlProxy.model.isCreated) {
+                    qmlProxy.model.generateCalculatedData()
+                }
+                if (qmlProxy.experiment.isCreated) {
+                    qmlProxy.experiment.loadMeasuredData()
+                }
+                if (qmlProxy.fitting.isFitFinished) {
+                    qmlProxy.fitting.fit()
+                }
             }
 
-            function setMeasuredDataObj() {
+            function loadMeasuredData() {
                 let xArray = []
                 let yArray = []
                 for (let i = 0; i < measuredDataLength; ++i) {
                     const xStep = 10 * Math.PI / (measuredDataLength - 1)
                     const x = i * xStep
-                    const randomShift = Math.random() * 0.1 - 0.05
-                    const y = qmlProxy.fitting.sineFunction(x, amplitude, period, phaseShift, verticalShift + randomShift)
+                    const randomVerticalShift = Math.random() * 0.1 - 0.05  // [-0.05, 0.05)
+                    const y = qmlProxy.calculator.sine(x,
+                                                       amplitude,
+                                                       period,
+                                                       phaseShift,
+                                                       verticalShift + randomVerticalShift
+                                                       )
                     xArray.push(x)
                     yArray.push(y)
                 }
-                measuredDataObj = {
-                    'x': xArray,
-                    'y': yArray
-                }
+                measuredData = { 'x': xArray, 'y': yArray }
+                isCreated = true
             }            
-            function emptyMeasuredDataObj() {
-                measuredDataObj = {
-                    'x': [],
-                    'y': []
-                }
+            function emptyMeasuredData() {
+                measuredData = { 'x': [], 'y': [] }
+                isCreated = false
             }
         }
 
-        readonly property var fitting: QtObject {
-            property bool isFitFinished: false
-
-            function sineFunction(x, amplitude, period, phaseShift, verticalShift) {
+        readonly property var calculator: QtObject {
+            function sine(x, amplitude, period, phaseShift, verticalShift) {
                 const res = amplitude * Math.sin( 2 * Math.PI / period * (x + phaseShift) ) + verticalShift
                 return res
             }
+        }
+
+
+        readonly property var fitting: QtObject {
+            property bool isFitFinished: false
 
             function fit() {
                 qmlProxy.model.amplitude = qmlProxy.experiment.amplitude
@@ -118,16 +167,14 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                 qmlProxy.model.phaseShift = qmlProxy.experiment.phaseShift
                 qmlProxy.model.verticalShift = qmlProxy.experiment.verticalShift
 
-                qmlProxy.model.setCalculatedDataObj()
-
                 isFitFinished = true
             }
         }
 
         readonly property var parameters: QtObject {
-            property var parametersAsJson: [
+            property var asJson: [
                 {
-                    id: 4538458360,
+                    id: '4538458360',
                     number: 1,
                     label: 'Amplitude',
                     value: qmlProxy.model.amplitude,
@@ -136,7 +183,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                     fit: true
                 },
                 {
-                    id: 4092346238,
+                    id: '4092346238',
                     number: 2,
                     label: 'Period',
                     value: qmlProxy.model.period,
@@ -145,7 +192,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                     fit: true
                 },
                 {
-                    id: 9834542745,
+                    id: '9834542745',
                     number: 2,
                     label: 'Vertical shift',
                     value: qmlProxy.model.verticalShift,
@@ -154,7 +201,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                     fit: true
                 },
                 {
-                    id: 8655377643,
+                    id: '8655377643',
                     number: 2,
                     label: 'Phase shift',
                     value: qmlProxy.model.phaseShift,
@@ -167,20 +214,21 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                 if (typeof pid === 'undefined') {
                     return
                 }
-                if (pid === 4538458360) {
+                if (pid === '4538458360') {
                     qmlProxy.model.amplitude = parseFloat(value)
-                } else if (pid === 4092346238) {
-                    qmlProxy.model.period = value
-                } else if (pid === 9834542745) {
-                    qmlProxy.model.verticalShift = value
-                } else if (pid === 8655377643) {
-                    qmlProxy.model.phaseShift = value
+                } else if (pid === '4092346238') {
+                    qmlProxy.model.period = parseFloat(value)
+                } else if (pid === '9834542745') {
+                    qmlProxy.model.verticalShift = parseFloat(value)
+                } else if (pid === '8655377643') {
+                    qmlProxy.model.phaseShift = parseFloat(value)
                 }
-                qmlProxy.model.setCalculatedDataObj()
             }
         }
 
         readonly property var summary: QtObject {
+            property bool isCreated: false
+
             // https://stackoverflow.com/questions/17882518/reading-and-writing-files-in-qml-qt
             // https://stackoverflow.com/questions/57351643/how-to-save-dynamically-generated-web-page-in-qwebengineview
             function saveFile(fileUrl, text) {
@@ -200,8 +248,8 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             }
         }
 
-        readonly property var statusBar: QtObject {
-            property string modelAsXml:
+        readonly property var status: QtObject {
+            property string asXml:
                 `<root>
                   <item>
                     <label>Calculations</label>
@@ -212,7 +260,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                     <value>lmfit</value>
                   </item>
                 </root>`
-            property var modelAsJson: [
+            property var asJson: [
                 {
                     label: 'Calculations',
                     value: 'CrysPy'
@@ -226,38 +274,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
     }
 
-    readonly property var miscProxy: QtObject {
-
-        readonly property var project: QtObject {
-            property bool projectCreated: false
-            property bool summaryGenerated: false
-            property string currentProjectPath: '_path_'
-            property var projectInfoAsJson: QtObject {
-                property string name: '_name_'
-                property string short_description: '_short_description_'
-                property string modified: '_modified_'
-            }
-            property var projectExamplesAsJson: [
-                {
-                    name: 'PbSO4',
-                    description: 'neutrons, powder, constant wavelength, D1A@ILL',
-                    path: '../Resources/Examples/PbSO4/project.json'
-                },
-                {
-                    name: 'Co2SiO4',
-                    description: 'neutrons, powder, constant wavelength, D20@ILL',
-                    path: '../Resources/Examples/Co2SiO4/project.json'
-                },
-                {
-                    name: 'Dy3Al5O12',
-                    description: 'neutrons, powder, constant wavelength, G41@LLB',
-                    path: '../Resources/Examples/Dy3Al5O12/project.json'
-                }
-              ]
-            function createProject() { projectCreated = true }
-            function loadExampleProject(fileUrl) {}
-        }
-
+    readonly property var plottingProxy: QtObject {
         readonly property var plotting1d: QtObject {
             property var libs: ['Plotly']
             property string currentLib: 'Plotly'

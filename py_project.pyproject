@@ -1,8 +1,20 @@
 {
-"files": [
-    "resources.qrc",
+"files": [    
     "EasyExampleApp/main.py",
-    "EasyExampleApp/Gui/main.qml",
-    "../EasyApp/EasyApp/Gui/Style/Colors.qml"
+
+    "EasyExampleApp/Logic/Calculator.py",
+    "EasyExampleApp/Logic/Model.py",
+    "EasyExampleApp/Logic/Experiment.py",
+    "EasyExampleApp/Logic/Fitting.py",
+    "EasyExampleApp/Logic/Parameters.py",
+    "EasyExampleApp/Logic/Summary.py",
+    "EasyExampleApp/Logic/Status.py",
+    "EasyExampleApp/Logic/Project.py",
+    "EasyExampleApp/Logic/PyProxy.py",
+    "EasyExampleApp/Logic/ResourcePaths.py",
+
+    "resources.qrc",
+
+    "EasyExampleApp/Gui/main.qml"
     ]
 }

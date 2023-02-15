@@ -15,11 +15,11 @@ EaComponents.BasicReport {
     xAxisTitle: "x"
     yAxisTitle: "y"
 
-    measuredXYData: ExGlobals.Proxies.miscProxy.project.summaryGenerated ?
-                        ExGlobals.Proxies.mainProxy.experiment.measuredDataObj :
+    measuredXYData: ExGlobals.Proxies.mainProxy.summary.isCreated ?
+                        ExGlobals.Proxies.mainProxy.experiment.measuredData :
                         {}
-    calculatedXYData: ExGlobals.Proxies.miscProxy.project.summaryGenerated ?
-                          ExGlobals.Proxies.mainProxy.model.calculatedDataObj :
+    calculatedXYData: ExGlobals.Proxies.mainProxy.summary.isCreated ?
+                          ExGlobals.Proxies.mainProxy.model.calculatedData :
                           {}
 
     Component.onCompleted: ExGlobals.References.summaryReportWebEngine = this

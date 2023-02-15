@@ -32,7 +32,7 @@ EasyScience 	       		- Parent directory.
 
 ## GUI prototyping / front-end development (QML)
 
-This is the easiest way of prototyping EasyApp-based GUI. Here, no Python back-end is needed and only QML components are to be displayed via the Qt `qml` tool. 
+This is the easiest way of prototyping EasyApp-based GUI. Here, no Python back-end is needed and only QML components are to be displayed via the Qt `qml` tool.
 
 ### Developers of both EasyExampleApp & EasyApp
 
@@ -57,11 +57,11 @@ In this case, `EasyApp` is installed via PIP from GitHub.
 * Create Python environment and activate it:
 	* `python3.9 -m venv .venv`
 	* `source .venv/bin/activate`
-* Upgrade PIP and install `numpy`
-	* pip install --upgrade pip
-	* pip install numpy
+* Upgrade PIP and install `numpy` and `jsbeautifier`
+	* `pip install --upgrade pip`
+	* `pip install numpy jsbeautifier`
 * Install `EasyApp` from GitHub (`new-easy-app` branch).
-	* pip install git+https://github.com/easyscience/EasyApp.git@new-easy-app
+	* `pip install git+https://github.com/easyscience/EasyApp.git@new-easy-app`
 * Run `main.py` by Python from QtCreator (`py_project.qmlproject`) or terminal, e.g.:
 	* `cd EasyExampleApp` (`EasyScience/EasyExampleApp/EasyExampleApp`)
 	* `python main.py`
@@ -74,6 +74,18 @@ In this case, `EasyApp` need to be cloned manually and located on the same lavel
 * `python3.9 -m venv .venv`
 * `source .venv/bin/activate`
 * `pip install --upgrade pip`
-* `pip install numpy PySide6`
+* `pip install PySide6 numpy jsbeautifier`
 * `cd EasyExampleApp`
 * `python EasyExampleApp/main.py`
+
+### Build app
+
+In this case, `EasyApp` need to be cloned manually and located on the same lavel as `EasyExampleApp`.
+
+* Go to the project directory (`EasyScience/EasyExampleApp`)
+* Convert `resources.qrc` to `resources.py`
+	* `pyside6-rcc EasyExampleApp/resources.qrc -o EasyExampleApp/resources.py`
+* Install PyInstaller
+	* `pip install pyinstaller`
+* Freeze app
+	* `pyinstaller EasyExampleApp/main.py --name=EasyExample --log-level WARN --noconfirm --clean --noconsole --onedir --distpath .build/pyinstaller/dist --workpath .build/pyinstaller/temp --specpath .build/pyinstaller`

@@ -14,7 +14,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Experimental data")
-        visible: ExGlobals.Proxies.mainProxy.experiment.experimentsLoaded
+        visible: ExGlobals.Proxies.mainProxy.experiment.isCreated
         last: true
 
         Loader { source: 'SideBarAdvanced/GenerateDataGroup.qml' }

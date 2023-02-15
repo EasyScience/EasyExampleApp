@@ -26,8 +26,8 @@ Column {
         // Table model
 
         model: EaComponents.JsonListModel {
-            json: ExGlobals.Proxies.mainProxy.model.modelsAdded ?
-                      JSON.stringify(ExGlobals.Proxies.mainProxy.model.modelsAsJson) :
+            json: ExGlobals.Proxies.mainProxy.model.isCreated ?
+                      JSON.stringify(ExGlobals.Proxies.mainProxy.model.asJson) :
                       ""
             query: "$[*]"
         }
@@ -51,7 +51,7 @@ Column {
 
             EaComponents.TableViewLabel {
                 headerText: "Color"
-                backgroundColor: model.color
+                backgroundColor: EaStyle.Colors.chartForegrounds[0]
             }
 
             EaComponents.TableViewButton {
@@ -60,9 +60,8 @@ Column {
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this model")
                 onClicked: {
-                    ExGlobals.Proxies.mainProxy.experiment.emptyMeasuredDataObj()
-                    ExGlobals.Proxies.mainProxy.experiment.experimentsLoaded = false
-                    ExGlobals.Proxies.mainProxy.model.modelsAdded = false
+                    ExGlobals.Proxies.mainProxy.experiment.emptyMeasuredData()
+                    ExGlobals.Proxies.mainProxy.model.emptyCalculatedData()
                     ExGlobals.Variables.experimentPageEnabled = false
                     ExGlobals.Variables.analysisPageEnabled = false
                     ExGlobals.Variables.summaryPageEnabled = false
@@ -85,12 +84,10 @@ Column {
         }
 
         EaElements.SideBarButton {
-            enabled: !ExGlobals.Proxies.mainProxy.model.modelsAdded
+            enabled: !ExGlobals.Proxies.mainProxy.model.isCreated
             fontIcon: "plus-circle"
             text: qsTr("Add new model manually")
-            onClicked: {
-                ExGlobals.Proxies.mainProxy.model.modelsAdded = true
-            }
+            onClicked: ExGlobals.Proxies.mainProxy.model.generateCalculatedData()
         }
     }
 
