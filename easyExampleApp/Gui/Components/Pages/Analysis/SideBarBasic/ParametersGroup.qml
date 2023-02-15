@@ -93,6 +93,22 @@ Column {
 
     }
 
+    // Parameter change slider
+
+    EaElements.Slider {
+        id: slider
+
+        width: table.width
+
+        from: -5
+        to: 5
+        value: table.model.get(table.currentIndex).value
+
+        onMoved: ExGlobals.Proxies.mainProxy.parameters.editParameterValue(
+                     table.model.get(table.currentIndex).id,
+                     value)
+    }
+
     // Control buttons below table
 
     EaElements.SideBarButton {
