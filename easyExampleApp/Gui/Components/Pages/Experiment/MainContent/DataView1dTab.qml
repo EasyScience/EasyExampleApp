@@ -12,8 +12,11 @@ import Gui.Globals as ExGlobals
 
 EaCharts.Plotly1dMeasVsCalc {
 
+    useWebGL: ExGlobals.Proxies.mainProxy.plotting.useWebGL1d
+
     xAxisTitle: "x"
     yAxisTitle: "y"
 
     measuredXYData: ExGlobals.Proxies.mainProxy.experiment.measuredData
+
 }

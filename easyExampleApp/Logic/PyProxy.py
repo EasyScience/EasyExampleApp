@@ -11,6 +11,7 @@ from Logic.Fitting import Fitting
 from Logic.Parameters import Parameters
 from Logic.Summary import Summary
 from Logic.Status import Status
+from Logic.Plotting import Plotting
 
 
 class PyProxy(QObject):
@@ -23,6 +24,7 @@ class PyProxy(QObject):
         self._parameters = Parameters(self)
         self._summary = Summary(self)
         self._status = Status(self)
+        self._plotting = Plotting(self)
 
     @Property('QVariant', constant=True)
     def project(self):
@@ -51,3 +53,7 @@ class PyProxy(QObject):
     @Property('QVariant', constant=True)
     def status(self):
         return self._status
+
+    @Property('QVariant', constant=True)
+    def plotting(self):
+        return self._plotting
