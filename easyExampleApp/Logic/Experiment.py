@@ -3,6 +3,7 @@
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 import numpy as np
+import timeit
 
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
@@ -28,7 +29,7 @@ class Experiment(QObject):
 
         self._as_json = [
             {
-                'label': 'D1A@ILL'
+                'label': 'PicoScope'
             }
         ]
 
@@ -39,7 +40,7 @@ class Experiment(QObject):
         self._verticalShift = np.random.uniform(0, 1)
         self._phaseShift = np.random.uniform(0, 1) * np.pi
 
-        self._measuredDataLength = 100
+        self._measuredDataLength = 300
         self._measuredData = {}
 
         self.measuredDataLengthChanged.connect(self.onMeasuredDataLengthChanged)
@@ -86,6 +87,7 @@ class Experiment(QObject):
 
     @Slot()
     def loadMeasuredData(self):
+        starttime = timeit.default_timer()
         xArray = []
         yArray = []
         for i in range (self.measuredDataLength):
@@ -100,6 +102,9 @@ class Experiment(QObject):
                                 )
             xArray.append(x)
             yArray.append(y)
+        endtime = timeit.default_timer()
+        #print(f'py: The generate measured data time is: {endtime - starttime}')
+
         self.measuredData = { 'x': xArray, 'y': yArray }
         self.isCreated = True
 

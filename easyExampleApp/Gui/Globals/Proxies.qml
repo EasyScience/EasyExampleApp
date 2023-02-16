@@ -22,19 +22,19 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         readonly property var project: QtObject {
             property var examplesAsJson: [
                 {
-                    name: 'PbSO4',
-                    description: 'neutrons, powder, constant wavelength, D1A@ILL',
-                    path: '../Resources/Examples/PbSO4/project.json'
+                    name: 'Example1',
+                    description: 'Sine wave, PicoScope 2204A',
+                    path: '../Resources/Examples/Example1/project.json'
                 },
                 {
-                    name: 'Co2SiO4',
-                    description: 'neutrons, powder, constant wavelength, D20@ILL',
-                    path: '../Resources/Examples/Co2SiO4/project.json'
+                    name: 'Example2',
+                    description: 'Sine wave, Tektronix 2430A',
+                    path: '../Resources/Examples/Example2/project.json'
                 },
                 {
-                    name: 'Dy3Al5O12',
-                    description: 'neutrons, powder, constant wavelength, G41@LLB',
-                    path: '../Resources/Examples/Dy3Al5O12/project.json'
+                    name: 'Example3',
+                    description: 'Sine wave, Siglent SDS1202X-E',
+                    path: '../Resources/Examples/Example3/project.json'
                 }
             ]
 
@@ -100,7 +100,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         readonly property var experiment: QtObject {
             readonly property var asJson: [
                     {
-                        label: 'D1A@ILL'
+                        label: 'PicoScope'
                     }
                   ]
             property bool isCreated: false

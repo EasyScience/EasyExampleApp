@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-import numpy as np
+import math
+import timeit
 
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
@@ -34,10 +35,12 @@ class Model(QObject):
         self._isCreated = False
 
         self._amplitude = 1
-        self._period = np.pi
+        self._period = 3.5 * math.pi
         self._verticalShift = 0
         self._phaseShift = 0
 
+        self._xArray = []
+        self._yArray = []
         self._calculatedData = {}
 
         self.amplitudeChanged.connect(self.generateCalculatedData)
@@ -123,11 +126,12 @@ class Model(QObject):
         self.calculatedDataChanged.emit()
 
     @Slot()
-    def generateCalculatedData(self):
+    def generateCalculatedDataSlow(self):
+        starttime = timeit.default_timer()
         xArray = []
         yArray = []
         for i in range(self._pyProxy.experiment.measuredDataLength):
-            xStep = 10 * np.pi / (self._pyProxy.experiment.measuredDataLength - 1)
+            xStep = 10 * math.pi / (self._pyProxy.experiment.measuredDataLength - 1)
             x = i * xStep
             y = Calculator.sine(x,
                                 self._amplitude,
@@ -137,7 +141,35 @@ class Model(QObject):
                                 )
             xArray.append(x)
             yArray.append(y)
+        endtime = timeit.default_timer()
+        #print(f'py: The generate calculated data time is: {endtime - starttime}')
+
         self.calculatedData = { 'x': xArray, 'y': yArray }
+        self.isCreated = True
+
+    def setXArray(self):
+        measuredDataLength = self._pyProxy.experiment.measuredDataLength
+        pi = math.pi
+        self._xArray = [i * 10 * pi / (measuredDataLength - 1) for i in range(measuredDataLength)]
+
+    def setYArray(self):
+        amplitude = self._amplitude
+        period = self._period
+        phaseShift = self._phaseShift
+        verticalShift = self._verticalShift
+        pi = math.pi
+        self._yArray = [amplitude * math.sin( 2 * pi / period * (x + phaseShift) ) + verticalShift for x in self._xArray]
+
+    @Slot()
+    def generateCalculatedData(self):
+        starttime = timeit.default_timer()
+        if len(self._xArray) != self._pyProxy.experiment.measuredDataLength:
+            self.setXArray()
+        self.setYArray()
+        endtime = timeit.default_timer()
+        #print(f'py: The generate calculated data time is: {endtime - starttime}')
+
+        self.calculatedData = { 'x': self._xArray, 'y': self._yArray }
         self.isCreated = True
 
     @Slot()

@@ -100,13 +100,19 @@ Column {
 
         width: table.width
 
-        from: -5
-        to: 5
+        from: table.model.get(table.currentIndex).min
+        to: table.model.get(table.currentIndex).max
         value: table.model.get(table.currentIndex).value
 
         onMoved: ExGlobals.Proxies.mainProxy.parameters.editParameterValue(
                      table.model.get(table.currentIndex).id,
                      value)
+
+        onPressedChanged: {
+            if (!pressed) {
+                ExGlobals.Proxies.mainProxy.parameters.generateAsJson()
+            }
+        }
     }
 
     // Control buttons below table
