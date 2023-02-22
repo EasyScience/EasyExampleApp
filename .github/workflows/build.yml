@@ -61,6 +61,7 @@ jobs:
 
       - name: Run QML GUI tests (run app in testmode, compare properties, save app images)
         run: |
+          ls /opt/hostedtoolcache/Python/3.9.16/x64/lib/python3.9/site-packages
           cd easyExampleApp
           python main.py --testmode
 

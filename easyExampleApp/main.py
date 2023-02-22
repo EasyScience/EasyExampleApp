@@ -4,7 +4,7 @@
 
 import sys
 
-from PySide6.QtWidgets import QApplication
+from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtWebEngineQuick import QtWebEngineQuick
 
@@ -17,7 +17,9 @@ if __name__ == '__main__':
     QtWebEngineQuick.initialize()
 
     # Create application
-    app = QApplication(sys.argv)
+    import numpy
+    print('!!!! numpy', numpy.__path__[0])
+    app = QGuiApplication(sys.argv)
 
     # Create QML application engine
     engine = QQmlApplicationEngine()
