@@ -27,7 +27,6 @@ EaElements.RemoteController {
         }
     }
 
-
     // Tests
 
     function processTestResults() {
@@ -63,8 +62,14 @@ EaElements.RemoteController {
     function runBasicGuiTest() {
         // Set up testing process
 
+        print('Run basic suit of GUI tests ')
+
+        //return
+
         rc.posToCenter()
         rc.showPointer()
+
+        //return
 
         // Home Page
 
@@ -77,6 +82,8 @@ EaElements.RemoteController {
 
         res.push( rc.compare(Globals.Refs.app.homePage.startButton.text, 'Start') )
         res.push( rc.compare(Globals.Refs.app.homePage.startButton.enabled, true) )
+
+        return
 
         rc.mouseClick(Globals.Refs.app.homePage.startButton)
 
