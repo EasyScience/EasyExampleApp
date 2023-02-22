@@ -36,8 +36,8 @@ jobs:
         with:
             python-version: 3.9
 
-      #- name: Upgrade PIP
-      #  run: pip install --upgrade pip
+      - name: Upgrade PIP
+        run: python -m pip install --upgrade pip
 
       - name: Install Python dependences
         run: |
