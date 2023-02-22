@@ -4,24 +4,16 @@ on: [push, pull_request]
 
 jobs:
   build:
-    timeout-minutes: 40
+    timeout-minutes: 10
 
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
         #os: [macos-11, ubuntu-20.04, windows-2019]
-        os: [windows-2019]
+        os: [macos-11]
 
     steps:
-      - name: Cancel previous workflow runs
-        uses: n1hility/cancel-previous-runs@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Check-out repository
-        uses: actions/checkout@v3
-
       - name: Set up non-Python dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -30,6 +22,28 @@ jobs:
           sudo apt-get -o Acquire::Retries=3 install libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xfixes0
           sudo apt-get -o Acquire::Retries=3 install libxcb-shape0
           sudo apt-get -o Acquire::Retries=3 install libpulse-mainloop-glib0
+
+      - name: Set up screen settings (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          "/Library/Application Support/VMware Tools/vmware-resolutionSet" 1920 1080
+          system_profiler SPDisplaysDataType | grep Resolution
+
+      - name: Set up screen settings (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install libxkbcommon-x11-0
+          Xvfb :0 -screen 0 1920x1080x24 -ac &
+          echo "DISPLAY=:0" >> $GITHUB_ENV
+
+      - name: Set up screen settings (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          Set-DisplayResolution -Width 1920 -Height 1080 -Force
+          Get-DisplayResolution
+
+      - name: Check-out repository
+        uses: actions/checkout@v3
 
       - name: Set up Python environment
         uses: actions/setup-python@v4
@@ -42,45 +56,12 @@ jobs:
       - name: Install Python dependences
         run: |
           python -m pip install git+https://github.com/easyscience/EasyApp.git@new-easy-app
-          python -m pip install numpy jsbeautifier
+          python -m pip install numpy jsbeautifier pytest-image-diff
 
-      - name: Run GUI tests (default shell)
+      - name: Run QML GUI tests (run app in testmode, compare properties, save app images)
         run: |
-          ls
           cd easyExampleApp
           python main.py --testmode
 
-      - name: Run GUI tests (bash)
-        shell: bash
-        run: |
-          ls
-          cd easyExampleApp
-          python main.py --testmode
-
-      - name: Run GUI tests (sh)
-        shell: sh
-        run: |
-          ls
-          cd easyExampleApp
-          python main.py --testmode
-
-      - name: Run GUI tests (pwsh)
-        shell: pwsh
-        run: |
-          ls
-          cd easyExampleApp
-          python main.py --testmode
-
-      - name: Run GUI tests (powershell)
-        shell: powershell
-        run: |
-          ls
-          cd easyExampleApp
-          python main.py --testmode
-
-      - name: Run GUI tests (cmd)
-        shell: cmd
-        run: |
-          ls
-          cd easyExampleApp
-          python main.py --testmode
+      - name: Run pytest (compare app images after previous step)
+        run: pytest
