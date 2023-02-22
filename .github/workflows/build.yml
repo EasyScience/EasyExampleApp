@@ -44,9 +44,40 @@ jobs:
           python -m pip install git+https://github.com/easyscience/EasyApp.git@new-easy-app
           python -m pip install numpy jsbeautifier
 
-      - name: Run GUI tests
-        shell: sh #bash
+      - name: cd easyExampleApp
+        run: cd easyExampleApp
+
+      - name: Run GUI tests (default shell)
         run: |
           ls
-          cd easyExampleApp
+          python main.py --testmode
+
+      - name: Run GUI tests (bash)
+        shell: bash
+        run: |
+          ls
+          python main.py --testmode
+
+      - name: Run GUI tests (sh)
+        shell: sh
+        run: |
+          ls
+          python main.py --testmode
+
+      - name: Run GUI tests (pwsh)
+        shell: pwsh
+        run: |
+          ls
+          python main.py --testmode
+
+      - name: Run GUI tests (powershell)
+        shell: powershell
+        run: |
+          ls
+          python main.py --testmode
+
+      - name: Run GUI tests (cmd)
+        shell: cmd
+        run: |
+          ls
           python main.py --testmode
