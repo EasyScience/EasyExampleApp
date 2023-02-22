@@ -36,15 +36,8 @@ jobs:
         with:
             python-version: '3.9'
 
-      - name: Run GUI tests
-        shell: bash
-        run: |
-          ls
-          cd easyExampleApp
-          python main.py --testmode
-
-      - name: Upgrade PIP
-        run: python -m pip install --upgrade pip
+#      - name: Upgrade PIP
+#        run: python -m pip install --upgrade pip
 
       - name: Install Python dependences
         run: |
@@ -52,7 +45,7 @@ jobs:
           python -m pip install numpy jsbeautifier
 
       - name: Run GUI tests
-        shell: bash
+        shell: sh #bash
         run: |
           ls
           cd easyExampleApp
