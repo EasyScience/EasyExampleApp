@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-import numpy as np
+import math
 
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
@@ -42,8 +42,8 @@ class Parameters(QObject):
                 'number': 2,
                 'label': 'Period',
                 'value': self._pyProxy.model.period,
-                'min': 3 * np.pi,
-                'max': 4 * np.pi,
+                'min': 3 * math.pi,
+                'max': 4 * math.pi,
                 'unit': 'rad',
                 'error': 0.2573,
                 'fit': True
@@ -65,7 +65,7 @@ class Parameters(QObject):
                 'label': 'Phase shift',
                 'value': self._pyProxy.model.phaseShift,
                 'min': 0,
-                'max': np.pi,
+                'max': math.pi,
                 'unit': 'rad',
                 'error': 0.2238,
                 'fit': True
