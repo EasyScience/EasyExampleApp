@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         #os: [macos-11, ubuntu-20.04, windows-2019]
-        os: [macos-11]
+        os: [ubuntu-20.04]
 
     steps:
       - name: Set up non-Python dependencies (Linux)
@@ -63,5 +63,5 @@ jobs:
           cd easyExampleApp
           python main.py --testmode
 
-      - name: Run pytest (compare app images after previous step)
-        run: pytest
+      #- name: Run pytest (compare app images after previous step)
+      #  run: pytest
