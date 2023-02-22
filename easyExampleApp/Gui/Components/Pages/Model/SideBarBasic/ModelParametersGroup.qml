@@ -8,7 +8,7 @@ import QtQuick.Controls
 import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Elements as EaElements
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
 
 
 Grid {
@@ -18,29 +18,29 @@ Grid {
     EaElements.Parameter {
         title: qsTr('Amplitude')
         width: parameterFieldWidth()
-        text: ExGlobals.Proxies.mainProxy.model.amplitude.toFixed(4)
-        onEditingFinished: ExGlobals.Proxies.mainProxy.model.amplitude = text
+        text: Globals.Proxies.mainProxy.model.amplitude.toFixed(4)
+        onEditingFinished: Globals.Proxies.mainProxy.model.amplitude = text
     }
 
     EaElements.Parameter {
         title: qsTr('Period')
         width: parameterFieldWidth()
-        text: ExGlobals.Proxies.mainProxy.model.period.toFixed(4)
-        onEditingFinished: ExGlobals.Proxies.mainProxy.model.period = text
+        text: Globals.Proxies.mainProxy.model.period.toFixed(4)
+        onEditingFinished: Globals.Proxies.mainProxy.model.period = text
     }
 
     EaElements.Parameter {
         title: qsTr('Vertical shift')
         width: parameterFieldWidth()
-        text: ExGlobals.Proxies.mainProxy.model.verticalShift.toFixed(4)
-        onEditingFinished: ExGlobals.Proxies.mainProxy.model.verticalShift = text
+        text: Globals.Proxies.mainProxy.model.verticalShift.toFixed(4)
+        onEditingFinished: Globals.Proxies.mainProxy.model.verticalShift = text
     }
 
     EaElements.Parameter {
         title: qsTr('Phase shift')
         width: parameterFieldWidth()
-        text: ExGlobals.Proxies.mainProxy.model.phaseShift.toFixed(4)
-        onEditingFinished: ExGlobals.Proxies.mainProxy.model.phaseShift = text
+        text: Globals.Proxies.mainProxy.model.phaseShift.toFixed(4)
+        onEditingFinished: Globals.Proxies.mainProxy.model.phaseShift = text
     }
 
     // Logic

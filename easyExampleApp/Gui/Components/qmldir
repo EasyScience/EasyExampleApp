@@ -1,4 +1,5 @@
 module Components
 
-ApplicationWindow 1.0 ApplicationWindow.qml
-StatusBar 1.0 StatusBar.qml
+ApplicationWindow ApplicationWindow.qml
+StatusBar StatusBar.qml
+UserTutorialsController UserTutorialsController.qml

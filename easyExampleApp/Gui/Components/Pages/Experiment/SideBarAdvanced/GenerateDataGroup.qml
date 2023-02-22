@@ -8,7 +8,7 @@ import QtQuick.Controls
 import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Elements as EaElements
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
 
 
 Row {
@@ -24,14 +24,14 @@ Row {
         units: qsTr('points')
         validator: IntValidator { bottom: 2; top: 1000001 }
 
-        Component.onCompleted: text = ExGlobals.Proxies.mainProxy.experiment.measuredDataLength
+        Component.onCompleted: text = Globals.Proxies.mainProxy.experiment.measuredDataLength
     }
 
     EaElements.SideBarButton {
         id: generateDataButton
 
         text: qsTr('Generate data')
-        onClicked: ExGlobals.Proxies.mainProxy.experiment.measuredDataLength = parseInt(inputField.text)
+        onClicked: Globals.Proxies.mainProxy.experiment.measuredDataLength = parseInt(inputField.text)
     }
 
 }

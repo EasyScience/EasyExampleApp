@@ -10,12 +10,12 @@ import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
-import Gui.Globals as ExGlobals
-import Gui.Components as ExComponents
+import Gui.Globals as Globals
+import Gui.Components as Components
 
 
 EaComponents.ContentPage {
-    defaultInfo: ExGlobals.Proxies.mainProxy.model.isCreated ?
+    defaultInfo: Globals.Proxies.mainProxy.model.isCreated ?
                      "" :
                      qsTr("No models added")
 
@@ -40,12 +40,14 @@ EaComponents.ContentPage {
             Loader { source: 'SideBarAdvanced.qml' }
         ]
 
-        continueButton.enabled: ExGlobals.Proxies.mainProxy.model.isCreated
+        continueButton.enabled: Globals.Proxies.mainProxy.model.isCreated
 
         continueButton.onClicked: {
-            ExGlobals.Variables.experimentPageEnabled = true
-            ExGlobals.References.experimentAppbarButton.toggle()
+            Globals.Vars.experimentPageEnabled = true
+            Globals.Refs.app.appbar.experimentButton.toggle()
         }
+
+        Component.onCompleted: Globals.Refs.app.modelPage.continueButton = continueButton
     }
 
     Component.onCompleted: print("Model page loaded:", this)

@@ -8,7 +8,7 @@ import QtQuick
 
 import EasyApp.Gui.Style as EaStyle
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
 
 
 QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS > Reset Code Model"

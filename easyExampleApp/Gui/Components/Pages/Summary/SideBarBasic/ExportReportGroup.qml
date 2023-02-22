@@ -9,7 +9,7 @@ import QtQuick.Dialogs
 import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Elements as EaElements
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
 
 
 Column {
@@ -86,9 +86,9 @@ Column {
         text: qsTr('Save')
         onClicked: {
             if (formatField.currentValue === 'html') {
-                ExGlobals.Proxies.mainProxy.summary.saveHtmlReport(reportLocationField.text)
+                Globals.Proxies.mainProxy.summary.saveHtmlReport(reportLocationField.text)
             } else if (formatField.currentValue === 'pdf') {
-                //ExGlobals.Variables.reportWebView.printToPdf(reportLocationField.text)
+                //Globals.Vars.reportWebView.printToPdf(reportLocationField.text)
             }
         }
     }
@@ -97,7 +97,7 @@ Column {
     FolderDialog {
         id: reportParentDirDialog
         title: qsTr("Choose report parent directory")
-        //folder: ExGlobals.Proxies.mainProxy.project.currentProjectPath
+        //folder: Globals.Proxies.mainProxy.project.currentProjectPath
         //Component.onCompleted: selectedFolder = projectPathDict().parent
     }
 

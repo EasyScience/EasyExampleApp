@@ -10,12 +10,12 @@ import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
-import Gui.Globals as ExGlobals
-import Gui.Components as ExComponents
+import Gui.Globals as Globals
+import Gui.Components as Components
 
 
 EaComponents.ContentPage {
-    defaultInfo: ExGlobals.Proxies.mainProxy.project.isCreated ?
+    defaultInfo: Globals.Proxies.mainProxy.project.isCreated ?
                      "" :
                      qsTr("No Project Created/Opened")
 
@@ -40,14 +40,16 @@ EaComponents.ContentPage {
             Loader { source: 'SideBarAdvanced.qml' }
         ]
 
-        continueButton.text: ExGlobals.Proxies.mainProxy.project.isCreated ?
+        continueButton.text: Globals.Proxies.mainProxy.project.isCreated ?
                                  qsTr("Continue") :
                                  qsTr("Continue without project")
 
         continueButton.onClicked: {
-            ExGlobals.Variables.modelPageEnabled = true
-            ExGlobals.References.modelAppbarButton.toggle()
+            Globals.Vars.modelPageEnabled = true
+            Globals.Refs.app.appbar.modelButton.toggle()
         }
+
+        Component.onCompleted: Globals.Refs.app.projectPage.continueButton = continueButton
     }
 
     Component.onCompleted: print("Project page loaded:", this)

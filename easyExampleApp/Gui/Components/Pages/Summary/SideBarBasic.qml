@@ -7,7 +7,7 @@ import QtQuick
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
 
 
 EaComponents.SideBarColumn {

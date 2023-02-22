@@ -7,7 +7,7 @@ import QtQuick
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
 
 
 EaComponents.SideBarColumn {
@@ -15,14 +15,14 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Models explorer")
         collapsible: false
-        last: !ExGlobals.Proxies.mainProxy.model.isCreated
+        last: !Globals.Proxies.mainProxy.model.isCreated
 
         Loader { source: 'SideBarBasic/ModelsExplorerGroup.qml' }
     }
 
     EaElements.GroupBox {
         title: qsTr("Selected model parameters")
-        visible: ExGlobals.Proxies.mainProxy.model.isCreated
+        visible: Globals.Proxies.mainProxy.model.isCreated
         last: true
 
         Loader { source: 'SideBarBasic/ModelParametersGroup.qml' }

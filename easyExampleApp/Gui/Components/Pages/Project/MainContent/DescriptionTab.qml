@@ -9,7 +9,7 @@ import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
 
 
 Rectangle {
@@ -33,7 +33,7 @@ Rectangle {
             font.family: EaStyle.Fonts.secondFontFamily
             font.pixelSize: EaStyle.Sizes.fontPixelSize * 3
             font.weight: Font.ExtraLight
-            text: ExGlobals.Proxies.mainProxy.project.currentProjectName
+            text: Globals.Proxies.mainProxy.project.currentProjectName
         }
 
         // Project info
@@ -48,7 +48,7 @@ Rectangle {
                 text: qsTr("Description:")
             }
             EaElements.TextInput {
-                text: ExGlobals.Proxies.mainProxy.project.currentProjectDescription
+                text: Globals.Proxies.mainProxy.project.currentProjectDescription
             }
 
             EaElements.Label {
@@ -56,7 +56,7 @@ Rectangle {
                 text: qsTr("Location:")
             }
             EaElements.Label {
-                text: ExGlobals.Proxies.mainProxy.project.currentProjectLocation
+                text: Globals.Proxies.mainProxy.project.currentProjectLocation
             }
 
             EaElements.Label {
@@ -64,16 +64,16 @@ Rectangle {
                 text: qsTr("Modified:")
             }
             EaElements.Label {
-                text: ExGlobals.Proxies.mainProxy.project.currentProjectCreatedDate
+                text: Globals.Proxies.mainProxy.project.currentProjectCreatedDate
             }
         }
 
         // Project image
 
         Image {
-            //visible: ExGlobals.Proxies.mainProxy.fitting.isFitFinished
+            //visible: Globals.Proxies.mainProxy.fitting.isFitFinished
 
-            //source: ExGlobals.Proxies.mainProxy.project.currentProjectImage
+            //source: Globals.Proxies.mainProxy.project.currentProjectImage
             width: EaStyle.Sizes.fontPixelSize * 25
             fillMode: Image.PreserveAspectFit
         }

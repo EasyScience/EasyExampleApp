@@ -11,7 +11,7 @@ import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 import EasyApp.Gui.Logic as EaLogic
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
 
 
 EaComponents.TableView {
@@ -23,7 +23,7 @@ EaComponents.TableView {
     // Table model
 
     model: EaComponents.JsonListModel {
-        json: JSON.stringify(ExGlobals.Proxies.mainProxy.project.examplesAsJson)
+        json: JSON.stringify(Globals.Proxies.mainProxy.project.examplesAsJson)
         query: "$[*]"
     }
 

@@ -7,31 +7,31 @@ import QtQuick
 import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Components as EaComponents
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
 
 
 EaComponents.AboutDialog {
     visible: EaGlobals.Variables.showAppAboutDialog
     onClosed: EaGlobals.Variables.showAppAboutDialog = false
 
-    appIconPath: ExGlobals.Configs.appConfig.icon
-    appUrl: ExGlobals.Configs.appConfig.homePageUrl
+    appIconPath: Globals.Configs.appConfig.icon
+    appUrl: Globals.Configs.appConfig.homePageUrl
 
-    appPrefixName: ExGlobals.Configs.appConfig.namePrefixForLogo
-    appSuffixName: ExGlobals.Configs.appConfig.nameSuffixForLogo
-    appVersion: ExGlobals.Configs.appConfig.version
-    appDate: ExGlobals.Configs.appConfig.date
+    appPrefixName: Globals.Configs.appConfig.namePrefixForLogo
+    appSuffixName: Globals.Configs.appConfig.nameSuffixForLogo
+    appVersion: Globals.Configs.appConfig.version
+    appDate: Globals.Configs.appConfig.date
 
-    commit: ExGlobals.Configs.appConfig.commit
-    commitUrl: ExGlobals.Configs.appConfig.commitUrl
-    branch: ExGlobals.Configs.appConfig.branch
-    branchUrl: ExGlobals.Configs.appConfig.branchUrl
+    commit: Globals.Configs.appConfig.commit
+    commitUrl: Globals.Configs.appConfig.commitUrl
+    branch: Globals.Configs.appConfig.branch
+    branchUrl: Globals.Configs.appConfig.branchUrl
 
-    eulaUrl: ExGlobals.Configs.appConfig.licenseUrl
-    oslUrl: ExGlobals.Configs.appConfig.dependenciesUrl
+    eulaUrl: Globals.Configs.appConfig.licenseUrl
+    oslUrl: Globals.Configs.appConfig.dependenciesUrl
 
-    description: ExGlobals.Configs.appConfig.description
-    developerIcons: ExGlobals.Configs.appConfig.developerIcons
-    developerYearsFrom: ExGlobals.Configs.appConfig.developerYearsFrom
-    developerYearsTo: ExGlobals.Configs.appConfig.developerYearsTo
+    description: Globals.Configs.appConfig.description
+    developerIcons: Globals.Configs.appConfig.developerIcons
+    developerYearsFrom: Globals.Configs.appConfig.developerYearsFrom
+    developerYearsTo: Globals.Configs.appConfig.developerYearsTo
 }

@@ -7,7 +7,7 @@ import QtQuick.Controls
 
 import EasyApp.Gui.Components as EaComponents
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
 
 
 EaComponents.BasicReport {
@@ -15,14 +15,14 @@ EaComponents.BasicReport {
     xAxisTitle: "x"
     yAxisTitle: "y"
 
-    measuredXYData: ExGlobals.Proxies.mainProxy.summary.isCreated ?
-                        ExGlobals.Proxies.mainProxy.experiment.measuredData :
+    measuredXYData: Globals.Proxies.mainProxy.summary.isCreated ?
+                        Globals.Proxies.mainProxy.experiment.measuredData :
                         {}
-    calculatedXYData: ExGlobals.Proxies.mainProxy.summary.isCreated ?
-                          ExGlobals.Proxies.mainProxy.model.calculatedData :
+    calculatedXYData: Globals.Proxies.mainProxy.summary.isCreated ?
+                          Globals.Proxies.mainProxy.model.calculatedData :
                           {}
 
-    Component.onCompleted: ExGlobals.References.summaryReportWebEngine = this
+    Component.onCompleted: Globals.Refs.summaryReportWebEngine = this
 
 }
 

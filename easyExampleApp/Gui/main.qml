@@ -10,21 +10,21 @@ import QtQuick.Window
 import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Elements as EaElements
 
-import Gui.Globals as ExGlobals
-import Gui.Components as ExComponents
+import Gui.Globals as Globals
+import Gui.Components as Components
 
 
 EaElements.SplashScreen {
 
-    appNamePrefix: ExGlobals.Configs.appConfig.namePrefixForLogo
-    appNameSuffix: ExGlobals.Configs.appConfig.nameSuffixForLogo
-    appVersion: qsTr('Version') + ` ${ExGlobals.Configs.appConfig.version} (${ExGlobals.Configs.appConfig.date})`
-    logoSource: ExGlobals.Configs.appConfig.icon
+    appNamePrefix: Globals.Configs.appConfig.namePrefixForLogo
+    appNameSuffix: Globals.Configs.appConfig.nameSuffixForLogo
+    appVersion: qsTr('Version') + ` ${Globals.Configs.appConfig.version} (${Globals.Configs.appConfig.date})`
+    logoSource: Globals.Configs.appConfig.icon
 
-    initialGuiCompleted: ExGlobals.Variables.applicationWindowCreated &&
-                         ExGlobals.Variables.homePageCreated
+    initialGuiCompleted: Globals.Vars.applicationWindowCreated &&
+                         Globals.Vars.homePageCreated
 
-    onAnimationFinishedChanged: ExGlobals.Variables.splashScreenAnimoFinished = animationFinished
+    onAnimationFinishedChanged: Globals.Vars.splashScreenAnimoFinished = animationFinished
 
     Component.onCompleted: print("Splash screen loaded:", this)
     Component.onDestruction: print("Splash screen destroyed:", this)

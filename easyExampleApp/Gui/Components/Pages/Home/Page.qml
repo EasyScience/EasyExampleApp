@@ -4,12 +4,14 @@
 
 import QtQuick
 import QtQuick.Controls
+import QtTest
 
 import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Elements as EaElements
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
+import Gui.Components as Components
 
 
 Item {
@@ -22,7 +24,7 @@ Item {
         Image {
             id: appLogo
 
-            source: ExGlobals.Configs.appConfig.icon
+            source: Globals.Configs.appConfig.icon
             anchors.horizontalCenter: parent.horizontalCenter
             width: EaStyle.Sizes.fontPixelSize * 5
             fillMode: Image.PreserveAspectFit
@@ -42,13 +44,13 @@ Item {
                 font.family: parent.fontFamily
                 font.pixelSize: parent.fontPixelSize
                 font.weight: Font.Light
-                text: ExGlobals.Configs.appConfig.namePrefixForLogo
+                text: Globals.Configs.appConfig.namePrefixForLogo
             }
             EaElements.Label {
                 font.family: parent.fontFamily
                 font.pixelSize: parent.fontPixelSize
                 font.weight: Font.DemiBold
-                text: ExGlobals.Configs.appConfig.nameSuffixForLogo
+                text: Globals.Configs.appConfig.nameSuffixForLogo
             }
         }
 
@@ -58,19 +60,19 @@ Item {
 
             anchors.horizontalCenter: parent.horizontalCenter
 
-            text: qsTr('Version') + ` ${ExGlobals.Configs.appConfig.version} (${ExGlobals.Configs.appConfig.date})`
+            text: qsTr('Version') + ` ${Globals.Configs.appConfig.version} (${Globals.Configs.appConfig.date})`
         }
 
         // Github branch
         EaElements.Label {
             id: githubBranch
 
-            visible: ExGlobals.Configs.appConfig.branch && ExGlobals.Configs.appConfig.branch !== 'master'
+            visible: Globals.Configs.appConfig.branch && Globals.Configs.appConfig.branch !== 'master'
             topPadding: EaStyle.Sizes.fontPixelSize * 0.5
             anchors.horizontalCenter: parent.horizontalCenter
             opacity: 0
 
-            text: qsTr('Branch') + ` <a href="${ExGlobals.Configs.appConfig.branchUrl}">${ExGlobals.Configs.appConfig.branch}</a>`
+            text: qsTr('Branch') + ` <a href="${Globals.Configs.appConfig.branchUrl}">${Globals.Configs.appConfig.branch}</a>`
         }
 
         // Vertical spacer
@@ -85,10 +87,10 @@ Item {
             fontIcon: "rocket"
             text: qsTr("Start")
             onClicked: {
-                ExGlobals.Variables.projectPageEnabled = true
-                ExGlobals.References.projectAppbarButton.toggle()
+                Globals.Vars.projectPageEnabled = true
+                Globals.Refs.app.appbar.projectButton.toggle()
             }
-            Component.onCompleted: ExGlobals.Variables.startButton = this
+            Component.onCompleted: Globals.Refs.app.homePage.startButton = this
         }
 
         // Vertical spacer
@@ -105,7 +107,7 @@ Item {
                 spacing: EaStyle.Sizes.fontPixelSize
 
                 EaElements.Button {
-                    text: qsTr("About %1".arg(ExGlobals.Configs.appConfig.name))
+                    text: qsTr("About %1".arg(Globals.Configs.appConfig.name))
                     onClicked: EaGlobals.Variables.showAppAboutDialog = true
                     Loader { id: aboutDialogLoader }
                     Component.onCompleted: aboutDialogLoader.source = "AboutDialog.qml"
@@ -134,9 +136,12 @@ Item {
                     onClicked: print("Tutorial 2 button clicked")
                 }
                 EaElements.Button {
-                    enabled: false
+                    //enabled: false
                     text: qsTr("Tutorial") + " 3: " + qsTr("Advanced usage")
-                    onClicked: print("Tutorial 3 button clicked")
+                    onClicked: {
+                        print("Tutorial 3 button clicked")
+                        dataFittingTutorialTimer.start()
+                    }
                 }
             }
         }
@@ -144,7 +149,20 @@ Item {
 
     Component.onCompleted: {
         print("Home page loaded:", this)
-        ExGlobals.Variables.homePageCreated = true
+        Globals.Vars.homePageCreated = true
     }
     Component.onDestruction: print("Home page destroyed:", this)
+
+    // User tutorials
+
+    Components.UserTutorialsController {
+        id: tutorialsController
+    }
+
+    Timer {
+        id: dataFittingTutorialTimer
+        interval: 100
+        onTriggered: tutorialsController.runDataFittingTutorial()
+    }
+
 }

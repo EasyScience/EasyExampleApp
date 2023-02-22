@@ -9,8 +9,11 @@ import QtQuick
 
 QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS > Reset Code Model"
 
-    // Debug mode
+    // Non-standard modes
     property bool isDebugMode: false
+    property bool isTestMode: typeof pyIsTestMode !== 'undefined' ?
+                                  pyIsTestMode:
+                                  false
 
     // Initial application pages accessibility
     property bool homePageEnabled: isDebugMode ? true : true

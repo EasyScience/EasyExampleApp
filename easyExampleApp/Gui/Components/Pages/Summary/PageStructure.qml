@@ -11,12 +11,12 @@ import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
-import Gui.Globals as ExGlobals
-import Gui.Components as ExComponents
+import Gui.Globals as Globals
+import Gui.Components as Components
 
 
 EaComponents.ContentPage {
-    defaultInfo: ExGlobals.Proxies.mainProxy.summary.isCreated ?
+    defaultInfo: Globals.Proxies.mainProxy.summary.isCreated ?
                      "" :
                      qsTr("No Summary Generated")
 

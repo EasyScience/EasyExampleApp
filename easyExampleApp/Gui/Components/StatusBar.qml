@@ -10,7 +10,7 @@ import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
 
 
 EaElements.StatusBar {
@@ -18,7 +18,7 @@ EaElements.StatusBar {
 
     /*
     model: XmlListModel {
-        xml: ExGlobals.Proxies.mainProxy.status.asXml
+        xml: Globals.Proxies.mainProxy.status.asXml
         query: "/root/item"
 
         XmlRole { name: "label"; query: "label/string()" }
@@ -27,7 +27,7 @@ EaElements.StatusBar {
     */
 
     model: EaComponents.JsonListModel {
-        json: JSON.stringify(ExGlobals.Proxies.mainProxy.status.asJson)
+        json: JSON.stringify(Globals.Proxies.mainProxy.status.asJson)
         query: "$[*]"
     }
 

@@ -7,17 +7,17 @@ import QtQuick.Controls
 
 import EasyApp.Gui.Charts as EaCharts
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
 
 
 EaCharts.Plotly1dMeasVsCalc {
 
-    useWebGL: ExGlobals.Proxies.mainProxy.plotting.useWebGL1d
+    useWebGL: Globals.Proxies.mainProxy.plotting.useWebGL1d
 
     xAxisTitle: "x"
     yAxisTitle: "y"
 
-    calculatedXYData: ExGlobals.Proxies.mainProxy.model.calculatedData
+    calculatedXYData: Globals.Proxies.mainProxy.model.calculatedData
 
 }
 

@@ -7,7 +7,7 @@ import QtQuick
 import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Components as EaComponents
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
 
 
 EaComponents.ProjectDescriptionDialog {
@@ -15,16 +15,16 @@ EaComponents.ProjectDescriptionDialog {
     onClosed: EaGlobals.Variables.showProjectDescriptionDialog = false
 
     onAccepted: {
-        ExGlobals.Proxies.mainProxy.project.currentProjectName = projectName
-        ExGlobals.Proxies.mainProxy.project.currentProjectDescription = projectDescription
-        ExGlobals.Proxies.mainProxy.project.currentProjectLocation = projectLocation
-        ExGlobals.Proxies.mainProxy.project.create()
+        Globals.Proxies.mainProxy.project.currentProjectName = projectName
+        Globals.Proxies.mainProxy.project.currentProjectDescription = projectDescription
+        Globals.Proxies.mainProxy.project.currentProjectLocation = projectLocation
+        Globals.Proxies.mainProxy.project.create()
     }
 
     Component.onCompleted: {
-        projectName = ExGlobals.Proxies.mainProxy.project.currentProjectName
-        projectDescription = ExGlobals.Proxies.mainProxy.project.currentProjectDescription
-        projectLocation = ExGlobals.Proxies.mainProxy.project.currentProjectLocation
+        projectName = Globals.Proxies.mainProxy.project.currentProjectName
+        projectDescription = Globals.Proxies.mainProxy.project.currentProjectDescription
+        projectLocation = Globals.Proxies.mainProxy.project.currentProjectLocation
     }
 }
 

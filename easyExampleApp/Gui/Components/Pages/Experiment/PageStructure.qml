@@ -10,12 +10,12 @@ import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
-import Gui.Globals as ExGlobals
-import Gui.Components as ExComponents
+import Gui.Globals as Globals
+import Gui.Components as Components
 
 
 EaComponents.ContentPage {
-    defaultInfo: ExGlobals.Proxies.mainProxy.experiment.isCreated ?
+    defaultInfo: Globals.Proxies.mainProxy.experiment.isCreated ?
                      "" :
                      qsTr("No experiments loaded")
 
@@ -46,14 +46,16 @@ EaComponents.ContentPage {
             Loader { source: 'SideBarAdvanced.qml' }
         ]
 
-        continueButton.text: ExGlobals.Proxies.mainProxy.experiment.isCreated ?
+        continueButton.text: Globals.Proxies.mainProxy.experiment.isCreated ?
                                  qsTr("Continue") :
                                  qsTr("Continue without experiment data")
 
         continueButton.onClicked: {
-            ExGlobals.Variables.analysisPageEnabled = true
-            ExGlobals.References.analysisAppbarButton.toggle()
+            Globals.Vars.analysisPageEnabled = true
+            Globals.Refs.app.appbar.analysisButton.toggle()
         }
+
+        Component.onCompleted: Globals.Refs.app.experimentPage.continueButton = continueButton
     }
 
     Component.onCompleted: print("Experiment page loaded:", this)

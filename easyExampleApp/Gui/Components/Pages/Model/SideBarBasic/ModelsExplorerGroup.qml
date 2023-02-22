@@ -11,7 +11,7 @@ import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 import EasyApp.Gui.Logic as EaLogic
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
 
 
 Column {
@@ -26,8 +26,8 @@ Column {
         // Table model
 
         model: EaComponents.JsonListModel {
-            json: ExGlobals.Proxies.mainProxy.model.isCreated ?
-                      JSON.stringify(ExGlobals.Proxies.mainProxy.model.asJson) :
+            json: Globals.Proxies.mainProxy.model.isCreated ?
+                      JSON.stringify(Globals.Proxies.mainProxy.model.asJson) :
                       ""
             query: "$[*]"
         }
@@ -60,11 +60,11 @@ Column {
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this model")
                 onClicked: {
-                    ExGlobals.Proxies.mainProxy.experiment.emptyMeasuredData()
-                    ExGlobals.Proxies.mainProxy.model.emptyCalculatedData()
-                    ExGlobals.Variables.experimentPageEnabled = false
-                    ExGlobals.Variables.analysisPageEnabled = false
-                    ExGlobals.Variables.summaryPageEnabled = false
+                    Globals.Proxies.mainProxy.experiment.emptyMeasuredData()
+                    Globals.Proxies.mainProxy.model.emptyCalculatedData()
+                    Globals.Vars.experimentPageEnabled = false
+                    Globals.Vars.analysisPageEnabled = false
+                    Globals.Vars.summaryPageEnabled = false
                 }
             }
 
@@ -84,10 +84,11 @@ Column {
         }
 
         EaElements.SideBarButton {
-            enabled: !ExGlobals.Proxies.mainProxy.model.isCreated
+            enabled: !Globals.Proxies.mainProxy.model.isCreated
             fontIcon: "plus-circle"
             text: qsTr("Add new model manually")
-            onClicked: ExGlobals.Proxies.mainProxy.model.generateCalculatedData()
+            onClicked: Globals.Proxies.mainProxy.model.generateCalculatedData()
+            Component.onCompleted: Globals.Refs.app.modelPage.addNewModelManuallyButton = this
         }
     }
 

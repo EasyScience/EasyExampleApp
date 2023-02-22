@@ -10,24 +10,24 @@ import EasyApp.Gui.Animations as EaAnimations
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
-import Gui.Globals as ExGlobals
-import Gui.Components as ExComponents
+import Gui.Globals as Globals
+import Gui.Components as Components
 
 
 EaComponents.ApplicationWindow {
 
-    appName: ExGlobals.Configs.appConfig.name
-    appVersion: ExGlobals.Configs.appConfig.version
-    appDate: ExGlobals.Configs.appConfig.date
+    appName: Globals.Configs.appConfig.name
+    appVersion: Globals.Configs.appConfig.version
+    appDate: Globals.Configs.appConfig.date
 
-    //opacity: ExGlobals.Variables.splashScreenAnimoFinished ? 1 : 0
+    //opacity: Globals.Vars.splashScreenAnimoFinished ? 1 : 0
     //Behavior on opacity { EaAnimations.ThemeChange {} }
 
     onClosing: Qt.quit()
 
     Component.onCompleted: {
         print("Application window loaded:", this)
-        ExGlobals.Variables.applicationWindowCreated = true
+        Globals.Vars.applicationWindowCreated = true
     }
     Component.onDestruction: print("Application window destroyed:", this)
 
@@ -39,12 +39,12 @@ EaComponents.ApplicationWindow {
     appBarLeftButtons: [
 
         EaElements.ToolButton {
-            enabled: ExGlobals.Proxies.mainProxy.project.isCreated &&
-                    ExGlobals.Proxies.mainProxy.project.needSave
+            enabled: Globals.Proxies.mainProxy.project.isCreated &&
+                    Globals.Proxies.mainProxy.project.needSave
             highlighted: true
             fontIcon: "save"
             ToolTip.text: qsTr("Save current state of the project")
-            onClicked: ExGlobals.Proxies.mainProxy.project.save()
+            onClicked: Globals.Proxies.mainProxy.project.save()
         },
 
         EaElements.ToolButton {
@@ -58,16 +58,16 @@ EaComponents.ApplicationWindow {
         },
 
         EaElements.ToolButton {
-            enabled: ExGlobals.Variables.homePageEnabled
+            enabled: Globals.Vars.homePageEnabled
             fontIcon: "backspace"
             ToolTip.text: qsTr("Reset to initial state without project, model and data")
             onClicked: {
                 appBarCentralTabs.setCurrentIndex(0)
-                ExGlobals.Variables.projectPageEnabled = false
-                ExGlobals.Variables.modelPageEnabled = false
-                ExGlobals.Variables.experimentPageEnabled = false
-                ExGlobals.Variables.analysisPageEnabled = false
-                ExGlobals.Variables.summaryPageEnabled = false
+                Globals.Vars.projectPageEnabled = false
+                Globals.Vars.modelPageEnabled = false
+                Globals.Vars.experimentPageEnabled = false
+                Globals.Vars.analysisPageEnabled = false
+                Globals.Vars.summaryPageEnabled = false
             }
         }
 
@@ -85,13 +85,13 @@ EaComponents.ApplicationWindow {
         EaElements.ToolButton {
             fontIcon: "question-circle"
             ToolTip.text: qsTr("Get online help")
-            onClicked: Qt.openUrlExternally(ExGlobals.Configs.appConfig.homePageUrl)
+            onClicked: Qt.openUrlExternally(Globals.Configs.appConfig.homePageUrl)
         },
 
         EaElements.ToolButton {
             fontIcon: "bug"
             ToolTip.text: qsTr("Report a bug or issue")
-            onClicked: Qt.openUrlExternally(ExGlobals.Configs.appConfig.issuesUrl)
+            onClicked: Qt.openUrlExternally(Globals.Configs.appConfig.issuesUrl)
         }
 
     ]
@@ -102,64 +102,67 @@ EaComponents.ApplicationWindow {
 
         // Home tab
         EaElements.AppBarTabButton {
-            enabled: ExGlobals.Variables.homePageEnabled
+            enabled: Globals.Vars.homePageEnabled
             fontIcon: "home"
             text: qsTr("Home")
             ToolTip.text: qsTr("Home page")
-            Component.onCompleted: homePageLoader.source = 'Pages/Home/Page.qml'
+            Component.onCompleted: {
+                homePageLoader.source = 'Pages/Home/Page.qml'
+                Globals.Refs.app.appbar.homeButton = this
+            }
         },
 
         // Project tab
         EaElements.AppBarTabButton {
-            enabled: ExGlobals.Variables.projectPageEnabled
+            enabled: Globals.Vars.projectPageEnabled
             fontIcon: "archive"
             text: qsTr("Project")
             ToolTip.text: qsTr("Project description page")
             onEnabledChanged: enabled ?
                                   projectPageLoader.source = 'Pages/Project/PageStructure.qml' :
                                   projectPageLoader.source = ''
-            Component.onCompleted: ExGlobals.References.projectAppbarButton = this
+            Component.onCompleted: Globals.Refs.app.appbar.projectButton = this
         },
 
         // Model tab
         EaElements.AppBarTabButton {
-            enabled: ExGlobals.Variables.modelPageEnabled
+            enabled: Globals.Vars.modelPageEnabled
             fontIcon: "gem"
             text: qsTr("Model")
             ToolTip.text: qsTr("Model description page")
             onEnabledChanged: enabled ?
                                   modelPageLoader.source = 'Pages/Model/PageStructure.qml' :
                                   modelPageLoader.source = ''
-            Component.onCompleted: ExGlobals.References.modelAppbarButton = this
+            Component.onCompleted: Globals.Refs.app.appbar.modelButton = this
         },
 
         // Experiment tab
         EaElements.AppBarTabButton {
-            enabled: ExGlobals.Variables.experimentPageEnabled
+            enabled: Globals.Vars.experimentPageEnabled
             fontIcon: "microscope"
             text: qsTr("Experiment")
             ToolTip.text: qsTr("Experimental settings and measured data page")
             onEnabledChanged: enabled ?
                                   experimentPageLoader.source = 'Pages/Experiment/PageStructure.qml' :
                                   experimentPageLoader.source = ''
-            Component.onCompleted: ExGlobals.References.experimentAppbarButton = this
+            Component.onCompleted: Globals.Refs.app.appbar.experimentButton = this
         },
 
         // Analysis tab
         EaElements.AppBarTabButton {
-            enabled: ExGlobals.Variables.analysisPageEnabled
+            enabled: Globals.Vars.analysisPageEnabled
             fontIcon: "calculator"
             text: qsTr("Analysis")
             ToolTip.text: qsTr("Simulation and fitting page")
             onEnabledChanged: enabled ?
                                   analysisPageLoader.source = 'Pages/Analysis/PageStructure.qml' :
                                   analysisPageLoader.source = ''
-            Component.onCompleted: ExGlobals.References.analysisAppbarButton = this
+            Component.onCompleted: Globals.Refs.app.appbar.analysisButton = this
         },
 
         // Summary tab
         EaElements.AppBarTabButton {
-            enabled: ExGlobals.Variables.summaryPageEnabled
+            enabled: Globals.Vars.summaryPageEnabled
             fontIcon: "clipboard-list"
             text: qsTr("Summary")
             ToolTip.text: qsTr("Summary of the work done")
@@ -167,9 +170,9 @@ EaComponents.ApplicationWindow {
                                   summaryPageLoader.source = 'Pages/Summary/PageStructure.qml' :
                                   summaryPageLoader.source = ''
             onCheckedChanged: checked ?
-                                  ExGlobals.Proxies.mainProxy.summary.isCreated = true :
-                                  ExGlobals.Proxies.mainProxy.summary.isCreated = false
-            Component.onCompleted: ExGlobals.References.summaryAppbarButton = this
+                                  Globals.Proxies.mainProxy.summary.isCreated = true :
+                                  Globals.Proxies.mainProxy.summary.isCreated = false
+            Component.onCompleted: Globals.Refs.app.appbar.summaryButton = this
         }
 
     ]
@@ -192,6 +195,16 @@ EaComponents.ApplicationWindow {
     // STATUS BAR
     /////////////
 
-    statusBar: ExComponents.StatusBar {}
+    statusBar: Components.StatusBar {}
+
+
+    //////////////////
+    // Developer tests
+    //////////////////
+
+    Loader {
+        source: Globals.Vars.isTestMode ? 'DeveloperTestsController.qml' : ""
+        //source: 'DeveloperTestsController.qml'
+    }
 
 }

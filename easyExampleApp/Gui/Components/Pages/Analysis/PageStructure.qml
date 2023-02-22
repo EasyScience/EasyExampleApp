@@ -11,19 +11,19 @@ import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
-import Gui.Globals as ExGlobals
-import Gui.Components as ExComponents
+import Gui.Globals as Globals
+import Gui.Components as Components
 
 
 EaComponents.ContentPage {
-    defaultInfo: ExGlobals.Proxies.mainProxy.model.isCreated ?
+    defaultInfo: Globals.Proxies.mainProxy.model.isCreated ?
                      "" :
                      qsTr("No analysis done")
 
     mainView: EaComponents.MainContent {
         tabs: [
             EaElements.TabButton {
-                text: ExGlobals.Proxies.mainProxy.experiment.isCreated ?
+                text: Globals.Proxies.mainProxy.experiment.isCreated ?
                           qsTr("Fitting") :
                           qsTr("Simulation")
             }
@@ -46,9 +46,11 @@ EaComponents.ContentPage {
         ]
 
         continueButton.onClicked: {
-            ExGlobals.Variables.summaryPageEnabled = true
-            ExGlobals.References.summaryAppbarButton.toggle()
+            Globals.Vars.summaryPageEnabled = true
+            Globals.Refs.app.appbar.summaryButton.toggle()
         }
+
+        Component.onCompleted: Globals.Refs.app.analysisPage.continueButton = continueButton
     }
 
     Component.onCompleted: print("Analysis page loaded:", this)

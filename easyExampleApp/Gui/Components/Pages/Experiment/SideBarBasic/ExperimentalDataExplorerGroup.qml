@@ -11,7 +11,7 @@ import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 import EasyApp.Gui.Logic as EaLogic
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
 
 
 Column {
@@ -26,8 +26,8 @@ Column {
         // Table model
 
         model: EaComponents.JsonListModel {
-            json: ExGlobals.Proxies.mainProxy.experiment.isCreated ?
-                      JSON.stringify(ExGlobals.Proxies.mainProxy.experiment.asJson) :
+            json: Globals.Proxies.mainProxy.experiment.isCreated ?
+                      JSON.stringify(Globals.Proxies.mainProxy.experiment.asJson) :
                       ""
             query: "$[*]"
         }
@@ -59,7 +59,7 @@ Column {
                 headerText: "Del."
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this dataset")
-                onClicked: ExGlobals.Proxies.mainProxy.experiment.emptyMeasuredData()
+                onClicked: Globals.Proxies.mainProxy.experiment.emptyMeasuredData()
             }
         }
 
@@ -71,10 +71,11 @@ Column {
         spacing: EaStyle.Sizes.fontPixelSize
 
         EaElements.SideBarButton {
-            enabled: !ExGlobals.Proxies.mainProxy.experiment.isCreated
+            enabled: !Globals.Proxies.mainProxy.experiment.isCreated
             fontIcon: "upload"
             text: qsTr("Import data from local drive")
-            onClicked: ExGlobals.Proxies.mainProxy.experiment.loadMeasuredData()
+            onClicked: Globals.Proxies.mainProxy.experiment.loadMeasuredData()
+            Component.onCompleted: Globals.Refs.app.experimentPage.importDataFromLocalDriveButton = this
         }
 
         EaElements.SideBarButton {

@@ -7,14 +7,14 @@ import QtQuick
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
 
 
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Experimental data")
-        visible: ExGlobals.Proxies.mainProxy.experiment.isCreated
+        visible: Globals.Proxies.mainProxy.experiment.isCreated
         last: true
 
         Loader { source: 'SideBarAdvanced/GenerateDataGroup.qml' }

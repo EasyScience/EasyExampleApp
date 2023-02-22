@@ -9,7 +9,7 @@ import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
-import Gui.Globals as ExGlobals
+import Gui.Globals as Globals
 
 
 Column {
@@ -25,7 +25,7 @@ Column {
         // Table model
 
         model: EaComponents.JsonListModel {
-            json: JSON.stringify(ExGlobals.Proxies.mainProxy.parameters.asJson)
+            json: JSON.stringify(Globals.Proxies.mainProxy.parameters.asJson)
             query: "$[*]"
         }
 
@@ -62,7 +62,7 @@ Column {
                 width: EaStyle.Sizes.fontPixelSize * 4
                 headerText: "Value"
                 text: model.value.toFixed(4)
-                onEditingFinished: ExGlobals.Proxies.mainProxy.parameters.editParameterValue(model.id, text)
+                onEditingFinished: Globals.Proxies.mainProxy.parameters.editParameterValue(model.id, text)
             }
 
             EaComponents.TableViewLabel {
@@ -79,15 +79,15 @@ Column {
                 width: EaStyle.Sizes.fontPixelSize * 4
                 elide: Text.ElideNone
                 headerText: "Error"
-                text: ExGlobals.Proxies.mainProxy.fitting.isFitFinished ? model.error.toFixed(4) : ''
+                text: Globals.Proxies.mainProxy.fitting.isFitFinished ? model.error.toFixed(4) : ''
             }
 
             EaComponents.TableViewCheckBox {
                 id: fitColumn
-                enabled: ExGlobals.Proxies.mainProxy.experiment.isCreated
+                enabled: Globals.Proxies.mainProxy.experiment.isCreated
                 headerText: "Fit"
                 checked: model.fit
-                //onCheckedChanged: ExGlobals.Proxies.mainProxy.parameters.editParameterFit(model.id, checked)
+                //onCheckedChanged: Globals.Proxies.mainProxy.parameters.editParameterFit(model.id, checked)
             }
         }
 
@@ -104,13 +104,13 @@ Column {
         to: table.model.get(table.currentIndex).max
         value: table.model.get(table.currentIndex).value
 
-        onMoved: ExGlobals.Proxies.mainProxy.parameters.editParameterValue(
+        onMoved: Globals.Proxies.mainProxy.parameters.editParameterValue(
                      table.model.get(table.currentIndex).id,
                      value)
 
         onPressedChanged: {
             if (!pressed) {
-                ExGlobals.Proxies.mainProxy.parameters.generateAsJson()
+                Globals.Proxies.mainProxy.parameters.generateAsJson()
             }
         }
     }
@@ -118,13 +118,15 @@ Column {
     // Control buttons below table
 
     EaElements.SideBarButton {
-        enabled: ExGlobals.Proxies.mainProxy.experiment.isCreated
+        enabled: Globals.Proxies.mainProxy.experiment.isCreated
         wide: true
 
         fontIcon: 'play-circle'
         text: qsTr('Start fitting')
 
-        onClicked: ExGlobals.Proxies.mainProxy.fitting.fit()
+        onClicked: Globals.Proxies.mainProxy.fitting.fit()
+
+        Component.onCompleted: Globals.Refs.app.analysisPage.startFittingButton = this
     }
 
 }
