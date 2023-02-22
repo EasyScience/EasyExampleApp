@@ -13,7 +13,7 @@ import Gui.Globals as Globals
 
 QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS > Reset Code Model"
 
-    readonly property var mainProxy: typeof pyProxy !== 'undefined' ?
+    property var mainProxy: typeof pyProxy !== 'undefined' && pyProxy !== null ?
                                          pyProxy:
                                          qmlProxy
 

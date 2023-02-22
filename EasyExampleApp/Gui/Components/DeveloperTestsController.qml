@@ -88,6 +88,7 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.homePage.startButton.enabled, true) )
 
         rc.mouseClick(Globals.Refs.app.homePage.startButton)
+        //rc.wait(2000)
 
         // Project Page
 
@@ -104,6 +105,7 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.projectPage.continueButton.enabled, true) )
 
         rc.mouseClick(Globals.Refs.app.projectPage.continueButton)
+        //rc.wait(2000)
 
         // Model Page
 
@@ -127,6 +129,7 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.enabled, true) )
 
         rc.mouseClick(Globals.Refs.app.modelPage.continueButton)
+        //rc.wait(2000)
 
         // Experiment page
 
@@ -150,6 +153,7 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.experimentPage.continueButton.text, 'Continue') )
 
         rc.mouseClick(Globals.Refs.app.experimentPage.continueButton)
+        //rc.wait(2000)
 
         // Analysis page
 
@@ -169,12 +173,16 @@ EaElements.RemoteController {
 
         rc.mouseClick(Globals.Refs.app.analysisPage.startFittingButton)
         rc.mouseClick(Globals.Refs.app.analysisPage.continueButton)
+        //rc.wait(2000)
 
         // Summary page
 
         saveImage(saveImagesDir, 'SummaryPage.png')
 
         // Complete testing process
+
+        rc.mouseClick(Globals.Refs.app.appbar.resetStateButton)
+        //rc.wait(2000)
 
         rc.hidePointer()
     }

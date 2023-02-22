@@ -69,6 +69,7 @@ EaComponents.ApplicationWindow {
                 Globals.Vars.analysisPageEnabled = false
                 Globals.Vars.summaryPageEnabled = false
             }
+            Component.onCompleted: Globals.Refs.app.appbar.resetStateButton = this
         }
 
     ]
@@ -196,7 +197,6 @@ EaComponents.ApplicationWindow {
     /////////////
 
     statusBar: Components.StatusBar {}
-
 
     //////////////////
     // Developer tests

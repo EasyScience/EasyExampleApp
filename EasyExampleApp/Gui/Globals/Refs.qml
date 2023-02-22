@@ -12,6 +12,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     // Main
     readonly property var app: {
         'appbar': {
+            'resetStateButton': null,
             'homeButton': null,
             'projectButton': null,
             'modelButton': null,
