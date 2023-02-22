@@ -45,6 +45,7 @@ jobs:
           pip install numpy jsbeautifier
 
       - name: Run GUI tests
+        shell: bash
         run: |
           cd easyExampleApp
           python main.py --testmode
