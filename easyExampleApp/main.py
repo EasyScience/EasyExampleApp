@@ -8,7 +8,7 @@ from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtWebEngineQuick import QtWebEngineQuick
 
-from Logic.ResourcePaths import ResourcePaths
+from Logic.Helpers import ResourcePaths, CommandLineArguments
 from Logic.PyProxy import PyProxy
 
 
@@ -26,9 +26,12 @@ if __name__ == '__main__':
     pyProxy = PyProxy()
     engine.rootContext().setContextProperty('pyProxy', pyProxy)
 
+    cliArgs = CommandLineArguments()
+    engine.rootContext().setContextProperty('pyIsTestMode', cliArgs.testmode)
+
     # Add paths to be accessible from the QML components
     resourcePaths = ResourcePaths()
-    for p in resourcePaths.import_paths:
+    for p in resourcePaths.imports:
         engine.addImportPath(p)
 
     # Load the root QML file

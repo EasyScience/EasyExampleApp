@@ -3,12 +3,13 @@
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 import os
+import argparse
 
 
 class ResourcePaths:
     def __init__(self):
-        self.main_qml_path = ''  # Current app main.qml file
-        self.import_paths = []   # EasyApp qml components (EasyApp/...) & Current app qml components (Gui/...)
+        self.main_qml = ''  # Current app main.qml file
+        self.imports = []   # EasyApp qml components (EasyApp/...) & Current app qml components (Gui/...)
         self.setPaths()
 
     def setPaths(self):
@@ -18,7 +19,7 @@ class ResourcePaths:
             import resources
             print(f'Resources: {resources}')
             self.main_qml = 'qrc:/Gui/main.qml'
-            self.import_paths = ['qrc:/EasyApp', 'qrc:/']
+            self.imports = ['qrc:/EasyApp', 'qrc:/']
             return
         except ImportError:
             print('No rc resources file is found.')
@@ -28,7 +29,7 @@ class ResourcePaths:
             import EasyApp
             print(f'EasyApp: {EasyApp.__path__[0]}')
             self.main_qml = 'Gui/main.qml'
-            self.import_paths = [os.path.join(EasyApp.__path__[0], '..'), '.']
+            self.imports = [os.path.join(EasyApp.__path__[0], '..'), '.']
             return
         except ImportError:
             print('No EasyApp module is installed.')
@@ -36,7 +37,22 @@ class ResourcePaths:
         # EasyApp from the local copy
         if os.path.exists('../../EasyApp'):
             self.main_qml = 'Gui/main.qml'
-            self.import_paths = ['../../EasyApp', '.' ]
+            self.imports = ['../../EasyApp', '.' ]
             return
         else:
             print('No EasyApp directory is found.')
+
+
+class CommandLineArguments:
+
+    def __new__(cls):
+        parser = argparse.ArgumentParser()
+
+        parser.add_argument(
+            '-t',
+            '--testmode',
+            action='store_true',
+            help='run the application in test mode: run tests, take screenshots and exit the application'
+        )
+
+        return parser.parse_args()
