@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         #os: [macos-11, ubuntu-20.04, windows-2019]
-        os: [ubuntu-20.04]
+        os: [ubuntu-22.04]
 
     steps:
       - name: Set up non-Python dependencies (Linux)
@@ -22,7 +22,7 @@ jobs:
           sudo apt-get -o Acquire::Retries=3 install libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xfixes0
           sudo apt-get -o Acquire::Retries=3 install libxcb-shape0
           sudo apt-get -o Acquire::Retries=3 install libpulse-mainloop-glib0
-          sudo apt-get -o Acquire::Retries=3 install libgl1
+          sudo apt-get -o Acquire::Retries=3 install libgl1 libgl1-mesa-glx
 
       - name: Set up screen settings (macOS)
         if: runner.os == 'macOS'
