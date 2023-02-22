@@ -89,8 +89,8 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
 
-        res.push( rc.compare(Globals.Refs.app.projectPage.continueButton.text, 'Continue without project1') )
-        res.push( rc.compare(Globals.Refs.app.projectPage.continueButton.enabled, false) )
+        res.push( rc.compare(Globals.Refs.app.projectPage.continueButton.text, 'Continue without project') )
+        res.push( rc.compare(Globals.Refs.app.projectPage.continueButton.enabled, true) )
 
         rc.mouseClick(Globals.Refs.app.projectPage.continueButton)
 
