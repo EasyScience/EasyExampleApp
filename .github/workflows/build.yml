@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         #os: [macos-11, ubuntu-20.04, windows-2019]
-        os: [macos-11]
+        os: [windows-2019]
 
     steps:
       - name: Cancel previous workflow runs
@@ -21,13 +21,6 @@ jobs:
 
       - name: Check-out repository
         uses: actions/checkout@v2
-
-  #    - name: Run GUI tests
-  #      run: |
-  #        ls
-  #        ls ..
-  #        cd EasyExampleApp
-
 
       - name: Set up non-Python dependencies (Linux)
         if: runner.os == 'Linux'
