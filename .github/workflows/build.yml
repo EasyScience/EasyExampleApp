@@ -21,6 +21,13 @@ jobs:
       - name: Check-out repository
         uses: actions/checkout@v2
 
+  #    - name: Run GUI tests
+  #      run: |
+  #        ls
+  #        ls ..
+  #        cd EasyExampleApp
+
+
       - name: Set up non-Python dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -35,8 +42,8 @@ jobs:
         with:
             python-version: 3.9
 
-      - name: Upgrade PIP
-        run: pip install --upgrade pip
+      #- name: Upgrade PIP
+      #  run: pip install --upgrade pip
 
       - name: Install Python dependences
         run: |
@@ -47,5 +54,5 @@ jobs:
         run: |
           ls
           ls ..
-          cd EasyExampleApp
+          cd easyExampleApp
           python main.py --testmode
