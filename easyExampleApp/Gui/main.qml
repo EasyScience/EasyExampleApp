@@ -14,26 +14,27 @@ import Gui.Globals as Globals
 import Gui.Components as Components
 
 
-EaElements.SplashScreen {
+Components.ApplicationWindow {
 
-    appNamePrefix: Globals.Configs.appConfig.namePrefixForLogo
-    appNameSuffix: Globals.Configs.appConfig.nameSuffixForLogo
-    appVersion: qsTr('Version') + ` ${Globals.Configs.appConfig.version} (${Globals.Configs.appConfig.date})`
-    logoSource: Globals.Configs.appConfig.icon
+    /*
+    EaElements.SplashScreen {
 
-    initialGuiCompleted: Globals.Vars.applicationWindowCreated &&
-                         Globals.Vars.homePageCreated
+        appNamePrefix: Globals.Configs.appConfig.namePrefixForLogo
+        appNameSuffix: Globals.Configs.appConfig.nameSuffixForLogo
+        appVersion: qsTr('Version') + ` ${Globals.Configs.appConfig.version} (${Globals.Configs.appConfig.date})`
+        logoSource: Globals.Configs.appConfig.icon
 
-    onAnimationFinishedChanged: Globals.Vars.splashScreenAnimoFinished = animationFinished
+        initialGuiCompleted: Globals.Vars.applicationWindowCreated &&
+                             Globals.Vars.homePageCreated
 
-    Component.onCompleted: print("Splash screen loaded:", this)
-    Component.onDestruction: print("Splash screen destroyed:", this)
+        onAnimationFinishedChanged: Globals.Vars.splashScreenAnimoFinished = animationFinished
 
-    // Application window loader
+        Component.onCompleted: print("Splash screen loaded:", this)
+        Component.onDestruction: print("Splash screen destroyed:", this)
 
-    Loader {
-        asynchronous: true
-        source: "Components/ApplicationWindow.qml"
     }
+    */
 
 }
+
+
