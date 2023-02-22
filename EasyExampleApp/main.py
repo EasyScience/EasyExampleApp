@@ -17,8 +17,6 @@ if __name__ == '__main__':
     QtWebEngineQuick.initialize()
 
     # Create application
-    import numpy
-    print('!!!! numpy', numpy.__path__[0])
     app = QGuiApplication(sys.argv)
 
     # Create QML application engine
