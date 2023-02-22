@@ -29,10 +29,10 @@ class Parameters(QObject):
             {
                 'id': '4538458360',
                 'number': 1,
-                'label': 'Amplitude',
-                'value': self._pyProxy.model.amplitude,
-                'min': 0,
-                'max': 1,
+                'label': 'Slope',
+                'value': self._pyProxy.model.slope,
+                'min': -5,
+                'max': 5,
                 'unit': '',
                 'error': 0.1131,
                 'fit': True
@@ -40,47 +40,20 @@ class Parameters(QObject):
             {
                 'id': '4092346238',
                 'number': 2,
-                'label': 'Period',
-                'value': self._pyProxy.model.period,
-                'min': 3 * math.pi,
-                'max': 4 * math.pi,
+                'label': 'y-Intercept',
+                'value': self._pyProxy.model.yIntercept,
+                'min': -5,
+                'max': 5,
                 'unit': 'rad',
                 'error': 0.2573,
-                'fit': True
-            },
-            {
-                'id': '9834542745',
-                'number': 3,
-                'label': 'Vertical shift',
-                'value': self._pyProxy.model.verticalShift,
-                'min': 0,
-                'max': 1,
-                'unit': '',
-                'error': 0.0212,
-                'fit': True
-            },
-            {
-                'id': '8655377643',
-                'number': 4,
-                'label': 'Phase shift',
-                'value': self._pyProxy.model.phaseShift,
-                'min': 0,
-                'max': math.pi,
-                'unit': 'rad',
-                'error': 0.2238,
                 'fit': True
             }
         ]
         self.asJsonChanged.emit()
 
-
     @Slot(str, str)
     def editParameterValue(self, pid, value):
         if (pid == '4538458360'):
-            self._pyProxy.model.amplitude = float(value)
+            self._pyProxy.model.slope = float(value)
         elif (pid == '4092346238'):
-            self._pyProxy.model.period = float(value)
-        elif (pid == '9834542745'):
-            self._pyProxy.model.verticalShift = float(value)
-        elif (pid == '8655377643'):
-            self._pyProxy.model.phaseShift = float(value)
+            self._pyProxy.model.yIntercept = float(value)

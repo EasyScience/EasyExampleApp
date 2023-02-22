@@ -12,14 +12,9 @@ from Logic.Calculator import Calculator
 
 class Model(QObject):
     asJsonChanged = Signal()
-
     isCreatedChanged = Signal()
-
-    amplitudeChanged = Signal()
-    periodChanged = Signal()
-    verticalShiftChanged = Signal()
-    phaseShiftChanged = Signal()
-
+    slopeChanged = Signal()
+    yInterceptChanged = Signal()
     calculatedDataChanged = Signal()
 
     def __init__(self, parent):
@@ -28,32 +23,26 @@ class Model(QObject):
 
         self._as_json = [
             {
-                'label': 'Sine wave'
+                'label': 'Line'
             }
         ]
 
         self._isCreated = False
 
-        self._amplitude = 1
-        self._period = 3.5 * math.pi
-        self._verticalShift = 0
-        self._phaseShift = 0
+        self._slope = 1.0
+        self._yIntercept = 0.0
 
         self._xArray = []
         self._yArray = []
         self._calculatedData = {}
 
-        self.amplitudeChanged.connect(self.generateCalculatedData)
-        self.periodChanged.connect(self.generateCalculatedData)
-        self.verticalShiftChanged.connect(self.generateCalculatedData)
-        self.phaseShiftChanged.connect(self.generateCalculatedData)
+        self.slopeChanged.connect(self.generateCalculatedData)
+        self.yInterceptChanged.connect(self.generateCalculatedData)
 
         self.asJsonChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
         self.isCreatedChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
-        self.amplitudeChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
-        self.periodChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
-        self.verticalShiftChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
-        self.phaseShiftChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
+        self.slopeChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
+        self.yInterceptChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
         self.calculatedDataChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
 
 
@@ -72,49 +61,27 @@ class Model(QObject):
         self._isCreated = newValue
         self.isCreatedChanged.emit()
 
-    @Property(float, notify=amplitudeChanged)
-    def amplitude(self):
-        return self._amplitude
+    @Property(float, notify=slopeChanged)
+    def slope(self):
+        return self._slope
 
-    @amplitude.setter
-    def amplitude(self, newValue):
-        if self._amplitude == newValue:
+    @slope.setter
+    def slope(self, newValue):
+        if self._slope == newValue:
             return
-        self._amplitude = newValue
-        self.amplitudeChanged.emit()
+        self._slope = newValue
+        self.slopeChanged.emit()
 
-    @Property(float, notify=periodChanged)
-    def period(self):
-        return self._period
+    @Property(float, notify=yInterceptChanged)
+    def yIntercept(self):
+        return self._yIntercept
 
-    @period.setter
-    def period(self, newValue):
-        if self._period == newValue:
+    @yIntercept.setter
+    def yIntercept(self, newValue):
+        if self._yIntercept == newValue:
             return
-        self._period = newValue
-        self.periodChanged.emit()
-
-    @Property(float, notify=verticalShiftChanged)
-    def verticalShift(self):
-        return self._verticalShift
-
-    @verticalShift.setter
-    def verticalShift(self, newValue):
-        if self._verticalShift == newValue:
-            return
-        self._verticalShift = newValue
-        self.verticalShiftChanged.emit()
-
-    @Property(float, notify=phaseShiftChanged)
-    def phaseShift(self):
-        return self._phaseShift
-
-    @phaseShift.setter
-    def phaseShift(self, newValue):
-        if self._phaseShift == newValue:
-            return
-        self._phaseShift = newValue
-        self.phaseShiftChanged.emit()
+        self._yIntercept = newValue
+        self.yInterceptChanged.emit()
 
     @Property('QVariant', notify=calculatedDataChanged)
     def calculatedData(self):
@@ -125,48 +92,23 @@ class Model(QObject):
         self._calculatedData = newObj
         self.calculatedDataChanged.emit()
 
-    @Slot()
-    def generateCalculatedDataSlow(self):
-        starttime = timeit.default_timer()
-        xArray = []
-        yArray = []
-        for i in range(self._pyProxy.experiment.measuredDataLength):
-            xStep = 10 * math.pi / (self._pyProxy.experiment.measuredDataLength - 1)
-            x = i * xStep
-            y = Calculator.sine(x,
-                                self._amplitude,
-                                self._period,
-                                self._phaseShift,
-                                self._verticalShift
-                                )
-            xArray.append(x)
-            yArray.append(y)
-        endtime = timeit.default_timer()
-        #print(f'py: The generate calculated data time is: {endtime - starttime}')
-
-        self.calculatedData = { 'x': xArray, 'y': yArray }
-        self.isCreated = True
-
     def setXArray(self):
-        measuredDataLength = self._pyProxy.experiment.measuredDataLength
-        pi = math.pi
-        self._xArray = [i * 10 * pi / (measuredDataLength - 1) for i in range(measuredDataLength)]
+        length = self._pyProxy.experiment.measuredDataLength
+        self._xArray = [i / (length - 1) for i in range(length)]
 
     def setYArray(self):
-        amplitude = self._amplitude
-        period = self._period
-        phaseShift = self._phaseShift
-        verticalShift = self._verticalShift
-        pi = math.pi
-        self._yArray = [amplitude * math.sin( 2 * pi / period * (x + phaseShift) ) + verticalShift for x in self._xArray]
+        xArray = self._xArray
+        slope = self._slope
+        yIntercept = self._yIntercept
+        self._yArray = Calculator.line(xArray, slope, yIntercept)
 
     @Slot()
     def generateCalculatedData(self):
-        starttime = timeit.default_timer()
+        #starttime = timeit.default_timer()
         if len(self._xArray) != self._pyProxy.experiment.measuredDataLength:
             self.setXArray()
         self.setYArray()
-        endtime = timeit.default_timer()
+        #endtime = timeit.default_timer()
         #print(f'py: The generate calculated data time is: {endtime - starttime}')
 
         self.calculatedData = { 'x': self._xArray, 'y': self._yArray }
@@ -174,5 +116,5 @@ class Model(QObject):
 
     @Slot()
     def emptyCalculatedData(self):
-        self.calculatedData = { 'x': [], 'y': [] }
+        self.calculatedData = {'x': [], 'y': []}
         self.isCreated = False

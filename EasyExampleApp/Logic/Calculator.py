@@ -2,12 +2,16 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-import math
+import random
 
 
 class Calculator:
 
     @staticmethod
-    def sine(x, amplitude, period, phaseShift, verticalShift):
-        res = amplitude * math.sin( 2 * math.pi / period * (x + phaseShift) ) + verticalShift
-        return res
+    def line(xArray, slope, yIntercept):
+        return [slope * x + yIntercept for x in xArray]
+
+    @staticmethod
+    def lineMeas(xArray, slope, yIntercept):
+        random.seed(1)
+        return [slope * x + yIntercept + random.uniform(-0.1, 0.1) for x in xArray]

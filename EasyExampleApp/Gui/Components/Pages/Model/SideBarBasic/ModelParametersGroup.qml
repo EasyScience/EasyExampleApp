@@ -16,31 +16,17 @@ Grid {
     spacing: EaStyle.Sizes.fontPixelSize
 
     EaElements.Parameter {
-        title: qsTr('Amplitude')
+        title: qsTr('Slope')
         width: parameterFieldWidth()
-        text: Globals.Proxies.mainProxy.model.amplitude.toFixed(4)
-        onEditingFinished: Globals.Proxies.mainProxy.model.amplitude = text
+        text: Globals.Proxies.mainProxy.model.slope.toFixed(4)
+        onEditingFinished: Globals.Proxies.mainProxy.model.slope = text
     }
 
     EaElements.Parameter {
-        title: qsTr('Period')
+        title: qsTr('y-Intercept')
         width: parameterFieldWidth()
-        text: Globals.Proxies.mainProxy.model.period.toFixed(4)
-        onEditingFinished: Globals.Proxies.mainProxy.model.period = text
-    }
-
-    EaElements.Parameter {
-        title: qsTr('Vertical shift')
-        width: parameterFieldWidth()
-        text: Globals.Proxies.mainProxy.model.verticalShift.toFixed(4)
-        onEditingFinished: Globals.Proxies.mainProxy.model.verticalShift = text
-    }
-
-    EaElements.Parameter {
-        title: qsTr('Phase shift')
-        width: parameterFieldWidth()
-        text: Globals.Proxies.mainProxy.model.phaseShift.toFixed(4)
-        onEditingFinished: Globals.Proxies.mainProxy.model.phaseShift = text
+        text: Globals.Proxies.mainProxy.model.yIntercept.toFixed(4)
+        onEditingFinished: Globals.Proxies.mainProxy.model.yIntercept = text
     }
 
     // Logic

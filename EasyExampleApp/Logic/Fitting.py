@@ -12,7 +12,6 @@ class Fitting(QObject):
         super().__init__(parent)
         self._pyProxy = parent
         self._isFitFinished = False
-
         self.isFitFinishedChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
 
     @Property(bool, notify=isFitFinishedChanged)
@@ -28,9 +27,6 @@ class Fitting(QObject):
 
     @Slot()
     def fit(self):
-        self._pyProxy.model.amplitude = self._pyProxy.experiment._amplitude
-        self._pyProxy.model.period = self._pyProxy.experiment._period
-        self._pyProxy.model.phaseShift = self._pyProxy.experiment._phaseShift
-        self._pyProxy.model.verticalShift = self._pyProxy.experiment._verticalShift
-
+        self._pyProxy.model.slope = self._pyProxy.experiment._slope
+        self._pyProxy.model.yIntercept = self._pyProxy.experiment._yIntercept
         self.isFitFinished = True

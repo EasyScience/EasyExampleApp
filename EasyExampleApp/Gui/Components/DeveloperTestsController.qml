@@ -35,7 +35,7 @@ EaElements.RemoteController {
         let failedTests = 0
 
         print("========================================")
-        print("GUI tests")
+        print("GUI TEST REPORT")
         print("----------------------------------------")
         for (let i in res) {
             if (res[i].startsWith('FAIL')) {

@@ -36,19 +36,19 @@ class Project(QObject):
 
         self._examples_as_json = [
             {
-                'name': 'Example1',
-                'description': 'Sine wave, PicoScope 2204A',
-                'path': '../Resources/Examples/Example1/project.json'
+                'name': 'Horizontal line',
+                'description': 'Straight line, horizontal, PicoScope 2204A',
+                'path': '../Resources/Examples/HorizontalLine/project.json'
             },
             {
-                'name': 'Example2',
-                'description': 'Sine wave, Tektronix 2430A',
-                'path': '../Resources/Examples/Example2/project.json'
+                'name': 'Slanting line 1',
+                'description': 'Straight line, positive slope, Tektronix 2430A',
+                'path': '../Resources/Examples/SlantingLine1/project.json'
             },
             {
-                'name': 'Example3',
-                'description': 'Sine wave, Siglent SDS1202X-E',
-                'path': '../Resources/Examples/Example3/project.json'
+                'name': 'Slanting line 2',
+                'description': 'Straight line, negative slope, Siglent SDS1202X-E',
+                'path': '../Resources/Examples/SlantingLine2/project.json'
             }
         ]
 
@@ -164,10 +164,8 @@ class Project(QObject):
             project['model'] = {
                 'label': self._pyProxy.model.asJson[0]['label'],
                 'isCreated': self._pyProxy.model.isCreated,
-                'amplitude': self._pyProxy.model.amplitude,
-                'period': self._pyProxy.model.period,
-                'verticalShift': self._pyProxy.model.verticalShift,
-                'phaseShift': self._pyProxy.model.phaseShift,
+                'slope': self._pyProxy.model.slope,
+                'yIntercept': self._pyProxy.model.yIntercept,
                 'calculatedData': self._pyProxy.model.calculatedData
             }
         if self._pyProxy.experiment.isCreated:

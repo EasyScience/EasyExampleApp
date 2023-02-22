@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-import numpy as np
 import timeit
 
 from PySide6.QtCore import QObject, Signal, Slot, Property
@@ -12,14 +11,9 @@ from Logic.Calculator import Calculator
 
 class Experiment(QObject):
     asJsonChanged = Signal()
-
     isCreatedChanged = Signal()
-
-    amplitudeChanged = Signal()
-    periodChanged = Signal()
-    verticalShiftChanged = Signal()
-    phaseShiftChanged = Signal()
-
+    slopeChanged = Signal()
+    yInterceptChanged = Signal()
     measuredDataLengthChanged = Signal()
     measuredDataChanged = Signal()
 
@@ -35,10 +29,8 @@ class Experiment(QObject):
 
         self._isCreated = False
 
-        self._amplitude = np.random.uniform(0, 1)
-        self._period = np.random.uniform(3, 4) * np.pi
-        self._verticalShift = np.random.uniform(0, 1)
-        self._phaseShift = np.random.uniform(0, 1) * np.pi
+        self._slope = -3
+        self._yIntercept = 1.5
 
         self._measuredDataLength = 300
         self._measuredData = {}
@@ -87,30 +79,18 @@ class Experiment(QObject):
 
     @Slot()
     def loadMeasuredData(self):
-        starttime = timeit.default_timer()
-        xArray = []
-        yArray = []
-        for i in range (self.measuredDataLength):
-            xStep = 10 * np.pi / (self.measuredDataLength - 1)
-            x = i * xStep
-            randomVerticalShift = np.random.uniform(-0.05, 0.05)
-            y = Calculator.sine(x,
-                                self._amplitude,
-                                self._period,
-                                self._phaseShift,
-                                self._verticalShift + randomVerticalShift
-                                )
-            xArray.append(x)
-            yArray.append(y)
-        endtime = timeit.default_timer()
+        #starttime = timeit.default_timer()
+        xArray = [i / (self.measuredDataLength - 1) for i in range(self.measuredDataLength)]
+        yArray = Calculator.lineMeas(xArray, self._slope, self._yIntercept)
+        #endtime = timeit.default_timer()
         #print(f'py: The generate measured data time is: {endtime - starttime}')
 
-        self.measuredData = { 'x': xArray, 'y': yArray }
+        self.measuredData = {'x': xArray, 'y': yArray}
         self.isCreated = True
 
     @Slot()
     def emptyMeasuredData(self):
-        self.measuredData = { 'x': [], 'y': [] }
+        self.measuredData = {'x': [], 'y': []}
         self.isCreated = False
 
     def onMeasuredDataLengthChanged(self):
