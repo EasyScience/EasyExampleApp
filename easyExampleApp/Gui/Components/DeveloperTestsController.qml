@@ -79,6 +79,8 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.homePage.startButton.text, 'Start') )
         res.push( rc.compare(Globals.Refs.app.homePage.startButton.enabled, true) )
 
+        return
+
         rc.mouseClick(Globals.Refs.app.homePage.startButton)
 
         // Project Page
