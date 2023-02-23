@@ -111,7 +111,7 @@ class Model(QObject):
         #endtime = timeit.default_timer()
         #print(f'py: The generate calculated data time is: {endtime - starttime}')
 
-        self.calculatedData = { 'x': self._xArray, 'y': self._yArray }
+        self.calculatedData = {'x': self._xArray, 'y': self._yArray}
         self.isCreated = True
 
     @Slot()

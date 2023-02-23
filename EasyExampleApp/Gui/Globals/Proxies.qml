@@ -9,6 +9,7 @@ import QtQuick
 import EasyApp.Gui.Style as EaStyle
 
 import Gui.Globals as Globals
+import Gui.Logic as Logic
 
 
 QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS > Reset Code Model"
@@ -22,23 +23,24 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         readonly property var project: QtObject {
             property var examplesAsJson: [
                 {
-                    name: 'Example1',
-                    description: 'Sine wave, PicoScope 2204A',
-                    path: '../Resources/Examples/Example1/project.json'
+                    'name': 'Horizontal line',
+                    'description': 'Straight line, horizontal, PicoScope 2204A',
+                    'path': '../Resources/Examples/HorizontalLine/project.json'
                 },
                 {
-                    name: 'Example2',
-                    description: 'Sine wave, Tektronix 2430A',
-                    path: '../Resources/Examples/Example2/project.json'
+                    'name': 'Slanting line 1',
+                    'description': 'Straight line, positive slope, Tektronix 2430A',
+                    'path': '../Resources/Examples/SlantingLine1/project.json'
                 },
                 {
-                    name: 'Example3',
-                    description: 'Sine wave, Siglent SDS1202X-E',
-                    path: '../Resources/Examples/Example3/project.json'
+                    'name': 'Slanting line 2',
+                    'description': 'Straight line, negative slope, Siglent SDS1202X-E',
+                    'path': '../Resources/Examples/SlantingLine2/project.json'
                 }
             ]
 
             property bool isCreated: false
+            property bool needSave: false
 
             property string currentProjectName: 'Default project'
             property string currentProjectDescription: 'Default project description'
@@ -55,44 +57,43 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         readonly property var model: QtObject {
             readonly property var asJson: [
                 {
-                    label: 'Sine wave'
+                    'label': 'Line'
                 }
             ]
 
             property bool isCreated: false
 
-            property real amplitude: 1
-            property real period: 3.141592653589793
-            property real verticalShift: 0
-            property real phaseShift: 0
+            property real slope: 1.0
+            property real yIntercept: 0
 
+            property var xArray: []
+            property var yArray: []
             property var calculatedData: ({})
 
-            onAmplitudeChanged: generateCalculatedData()
-            onPeriodChanged: generateCalculatedData()
-            onVerticalShiftChanged: generateCalculatedData()
-            onPhaseShiftChanged: generateCalculatedData()
+            onSlopeChanged: generateCalculatedData()
+            onYInterceptChanged: generateCalculatedData()
+
+            function setXArray() {
+                const length = qmlProxy.experiment.measuredDataLength
+                xArray = Array.from({ length: length }, (_, i) => i / (length - 1))
+            }
+
+            function setYArray() {
+                yArray = Logic.Calculator.line(xArray, slope, yIntercept)
+            }
 
             function generateCalculatedData() {
-                let xArray = []
-                let yArray = []
-                for (let i = 0; i < qmlProxy.experiment.measuredDataLength; ++i) {
-                    const xStep = 10 * Math.PI / (qmlProxy.experiment.measuredDataLength - 1)
-                    const x = i * xStep
-                    const y = qmlProxy.calculator.sine(x,
-                                                       amplitude,
-                                                       period,
-                                                       phaseShift,
-                                                       verticalShift
-                                                       )
-                    xArray.push(x)
-                    yArray.push(y)
+                if (xArray.length !== qmlProxy.experiment.measuredDataLength) {
+                    setXArray()
                 }
-                calculatedData = { 'x': xArray, 'y': yArray }
+                setYArray()
+
+                calculatedData = {'x': xArray, 'y': yArray}
                 isCreated = true
             }
+
             function emptyCalculatedData() {
-                calculatedData = { 'x': [], 'y': [] }
+                calculatedData = {'x': [], 'y': []}
                 isCreated = false
             }
         }
@@ -100,17 +101,15 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         readonly property var experiment: QtObject {
             readonly property var asJson: [
                     {
-                        label: 'PicoScope'
+                        'label': 'PicoScope'
                     }
                   ]
             property bool isCreated: false
 
-            property real amplitude: Math.abs(Math.random())  // [0, 1)
-            property real period: Math.abs(Math.random()) * Math.PI * (4 - 3) + 3  // (3, 4) * pi
-            property real verticalShift: Math.random()  // (-1, 1)
-            property real phaseShift: Math.random() * Math.PI  // (-1, 1) * pi
+            property real slope: -3
+            property real yIntercept: 1.5
 
-            property int measuredDataLength: 100
+            property int measuredDataLength: 300
             property var measuredData: ({})
 
             onMeasuredDataLengthChanged: {
@@ -126,102 +125,69 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             }
 
             function loadMeasuredData() {
-                let xArray = []
-                let yArray = []
-                for (let i = 0; i < measuredDataLength; ++i) {
-                    const xStep = 10 * Math.PI / (measuredDataLength - 1)
-                    const x = i * xStep
-                    const randomVerticalShift = Math.random() * 0.1 - 0.05  // [-0.05, 0.05)
-                    const y = qmlProxy.calculator.sine(x,
-                                                       amplitude,
-                                                       period,
-                                                       phaseShift,
-                                                       verticalShift + randomVerticalShift
-                                                       )
-                    xArray.push(x)
-                    yArray.push(y)
-                }
-                measuredData = { 'x': xArray, 'y': yArray }
+                const length = measuredDataLength
+                const xArray = Array.from({ length: length }, (_, i) => i / (length - 1))
+                const yArray = Logic.Calculator.lineMeas(xArray, slope, yIntercept)
+                measuredData = {'x': xArray, 'y': yArray}
                 isCreated = true
             }            
+
             function emptyMeasuredData() {
-                measuredData = { 'x': [], 'y': [] }
+                measuredData = {'x': [], 'y': []}
                 isCreated = false
             }
         }
-
-        readonly property var calculator: QtObject {
-            function sine(x, amplitude, period, phaseShift, verticalShift) {
-                const res = amplitude * Math.sin( 2 * Math.PI / period * (x + phaseShift) ) + verticalShift
-                return res
-            }
-        }
-
 
         readonly property var fitting: QtObject {
             property bool isFitFinished: false
 
             function fit() {
-                qmlProxy.model.amplitude = qmlProxy.experiment.amplitude
-                qmlProxy.model.period = qmlProxy.experiment.period
-                qmlProxy.model.phaseShift = qmlProxy.experiment.phaseShift
-                qmlProxy.model.verticalShift = qmlProxy.experiment.verticalShift
-
+                qmlProxy.model.slope = qmlProxy.experiment.slope
+                qmlProxy.model.yIntercept = qmlProxy.experiment.yIntercept
                 isFitFinished = true
             }
         }
 
         readonly property var parameters: QtObject {
-            property var asJson: [
-                {
-                    id: '4538458360',
-                    number: 1,
-                    label: 'Amplitude',
-                    value: qmlProxy.model.amplitude,
-                    unit: '',
-                    error: 0.1131,
-                    fit: true
-                },
-                {
-                    id: '4092346238',
-                    number: 2,
-                    label: 'Period',
-                    value: qmlProxy.model.period,
-                    unit: 'rad',
-                    error: 0.2573,
-                    fit: true
-                },
-                {
-                    id: '9834542745',
-                    number: 2,
-                    label: 'Vertical shift',
-                    value: qmlProxy.model.verticalShift,
-                    unit: '',
-                    error: 0.0212,
-                    fit: true
-                },
-                {
-                    id: '8655377643',
-                    number: 2,
-                    label: 'Phase shift',
-                    value: qmlProxy.model.phaseShift,
-                    unit: 'rad',
-                    error: 0.2238,
-                    fit: true
-                }
-            ]
+            property var asJson: []
+
+            Component.onCompleted: generateAsJson()
+
+            function generateAsJson() {
+                asJson = [
+                    {
+                        'id': '4538458360',
+                        'number': 1,
+                        'label': 'Slope',
+                        'value': qmlProxy.model.slope,
+                        'min': -5,
+                        'max': 5,
+                        'unit': '',
+                        'error': 0.1131,
+                        'fit': true
+                    },
+                    {
+                        'id': '4092346238',
+                        'number': 2,
+                        'label': 'y-Intercept',
+                        'value': qmlProxy.model.yIntercept,
+                        'min': -5,
+                        'max': 5,
+                        'unit': '',
+                        'error': 0.2573,
+                        'fit': true
+                    }
+                ]
+            }
+
             function editParameterValue(pid, value) {
                 if (typeof pid === 'undefined') {
                     return
                 }
                 if (pid === '4538458360') {
-                    qmlProxy.model.amplitude = parseFloat(value)
+                    qmlProxy.model.slope = parseFloat(value)
                 } else if (pid === '4092346238') {
-                    qmlProxy.model.period = parseFloat(value)
-                } else if (pid === '9834542745') {
-                    qmlProxy.model.verticalShift = parseFloat(value)
-                } else if (pid === '8655377643') {
-                    qmlProxy.model.phaseShift = parseFloat(value)
+                    qmlProxy.model.yIntercept = parseFloat(value)
                 }
             }
         }

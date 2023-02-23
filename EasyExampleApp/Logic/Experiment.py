@@ -80,8 +80,11 @@ class Experiment(QObject):
     @Slot()
     def loadMeasuredData(self):
         #starttime = timeit.default_timer()
-        xArray = [i / (self.measuredDataLength - 1) for i in range(self.measuredDataLength)]
-        yArray = Calculator.lineMeas(xArray, self._slope, self._yIntercept)
+        slope = self._slope
+        yIntercept = self._yIntercept
+        length = self.measuredDataLength
+        xArray = [i / (length - 1) for i in range(length)]
+        yArray = Calculator.lineMeas(xArray, slope, yIntercept)
         #endtime = timeit.default_timer()
         #print(f'py: The generate measured data time is: {endtime - starttime}')
 
