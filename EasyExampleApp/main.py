@@ -37,6 +37,7 @@ if __name__ == '__main__':
     # Load the root QML file
     engine.load(resourcePaths.main_qml)
 
+    print("This is a resource path: ", resourcePaths.main_qml)
     # Event loop
     if not engine.rootObjects():
         sys.exit(-1)
