@@ -23,7 +23,7 @@ class Project(QObject):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._pyProxy = parent
+        self._proxy = parent
 
         self._isCreated = False
         self._needSave = False
@@ -153,39 +153,40 @@ class Project(QObject):
 
         project = {}
 
-        if self._pyProxy.project.isCreated:
+        if self._proxy.project.isCreated:
             project['project'] = {
-                'name': self._pyProxy.project.currentProjectName,
-                'description': self._pyProxy.project.currentProjectDescription,
-                'location': self._pyProxy.project.currentProjectLocation,
-                'creationDate': self._pyProxy.project.currentProjectCreatedDate
+                'name': self._proxy.project.currentProjectName,
+                'description': self._proxy.project.currentProjectDescription,
+                'location': self._proxy.project.currentProjectLocation,
+                'creationDate': self._proxy.project.currentProjectCreatedDate
             }
 
-        if self._pyProxy.model.isCreated:
-            project['model'] = {
-                'label': self._pyProxy.model.asJson[0]['label'],
-                'isCreated': self._pyProxy.model.isCreated,
-                'slope': self._pyProxy.model.slope,
-                'yIntercept': self._pyProxy.model.yIntercept,
-                'calculatedData': self._pyProxy.model.calculatedData
-            }
-
-        if self._pyProxy.experiment.isCreated:
+        if self._proxy.experiment.isCreated:
             project['experiment'] = {
-                'label': self._pyProxy.experiment.asJson[0]['label'],
-                'isCreated': self._pyProxy.experiment.isCreated,
-                'measuredDataLength': self._pyProxy.experiment.measuredDataLength,
-                'measuredData': self._pyProxy.experiment.measuredData
+                'label': self._proxy.experiment.description['label'],
+                'isCreated': self._proxy.experiment.isCreated,
+                'parameters': self._proxy.model.parameters,
+                'dataSize': self._proxy.experiment.dataSize,
+                'xData': self._proxy.experiment.xData,
+                'yData': self._proxy.experiment.yData,
             }
 
-        if self._pyProxy.fitting.isFitFinished:
+        if self._proxy.model.isCreated:
+            project['model'] = {
+                'label': self._proxy.model.description['label'],
+                'isCreated': self._proxy.model.isCreated,
+                'parameters': self._proxy.model.parameters,
+                'yData': self._proxy.model.yData
+            }
+
+        if self._proxy.fitting.isFitFinished:
             project['fitting'] = {
-                'isFitFinished': self._pyProxy.fitting.isFitFinished
+                'isFitFinished': self._proxy.fitting.isFitFinished
             }
 
-        if self._pyProxy.summary.isCreated:
+        if self._proxy.summary.isCreated:
             project['summary'] = {
-                'isCreated': self._pyProxy.summary.isCreated
+                'isCreated': self._proxy.summary.isCreated
             }
 
         # Style project json
