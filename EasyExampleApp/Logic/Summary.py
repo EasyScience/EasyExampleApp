@@ -10,9 +10,10 @@ class Summary(QObject):
 
     def __init__(self, parent):
         super().__init__(parent)
-        self._pyProxy = parent
-
+        self._proxy = parent
         self._isCreated = False
+
+        self.isCreatedChanged.connect(self._proxy.project.setNeedSaveToTrue)
 
     @Property(bool, notify=isCreatedChanged)
     def isCreated(self):

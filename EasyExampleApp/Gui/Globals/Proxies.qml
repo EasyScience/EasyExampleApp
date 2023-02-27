@@ -7,6 +7,7 @@ pragma Singleton
 import QtQuick
 
 import EasyApp.Gui.Style as EaStyle
+import EasyApp.Gui.Logic as EaLogic
 
 import Gui.Globals as Globals
 import Gui.Logic as Logic
@@ -14,7 +15,7 @@ import Gui.Logic as Logic
 
 QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS > Reset Code Model"
 
-    property var mainProxy: typeof pyProxy !== 'undefined' && pyProxy !== null ?
+    property var main: typeof pyProxy !== 'undefined' && pyProxy !== null ?
                                          pyProxy:
                                          qmlProxy
 
@@ -48,9 +49,67 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             property string currentProjectCreatedDate: ''
             property string currentProjectImage: Qt.resolvedUrl('../Resources/Project/Sine.svg')
 
+            onExamplesAsJsonChanged: setNeedSaveToTrue()
+            onCurrentProjectNameChanged: setNeedSaveToTrue()
+            onCurrentProjectDescriptionChanged: setNeedSaveToTrue()
+            onCurrentProjectImageChanged: setNeedSaveToTrue()
+
+            function setNeedSaveToTrue() {
+                needSave = true
+            }
+
             function create() {
                 currentProjectCreatedDate = `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`
                 isCreated = true
+            }
+
+            function save() {
+                let project = {}
+
+                if (isCreated) {
+                    project['project'] = {
+                        'name': currentProjectName,
+                        'description': currentProjectDescription,
+                        'location': currentProjectLocation,
+                        'creationDate': currentProjectCreatedDate
+                    }
+                }
+
+                if (qmlProxy.model.isCreated) {
+                    project['model'] = {
+                        'label': qmlProxy.model.asJson[0]['label'],
+                        'isCreated': qmlProxy.model.isCreated,
+                        'slope': qmlProxy.model.slope,
+                        'yIntercept': qmlProxy.model.yIntercept,
+                        'calculatedData': qmlProxy.model.calculatedData
+                    }
+                }
+
+                if (qmlProxy.experiment.isCreated) {
+                    project['experiment'] = {
+                        'label': qmlProxy.experiment.asJson[0]['label'],
+                        'isCreated': qmlProxy.experiment.isCreated,
+                        'measuredDataLength': qmlProxy.experiment.measuredDataLength,
+                        'measuredData': qmlProxy.experiment.measuredData
+                    }
+                }
+
+                if (qmlProxy.fitting.isFitFinished) {
+                    project['fitting'] = {
+                        'isFitFinished': qmlProxy.fitting.isFitFinished
+                    }
+                }
+
+                if (qmlProxy.summary.isCreated) {
+                    project['summary'] = {
+                        'isCreated': qmlProxy.summary.isCreated
+                    }
+                }
+
+                const filePath = `${currentProjectLocation}/project.json`
+                EaLogic.Utils.writeFile(filePath, JSON.stringify(project))
+
+                needSave = false
             }
         }
 
@@ -72,6 +131,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
             onSlopeChanged: generateCalculatedData()
             onYInterceptChanged: generateCalculatedData()
+            onCalculatedDataChanged: qmlProxy.project.setNeedSaveToTrue()
 
             function setXArray() {
                 const length = qmlProxy.experiment.measuredDataLength
@@ -123,6 +183,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                     qmlProxy.fitting.fit()
                 }
             }
+            onMeasuredDataChanged: qmlProxy.project.setNeedSaveToTrue()
 
             function loadMeasuredData() {
                 const length = measuredDataLength
@@ -140,6 +201,8 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
         readonly property var fitting: QtObject {
             property bool isFitFinished: false
+
+            onIsFitFinishedChanged: qmlProxy.project.setNeedSaveToTrue()
 
             function fit() {
                 qmlProxy.model.slope = qmlProxy.experiment.slope
@@ -195,21 +258,15 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         readonly property var summary: QtObject {
             property bool isCreated: false
 
+            onIsCreatedChanged: qmlProxy.project.setNeedSaveToTrue()
+
             // https://stackoverflow.com/questions/17882518/reading-and-writing-files-in-qml-qt
             // https://stackoverflow.com/questions/57351643/how-to-save-dynamically-generated-web-page-in-qwebengineview
-            function saveFile(fileUrl, text) {
-                const request = new XMLHttpRequest()
-                request.open("PUT", fileUrl, false)
-                request.send(text)
-                return request.status
-            }
             function saveHtmlReport(fileUrl) {
-                const webEngine = ExGlobals.References.summaryReportWebEngine
+                const webEngine = Globals.Refs.summaryReportWebEngine
                 webEngine.runJavaScript("document.documentElement.outerHTML",
                                         function(htmlContent) {
-                                            print('!!!!!!!', htmlContent)
-                                            const status = saveFile(fileUrl, htmlContent)
-                                            print(`Save report '${fileUrl}' status: ${status}`)
+                                            const status = EaLogic.Utils.writeFile(fileUrl, htmlContent)
                                         })
             }
         }

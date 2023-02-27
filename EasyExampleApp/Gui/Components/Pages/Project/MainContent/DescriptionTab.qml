@@ -33,7 +33,7 @@ Rectangle {
             font.family: EaStyle.Fonts.secondFontFamily
             font.pixelSize: EaStyle.Sizes.fontPixelSize * 3
             font.weight: Font.ExtraLight
-            text: Globals.Proxies.mainProxy.project.currentProjectName
+            text: Globals.Proxies.main.project.currentProjectName
         }
 
         // Project info
@@ -48,7 +48,7 @@ Rectangle {
                 text: qsTr("Description:")
             }
             EaElements.TextInput {
-                text: Globals.Proxies.mainProxy.project.currentProjectDescription
+                text: Globals.Proxies.main.project.currentProjectDescription
             }
 
             EaElements.Label {
@@ -56,24 +56,24 @@ Rectangle {
                 text: qsTr("Location:")
             }
             EaElements.Label {
-                text: Globals.Proxies.mainProxy.project.currentProjectLocation
+                text: Globals.Proxies.main.project.currentProjectLocation
             }
 
             EaElements.Label {
                 font.bold: true
-                text: qsTr("Modified:")
+                text: qsTr("Created:")
             }
             EaElements.Label {
-                text: Globals.Proxies.mainProxy.project.currentProjectCreatedDate
+                text: Globals.Proxies.main.project.currentProjectCreatedDate
             }
         }
 
         // Project image
 
         Image {
-            //visible: Globals.Proxies.mainProxy.fitting.isFitFinished
+            //visible: Globals.Proxies.main.fitting.isFitFinished
 
-            //source: Globals.Proxies.mainProxy.project.currentProjectImage
+            //source: Globals.Proxies.main.project.currentProjectImage
             width: EaStyle.Sizes.fontPixelSize * 25
             fillMode: Image.PreserveAspectFit
         }

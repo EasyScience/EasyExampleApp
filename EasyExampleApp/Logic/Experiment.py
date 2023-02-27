@@ -6,45 +6,86 @@ import timeit
 
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
-from Logic.Calculator import Calculator
+from Logic.Calculators import LineCalculator
 
 
 class Experiment(QObject):
-    asJsonChanged = Signal()
+    descriptionChanged = Signal()
+    parametersChanged = Signal()
+    dataSizeChanged = Signal()
+    xDataChanged = Signal()
+    yDataChanged = Signal()
     isCreatedChanged = Signal()
-    slopeChanged = Signal()
-    yInterceptChanged = Signal()
-    measuredDataLengthChanged = Signal()
-    measuredDataChanged = Signal()
 
     def __init__(self, parent):
         super().__init__(parent)
-        self._pyProxy = parent
-
-        self._as_json = [
-            {
-                'label': 'PicoScope'
+        self._proxy = parent
+        self._description = {
+            'label': 'PicoScope'
+        }
+        self._parameters = {
+            'xMin': {
+                'value': 0.0,
+                'fittable': False,
+            },
+            'xMax': {
+                'value': 1.0,
+                'fittable': False,
+            },
+            'xStep': {
+                'value': 0.01,
+                'fittable': False,
             }
-        ]
-
+        }
+        self._dataSize = 300
+        self._xData = []
+        self._yData = []
         self._isCreated = False
 
-        self._slope = -3
-        self._yIntercept = 1.5
+        self.dataSizeChanged.connect(self.onDataSizeChanged)
 
-        self._measuredDataLength = 300
-        self._measuredData = {}
+        self.descriptionChanged.connect(self._proxy.project.setNeedSaveToTrue)
+        self.parametersChanged.connect(self._proxy.project.setNeedSaveToTrue)
+        self.xDataChanged.connect(self._proxy.project.setNeedSaveToTrue)
+        self.yDataChanged.connect(self._proxy.project.setNeedSaveToTrue)
+        self.isCreatedChanged.connect(self._proxy.project.setNeedSaveToTrue)
 
-        self.measuredDataLengthChanged.connect(self.onMeasuredDataLengthChanged)
+    @Property('QVariant', notify=descriptionChanged)
+    def description(self):
+        return self._description
 
-        self.asJsonChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
-        self.isCreatedChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
-        self.measuredDataLengthChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
-        self.measuredDataChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
+    @Property('QVariant', notify=parametersChanged)
+    def parameters(self):
+        return self._parameters
 
-    @Property('QVariant', notify=asJsonChanged)
-    def asJson(self):
-        return self._as_json
+    @Property(int, notify=dataSizeChanged)
+    def dataSize(self):
+        return self._dataSize
+
+    @dataSize.setter
+    def dataSize(self, newValue):
+        if self._dataSize == newValue:
+            return
+        self._dataSize = newValue
+        self.dataSizeChanged.emit()
+
+    @Property('QVariant', notify=xDataChanged)
+    def xData(self):
+        return self._xData
+
+    @xData.setter
+    def xData(self, newData):
+        self._xData = newData
+        self.xDataChanged.emit()
+
+    @Property('QVariant', notify=yDataChanged)
+    def yData(self):
+        return self._yData
+
+    @yData.setter
+    def yData(self, newData):
+        self._yData = newData
+        self.yDataChanged.emit()
 
     @Property(bool, notify=isCreatedChanged)
     def isCreated(self):
@@ -57,49 +98,32 @@ class Experiment(QObject):
         self._isCreated = newValue
         self.isCreatedChanged.emit()
 
-    @Property(int, notify=measuredDataLengthChanged)
-    def measuredDataLength(self):
-        return self._measuredDataLength
-
-    @measuredDataLength.setter
-    def measuredDataLength(self, newValue):
-        if self._measuredDataLength == newValue:
-            return
-        self._measuredDataLength = newValue
-        self.measuredDataLengthChanged.emit()
-
-    @Property('QVariant', notify=measuredDataChanged)
-    def measuredData(self):
-        return self._measuredData
-
-    @measuredData.setter
-    def measuredData(self, newObj):
-        self._measuredData = newObj
-        self.measuredDataChanged.emit()
-
     @Slot()
-    def loadMeasuredData(self):
-        #starttime = timeit.default_timer()
-        slope = self._slope
-        yIntercept = self._yIntercept
-        length = self.measuredDataLength
-        xArray = [i / (length - 1) for i in range(length)]
-        yArray = Calculator.lineMeas(xArray, slope, yIntercept)
-        #endtime = timeit.default_timer()
-        #print(f'py: The generate measured data time is: {endtime - starttime}')
-
-        self.measuredData = {'x': xArray, 'y': yArray}
+    def loadData(self):
+        length = self._dataSize
+        slope = -3.0
+        yIntercept = 1.5
+        self.xData = [i / (length - 1) for i in range(length)]
+        self.yData = LineCalculator.pseudoMeasured(self.xData, slope, yIntercept)
         self.isCreated = True
 
     @Slot()
-    def emptyMeasuredData(self):
-        self.measuredData = {'x': [], 'y': []}
+    def emptyData(self):
+        self.xData = []
+        self.yData = []
         self.isCreated = False
 
-    def onMeasuredDataLengthChanged(self):
-        if self._pyProxy.model.isCreated:
-            self._pyProxy.model.generateCalculatedData()
-        if self._pyProxy.experiment.isCreated:
-            self._pyProxy.experiment.loadMeasuredData()
-        if self._pyProxy.fitting.isFitFinished:
-            self._pyProxy.fitting.fit()
+    def onDataSizeChanged(self):
+        if self.isCreated:
+            self.loadData()
+
+    @Slot(str, str, str)
+    def editParameter(self, name, item, value):
+        if item == 'value':
+            value = float(value)
+        elif item == 'fit':
+            value = bool(value)
+        if self._parameters[name][item] == value:
+            return
+        self._parameters[name][item] = value
+        self.parametersChanged.emit()

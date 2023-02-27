@@ -34,9 +34,8 @@ EaElements.RemoteController {
         let okTests = 0
         let failedTests = 0
 
-        print("========================================")
-        print("GUI TEST REPORT")
-        print("----------------------------------------")
+        print("============================ GUI TEST REPORT START =============================")
+
         for (let i in res) {
             if (res[i].startsWith('FAIL')) {
                 success = -1
@@ -47,13 +46,9 @@ EaElements.RemoteController {
             }
         }
 
-        if (success === 0) {
-            print(`All ${res.length} GUI tests are OK`)
-        } else {
-            print("----------------------------------------")
-            print(`${failedTests} of ${res.length} GUI tests are FAILED`)
-        }
-        print("========================================")
+        print("--------------------------------------------------------------------------------")
+        print(`${res.length} total, ${res.length - failedTests} passed, ${failedTests} failed`)
+        print("============================= GUI TEST REPORT END ==============================")
 
         print("Closing app after test mode.")
         Qt.exit(success)
@@ -75,12 +70,12 @@ EaElements.RemoteController {
 
         // Home Page
 
-        saveImage(saveImagesDir, 'HomePage.png')
+        //saveImage(saveImagesDir, 'HomePage.png')
 
         res.push( rc.compare(Globals.Refs.app.appbar.homeButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.projectButton.enabled, false) )
-        res.push( rc.compare(Globals.Refs.app.appbar.modelButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.experimentButton.enabled, false) )
+        res.push( rc.compare(Globals.Refs.app.appbar.modelButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
 
@@ -92,12 +87,12 @@ EaElements.RemoteController {
 
         // Project Page
 
-        saveImage(saveImagesDir, 'ProjectPage.png')
+        //saveImage(saveImagesDir, 'ProjectPage.png')
 
         res.push( rc.compare(Globals.Refs.app.appbar.homeButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.projectButton.enabled, true) )
-        res.push( rc.compare(Globals.Refs.app.appbar.modelButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.experimentButton.enabled, false) )
+        res.push( rc.compare(Globals.Refs.app.appbar.modelButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
 
@@ -107,38 +102,14 @@ EaElements.RemoteController {
         rc.mouseClick(Globals.Refs.app.projectPage.continueButton)
         //rc.wait(2000)
 
-        // Model Page
-
-        saveImage(saveImagesDir, 'ModelPage.png')
-
-        res.push( rc.compare(Globals.Refs.app.appbar.homeButton.enabled, true) )
-        res.push( rc.compare(Globals.Refs.app.appbar.projectButton.enabled, true) )
-        res.push( rc.compare(Globals.Refs.app.appbar.modelButton.enabled, true) )
-        res.push( rc.compare(Globals.Refs.app.appbar.experimentButton.enabled, false) )
-        res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, false) )
-        res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
-
-        res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.text, 'Add new model manually') )
-        res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.enabled, true) )
-        res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.text, 'Continue') )
-        res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.enabled, false) )
-
-        rc.mouseClick(Globals.Refs.app.modelPage.addNewModelManuallyButton)
-
-        res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.enabled, false) )
-        res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.enabled, true) )
-
-        rc.mouseClick(Globals.Refs.app.modelPage.continueButton)
-        //rc.wait(2000)
-
         // Experiment page
 
-        saveImage(saveImagesDir, 'ExperimentPage.png')
+        //saveImage(saveImagesDir, 'ExperimentPage.png')
 
         res.push( rc.compare(Globals.Refs.app.appbar.homeButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.projectButton.enabled, true) )
-        res.push( rc.compare(Globals.Refs.app.appbar.modelButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.experimentButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.appbar.modelButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
 
@@ -155,14 +126,38 @@ EaElements.RemoteController {
         rc.mouseClick(Globals.Refs.app.experimentPage.continueButton)
         //rc.wait(2000)
 
-        // Analysis page
+        // Model Page
 
-        saveImage(saveImagesDir, 'AnalysisPage.png')
+        //saveImage(saveImagesDir, 'ModelPage.png')
 
         res.push( rc.compare(Globals.Refs.app.appbar.homeButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.projectButton.enabled, true) )
-        res.push( rc.compare(Globals.Refs.app.appbar.modelButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.experimentButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.appbar.modelButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, false) )
+        res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
+
+        res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.text, 'Add new model manually') )
+        res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.text, 'Continue') )
+        res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.enabled, false) )
+
+        rc.mouseClick(Globals.Refs.app.modelPage.addNewModelManuallyButton)
+
+        res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.enabled, false) )
+        res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.enabled, true) )
+
+        rc.mouseClick(Globals.Refs.app.modelPage.continueButton)
+        //rc.wait(2000)
+
+        // Analysis page
+
+        //saveImage(saveImagesDir, 'AnalysisPage.png')
+
+        res.push( rc.compare(Globals.Refs.app.appbar.homeButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.appbar.projectButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.appbar.experimentButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.appbar.modelButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
 
@@ -177,7 +172,7 @@ EaElements.RemoteController {
 
         // Summary page
 
-        saveImage(saveImagesDir, 'SummaryPage.png')
+        //saveImage(saveImagesDir, 'SummaryPage.png')
 
         // Complete testing process
 

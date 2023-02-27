@@ -15,7 +15,6 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Experimental data explorer")
         collapsible: false
-        //last: !Globals.Proxies.mainProxy.experiment.isCreated
         last: true
 
         Loader { source: 'SideBarBasic/ExperimentalDataExplorerGroup.qml' }

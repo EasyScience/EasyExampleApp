@@ -10,9 +10,10 @@ class Fitting(QObject):
 
     def __init__(self, parent):
         super().__init__(parent)
-        self._pyProxy = parent
+        self._proxy = parent
         self._isFitFinished = False
-        self.isFitFinishedChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
+
+        self.isFitFinishedChanged.connect(self._proxy.model.parametersChanged)
 
     @Property(bool, notify=isFitFinishedChanged)
     def isFitFinished(self):
@@ -27,6 +28,11 @@ class Fitting(QObject):
 
     @Slot()
     def fit(self):
-        self._pyProxy.model.slope = self._pyProxy.experiment._slope
-        self._pyProxy.model.yIntercept = self._pyProxy.experiment._yIntercept
+        self.isFitFinished = False
+        if self._proxy.model.parameters['slope']['fit']:
+            self._proxy.model.parameters['slope']['value'] = -3.0015
+            self._proxy.model.parameters['slope']['error'] = 0.0023
+        if self._proxy.model.parameters['yIntercept']['fit']:
+            self._proxy.model.parameters['yIntercept']['value'] = 1.4950
+            self._proxy.model.parameters['yIntercept']['error'] = 0.0045
         self.isFitFinished = True

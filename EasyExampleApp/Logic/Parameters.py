@@ -8,52 +8,41 @@ from PySide6.QtCore import QObject, Signal, Slot, Property
 
 
 class Parameters(QObject):
-    asJsonChanged = Signal()
+    fittablesChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._pyProxy = parent
+        self._proxy = parent
+        self._fittables = []
 
-        self._as_json = []
-        self.generateAsJson()
+        self._proxy.experiment.isCreatedChanged.connect(self.setFittables)
+        self._proxy.model.isCreatedChanged.connect(self.setFittables)
+        self._proxy.experiment.parametersChanged.connect(self.setFittables)
+        self._proxy.model.parametersChanged.connect(self.setFittables)
 
-        self.asJsonChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
+    @Property('QVariant', notify=fittablesChanged)
+    def fittables(self):
+        return self._fittables
 
-    @Property('QVariant', notify=asJsonChanged)
-    def asJson(self):
-        return self._as_json
+    @Slot(str, str, str, str)
+    def edit(self, group, label, item, value):
+        if group == 'experiment':
+            self._proxy.experiment.editParameter(label, item, value)
+        if group == 'model':
+            self._proxy.model.editParameter(label, item, value)
 
-    @Slot()
-    def generateAsJson(self):
-        self._as_json = [
-            {
-                'id': '4538458360',
-                'number': 1,
-                'label': 'Slope',
-                'value': self._pyProxy.model.slope,
-                'min': -5,
-                'max': 5,
-                'unit': '',
-                'error': 0.1131,
-                'fit': True
-            },
-            {
-                'id': '4092346238',
-                'number': 2,
-                'label': 'y-Intercept',
-                'value': self._pyProxy.model.yIntercept,
-                'min': -5,
-                'max': 5,
-                'unit': 'rad',
-                'error': 0.2573,
-                'fit': True
-            }
-        ]
-        self.asJsonChanged.emit()
-
-    @Slot(str, str)
-    def editParameterValue(self, pid, value):
-        if (pid == '4538458360'):
-            self._pyProxy.model.slope = float(value)
-        elif (pid == '4092346238'):
-            self._pyProxy.model.yIntercept = float(value)
+    def setFittables(self):
+        self._fittables = []
+        for label, param in self._proxy.experiment.parameters.items():
+            if param['fittable']:
+                param['group'] = 'experiment'
+                param['parent'] = self._proxy.experiment.description['label']
+                param['label'] = label
+                self._fittables.append(param)
+        for label, param in self._proxy.model.parameters.items():
+            if param['fittable']:
+                param['group'] = 'model'
+                param['parent'] = self._proxy.model.description['label']
+                param['label'] = label
+                self._fittables.append(param)
+        self.fittablesChanged.emit()

@@ -18,7 +18,7 @@ EaElements.StatusBar {
 
     /*
     model: XmlListModel {
-        xml: Globals.Proxies.mainProxy.status.asXml
+        xml: Globals.Proxies.main.status.asXml
         query: "/root/item"
 
         XmlRole { name: "label"; query: "label/string()" }
@@ -27,7 +27,7 @@ EaElements.StatusBar {
     */
 
     model: EaComponents.JsonListModel {
-        json: JSON.stringify(Globals.Proxies.mainProxy.status.asJson)
+        json: JSON.stringify(Globals.Proxies.main.status.asJson)
         query: "$[*]"
     }
 

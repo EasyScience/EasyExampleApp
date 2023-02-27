@@ -15,7 +15,7 @@ import Gui.Components as Components
 
 
 EaComponents.ContentPage {
-    defaultInfo: Globals.Proxies.mainProxy.model.isCreated ?
+    defaultInfo: Globals.Proxies.main.model.isCreated ?
                      "" :
                      qsTr("No models added")
 
@@ -40,11 +40,11 @@ EaComponents.ContentPage {
             Loader { source: 'SideBarAdvanced.qml' }
         ]
 
-        continueButton.enabled: Globals.Proxies.mainProxy.model.isCreated
+        continueButton.enabled: Globals.Proxies.main.model.isCreated
 
         continueButton.onClicked: {
-            Globals.Vars.experimentPageEnabled = true
-            Globals.Refs.app.appbar.experimentButton.toggle()
+            Globals.Vars.analysisPageEnabled = true
+            Globals.Refs.app.appbar.analysisButton.toggle()
         }
 
         Component.onCompleted: Globals.Refs.app.modelPage.continueButton = continueButton

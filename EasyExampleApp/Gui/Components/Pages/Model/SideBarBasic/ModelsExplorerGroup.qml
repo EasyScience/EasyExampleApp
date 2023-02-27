@@ -26,8 +26,8 @@ Column {
         // Table model
 
         model: EaComponents.JsonListModel {
-            json: Globals.Proxies.mainProxy.model.isCreated ?
-                      JSON.stringify(Globals.Proxies.mainProxy.model.asJson) :
+            json: Globals.Proxies.main.model.isCreated ?
+                      JSON.stringify([Globals.Proxies.main.model.description]) :
                       ""
             query: "$[*]"
         }
@@ -60,8 +60,8 @@ Column {
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this model")
                 onClicked: {
-                    Globals.Proxies.mainProxy.experiment.emptyMeasuredData()
-                    Globals.Proxies.mainProxy.model.emptyCalculatedData()
+                    Globals.Proxies.main.experiment.emptyData()
+                    Globals.Proxies.main.model.emptyData()
                     Globals.Vars.experimentPageEnabled = false
                     Globals.Vars.analysisPageEnabled = false
                     Globals.Vars.summaryPageEnabled = false
@@ -84,10 +84,10 @@ Column {
         }
 
         EaElements.SideBarButton {
-            enabled: !Globals.Proxies.mainProxy.model.isCreated
+            enabled: !Globals.Proxies.main.model.isCreated
             fontIcon: "plus-circle"
             text: qsTr("Add new model manually")
-            onClicked: Globals.Proxies.mainProxy.model.generateCalculatedData()
+            onClicked: Globals.Proxies.main.model.calculateData()
             Component.onCompleted: Globals.Refs.app.modelPage.addNewModelManuallyButton = this
         }
     }

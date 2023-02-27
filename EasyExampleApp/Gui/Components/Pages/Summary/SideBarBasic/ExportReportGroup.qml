@@ -86,7 +86,7 @@ Column {
         text: qsTr('Save')
         onClicked: {
             if (formatField.currentValue === 'html') {
-                Globals.Proxies.mainProxy.summary.saveHtmlReport(reportLocationField.text)
+                Globals.Proxies.main.summary.saveHtmlReport(reportLocationField.text)
             } else if (formatField.currentValue === 'pdf') {
                 //Globals.Vars.reportWebView.printToPdf(reportLocationField.text)
             }
@@ -97,7 +97,7 @@ Column {
     FolderDialog {
         id: reportParentDirDialog
         title: qsTr("Choose report parent directory")
-        //folder: Globals.Proxies.mainProxy.project.currentProjectPath
+        //folder: Globals.Proxies.main.project.currentProjectPath
         //Component.onCompleted: selectedFolder = projectPathDict().parent
     }
 

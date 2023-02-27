@@ -25,7 +25,7 @@ Column {
         // Table model
 
         model: EaComponents.JsonListModel {
-            json: JSON.stringify(Globals.Proxies.mainProxy.parameters.asJson)
+            json: JSON.stringify(Globals.Proxies.main.parameters.fittables)
             query: "$[*]"
         }
 
@@ -37,7 +37,7 @@ Column {
                 id: numberColumn
                 width: EaStyle.Sizes.fontPixelSize * 2.5
                 headerText: "No."
-                text: model.number
+                text: index + 1
             }
 
             EaComponents.TableViewLabel {
@@ -51,7 +51,7 @@ Column {
                        errorColumn.width -
                        fitColumn.width
                 headerText: "Label"
-                text: model.label
+                text: `${model.group}.${model.parent}.${model.label}`
                 textFormat: Text.PlainText
                 elide: Text.ElideMiddle
             }
@@ -62,7 +62,7 @@ Column {
                 width: EaStyle.Sizes.fontPixelSize * 4
                 headerText: "Value"
                 text: model.value.toFixed(4)
-                onEditingFinished: Globals.Proxies.mainProxy.parameters.editParameterValue(model.id, text)
+                onEditingFinished: Globals.Proxies.main.parameters.edit(model.group, model.label, 'value', text)
             }
 
             EaComponents.TableViewLabel {
@@ -79,15 +79,15 @@ Column {
                 width: EaStyle.Sizes.fontPixelSize * 4
                 elide: Text.ElideNone
                 headerText: "Error"
-                text: Globals.Proxies.mainProxy.fitting.isFitFinished ? model.error.toFixed(4) : ''
+                text: model.error === 0 ? '' :  model.error.toFixed(4)
             }
 
             EaComponents.TableViewCheckBox {
                 id: fitColumn
-                enabled: Globals.Proxies.mainProxy.experiment.isCreated
+                enabled: Globals.Proxies.main.experiment.isCreated
                 headerText: "Fit"
                 checked: model.fit
-                //onCheckedChanged: Globals.Proxies.mainProxy.parameters.editParameterFit(model.id, checked)
+                onCheckedChanged: Globals.Proxies.main.parameters.edit(model.group, model.label, 'fit', checked)
             }
         }
 
@@ -104,27 +104,23 @@ Column {
         to: table.model.get(table.currentIndex).max
         value: table.model.get(table.currentIndex).value
 
-        onMoved: Globals.Proxies.mainProxy.parameters.editParameterValue(
-                     table.model.get(table.currentIndex).id,
-                     value)
-
-        onPressedChanged: {
-            if (!pressed) {
-                Globals.Proxies.mainProxy.parameters.generateAsJson()
-            }
+        onMoved: {
+            const group = table.model.get(table.currentIndex).group
+            const label = table.model.get(table.currentIndex).label
+            Globals.Proxies.main.parameters.edit(group, label, 'value', value)
         }
     }
 
     // Control buttons below table
 
     EaElements.SideBarButton {
-        enabled: Globals.Proxies.mainProxy.experiment.isCreated
+        enabled: Globals.Proxies.main.experiment.isCreated
         wide: true
 
         fontIcon: 'play-circle'
         text: qsTr('Start fitting')
 
-        onClicked: Globals.Proxies.mainProxy.fitting.fit()
+        onClicked: Globals.Proxies.main.fitting.fit()
 
         Component.onCompleted: Globals.Refs.app.analysisPage.startFittingButton = this
     }

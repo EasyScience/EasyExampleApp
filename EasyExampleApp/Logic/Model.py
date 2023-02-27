@@ -7,48 +7,68 @@ import timeit
 
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
-from Logic.Calculator import Calculator
+from Logic.Calculators import LineCalculator
 
 
 class Model(QObject):
-    asJsonChanged = Signal()
+    descriptionChanged = Signal()
+    parametersChanged = Signal()
+    yDataChanged = Signal()
     isCreatedChanged = Signal()
-    slopeChanged = Signal()
-    yInterceptChanged = Signal()
-    calculatedDataChanged = Signal()
 
     def __init__(self, parent):
         super().__init__(parent)
-        self._pyProxy = parent
-
-        self._as_json = [
-            {
-                'label': 'Line'
+        self._proxy = parent
+        self._description = {
+            'label': 'Line'
+        }
+        self._parameters = {
+            'slope': {
+                'value': 1.0,
+                'error': 0,
+                'min': -5,
+                'max': 5,
+                'unit': '',
+                'fittable': True,
+                'fit': True
+            },
+            'yIntercept': {
+                'value': 0.0,
+                'error': 0,
+                'min': -5,
+                'max': 5,
+                'unit': '',
+                'fittable': True,
+                'fit': True
             }
-        ]
-
+        }
+        self._yData = []
         self._isCreated = False
 
-        self._slope = 1.0
-        self._yIntercept = 0.0
+        self._proxy.experiment.dataSizeChanged.connect(self.onDataSizeChanged)
+        self.parametersChanged.connect(self.calculateData)
 
-        self._xArray = []
-        self._yArray = []
-        self._calculatedData = {}
+        self.descriptionChanged.connect(self._proxy.project.setNeedSaveToTrue)
+        self.parametersChanged.connect(self._proxy.project.setNeedSaveToTrue)
+        self.yDataChanged.connect(self._proxy.project.setNeedSaveToTrue)
+        self.isCreatedChanged.connect(self._proxy.project.setNeedSaveToTrue)
 
-        self.slopeChanged.connect(self.generateCalculatedData)
-        self.yInterceptChanged.connect(self.generateCalculatedData)
+    @Property('QVariant', notify=descriptionChanged)
+    def description(self):
+        return self._description
 
-        self.asJsonChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
-        self.isCreatedChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
-        self.slopeChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
-        self.yInterceptChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
-        self.calculatedDataChanged.connect(self._pyProxy.project.setNeedSaveToTrue)
+    @Property('QVariant', notify=parametersChanged)
+    def parameters(self):
+        return self._parameters
 
+    @Property('QVariant', notify=yDataChanged)
+    def yData(self):
+        return self._yData
 
-    @Property('QVariant', notify=asJsonChanged)
-    def asJson(self):
-        return self._as_json
+    @yData.setter
+    def yData(self, newData):
+        self._yData = newData
+        self.yDataChanged.emit()
 
     @Property(bool, notify=isCreatedChanged)
     def isCreated(self):
@@ -61,60 +81,34 @@ class Model(QObject):
         self._isCreated = newValue
         self.isCreatedChanged.emit()
 
-    @Property(float, notify=slopeChanged)
-    def slope(self):
-        return self._slope
-
-    @slope.setter
-    def slope(self, newValue):
-        if self._slope == newValue:
-            return
-        self._slope = newValue
-        self.slopeChanged.emit()
-
-    @Property(float, notify=yInterceptChanged)
-    def yIntercept(self):
-        return self._yIntercept
-
-    @yIntercept.setter
-    def yIntercept(self, newValue):
-        if self._yIntercept == newValue:
-            return
-        self._yIntercept = newValue
-        self.yInterceptChanged.emit()
-
-    @Property('QVariant', notify=calculatedDataChanged)
-    def calculatedData(self):
-        return self._calculatedData
-
-    @calculatedData.setter
-    def calculatedData(self, newObj):
-        self._calculatedData = newObj
-        self.calculatedDataChanged.emit()
-
-    def setXArray(self):
-        length = self._pyProxy.experiment.measuredDataLength
-        self._xArray = [i / (length - 1) for i in range(length)]
-
-    def setYArray(self):
-        xArray = self._xArray
-        slope = self._slope
-        yIntercept = self._yIntercept
-        self._yArray = Calculator.line(xArray, slope, yIntercept)
-
     @Slot()
-    def generateCalculatedData(self):
-        #starttime = timeit.default_timer()
-        if len(self._xArray) != self._pyProxy.experiment.measuredDataLength:
-            self.setXArray()
-        self.setYArray()
-        #endtime = timeit.default_timer()
-        #print(f'py: The generate calculated data time is: {endtime - starttime}')
-
-        self.calculatedData = {'x': self._xArray, 'y': self._yArray}
+    def calculateData(self):
+        slope = self._parameters['slope']['value']
+        yIntercept = self._parameters['yIntercept']['value']
+        xData = self._proxy.experiment.xData
+        self.yData = LineCalculator.calculated(xData, slope, yIntercept)
         self.isCreated = True
 
     @Slot()
-    def emptyCalculatedData(self):
-        self.calculatedData = {'x': [], 'y': []}
+    def emptyData(self):
+        self.yData = []
         self.isCreated = False
+
+    def onDataSizeChanged(self):
+        if self.isCreated:
+            self.calculateData()
+
+    @Slot(str, str, str)
+    def editParameter(self, label, item, value):
+        if item == 'value':
+            value = float(value)
+        elif item == 'fit':
+            if value == 'true':
+                value = True
+            elif value == 'false':
+                value = False
+                self._parameters[label]['error'] = 0
+        if self._parameters[label][item] == value:
+            return
+        self._parameters[label][item] = value
+        self.parametersChanged.emit()

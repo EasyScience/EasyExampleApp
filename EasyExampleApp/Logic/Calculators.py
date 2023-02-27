@@ -5,13 +5,13 @@
 import random
 
 
-class Calculator:
+class LineCalculator:
 
     @staticmethod
-    def line(xArray, slope, yIntercept):
+    def calculated(xArray, slope, yIntercept):
         return [slope * x + yIntercept for x in xArray]
 
     @staticmethod
-    def lineMeas(xArray, slope, yIntercept):
+    def pseudoMeasured(xArray, slope, yIntercept):
         random.seed(1)
         return [slope * x + yIntercept + random.uniform(-0.1, 0.1) for x in xArray]

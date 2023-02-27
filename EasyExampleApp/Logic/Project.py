@@ -53,11 +53,8 @@ class Project(QObject):
         ]
 
         self.examplesAsJsonChanged.connect(self.setNeedSaveToTrue)
-        self.isCreatedChanged.connect(self.setNeedSaveToTrue)
         self.currentProjectNameChanged.connect(self.setNeedSaveToTrue)
         self.currentProjectDescriptionChanged.connect(self.setNeedSaveToTrue)
-        self.currentProjectLocationChanged.connect(self.setNeedSaveToTrue)
-        self.currentProjectCreatedDateChanged.connect(self.setNeedSaveToTrue)
         self.currentProjectImageChanged.connect(self.setNeedSaveToTrue)
 
     @Property(bool, notify=isCreatedChanged)
@@ -152,7 +149,10 @@ class Project(QObject):
 
     @Slot()
     def save(self):
+        # Create project json
+
         project = {}
+
         if self._pyProxy.project.isCreated:
             project['project'] = {
                 'name': self._pyProxy.project.currentProjectName,
@@ -160,6 +160,7 @@ class Project(QObject):
                 'location': self._pyProxy.project.currentProjectLocation,
                 'creationDate': self._pyProxy.project.currentProjectCreatedDate
             }
+
         if self._pyProxy.model.isCreated:
             project['model'] = {
                 'label': self._pyProxy.model.asJson[0]['label'],
@@ -168,6 +169,7 @@ class Project(QObject):
                 'yIntercept': self._pyProxy.model.yIntercept,
                 'calculatedData': self._pyProxy.model.calculatedData
             }
+
         if self._pyProxy.experiment.isCreated:
             project['experiment'] = {
                 'label': self._pyProxy.experiment.asJson[0]['label'],
@@ -175,22 +177,30 @@ class Project(QObject):
                 'measuredDataLength': self._pyProxy.experiment.measuredDataLength,
                 'measuredData': self._pyProxy.experiment.measuredData
             }
-        if True:
+
+        if self._pyProxy.fitting.isFitFinished:
             project['fitting'] = {
                 'isFitFinished': self._pyProxy.fitting.isFitFinished
             }
+
         if self._pyProxy.summary.isCreated:
             project['summary'] = {
                 'isCreated': self._pyProxy.summary.isCreated
             }
 
+        # Style project json
+
         options = jsbeautifier.default_options()
         options.indent_size = 2
-        formatted_project = jsbeautifier.beautify(json.dumps(project), options)
+        formattedProject = jsbeautifier.beautify(json.dumps(project), options)
 
-        file_path = os.path.join(self.currentProjectLocation, 'project.json')
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        with open(file_path, 'w') as file:
-            file.write(formatted_project)
+        # Save formatted project json
+
+        filePath = os.path.join(self.currentProjectLocation, 'project.json')
+        os.makedirs(os.path.dirname(filePath), exist_ok=True)
+        with open(filePath, 'w') as file:
+            file.write(formattedProject)
+
+        # Toggle need save
 
         self.needSave = False

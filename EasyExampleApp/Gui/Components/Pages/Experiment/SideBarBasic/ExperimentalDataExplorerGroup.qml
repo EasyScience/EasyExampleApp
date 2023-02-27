@@ -26,8 +26,8 @@ Column {
         // Table model
 
         model: EaComponents.JsonListModel {
-            json: Globals.Proxies.mainProxy.experiment.isCreated ?
-                      JSON.stringify(Globals.Proxies.mainProxy.experiment.asJson) :
+            json: Globals.Proxies.main.experiment.isCreated ?
+                      JSON.stringify([Globals.Proxies.main.experiment.description]) :
                       ""
             query: "$[*]"
         }
@@ -59,7 +59,7 @@ Column {
                 headerText: "Del."
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this dataset")
-                onClicked: Globals.Proxies.mainProxy.experiment.emptyMeasuredData()
+                onClicked: Globals.Proxies.main.experiment.emptyData()
             }
         }
 
@@ -71,10 +71,10 @@ Column {
         spacing: EaStyle.Sizes.fontPixelSize
 
         EaElements.SideBarButton {
-            enabled: !Globals.Proxies.mainProxy.experiment.isCreated
+            enabled: !Globals.Proxies.main.experiment.isCreated
             fontIcon: "upload"
             text: qsTr("Import data from local drive")
-            onClicked: Globals.Proxies.mainProxy.experiment.loadMeasuredData()
+            onClicked: Globals.Proxies.main.experiment.loadData()
             Component.onCompleted: Globals.Refs.app.experimentPage.importDataFromLocalDriveButton = this
         }
 

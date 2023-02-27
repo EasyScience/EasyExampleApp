@@ -18,15 +18,15 @@ Grid {
     EaElements.Parameter {
         title: qsTr('Slope')
         width: parameterFieldWidth()
-        text: Globals.Proxies.mainProxy.model.slope.toFixed(4)
-        onEditingFinished: Globals.Proxies.mainProxy.model.slope = text
+        text: Globals.Proxies.main.model.parameters.slope.value.toFixed(4)
+        onEditingFinished: Globals.Proxies.main.model.editParameter('slope', 'value', text)
     }
 
     EaElements.Parameter {
         title: qsTr('y-Intercept')
         width: parameterFieldWidth()
-        text: Globals.Proxies.mainProxy.model.yIntercept.toFixed(4)
-        onEditingFinished: Globals.Proxies.mainProxy.model.yIntercept = text
+        text: Globals.Proxies.main.model.parameters.yIntercept.value.toFixed(4)
+        onEditingFinished: Globals.Proxies.main.model.editParameter('yIntercept', 'value', text)
     }
 
     // Logic

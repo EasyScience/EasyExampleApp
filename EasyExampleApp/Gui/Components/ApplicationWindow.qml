@@ -39,12 +39,12 @@ EaComponents.ApplicationWindow {
     appBarLeftButtons: [
 
         EaElements.ToolButton {
-            enabled: Globals.Proxies.mainProxy.project.isCreated &&
-                    Globals.Proxies.mainProxy.project.needSave
+            enabled: Globals.Proxies.main.project.isCreated &&
+                    Globals.Proxies.main.project.needSave
             highlighted: true
             fontIcon: "save"
             ToolTip.text: qsTr("Save current state of the project")
-            onClicked: Globals.Proxies.mainProxy.project.save()
+            onClicked: Globals.Proxies.main.project.save()
         },
 
         EaElements.ToolButton {
@@ -125,18 +125,6 @@ EaComponents.ApplicationWindow {
             Component.onCompleted: Globals.Refs.app.appbar.projectButton = this
         },
 
-        // Model tab
-        EaElements.AppBarTabButton {
-            enabled: Globals.Vars.modelPageEnabled
-            fontIcon: "gem"
-            text: qsTr("Model")
-            ToolTip.text: qsTr("Model description page")
-            onEnabledChanged: enabled ?
-                                  modelPageLoader.source = 'Pages/Model/PageStructure.qml' :
-                                  modelPageLoader.source = ''
-            Component.onCompleted: Globals.Refs.app.appbar.modelButton = this
-        },
-
         // Experiment tab
         EaElements.AppBarTabButton {
             enabled: Globals.Vars.experimentPageEnabled
@@ -147,6 +135,18 @@ EaComponents.ApplicationWindow {
                                   experimentPageLoader.source = 'Pages/Experiment/PageStructure.qml' :
                                   experimentPageLoader.source = ''
             Component.onCompleted: Globals.Refs.app.appbar.experimentButton = this
+        },
+
+        // Model tab
+        EaElements.AppBarTabButton {
+            enabled: Globals.Vars.modelPageEnabled
+            fontIcon: "gem"
+            text: qsTr("Model")
+            ToolTip.text: qsTr("Model description page")
+            onEnabledChanged: enabled ?
+                                  modelPageLoader.source = 'Pages/Model/PageStructure.qml' :
+                                  modelPageLoader.source = ''
+            Component.onCompleted: Globals.Refs.app.appbar.modelButton = this
         },
 
         // Analysis tab
@@ -171,8 +171,8 @@ EaComponents.ApplicationWindow {
                                   summaryPageLoader.source = 'Pages/Summary/PageStructure.qml' :
                                   summaryPageLoader.source = ''
             onCheckedChanged: checked ?
-                                  Globals.Proxies.mainProxy.summary.isCreated = true :
-                                  Globals.Proxies.mainProxy.summary.isCreated = false
+                                  Globals.Proxies.main.summary.isCreated = true :
+                                  Globals.Proxies.main.summary.isCreated = false
             Component.onCompleted: Globals.Refs.app.appbar.summaryButton = this
         }
 
@@ -186,8 +186,8 @@ EaComponents.ApplicationWindow {
     contentArea: [
         Loader { id: homePageLoader },
         Loader { id: projectPageLoader },
-        Loader { id: modelPageLoader },
         Loader { id: experimentPageLoader },
+        Loader { id: modelPageLoader },
         Loader { id: analysisPageLoader },
         Loader { id: summaryPageLoader }
     ]

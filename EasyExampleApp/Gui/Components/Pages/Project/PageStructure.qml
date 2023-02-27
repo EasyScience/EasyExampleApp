@@ -15,7 +15,7 @@ import Gui.Components as Components
 
 
 EaComponents.ContentPage {
-    defaultInfo: Globals.Proxies.mainProxy.project.isCreated ?
+    defaultInfo: Globals.Proxies.main.project.isCreated ?
                      "" :
                      qsTr("No Project Created/Opened")
 
@@ -40,13 +40,13 @@ EaComponents.ContentPage {
             Loader { source: 'SideBarAdvanced.qml' }
         ]
 
-        continueButton.text: Globals.Proxies.mainProxy.project.isCreated ?
+        continueButton.text: Globals.Proxies.main.project.isCreated ?
                                  qsTr("Continue") :
                                  qsTr("Continue without project")
 
-        continueButton.onClicked: {
-            Globals.Vars.modelPageEnabled = true
-            Globals.Refs.app.appbar.modelButton.toggle()
+        continueButton.onClicked: {            
+            Globals.Vars.experimentPageEnabled = true
+            Globals.Refs.app.appbar.experimentButton.toggle()
         }
 
         Component.onCompleted: Globals.Refs.app.projectPage.continueButton = continueButton

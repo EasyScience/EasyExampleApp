@@ -18,10 +18,10 @@ class PyProxy(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._project = Project(self)
-        self._model = Model(self)
         self._experiment = Experiment(self)
-        self._fitting = Fitting(self)
+        self._model = Model(self)
         self._parameters = Parameters(self)
+        self._fitting = Fitting(self)
         self._summary = Summary(self)
         self._status = Status(self)
         self._plotting = Plotting(self)
@@ -31,12 +31,12 @@ class PyProxy(QObject):
         return self._project
 
     @Property('QVariant', constant=True)
-    def model(self):
-        return self._model
-
-    @Property('QVariant', constant=True)
     def experiment(self):
         return self._experiment
+
+    @Property('QVariant', constant=True)
+    def model(self):
+        return self._model
 
     @Property('QVariant', constant=True)
     def fitting(self):
