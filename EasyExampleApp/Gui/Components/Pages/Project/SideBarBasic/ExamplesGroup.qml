@@ -23,7 +23,7 @@ EaComponents.TableView {
     // Table model
 
     model: EaComponents.JsonListModel {
-        json: JSON.stringify(Globals.Proxies.main.project.examplesAsJson)
+        json: JSON.stringify(Globals.Proxies.main.project.examples)
         query: "$[*]"
     }
 

@@ -13,6 +13,7 @@ import Gui.Globals as Globals
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
+        enabled: Globals.Proxies.main.project.isCreated
         title: qsTr("Export report")
         collapsible: false
         last: true

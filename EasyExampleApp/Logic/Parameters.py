@@ -16,8 +16,8 @@ class Parameters(QObject):
         self._fittables = []
 
         self._proxy.experiment.isCreatedChanged.connect(self.setFittables)
-        self._proxy.model.isCreatedChanged.connect(self.setFittables)
         self._proxy.experiment.parametersChanged.connect(self.setFittables)
+        self._proxy.model.isCreatedChanged.connect(self.setFittables)
         self._proxy.model.parametersChanged.connect(self.setFittables)
 
     @Property('QVariant', notify=fittablesChanged)
@@ -28,7 +28,7 @@ class Parameters(QObject):
     def edit(self, group, label, item, value):
         if group == 'experiment':
             self._proxy.experiment.editParameter(label, item, value)
-        if group == 'model':
+        elif group == 'model':
             self._proxy.model.editParameter(label, item, value)
 
     def setFittables(self):

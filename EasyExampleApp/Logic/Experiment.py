@@ -118,12 +118,16 @@ class Experiment(QObject):
             self.loadData()
 
     @Slot(str, str, str)
-    def editParameter(self, name, item, value):
+    def editParameter(self, label, item, value):
         if item == 'value':
             value = float(value)
         elif item == 'fit':
-            value = bool(value)
-        if self._parameters[name][item] == value:
+            if value == 'true':
+                value = True
+            elif value == 'false':
+                value = False
+                self._parameters[label]['error'] = 0
+        if self._parameters[label][item] == value:
             return
-        self._parameters[name][item] = value
+        self._parameters[label][item] = value
         self.parametersChanged.emit()

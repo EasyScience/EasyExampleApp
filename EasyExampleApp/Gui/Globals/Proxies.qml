@@ -21,8 +21,20 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
     readonly property var qmlProxy: QtObject {
 
+        // Project
+
         readonly property var project: QtObject {
-            property var examplesAsJson: [
+
+            property bool isCreated: false
+            property bool needSave: false
+
+            property string currentProjectName: 'Default project'
+            property string currentProjectDescription: 'Default project description'
+            property string currentProjectLocation: ''
+            property string currentProjectCreatedDate: ''
+            property string currentProjectImage: Qt.resolvedUrl('../Resources/Project/Sine.svg')
+
+            property var examples: [
                 {
                     'name': 'Horizontal line',
                     'description': 'Straight line, horizontal, PicoScope 2204A',
@@ -40,16 +52,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                 }
             ]
 
-            property bool isCreated: false
-            property bool needSave: false
-
-            property string currentProjectName: 'Default project'
-            property string currentProjectDescription: 'Default project description'
-            property string currentProjectLocation: ''
-            property string currentProjectCreatedDate: ''
-            property string currentProjectImage: Qt.resolvedUrl('../Resources/Project/Sine.svg')
-
-            onExamplesAsJsonChanged: setNeedSaveToTrue()
+            onExamplesChanged: setNeedSaveToTrue()
             onCurrentProjectNameChanged: setNeedSaveToTrue()
             onCurrentProjectDescriptionChanged: setNeedSaveToTrue()
             onCurrentProjectImageChanged: setNeedSaveToTrue()
@@ -75,22 +78,23 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                     }
                 }
 
-                if (qmlProxy.model.isCreated) {
-                    project['model'] = {
-                        'label': qmlProxy.model.asJson[0]['label'],
-                        'isCreated': qmlProxy.model.isCreated,
-                        'slope': qmlProxy.model.slope,
-                        'yIntercept': qmlProxy.model.yIntercept,
-                        'calculatedData': qmlProxy.model.calculatedData
-                    }
-                }
-
                 if (qmlProxy.experiment.isCreated) {
                     project['experiment'] = {
                         'label': qmlProxy.experiment.asJson[0]['label'],
                         'isCreated': qmlProxy.experiment.isCreated,
-                        'measuredDataLength': qmlProxy.experiment.measuredDataLength,
-                        'measuredData': qmlProxy.experiment.measuredData
+                        'parameters': qmlProxy.experiment.parameters,
+                        'dataSize': qmlProxy.experiment.dataSize,
+                        'xData': qmlProxy.experiment.xData,
+                        'yData': qmlProxy.experiment.yData
+                    }
+                }
+
+                if (qmlProxy.model.isCreated) {
+                    project['model'] = {
+                        'label': qmlProxy.model.asJson[0]['label'],
+                        'isCreated': qmlProxy.model.isCreated,
+                        'parameters': qmlProxy.model.parameters,
+                        'yData': qmlProxy.model.yData
                     }
                 }
 
@@ -113,147 +117,228 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             }
         }
 
-        readonly property var model: QtObject {
-            readonly property var asJson: [
-                {
-                    'label': 'Line'
-                }
-            ]
-
-            property bool isCreated: false
-
-            property real slope: 1.0
-            property real yIntercept: 0
-
-            property var xArray: []
-            property var yArray: []
-            property var calculatedData: ({})
-
-            onSlopeChanged: generateCalculatedData()
-            onYInterceptChanged: generateCalculatedData()
-            onCalculatedDataChanged: qmlProxy.project.setNeedSaveToTrue()
-
-            function setXArray() {
-                const length = qmlProxy.experiment.measuredDataLength
-                xArray = Array.from({ length: length }, (_, i) => i / (length - 1))
-            }
-
-            function setYArray() {
-                yArray = Logic.Calculator.line(xArray, slope, yIntercept)
-            }
-
-            function generateCalculatedData() {
-                if (xArray.length !== qmlProxy.experiment.measuredDataLength) {
-                    setXArray()
-                }
-                setYArray()
-
-                calculatedData = {'x': xArray, 'y': yArray}
-                isCreated = true
-            }
-
-            function emptyCalculatedData() {
-                calculatedData = {'x': [], 'y': []}
-                isCreated = false
-            }
-        }
+        // Experiment
 
         readonly property var experiment: QtObject {
-            readonly property var asJson: [
-                    {
-                        'label': 'PicoScope'
-                    }
-                  ]
+            readonly property var description: {
+                'label': 'PicoScope'
+            }
+            property var parameters: {
+                'xMin': {
+                    'value': 0.0,
+                    'fittable': false,
+                },
+                'xMax': {
+                    'value': 1.0,
+                    'fittable': false,
+                },
+                'xStep': {
+                    'value': 0.01,
+                    'fittable': false,
+                }
+            }
+            property int dataSize: 300
+            property var xData: []
+            property var yData: []
             property bool isCreated: false
 
-            property real slope: -3
-            property real yIntercept: 1.5
-
-            property int measuredDataLength: 300
-            property var measuredData: ({})
-
-            onMeasuredDataLengthChanged: {
-                if (qmlProxy.model.isCreated) {
-                    qmlProxy.model.generateCalculatedData()
+            onDataSizeChanged: {
+                if (isCreated) {
+                    loadData()
                 }
-                if (qmlProxy.experiment.isCreated) {
-                    qmlProxy.experiment.loadMeasuredData()
+                if (qmlProxy.model.isCreated) {
+                    qmlProxy.model.calculateData()
                 }
                 if (qmlProxy.fitting.isFitFinished) {
                     qmlProxy.fitting.fit()
                 }
             }
-            onMeasuredDataChanged: qmlProxy.project.setNeedSaveToTrue()
 
-            function loadMeasuredData() {
-                const length = measuredDataLength
-                const xArray = Array.from({ length: length }, (_, i) => i / (length - 1))
-                const yArray = Logic.Calculator.lineMeas(xArray, slope, yIntercept)
-                measuredData = {'x': xArray, 'y': yArray}
+            onDescriptionChanged: qmlProxy.project.setNeedSaveToTrue()
+            onXDataChanged: qmlProxy.project.setNeedSaveToTrue()
+            onYDataChanged: qmlProxy.project.setNeedSaveToTrue()
+            onParametersChanged: {
+                if (isCreated) {
+                    qmlProxy.parameters.setFittables()
+                    qmlProxy.project.setNeedSaveToTrue()
+                }
+            }
+            onIsCreatedChanged: {
+                if (isCreated) {
+                    qmlProxy.parameters.setFittables()
+                    qmlProxy.project.setNeedSaveToTrue()
+                }
+            }
+
+            function loadData() {
+                const length = dataSize
+                const slope = -3.0
+                const yIntercept = 1.5
+                xData = Array.from({ length: length }, (_, i) => i / (length - 1))
+                yData = Logic.LineCalculator.pseudoMeasured(xData, slope, yIntercept)
                 isCreated = true
             }            
 
-            function emptyMeasuredData() {
-                measuredData = {'x': [], 'y': []}
+            function emptyData() {
+                xData = []
+                yData = []
                 isCreated = false
             }
+
+            function editParameter(label, item, value) {
+                if (item === 'value') {
+                    value = parseFloat(value)
+                } else if (item === 'fit') {
+                    if (!value) {
+                        parameters[label].error = 0
+                    }
+                }
+                if (parameters[label][item] === value) {
+                    return
+                }
+                parameters[label][item] = value
+                parametersChanged()
+            }
         }
+
+        // Model
+
+        readonly property var model: QtObject {
+            readonly property var description: {
+                    'label': 'Line'
+            }
+            property var parameters: {
+                'slope': {
+                    'value': 1.0,
+                    'error': 0,
+                    'min': -5,
+                    'max': 5,
+                    'unit': '',
+                    'fittable': true,
+                    'fit': true
+                },
+                'yIntercept': {
+                    'value': 0.0,
+                    'error': 0,
+                    'min': -5,
+                    'max': 5,
+                    'unit': '',
+                    'fittable': true,
+                    'fit': true
+                }
+            }
+
+            property var yData: []
+            property bool isCreated: false
+
+            onParametersChanged: {
+                if (isCreated) {
+                    calculateData()
+                    qmlProxy.parameters.setFittables()
+                    qmlProxy.project.setNeedSaveToTrue()
+                }
+            }
+            onIsCreatedChanged: {
+                if (isCreated) {
+                    qmlProxy.parameters.setFittables()
+                    qmlProxy.project.setNeedSaveToTrue()
+                }
+            }
+
+            function calculateData() {
+                const slope = parameters.slope.value
+                const yIntercept = parameters.yIntercept.value
+                const xData = qmlProxy.experiment.xData
+                yData = Logic.LineCalculator.calculated(xData, slope, yIntercept)
+                isCreated = true
+            }
+
+            function emptyData() {
+                yData = []
+                isCreated = false
+            }
+
+            function editParameter(label, item, value) {
+                if (item === 'value') {
+                    value = parseFloat(value)
+                } else if (item === 'fit') {
+                    if (!value) {
+                        parameters[label].error = 0
+                    }
+                }
+                if (parameters[label][item] === value) {
+                    return
+                }
+                parameters[label][item] = value
+                parametersChanged()
+            }
+        }
+
+        // Fitting
 
         readonly property var fitting: QtObject {
             property bool isFitFinished: false
 
-            onIsFitFinishedChanged: qmlProxy.project.setNeedSaveToTrue()
+            onIsFitFinishedChanged: {
+                qmlProxy.model.parametersChanged()
+                qmlProxy.project.setNeedSaveToTrue()
+            }
 
             function fit() {
-                qmlProxy.model.slope = qmlProxy.experiment.slope
-                qmlProxy.model.yIntercept = qmlProxy.experiment.yIntercept
+                isFitFinished = false
+                if (qmlProxy.model.parameters.slope.fit) {
+                    qmlProxy.model.parameters.slope.value = -3.0015
+                    qmlProxy.model.parameters.slope.error = 0.0023
+                }
+                if (qmlProxy.model.parameters.yIntercept.fit) {
+                    qmlProxy.model.parameters.yIntercept.value = 1.4950
+                    qmlProxy.model.parameters.yIntercept.error = 0.0045
+                }
                 isFitFinished = true
             }
         }
 
+        // Parameters
+
         readonly property var parameters: QtObject {
-            property var asJson: []
+            property var fittables: []
 
-            Component.onCompleted: generateAsJson()
+            function edit(group, label, item, value) {
+                if (group === 'experiment') {
+                    qmlProxy.experiment.editParameter(label, item, value)
+                } else if (group === 'model') {
+                    qmlProxy.model.editParameter(label, item, value)
+                }
+            }
 
-            function generateAsJson() {
-                asJson = [
-                    {
-                        'id': '4538458360',
-                        'number': 1,
-                        'label': 'Slope',
-                        'value': qmlProxy.model.slope,
-                        'min': -5,
-                        'max': 5,
-                        'unit': '',
-                        'error': 0.1131,
-                        'fit': true
-                    },
-                    {
-                        'id': '4092346238',
-                        'number': 2,
-                        'label': 'y-Intercept',
-                        'value': qmlProxy.model.yIntercept,
-                        'min': -5,
-                        'max': 5,
-                        'unit': '',
-                        'error': 0.2573,
-                        'fit': true
+            function setFittables() {
+                let _fittables = []
+                for (let label in qmlProxy.experiment.parameters) {
+                    let param = qmlProxy.experiment.parameters[label]
+                    if (param.fittable) {
+                        param.group = 'experiment'
+                        param.parent = qmlProxy.experiment.description.label
+                        param.label = label
+                        _fittables.push(param)
                     }
-                ]
+                }
+                for (let label in qmlProxy.model.parameters) {
+                    let param = qmlProxy.model.parameters[label]
+                    if (param.fittable) {
+                        param.group = 'model'
+                        param.parent = qmlProxy.model.description.label
+                        param.label = label
+                        _fittables.push(param)
+                    }
+                }
+                if (_fittables.length !== 0) {
+                    fittables = _fittables
+                }
             }
 
-            function editParameterValue(pid, value) {
-                if (typeof pid === 'undefined') {
-                    return
-                }
-                if (pid === '4538458360') {
-                    qmlProxy.model.slope = parseFloat(value)
-                } else if (pid === '4092346238') {
-                    qmlProxy.model.yIntercept = parseFloat(value)
-                }
-            }
         }
+
+        // Summary
 
         readonly property var summary: QtObject {
             property bool isCreated: false
@@ -270,6 +355,8 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                                         })
             }
         }
+
+        // Status
 
         readonly property var status: QtObject {
             property string asXml:
@@ -294,6 +381,8 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                 }
               ]
         }
+
+        // Plotting
 
         readonly property var plotting: QtObject {
             readonly property bool useWebGL1d: false

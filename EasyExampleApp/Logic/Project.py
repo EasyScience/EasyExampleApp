@@ -10,7 +10,7 @@ from PySide6.QtCore import QObject, Signal, Slot, Property
 
 
 class Project(QObject):
-    examplesAsJsonChanged = Signal()
+    examplesChanged = Signal()
 
     isCreatedChanged = Signal()
     needSaveChanged = Signal()
@@ -34,7 +34,7 @@ class Project(QObject):
         self._currentProjectCreatedDate = ''
         self._currentProjectImage = '../Resources/Project/Sine.svg'
 
-        self._examples_as_json = [
+        self._examples = [
             {
                 'name': 'Horizontal line',
                 'description': 'Straight line, horizontal, PicoScope 2204A',
@@ -52,7 +52,7 @@ class Project(QObject):
             }
         ]
 
-        self.examplesAsJsonChanged.connect(self.setNeedSaveToTrue)
+        self.examplesChanged.connect(self.setNeedSaveToTrue)
         self.currentProjectNameChanged.connect(self.setNeedSaveToTrue)
         self.currentProjectDescriptionChanged.connect(self.setNeedSaveToTrue)
         self.currentProjectImageChanged.connect(self.setNeedSaveToTrue)
@@ -138,9 +138,9 @@ class Project(QObject):
         self._currentProjectImage = newValue
         self.currentProjectImageChanged.emit()
 
-    @Property('QVariant', notify=examplesAsJsonChanged)
-    def examplesAsJson(self):
-        return self._examples_as_json
+    @Property('QVariant', notify=examplesChanged)
+    def examples(self):
+        return self._examples
 
     @Slot()
     def create(self):
@@ -153,7 +153,7 @@ class Project(QObject):
 
         project = {}
 
-        if self._proxy.project.isCreated:
+        if self.isCreated:
             project['project'] = {
                 'name': self._proxy.project.currentProjectName,
                 'description': self._proxy.project.currentProjectDescription,
