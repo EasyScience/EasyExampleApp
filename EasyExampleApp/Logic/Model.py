@@ -2,25 +2,24 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-import math
-import timeit
-
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
 from Logic.Calculators import LineCalculator
 
 
 class Model(QObject):
+    isCreatedChanged = Signal()
     descriptionChanged = Signal()
+    parameterEdited = Signal(bool)
+    parametersEdited = Signal(bool)
     parametersChanged = Signal()
     yDataChanged = Signal()
-    isCreatedChanged = Signal()
 
     def __init__(self, parent):
         super().__init__(parent)
         self._proxy = parent
         self._description = {
-            'label': 'Line'
+            'name': 'Line'
         }
         self._parameters = {
             'slope': {
@@ -44,14 +43,6 @@ class Model(QObject):
         }
         self._yData = []
         self._isCreated = False
-
-        self._proxy.experiment.dataSizeChanged.connect(self.onDataSizeChanged)
-        self.parametersChanged.connect(self.calculateData)
-
-        self.descriptionChanged.connect(self._proxy.project.setNeedSaveToTrue)
-        self.parametersChanged.connect(self._proxy.project.setNeedSaveToTrue)
-        self.yDataChanged.connect(self._proxy.project.setNeedSaveToTrue)
-        self.isCreatedChanged.connect(self._proxy.project.setNeedSaveToTrue)
 
     @Property('QVariant', notify=descriptionChanged)
     def description(self):
@@ -94,12 +85,8 @@ class Model(QObject):
         self.yData = []
         self.isCreated = False
 
-    def onDataSizeChanged(self):
-        if self.isCreated:
-            self.calculateData()
-
-    @Slot(str, str, str)
-    def editParameter(self, label, item, value):
+    @Slot(str, str, str, bool)
+    def editParameter(self, name, item, value, needSetFittables):
         if item == 'value':
             value = float(value)
         elif item == 'fit':
@@ -107,8 +94,8 @@ class Model(QObject):
                 value = True
             elif value == 'false':
                 value = False
-                self._parameters[label]['error'] = 0
-        if self._parameters[label][item] == value:
+                self._parameters[name]['error'] = 0
+        if self._parameters[name][item] == value:
             return
-        self._parameters[label][item] = value
-        self.parametersChanged.emit()
+        self._parameters[name][item] = value
+        self.parameterEdited.emit(needSetFittables)

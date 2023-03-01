@@ -4,6 +4,7 @@
 
 from PySide6.QtCore import QObject, Property
 
+from Logic.Connections import Connections
 from Logic.Project import Project
 from Logic.Model import Model
 from Logic.Experiment import Experiment
@@ -25,6 +26,11 @@ class PyProxy(QObject):
         self._summary = Summary(self)
         self._status = Status(self)
         self._plotting = Plotting(self)
+        self._connections = Connections(self)
+
+    @Property('QVariant', constant=True)
+    def connections(self):
+        return self._connections
 
     @Property('QVariant', constant=True)
     def project(self):

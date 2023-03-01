@@ -20,6 +20,8 @@ Column {
     EaComponents.TableView {
         id: table
 
+        property var currentValueTextInput: null
+
         defaultInfoText: qsTr("No parameters found")
 
         // Table model
@@ -32,11 +34,17 @@ Column {
         // Table rows
 
         delegate: EaComponents.TableViewDelegate {
+            property bool isCurrentItem: ListView.isCurrentItem
+            onIsCurrentItemChanged: {
+                if (table.currentValueTextInput != valueColumn) {
+                   table.currentValueTextInput = valueColumn
+                }
+            }
 
             EaComponents.TableViewLabel {
                 id: numberColumn
                 width: EaStyle.Sizes.fontPixelSize * 2.5
-                headerText: "No."
+                headerText: qsTr("No.")
                 text: index + 1
             }
 
@@ -50,8 +58,8 @@ Column {
                        unitColumn.width -
                        errorColumn.width -
                        fitColumn.width
-                headerText: "Label"
-                text: `${model.group}.${model.parent}.${model.label}`
+                headerText: qsTr("Name")
+                text: `${model.group}.${model.parent}.${model.name}`
                 textFormat: Text.PlainText
                 elide: Text.ElideMiddle
             }
@@ -60,9 +68,9 @@ Column {
                 id: valueColumn
                 horizontalAlignment: Text.AlignRight
                 width: EaStyle.Sizes.fontPixelSize * 4
-                headerText: "Value"
+                headerText: qsTr("Value")
                 text: model.value.toFixed(4)
-                onEditingFinished: Globals.Proxies.main.parameters.edit(model.group, model.label, 'value', text)
+                onEditingFinished: Globals.Proxies.main.parameters.edit(model.group, model.name, 'value', text)
             }
 
             EaComponents.TableViewLabel {
@@ -78,16 +86,16 @@ Column {
                 horizontalAlignment: Text.AlignRight
                 width: EaStyle.Sizes.fontPixelSize * 4
                 elide: Text.ElideNone
-                headerText: "Error"
+                headerText: qsTr("Error")
                 text: model.error === 0 ? '' :  model.error.toFixed(4)
             }
 
             EaComponents.TableViewCheckBox {
                 id: fitColumn
                 enabled: Globals.Proxies.main.experiment.isCreated
-                headerText: "Fit"
+                headerText: qsTr("Fit")
                 checked: model.fit
-                onCheckedChanged: Globals.Proxies.main.parameters.edit(model.group, model.label, 'fit', checked)
+                onCheckedChanged: Globals.Proxies.main.parameters.edit(model.group, model.name, 'fit', checked)
             }
         }
 
@@ -102,12 +110,11 @@ Column {
 
         from: table.model.get(table.currentIndex).min
         to: table.model.get(table.currentIndex).max
-        value: table.model.get(table.currentIndex).value
+        value: table.currentValueTextInput.text
 
         onMoved: {
-            const group = table.model.get(table.currentIndex).group
-            const label = table.model.get(table.currentIndex).label
-            Globals.Proxies.main.parameters.edit(group, label, 'value', value)
+            table.currentValueTextInput.text = value.toFixed(4)
+            table.currentValueTextInput.editingFinished()
         }
     }
 

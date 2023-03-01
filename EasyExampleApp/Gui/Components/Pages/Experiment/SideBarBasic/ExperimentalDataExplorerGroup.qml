@@ -45,8 +45,8 @@ Column {
             EaComponents.TableViewTextInput {
                 horizontalAlignment: Text.AlignLeft
                 width: EaStyle.Sizes.fontPixelSize * 27.9
-                headerText: "Label"
-                text: model.label
+                headerText: "Name"
+                text: model.name
             }
 
             EaComponents.TableViewLabel {

@@ -23,8 +23,8 @@ if __name__ == '__main__':
     engine = QQmlApplicationEngine()
 
     # Expose the Python objects to QML
-    pyProxy = PyProxy()
-    engine.rootContext().setContextProperty('pyProxy', pyProxy)
+    proxy = PyProxy()
+    engine.rootContext().setContextProperty('pyProxy', proxy)
 
     cliArgs = CommandLineArguments()
     engine.rootContext().setContextProperty('pyIsTestMode', cliArgs.testmode)

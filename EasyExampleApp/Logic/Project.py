@@ -10,30 +10,25 @@ from PySide6.QtCore import QObject, Signal, Slot, Property
 
 
 class Project(QObject):
-    examplesChanged = Signal()
-
     isCreatedChanged = Signal()
     needSaveChanged = Signal()
-
-    currentProjectNameChanged = Signal()
-    currentProjectDescriptionChanged = Signal()
-    currentProjectLocationChanged = Signal()
-    currentProjectCreatedDateChanged = Signal()
-    currentProjectImageChanged = Signal()
+    nameChanged = Signal()
+    descriptionChanged = Signal()
+    locationChanged = Signal()
+    createdDateChanged = Signal()
+    imageChanged = Signal()
+    examplesChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self._proxy = parent
-
         self._isCreated = False
         self._needSave = False
-
-        self._currentProjectName = 'Default project'
-        self._currentProjectDescription = 'Default project description'
-        self._currentProjectLocation = ''
-        self._currentProjectCreatedDate = ''
-        self._currentProjectImage = '../Resources/Project/Sine.svg'
-
+        self._name = 'Default project'
+        self._description = 'Default project description'
+        self._location = ''
+        self._createdDate = ''
+        self._image = '../Resources/Project/Sine.svg'
         self._examples = [
             {
                 'name': 'Horizontal line',
@@ -53,9 +48,9 @@ class Project(QObject):
         ]
 
         self.examplesChanged.connect(self.setNeedSaveToTrue)
-        self.currentProjectNameChanged.connect(self.setNeedSaveToTrue)
-        self.currentProjectDescriptionChanged.connect(self.setNeedSaveToTrue)
-        self.currentProjectImageChanged.connect(self.setNeedSaveToTrue)
+        self.nameChanged.connect(self.setNeedSaveToTrue)
+        self.descriptionChanged.connect(self.setNeedSaveToTrue)
+        self.imageChanged.connect(self.setNeedSaveToTrue)
 
     @Property(bool, notify=isCreatedChanged)
     def isCreated(self):
@@ -83,60 +78,60 @@ class Project(QObject):
     def setNeedSaveToTrue(self):
         self.needSave = True
 
-    @Property(str, notify=currentProjectNameChanged)
-    def currentProjectName(self):
-        return self._currentProjectName
+    @Property(str, notify=nameChanged)
+    def name(self):
+        return self._name
 
-    @currentProjectName.setter
-    def currentProjectName(self, newValue):
-        if self._currentProjectName == newValue:
+    @name.setter
+    def name(self, newValue):
+        if self._name == newValue:
             return
-        self._currentProjectName = newValue
-        self.currentProjectNameChanged.emit()
+        self._name = newValue
+        self.nameChanged.emit()
 
-    @Property(str, notify=currentProjectDescriptionChanged)
-    def currentProjectDescription(self):
-        return self._currentProjectDescription
+    @Property(str, notify=descriptionChanged)
+    def description(self):
+        return self._description
 
-    @currentProjectDescription.setter
-    def currentProjectDescription(self, newValue):
-        if self._currentProjectDescription == newValue:
+    @description.setter
+    def description(self, newValue):
+        if self._description == newValue:
             return
-        self._currentProjectDescription = newValue
-        self.currentProjectDescriptionChanged.emit()
+        self._description = newValue
+        self.descriptionChanged.emit()
 
-    @Property(str, notify=currentProjectLocationChanged)
-    def currentProjectLocation(self):
-        return self._currentProjectLocation
+    @Property(str, notify=locationChanged)
+    def location(self):
+        return self._location
 
-    @currentProjectLocation.setter
-    def currentProjectLocation(self, newValue):
-        if self._currentProjectLocation == newValue:
+    @location.setter
+    def location(self, newValue):
+        if self._location == newValue:
             return
-        self._currentProjectLocation = newValue
-        self.currentProjectLocationChanged.emit()
+        self._location = newValue
+        self.locationChanged.emit()
 
-    @Property(str, notify=currentProjectCreatedDateChanged)
-    def currentProjectCreatedDate(self):
-        return self._currentProjectCreatedDate
+    @Property(str, notify=createdDateChanged)
+    def createdDate(self):
+        return self._createdDate
 
-    @currentProjectCreatedDate.setter
-    def currentProjectCreatedDate(self, newValue):
-        if self._currentProjectCreatedDate == newValue:
+    @createdDate.setter
+    def createdDate(self, newValue):
+        if self._createdDate == newValue:
             return
-        self._currentProjectCreatedDate = newValue
-        self.currentProjectCreatedDateChanged.emit()
+        self._createdDate = newValue
+        self.createdDateChanged.emit()
 
-    @Property(str, notify=currentProjectImageChanged)
-    def currentProjectImage(self):
-        return self._currentProjectImage
+    @Property(str, notify=imageChanged)
+    def image(self):
+        return self._image
 
-    @currentProjectImage.setter
-    def currentProjectImage(self, newValue):
-        if self._currentProjectImage == newValue:
+    @image.setter
+    def image(self, newValue):
+        if self._image == newValue:
             return
-        self._currentProjectImage = newValue
-        self.currentProjectImageChanged.emit()
+        self._image = newValue
+        self.imageChanged.emit()
 
     @Property('QVariant', notify=examplesChanged)
     def examples(self):
@@ -144,7 +139,7 @@ class Project(QObject):
 
     @Slot()
     def create(self):
-        self.currentProjectCreatedDate = datetime.now().strftime("%d.%b.%Y %H:%M")
+        self.createdDate = datetime.now().strftime("%d.%b.%Y %H:%M")
         self.isCreated = True
 
     @Slot()
@@ -155,15 +150,15 @@ class Project(QObject):
 
         if self.isCreated:
             project['project'] = {
-                'name': self._proxy.project.currentProjectName,
-                'description': self._proxy.project.currentProjectDescription,
-                'location': self._proxy.project.currentProjectLocation,
-                'creationDate': self._proxy.project.currentProjectCreatedDate
+                'name': self._proxy.project.name,
+                'description': self._proxy.project.description,
+                'location': self._proxy.project.location,
+                'creationDate': self._proxy.project.createdDate
             }
 
         if self._proxy.experiment.isCreated:
             project['experiment'] = {
-                'label': self._proxy.experiment.description['label'],
+                'name': self._proxy.experiment.description['name'],
                 'isCreated': self._proxy.experiment.isCreated,
                 'parameters': self._proxy.model.parameters,
                 'dataSize': self._proxy.experiment.dataSize,
@@ -173,15 +168,15 @@ class Project(QObject):
 
         if self._proxy.model.isCreated:
             project['model'] = {
-                'label': self._proxy.model.description['label'],
+                'name': self._proxy.model.description['name'],
                 'isCreated': self._proxy.model.isCreated,
                 'parameters': self._proxy.model.parameters,
                 'yData': self._proxy.model.yData
             }
 
-        if self._proxy.fitting.isFitFinished:
+        if self._proxy.fitting.fitFinished:
             project['fitting'] = {
-                'isFitFinished': self._proxy.fitting.isFitFinished
+                'fitFinished': self._proxy.fitting.fitFinished
             }
 
         if self._proxy.summary.isCreated:
@@ -197,7 +192,7 @@ class Project(QObject):
 
         # Save formatted project json
 
-        filePath = os.path.join(self.currentProjectLocation, 'project.json')
+        filePath = os.path.join(self.location, 'project.json')
         os.makedirs(os.path.dirname(filePath), exist_ok=True)
         with open(filePath, 'w') as file:
             file.write(formattedProject)

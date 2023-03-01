@@ -38,25 +38,25 @@ Column {
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 2.5
-                headerText: "No."
+                headerText: qsTr("No.")
                 text: model.index + 1
             }
 
             EaComponents.TableViewTextInput {
                 horizontalAlignment: Text.AlignLeft
                 width: EaStyle.Sizes.fontPixelSize * 27.9
-                headerText: "Label"
-                text: model.label
+                headerText: qsTr("Name")
+                text: model.name
             }
 
             EaComponents.TableViewLabel {
-                headerText: "Color"
+                headerText: qsTr("Color")
                 backgroundColor: EaStyle.Colors.chartForegrounds[0]
             }
 
             EaComponents.TableViewButton {
                 id: deleteRowColumn
-                headerText: "Del."
+                headerText: qsTr("Del.")
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this model")
                 onClicked: {

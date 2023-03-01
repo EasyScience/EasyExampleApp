@@ -2,53 +2,45 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-import timeit
-
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
 from Logic.Calculators import LineCalculator
 
 
 class Experiment(QObject):
+    isCreatedChanged = Signal()
     descriptionChanged = Signal()
+    parameterEdited = Signal(bool)
+    parametersEdited = Signal(bool)
     parametersChanged = Signal()
     dataSizeChanged = Signal()
     xDataChanged = Signal()
     yDataChanged = Signal()
-    isCreatedChanged = Signal()
 
     def __init__(self, parent):
         super().__init__(parent)
         self._proxy = parent
+        self._isCreated = False
         self._description = {
-            'label': 'PicoScope'
+            'name': 'PicoScope'
         }
         self._parameters = {
             'xMin': {
                 'value': 0.0,
-                'fittable': False,
+                'fittable': False
             },
             'xMax': {
                 'value': 1.0,
-                'fittable': False,
+                'fittable': False
             },
             'xStep': {
                 'value': 0.01,
-                'fittable': False,
+                'fittable': False
             }
         }
         self._dataSize = 300
         self._xData = []
         self._yData = []
-        self._isCreated = False
-
-        self.dataSizeChanged.connect(self.onDataSizeChanged)
-
-        self.descriptionChanged.connect(self._proxy.project.setNeedSaveToTrue)
-        self.parametersChanged.connect(self._proxy.project.setNeedSaveToTrue)
-        self.xDataChanged.connect(self._proxy.project.setNeedSaveToTrue)
-        self.yDataChanged.connect(self._proxy.project.setNeedSaveToTrue)
-        self.isCreatedChanged.connect(self._proxy.project.setNeedSaveToTrue)
 
     @Property('QVariant', notify=descriptionChanged)
     def description(self):
@@ -113,12 +105,8 @@ class Experiment(QObject):
         self.yData = []
         self.isCreated = False
 
-    def onDataSizeChanged(self):
-        if self.isCreated:
-            self.loadData()
-
-    @Slot(str, str, str)
-    def editParameter(self, label, item, value):
+    @Slot(str, str, str, bool)
+    def editParameter(self, name, item, value, needSetFittables):
         if item == 'value':
             value = float(value)
         elif item == 'fit':
@@ -126,8 +114,8 @@ class Experiment(QObject):
                 value = True
             elif value == 'false':
                 value = False
-                self._parameters[label]['error'] = 0
-        if self._parameters[label][item] == value:
+                self._parameters[name]['error'] = 0
+        if self._parameters[name][item] == value:
             return
-        self._parameters[label][item] = value
-        self.parametersChanged.emit()
+        self._parameters[name][item] = value
+        self.parameterEdited.emit(needSetFittables)

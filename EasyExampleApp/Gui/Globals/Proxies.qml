@@ -5,6 +5,7 @@
 pragma Singleton
 
 import QtQuick
+import QtQuick.Controls
 
 import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Logic as EaLogic
@@ -21,19 +22,99 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
     readonly property var qmlProxy: QtObject {
 
+        //////////////
+        // Connections
+        //////////////
+
+        readonly property var connections: QtObject {
+
+            Component.onCompleted: {
+                // Project
+
+                qmlProxy.project.nameChanged.connect(qmlProxy.project.setNeedSaveToTrue)
+                qmlProxy.project.descriptionChanged.connect(qmlProxy.project.setNeedSaveToTrue)
+                qmlProxy.project.isCreatedChanged.connect(qmlProxy.project.save)
+
+                // Experiment
+
+                qmlProxy.experiment.descriptionChanged.connect(qmlProxy.project.setNeedSaveToTrue)
+
+                qmlProxy.experiment.isCreatedChanged.connect(function() {
+                    print(`Experiment created: ${qmlProxy.experiment.isCreated}`)
+                    qmlProxy.parameters.setFittables()
+                    qmlProxy.project.setNeedSaveToTrue()
+                })
+
+                qmlProxy.experiment.parameterEdited.connect(function(needSetFittables) {
+                    qmlProxy.experiment.parametersEdited(needSetFittables)
+                })
+
+                qmlProxy.experiment.parametersEdited.connect(function(needSetFittables) {
+                    print(`Experiment parameters changed. Need set fittables: ${needSetFittables}`)
+                    qmlProxy.experiment.parametersChanged()
+                    qmlProxy.experiment.loadData()
+                    if (needSetFittables) {
+                        qmlProxy.parameters.setFittables()
+                    }
+                    qmlProxy.project.setNeedSaveToTrue()
+                })
+
+                qmlProxy.experiment.dataSizeChanged.connect(function() {
+                    print(`Experiment data size: ${qmlProxy.experiment.dataSize}`)
+                    qmlProxy.experiment.loadData()
+                    if (qmlProxy.model.isCreated) {
+                        qmlProxy.model.calculateData()
+                    }
+                })
+
+                // Model
+
+                qmlProxy.model.descriptionChanged.connect(qmlProxy.project.setNeedSaveToTrue)
+
+                qmlProxy.model.isCreatedChanged.connect(function() {
+                    print(`Model created: ${qmlProxy.model.isCreated}`)
+                    qmlProxy.parameters.setFittables()
+                    qmlProxy.project.setNeedSaveToTrue()
+                })
+
+                qmlProxy.model.parameterEdited.connect(function(needSetFittables) {
+                    qmlProxy.model.parametersEdited(needSetFittables)
+                })
+
+                qmlProxy.model.parametersEdited.connect(function(needSetFittables) {
+                    qmlProxy.model.parametersChanged()
+                    qmlProxy.model.calculateData()
+                    if (needSetFittables) {
+                        qmlProxy.parameters.setFittables()
+                    }
+                    qmlProxy.project.setNeedSaveToTrue()
+                })
+
+                // Fitting
+
+                qmlProxy.fitting.fitFinishedChanged.connect(function() {
+                    print(`Fit finished: ${qmlProxy.fitting.fitFinished}`)
+                    const needSetFittables = true
+                    qmlProxy.model.parametersEdited(needSetFittables)
+                })
+
+            }
+
+        }
+
+        //////////
         // Project
+        //////////
 
         readonly property var project: QtObject {
 
             property bool isCreated: false
             property bool needSave: false
-
-            property string currentProjectName: 'Default project'
-            property string currentProjectDescription: 'Default project description'
-            property string currentProjectLocation: ''
-            property string currentProjectCreatedDate: ''
-            property string currentProjectImage: Qt.resolvedUrl('../Resources/Project/Sine.svg')
-
+            property string name: 'Default project'
+            property string description: 'Default project description'
+            property string location: ''
+            property string createdDate: ''
+            property string image: Qt.resolvedUrl('../Resources/Project/Sine.svg')
             property var examples: [
                 {
                     'name': 'Horizontal line',
@@ -52,17 +133,12 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                 }
             ]
 
-            onExamplesChanged: setNeedSaveToTrue()
-            onCurrentProjectNameChanged: setNeedSaveToTrue()
-            onCurrentProjectDescriptionChanged: setNeedSaveToTrue()
-            onCurrentProjectImageChanged: setNeedSaveToTrue()
-
             function setNeedSaveToTrue() {
                 needSave = true
             }
 
             function create() {
-                currentProjectCreatedDate = `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`
+                createdDate = `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`
                 isCreated = true
             }
 
@@ -71,16 +147,16 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
                 if (isCreated) {
                     project['project'] = {
-                        'name': currentProjectName,
-                        'description': currentProjectDescription,
-                        'location': currentProjectLocation,
-                        'creationDate': currentProjectCreatedDate
+                        'name': name,
+                        'description': description,
+                        'location': location,
+                        'creationDate': createdDate
                     }
                 }
 
                 if (qmlProxy.experiment.isCreated) {
                     project['experiment'] = {
-                        'label': qmlProxy.experiment.asJson[0]['label'],
+                        'name': qmlProxy.experiment.description.name,
                         'isCreated': qmlProxy.experiment.isCreated,
                         'parameters': qmlProxy.experiment.parameters,
                         'dataSize': qmlProxy.experiment.dataSize,
@@ -91,16 +167,16 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
                 if (qmlProxy.model.isCreated) {
                     project['model'] = {
-                        'label': qmlProxy.model.asJson[0]['label'],
+                        'name': qmlProxy.model.description.name,
                         'isCreated': qmlProxy.model.isCreated,
                         'parameters': qmlProxy.model.parameters,
                         'yData': qmlProxy.model.yData
                     }
                 }
 
-                if (qmlProxy.fitting.isFitFinished) {
+                if (qmlProxy.fitting.fitFinished) {
                     project['fitting'] = {
-                        'isFitFinished': qmlProxy.fitting.isFitFinished
+                        'fitFinished': qmlProxy.fitting.fitFinished
                     }
                 }
 
@@ -110,18 +186,24 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                     }
                 }
 
-                const filePath = `${currentProjectLocation}/project.json`
+                const filePath = `${location}/project.json`
                 EaLogic.Utils.writeFile(filePath, JSON.stringify(project))
 
                 needSave = false
             }
         }
 
+        /////////////
         // Experiment
+        /////////////
 
         readonly property var experiment: QtObject {
-            readonly property var description: {
-                'label': 'PicoScope'
+            signal parameterEdited(bool needSetFittables)
+            signal parametersEdited(bool needSetFittables)
+
+            property bool isCreated: false
+            property var description: {
+                'name': 'PicoScope'
             }
             property var parameters: {
                 'xMin': {
@@ -140,35 +222,6 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             property int dataSize: 300
             property var xData: []
             property var yData: []
-            property bool isCreated: false
-
-            onDataSizeChanged: {
-                if (isCreated) {
-                    loadData()
-                }
-                if (qmlProxy.model.isCreated) {
-                    qmlProxy.model.calculateData()
-                }
-                if (qmlProxy.fitting.isFitFinished) {
-                    qmlProxy.fitting.fit()
-                }
-            }
-
-            onDescriptionChanged: qmlProxy.project.setNeedSaveToTrue()
-            onXDataChanged: qmlProxy.project.setNeedSaveToTrue()
-            onYDataChanged: qmlProxy.project.setNeedSaveToTrue()
-            onParametersChanged: {
-                if (isCreated) {
-                    qmlProxy.parameters.setFittables()
-                    qmlProxy.project.setNeedSaveToTrue()
-                }
-            }
-            onIsCreatedChanged: {
-                if (isCreated) {
-                    qmlProxy.parameters.setFittables()
-                    qmlProxy.project.setNeedSaveToTrue()
-                }
-            }
 
             function loadData() {
                 const length = dataSize
@@ -185,27 +238,33 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                 isCreated = false
             }
 
-            function editParameter(label, item, value) {
+            function editParameter(name, item, value, needSetFittables) {
                 if (item === 'value') {
                     value = parseFloat(value)
                 } else if (item === 'fit') {
                     if (!value) {
-                        parameters[label].error = 0
+                        parameters[name].error = 0
                     }
                 }
-                if (parameters[label][item] === value) {
+                if (parameters[name][item] === value) {
                     return
                 }
-                parameters[label][item] = value
-                parametersChanged()
+                parameters[name][item] = value
+                parameterEdited(needSetFittables)
             }
         }
 
+        ////////
         // Model
+        ////////
 
         readonly property var model: QtObject {
-            readonly property var description: {
-                    'label': 'Line'
+            signal parameterEdited(bool needSetFittables)
+            signal parametersEdited(bool needSetFittables)
+
+            property bool isCreated: false
+            property var description: {
+                    'name': 'Line'
             }
             property var parameters: {
                 'slope': {
@@ -227,23 +286,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                     'fit': true
                 }
             }
-
             property var yData: []
-            property bool isCreated: false
-
-            onParametersChanged: {
-                if (isCreated) {
-                    calculateData()
-                    qmlProxy.parameters.setFittables()
-                    qmlProxy.project.setNeedSaveToTrue()
-                }
-            }
-            onIsCreatedChanged: {
-                if (isCreated) {
-                    qmlProxy.parameters.setFittables()
-                    qmlProxy.project.setNeedSaveToTrue()
-                }
-            }
 
             function calculateData() {
                 const slope = parameters.slope.value
@@ -258,34 +301,31 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                 isCreated = false
             }
 
-            function editParameter(label, item, value) {
+            function editParameter(name, item, value, needSetFittables) {
                 if (item === 'value') {
                     value = parseFloat(value)
                 } else if (item === 'fit') {
                     if (!value) {
-                        parameters[label].error = 0
+                        parameters[name].error = 0
                     }
                 }
-                if (parameters[label][item] === value) {
+                if (parameters[name][item] === value) {
                     return
                 }
-                parameters[label][item] = value
-                parametersChanged()
+                parameters[name][item] = value
+                parameterEdited(needSetFittables)
             }
         }
 
+        //////////
         // Fitting
+        //////////
 
         readonly property var fitting: QtObject {
-            property bool isFitFinished: false
-
-            onIsFitFinishedChanged: {
-                qmlProxy.model.parametersChanged()
-                qmlProxy.project.setNeedSaveToTrue()
-            }
+            property bool fitFinished: false
 
             function fit() {
-                isFitFinished = false
+                fitFinished = false
                 if (qmlProxy.model.parameters.slope.fit) {
                     qmlProxy.model.parameters.slope.value = -3.0015
                     qmlProxy.model.parameters.slope.error = 0.0023
@@ -294,56 +334,64 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                     qmlProxy.model.parameters.yIntercept.value = 1.4950
                     qmlProxy.model.parameters.yIntercept.error = 0.0045
                 }
-                isFitFinished = true
+                fitFinished = true
             }
         }
 
+        /////////////
         // Parameters
+        /////////////
 
         readonly property var parameters: QtObject {
             property var fittables: []
 
-            function edit(group, label, item, value) {
+            function edit(group, name, item, value) {
+                const needSetFittables = false
                 if (group === 'experiment') {
-                    qmlProxy.experiment.editParameter(label, item, value)
+                    qmlProxy.experiment.editParameter(name, item, value, needSetFittables)
                 } else if (group === 'model') {
-                    qmlProxy.model.editParameter(label, item, value)
+                    qmlProxy.model.editParameter(name, item, value, needSetFittables)
                 }
             }
 
             function setFittables() {
                 let _fittables = []
-                for (let label in qmlProxy.experiment.parameters) {
-                    let param = qmlProxy.experiment.parameters[label]
+                for (let name in qmlProxy.experiment.parameters) {
+                    let param = qmlProxy.experiment.parameters[name]
                     if (param.fittable) {
                         param.group = 'experiment'
-                        param.parent = qmlProxy.experiment.description.label
-                        param.label = label
+                        param.parent = qmlProxy.experiment.description.name
+                        param.name = name
                         _fittables.push(param)
                     }
                 }
-                for (let label in qmlProxy.model.parameters) {
-                    let param = qmlProxy.model.parameters[label]
+                for (let name in qmlProxy.model.parameters) {
+                    let param = qmlProxy.model.parameters[name]
                     if (param.fittable) {
                         param.group = 'model'
-                        param.parent = qmlProxy.model.description.label
-                        param.label = label
+                        param.parent = qmlProxy.model.description.name
+                        param.name = name
                         _fittables.push(param)
                     }
                 }
                 if (_fittables.length !== 0) {
+                    /*
+                    for (let i = 0; i < 10000; ++i) {
+                        _fittables.push(_fittables[0])
+                    }
+                    */
                     fittables = _fittables
                 }
             }
 
         }
 
+        //////////
         // Summary
+        //////////
 
         readonly property var summary: QtObject {
             property bool isCreated: false
-
-            onIsCreatedChanged: qmlProxy.project.setNeedSaveToTrue()
 
             // https://stackoverflow.com/questions/17882518/reading-and-writing-files-in-qml-qt
             // https://stackoverflow.com/questions/57351643/how-to-save-dynamically-generated-web-page-in-qwebengineview
@@ -356,33 +404,37 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             }
         }
 
+        /////////
         // Status
+        /////////
 
         readonly property var status: QtObject {
             property string asXml:
                 `<root>
                   <item>
-                    <label>Calculations</label>
+                    <name>Calculations</name>
                     <value>CrysPy</value>
                   </item>
                   <item>
-                    <label>Minimization</label>
+                    <name>Minimization</name>
                     <value>lmfit</value>
                   </item>
                 </root>`
             property var asJson: [
                 {
-                    label: 'Calculations',
+                    name: 'Calculations',
                     value: 'CrysPy'
                 },
                 {
-                    label: 'Minimization',
+                    name: 'Minimization',
                     value: 'lmfit'
                 }
               ]
         }
 
+        ///////////
         // Plotting
+        ///////////
 
         readonly property var plotting: QtObject {
             readonly property bool useWebGL1d: false

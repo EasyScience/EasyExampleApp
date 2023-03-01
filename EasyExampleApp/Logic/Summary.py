@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-from PySide6.QtCore import QObject, Signal, Slot, Property
+from PySide6.QtCore import QObject, Signal, Property
 
 
 class Summary(QObject):
@@ -12,8 +12,6 @@ class Summary(QObject):
         super().__init__(parent)
         self._proxy = parent
         self._isCreated = False
-
-        self.isCreatedChanged.connect(self._proxy.project.setNeedSaveToTrue)
 
     @Property(bool, notify=isCreatedChanged)
     def isCreated(self):
