@@ -26,17 +26,20 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         'projectPage': {
             'continueButton': null
         },
-        'modelPage': {
-            'continueButton': null,
-            'addNewModelManuallyButton': null
-        },
         'experimentPage': {
             'continueButton': null,
-            'importDataFromLocalDriveButton': null
+            'importDataFromLocalDriveButton': null,
+            'plotView': null
+        },
+        'modelPage': {
+            'continueButton': null,
+            'addNewModelManuallyButton': null,
+            'plotView': null
         },
         'analysisPage': {
             'continueButton': null,
-            'startFittingButton': null
+            'startFittingButton': null,
+            'plotView': null
         },
         'summaryPage': {
         },

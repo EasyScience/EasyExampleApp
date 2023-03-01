@@ -21,5 +21,7 @@ EaCharts.Plotly1dMeasVsCalc {
     measuredYData: Globals.Proxies.main.experiment.yData
     calculatedYData: Globals.Proxies.main.model.yData
 
+    Component.onCompleted: Globals.Refs.app.analysisPage.plotView = this
+
 }
 

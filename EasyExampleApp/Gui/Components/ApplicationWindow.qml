@@ -198,13 +198,12 @@ EaComponents.ApplicationWindow {
 
     statusBar: Components.StatusBar {}
 
-    //////////////////
-    // Developer tests
-    //////////////////
+    ////////////
+    // GUI TESTS
+    ////////////
 
     Loader {
-        source: Globals.Vars.isTestMode ? 'DeveloperTestsController.qml' : ""
-        //source: 'DeveloperTestsController.qml'
+        source: Globals.Vars.isTestMode ? 'GuiTestsController.qml' : ""
     }
 
 }

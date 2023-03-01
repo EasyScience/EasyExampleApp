@@ -63,7 +63,7 @@ EaElements.RemoteController {
 
         print('Run basic suit of GUI tests')
 
-        const saveImagesDir = '../.tests/GuiTests/BasicGuiTest/ActualImages'
+        //const saveImagesDir = '../.tests/GuiTests/BasicGuiTest/ActualImages'
 
         rc.posToCenter()
         rc.showPointer()
@@ -119,9 +119,13 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.experimentPage.continueButton.enabled, true) )
 
         rc.mouseClick(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton)
+        rc.wait(2000)
 
         res.push( rc.compare(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.experimentPage.continueButton.text, 'Continue') )
+
+        res.push( rc.compare(Globals.Refs.app.experimentPage.plotView.xData, Globals.Tests.expected.created.experiment.xData) )
+        res.push( rc.compare(Globals.Refs.app.experimentPage.plotView.measuredYData, Globals.Tests.expected.created.experiment.yData) )
 
         rc.mouseClick(Globals.Refs.app.experimentPage.continueButton)
         //rc.wait(2000)
@@ -143,9 +147,13 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.enabled, false) )
 
         rc.mouseClick(Globals.Refs.app.modelPage.addNewModelManuallyButton)
+        rc.wait(2000)
 
         res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.enabled, true) )
+
+        res.push( rc.compare(Globals.Refs.app.modelPage.plotView.xData, Globals.Tests.expected.created.experiment.xData) )
+        res.push( rc.compare(Globals.Refs.app.modelPage.plotView.calculatedYData, Globals.Tests.expected.created.model.yData) )
 
         rc.mouseClick(Globals.Refs.app.modelPage.continueButton)
         //rc.wait(2000)
@@ -166,7 +174,19 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.analysisPage.continueButton.text, 'Continue') )
         res.push( rc.compare(Globals.Refs.app.analysisPage.continueButton.enabled, true) )
 
+        rc.wait(2000)
+
+        res.push( rc.compare(Globals.Refs.app.analysisPage.plotView.xData, Globals.Tests.expected.created.experiment.xData) )
+        res.push( rc.compare(Globals.Refs.app.analysisPage.plotView.measuredYData, Globals.Tests.expected.created.experiment.yData) )
+        res.push( rc.compare(Globals.Refs.app.analysisPage.plotView.calculatedYData, Globals.Tests.expected.created.model.yData) )
+
         rc.mouseClick(Globals.Refs.app.analysisPage.startFittingButton)
+        rc.wait(2000)
+
+        res.push( rc.compare(Globals.Refs.app.analysisPage.plotView.xData, Globals.Tests.expected.created.experiment.xData) )
+        res.push( rc.compare(Globals.Refs.app.analysisPage.plotView.measuredYData, Globals.Tests.expected.created.experiment.yData) )
+        res.push( rc.compare(Globals.Refs.app.analysisPage.plotView.calculatedYData, Globals.Tests.expected.fitted.model.yData) )
+
         rc.mouseClick(Globals.Refs.app.analysisPage.continueButton)
         //rc.wait(2000)
 

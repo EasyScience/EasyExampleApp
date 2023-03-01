@@ -20,4 +20,6 @@ EaCharts.Plotly1dMeasVsCalc {
     xData: Globals.Proxies.main.experiment.xData
     measuredYData: Globals.Proxies.main.experiment.yData
 
+    Component.onCompleted: Globals.Refs.app.experimentPage.plotView = this
+
 }
