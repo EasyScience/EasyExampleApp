@@ -20,6 +20,7 @@ Grid {
         width: parameterFieldWidth()
         text: Globals.Proxies.main.model.parameters.slope.value.toFixed(4)
         onEditingFinished: Globals.Proxies.main.model.editParameter('slope', 'value', text, true)
+        Component.onCompleted: Globals.Refs.app.modelPage.slopeParameter = this
     }
 
     EaElements.Parameter {
@@ -27,6 +28,7 @@ Grid {
         width: parameterFieldWidth()
         text: Globals.Proxies.main.model.parameters.yIntercept.value.toFixed(4)
         onEditingFinished: Globals.Proxies.main.model.editParameter('yIntercept', 'value', text, true)
+        Component.onCompleted: Globals.Refs.app.modelPage.yInterceptParameter = this
     }
 
     // Logic

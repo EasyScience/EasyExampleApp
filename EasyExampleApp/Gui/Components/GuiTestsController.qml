@@ -152,6 +152,9 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.enabled, true) )
 
+        res.push( rc.compare(Globals.Refs.app.modelPage.slopeParameter.text, Globals.Tests.expected.created.model.parameters.slope.value) )
+        res.push( rc.compare(Globals.Refs.app.modelPage.yInterceptParameter.text, Globals.Tests.expected.created.model.parameters.yIntercept.value) )
+
         res.push( rc.compare(Globals.Refs.app.modelPage.plotView.xData, Globals.Tests.expected.created.experiment.xData) )
         res.push( rc.compare(Globals.Refs.app.modelPage.plotView.calculatedYData, Globals.Tests.expected.created.model.yData) )
 
@@ -182,6 +185,9 @@ EaElements.RemoteController {
 
         rc.mouseClick(Globals.Refs.app.analysisPage.startFittingButton)
         rc.wait(2000)
+
+        res.push( rc.compare(Globals.Refs.app.modelPage.slopeParameter.text, Globals.Tests.expected.fitted.model.parameters.slope.value) )
+        res.push( rc.compare(Globals.Refs.app.modelPage.yInterceptParameter.text, Globals.Tests.expected.fitted.model.parameters.yIntercept.value) )
 
         res.push( rc.compare(Globals.Refs.app.analysisPage.plotView.xData, Globals.Tests.expected.created.experiment.xData) )
         res.push( rc.compare(Globals.Refs.app.analysisPage.plotView.measuredYData, Globals.Tests.expected.created.experiment.yData) )
