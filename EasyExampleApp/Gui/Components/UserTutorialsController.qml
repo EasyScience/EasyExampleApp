@@ -89,7 +89,7 @@ EaElements.RemoteController {
         rc.mouseClick(Globals.Refs.app.projectPage.continueButton)
 
         // Model Page
-        rc.mouseClick(Globals.Refs.app.modelPage.addNewModelManuallyButton)
+        rc.mouseClick(Globals.Refs.app.modelPage.loadNewModelFromFileButton)
         rc.mouseClick(Globals.Refs.app.modelPage.continueButton)
 
         // Experiment page

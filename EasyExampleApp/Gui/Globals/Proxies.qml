@@ -31,30 +31,33 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             Component.onCompleted: {
                 // Project
 
-                qmlProxy.project.nameChanged.connect(qmlProxy.project.setNeedSaveToTrue)
-                qmlProxy.project.descriptionChanged.connect(qmlProxy.project.setNeedSaveToTrue)
-                qmlProxy.project.isCreatedChanged.connect(qmlProxy.project.save)
+//                qmlProxy.project.nameChanged.connect(qmlProxy.project.setNeedSaveToTrue)
+//                qmlProxy.project.descriptionChanged.connect(qmlProxy.project.setNeedSaveToTrue)
+ //               qmlProxy.project.createdChanged.connect(qmlProxy.project.save)
 
                 // Experiment
 
-                qmlProxy.experiment.descriptionChanged.connect(qmlProxy.project.setNeedSaveToTrue)
+                qmlProxy.experiment.dataChanged.connect(qmlProxy.project.setNeedSaveToTrue)
 
-                qmlProxy.experiment.isCreatedChanged.connect(function() {
-                    print(`Experiment created: ${qmlProxy.experiment.isCreated}`)
-                    qmlProxy.parameters.setFittables()
+                qmlProxy.experiment.dataChanged.connect(qmlProxy.fittables.set)
+
+
+                qmlProxy.experiment.createdChanged.connect(function() {
+                    print(`Experiment created: ${qmlProxy.experiment.created}`)
+                    qmlProxy.fittables.set()
                     qmlProxy.project.setNeedSaveToTrue()
                 })
 
-                qmlProxy.experiment.parameterEdited.connect(function(needSetFittables) {
-                    qmlProxy.experiment.parametersEdited(needSetFittables)
-                })
-
+//                qmlProxy.experiment.parameterEdited.connect(function(needSetFittables) {
+  //                  qmlProxy.experiment.parametersEdited(needSetFittables)
+    //            })
+/*
                 qmlProxy.experiment.parametersEdited.connect(function(needSetFittables) {
                     print(`Experiment parameters changed. Need set fittables: ${needSetFittables}`)
                     qmlProxy.experiment.parametersChanged()
                     qmlProxy.experiment.loadData()
                     if (needSetFittables) {
-                        qmlProxy.parameters.setFittables()
+                        qmlProxy.fittables.set()
                     }
                     qmlProxy.project.setNeedSaveToTrue()
                 })
@@ -66,29 +69,44 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                         qmlProxy.model.calculateData()
                     }
                 })
-
+*/
                 // Model
 
-                qmlProxy.model.descriptionChanged.connect(qmlProxy.project.setNeedSaveToTrue)
 
-                qmlProxy.model.isCreatedChanged.connect(function() {
-                    print(`Model created: ${qmlProxy.model.isCreated}`)
-                    qmlProxy.parameters.setFittables()
-                    qmlProxy.project.setNeedSaveToTrue()
-                })
+//                qmlProxy.model.dataChanged.connect(qmlProxy.fittables.set)
 
-                qmlProxy.model.parameterEdited.connect(function(needSetFittables) {
-                    qmlProxy.model.parametersEdited(needSetFittables)
-                })
-
-                qmlProxy.model.parametersEdited.connect(function(needSetFittables) {
-                    qmlProxy.model.parametersChanged()
+                //qmlProxy.model.descriptionChanged.connect(qmlProxy.project.setNeedSaveToTrue)
+/*
+                qmlProxy.model.modelAdded.connect(function() {
+                    print(`Model added. Models count: ${qmlProxy.model.models.length}`)
                     qmlProxy.model.calculateData()
+                    qmlProxy.fittables.set()
+                    qmlProxy.project.setNeedSaveToTrue()
+                    qmlProxy.model.modelsChanged()
+                })
+*/
+                qmlProxy.model.parameterEdited.connect(function(needSetFittables) {
+                    //qmlProxy.model.parametersEdited(needSetFittables)
+                    //qmlProxy.model.dataChanged()
+                    qmlProxy.model.calculate()
                     if (needSetFittables) {
-                        qmlProxy.parameters.setFittables()
+                        //print('!!!!!!!!!!', needSetFittables)
+                        qmlProxy.fittables.set()
                     }
                     qmlProxy.project.setNeedSaveToTrue()
                 })
+
+                /*
+                qmlProxy.model.parametersEdited.connect(function(needSetFittables) {
+                    //qmlProxy.model.modelsChanged()
+                    //qmlProxy.model.calculateData()
+                    qmlProxy.model.dataChanged()
+                    if (needSetFittables) {
+                        qmlProxy.fittables.set()
+                    }
+                    qmlProxy.project.setNeedSaveToTrue()
+                })
+                */
 
                 // Fitting
 
@@ -108,14 +126,21 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
         readonly property var project: QtObject {
 
-            property bool isCreated: false
-            property bool needSave: false
-            property string name: 'Default project'
-            property string description: 'Default project description'
-            property string location: ''
-            property string createdDate: ''
-            property string image: Qt.resolvedUrl('../Resources/Project/Sine.svg')
-            property var examples: [
+            readonly property var _EMPTY_DATA: {
+                'name': '',
+                'description': '',
+                'location': '',
+                'creationDate': ''
+            }
+
+            readonly property var _DEFAULT_DATA: {
+                'name': 'Default project',
+                'description': 'Default project description',
+                'location': '',
+                'creationDate': ''
+            }
+
+            readonly property var _EXAMPLES: [
                 {
                     'name': 'Horizontal line',
                     'description': 'Straight line, horizontal, PicoScope 2204A',
@@ -133,62 +158,42 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                 }
             ]
 
+            property var data: _EMPTY_DATA
+            property var examples: _EXAMPLES
+            property bool created: false
+            property bool needSave: false
+
             function setNeedSaveToTrue() {
                 needSave = true
             }
 
             function create() {
-                createdDate = `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`
-                isCreated = true
+                data.creationDate = `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`
+                dataChanged()  // Emit signal, as it is not emited automatically
+                created = true
+            }
+
+            function editData(key, value) {
+                if (data[key] === value) {
+                    return
+                }
+                data[key] = value
+                dataChanged()  // Emit signal, as it is not emited automatically
             }
 
             function save() {
-                let project = {}
-
-                if (isCreated) {
-                    project['project'] = {
-                        'name': name,
-                        'description': description,
-                        'location': location,
-                        'creationDate': createdDate
-                    }
+                let out = {}
+                if (created) {
+                    out['project'] = data
                 }
-
-                if (qmlProxy.experiment.isCreated) {
-                    project['experiment'] = {
-                        'name': qmlProxy.experiment.description.name,
-                        'isCreated': qmlProxy.experiment.isCreated,
-                        'parameters': qmlProxy.experiment.parameters,
-                        'dataSize': qmlProxy.experiment.dataSize,
-                        'xData': qmlProxy.experiment.xData,
-                        'yData': qmlProxy.experiment.yData
-                    }
+                if (qmlProxy.experiment.created) {
+                    out['experiment'] = qmlProxy.experiment.data
                 }
-
-                if (qmlProxy.model.isCreated) {
-                    project['model'] = {
-                        'name': qmlProxy.model.description.name,
-                        'isCreated': qmlProxy.model.isCreated,
-                        'parameters': qmlProxy.model.parameters,
-                        'yData': qmlProxy.model.yData
-                    }
+                if (qmlProxy.model.created) {
+                    out['model'] = qmlProxy.model.data
                 }
-
-                if (qmlProxy.fitting.fitFinished) {
-                    project['fitting'] = {
-                        'fitFinished': qmlProxy.fitting.fitFinished
-                    }
-                }
-
-                if (qmlProxy.summary.isCreated) {
-                    project['summary'] = {
-                        'isCreated': qmlProxy.summary.isCreated
-                    }
-                }
-
-                const filePath = `${location}/project.json`
+                const filePath = `${out.project.location}/project.json`
                 EaLogic.Utils.writeFile(filePath, JSON.stringify(project))
-
                 needSave = false
             }
         }
@@ -198,60 +203,62 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         /////////////
 
         readonly property var experiment: QtObject {
-            signal parameterEdited(bool needSetFittables)
-            signal parametersEdited(bool needSetFittables)
 
-            property bool isCreated: false
-            property var description: {
-                'name': 'PicoScope'
-            }
-            property var parameters: {
-                'xMin': {
-                    'value': 0.0,
-                    'fittable': false,
-                },
-                'xMax': {
-                    'value': 1.0,
-                    'fittable': false,
-                },
-                'xStep': {
-                    'value': 0.01,
-                    'fittable': false,
+            readonly property var _EMPTY_DATA: [
+                {
+                    'name': '',
+                    'params': {},
+                    'xArray': [],
+                    'yArray': []
                 }
-            }
-            property int dataSize: 300
-            property var xData: []
-            property var yData: []
+            ]
 
-            function loadData() {
-                const length = dataSize
+            readonly property var _DEFAULT_DATA: [
+                {
+                    'name': 'PicoScope',
+                    'params': {
+                        'xMin': {
+                            'value': 0.0,
+                            'fittable': false
+                        },
+                        'xMax': {
+                            'value': 1.0,
+                            'fittable': false
+                        },
+                        'xStep': {
+                            'value': 0.01,
+                            'fittable': false
+                        }
+                    },
+                    'xArray': [],
+                    'yArray': []
+                }
+            ]
+
+            property var data: _EMPTY_DATA
+            property bool created: false
+
+            function load() {
+                data = _DEFAULT_DATA  // dataChanged() signal emited automatically
+                const xMax = data[0].params.xMax.value
+                const xMin = data[0].params.xMin.value
+                const xStep = data[0].params.xStep.value
+                const length = (xMax - xMin) / xStep + 1
+                const xArray = Array.from({ length: length }, (_, i) => i / (length - 1))
                 const slope = -3.0
                 const yIntercept = 1.5
-                xData = Array.from({ length: length }, (_, i) => i / (length - 1))
-                yData = Logic.LineCalculator.pseudoMeasured(xData, slope, yIntercept)
-                isCreated = true
+                const yArray = Logic.LineCalculator.pseudoMeasured(xArray, slope, yIntercept)
+                data[0].xArray = xArray
+                data[0].yArray = yArray
+                dataChanged()  // Emit signal, as it is not emited automatically
+                created = true
             }            
 
-            function emptyData() {
-                xData = []
-                yData = []
-                isCreated = false
+            function reset() {
+                data = _EMPTY_DATA  // dataChanged() signal emited automatically
+                created = false
             }
 
-            function editParameter(name, item, value, needSetFittables) {
-                if (item === 'value') {
-                    value = parseFloat(value)
-                } else if (item === 'fit') {
-                    if (!value) {
-                        parameters[name].error = 0
-                    }
-                }
-                if (parameters[name][item] === value) {
-                    return
-                }
-                parameters[name][item] = value
-                parameterEdited(needSetFittables)
-            }
         }
 
         ////////
@@ -260,61 +267,126 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
         readonly property var model: QtObject {
             signal parameterEdited(bool needSetFittables)
-            signal parametersEdited(bool needSetFittables)
+            //signal parametersEdited(bool needSetFittables)
+            //signal modelAdded()
+            //signal modelRemoved()
 
-            property bool isCreated: false
-            property var description: {
-                    'name': 'Line'
-            }
-            property var parameters: {
-                'slope': {
-                    'value': 1.0,
-                    'error': 0,
-                    'min': -5,
-                    'max': 5,
-                    'unit': '',
-                    'fittable': true,
-                    'fit': true
-                },
-                'yIntercept': {
-                    'value': 0.0,
-                    'error': 0,
-                    'min': -5,
-                    'max': 5,
-                    'unit': '',
-                    'fittable': true,
-                    'fit': true
+            readonly property var _EMPTY_DATA: [
+                {
+                    'name': '',
+                    'params': {},
+                    'yArray': []
                 }
-            }
-            property var yData: []
+            ]
 
-            function calculateData() {
-                const slope = parameters.slope.value
-                const yIntercept = parameters.yIntercept.value
-                const xData = qmlProxy.experiment.xData
-                yData = Logic.LineCalculator.calculated(xData, slope, yIntercept)
-                isCreated = true
+            readonly property var _DEFAULT_DATA: [
+                {
+                    'name': 'LineA',
+                    'params': {
+                        'slope': {
+                            'value': 1.0,
+                            'error': 0,
+                            'min': -5,
+                            'max': 5,
+                            'unit': '',
+                            'fittable': true,
+                            'fit': true
+                        },
+                        'yIntercept': {
+                            'value': 0.0,
+                            'error': 0,
+                            'min': -5,
+                            'max': 5,
+                            'unit': '',
+                            'fittable': true,
+                            'fit': true
+                        }
+                    },
+                    'yArray': []
+                },
+                {
+                    'name': 'LineB',
+                    'params': {
+                        'slope': {
+                            'value': -1.5,
+                            'error': 0,
+                            'min': -5,
+                            'max': 5,
+                            'unit': '',
+                            'fittable': true,
+                            'fit': true
+                        },
+                        'yIntercept': {
+                            'value': 0.5,
+                            'error': 0,
+                            'min': -5,
+                            'max': 5,
+                            'unit': '',
+                            'fittable': true,
+                            'fit': true
+                        }
+                    },
+                    'yArray': []
+                }
+            ]
+
+            property var data: _EMPTY_DATA
+            property var totalYArray: []
+            property bool created: false
+            property int currentIndex: 0
+
+            function load() {
+                data = _DEFAULT_DATA  // dataChanged() signal emited automatically
+                calculate()
+                qmlProxy.fittables.set() //////////////////////////
+                created = true
             }
 
-            function emptyData() {
-                yData = []
-                isCreated = false
+            function reset() {
+                data = _EMPTY_DATA  // dataChanged() signal emited automatically
+                created = false
             }
 
-            function editParameter(name, item, value, needSetFittables) {
+            function calculate() {
+                for (let i in data) {
+                    calculateYArray(i)
+                }
+                dataChanged()  // Emit signal, as it is not emited automatically
+                calculateTotalYArray()
+            }
+
+            function calculateYArray(i) {
+                const xArray = qmlProxy.experiment.data[0].xArray
+                const slope = data[i].params.slope.value
+                const yIntercept = data[i].params.yIntercept.value
+                const yArray = Logic.LineCalculator.calculated(xArray, slope, yIntercept)
+                data[i].yArray = yArray
+            }
+
+            function calculateTotalYArray() {
+                const length = data[0].yArray.length
+                let out = Array(length).fill(0)
+                for (const block of data) {
+                    out = out.map((val, idx) => val + block.yArray[idx])
+                }
+                totalYArray = out  // totalYArrayChanged() signal emited automatically
+            }
+
+            function editParameter(currentModelIndex, name, item, value, needSetFittables) {
                 if (item === 'value') {
                     value = parseFloat(value)
                 } else if (item === 'fit') {
                     if (!value) {
-                        parameters[name].error = 0
+                        data[currentModelIndex].params[name].error = 0
                     }
                 }
-                if (parameters[name][item] === value) {
+                if (data[currentModelIndex].params[name][item] === value) {
                     return
                 }
-                parameters[name][item] = value
+                data[currentModelIndex].params[name][item] = value
                 parameterEdited(needSetFittables)
             }
+
         }
 
         //////////
@@ -326,13 +398,13 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
             function fit() {
                 fitFinished = false
-                if (qmlProxy.model.parameters.slope.fit) {
-                    qmlProxy.model.parameters.slope.value = -3.0015
-                    qmlProxy.model.parameters.slope.error = 0.0023
+                if (qmlProxy.model.fittables.slope.fit) {
+                    qmlProxy.model.fittables.slope.value = -3.0015
+                    qmlProxy.model.fittables.slope.error = 0.0023
                 }
-                if (qmlProxy.model.parameters.yIntercept.fit) {
-                    qmlProxy.model.parameters.yIntercept.value = 1.4950
-                    qmlProxy.model.parameters.yIntercept.error = 0.0045
+                if (qmlProxy.model.fittables.yIntercept.fit) {
+                    qmlProxy.model.fittables.yIntercept.value = 1.4950
+                    qmlProxy.model.fittables.yIntercept.error = 0.0045
                 }
                 fitFinished = true
             }
@@ -342,45 +414,67 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         // Parameters
         /////////////
 
-        readonly property var parameters: QtObject {
-            property var fittables: []
+        readonly property var fittables: QtObject {
+            property var data: []
 
-            function edit(group, name, item, value) {
+            function edit(group, parentIndex, name, item, value) {
                 const needSetFittables = false
                 if (group === 'experiment') {
-                    qmlProxy.experiment.editParameter(name, item, value, needSetFittables)
+                    qmlProxy.experiment.editParameter(parentIndex, name, item, value, needSetFittables)
                 } else if (group === 'model') {
-                    qmlProxy.model.editParameter(name, item, value, needSetFittables)
+                    qmlProxy.model.editParameter(parentIndex, name, item, value, needSetFittables)
                 }
             }
 
-            function setFittables() {
-                let _fittables = []
-                for (let name in qmlProxy.experiment.parameters) {
-                    let param = qmlProxy.experiment.parameters[name]
-                    if (param.fittable) {
-                        param.group = 'experiment'
-                        param.parent = qmlProxy.experiment.description.name
-                        param.name = name
-                        _fittables.push(param)
+            function set() {
+                let _data = []
+                for (let i in qmlProxy.experiment.data) {
+                    const block = qmlProxy.experiment.data[i]
+                    for (const name in block.params) {
+                        const param = block.params[name]
+                        if (param.fittable) {
+                            let fittable = {}
+                            fittable.group = 'experiment'
+                            fittable.name = name
+                            fittable.parentIndex = i
+                            fittable.parentName = block.name
+                            fittable.value = param.value
+                            fittable.error = param.error
+                            fittable.min = param.min
+                            fittable.max = param.max
+                            fittable.unit = param.unit
+                            fittable.fit = param.fit
+                            _data.push(fittable)
+                        }
                     }
                 }
-                for (let name in qmlProxy.model.parameters) {
-                    let param = qmlProxy.model.parameters[name]
-                    if (param.fittable) {
-                        param.group = 'model'
-                        param.parent = qmlProxy.model.description.name
-                        param.name = name
-                        _fittables.push(param)
+                for (let i in qmlProxy.model.data) {
+                    const block = qmlProxy.model.data[i]
+                    for (const name in block.params) {
+                        const param = block.params[name]
+                        if (param.fittable) {
+                            let fittable = {}
+                            fittable.group = 'model'
+                            fittable.name = name
+                            fittable.parentIndex = i
+                            fittable.parentName = block.name
+                            fittable.value = param.value
+                            fittable.error = param.error
+                            fittable.min = param.min
+                            fittable.max = param.max
+                            fittable.unit = param.unit
+                            fittable.fit = param.fit
+                            _data.push(fittable)
+                        }
                     }
                 }
-                if (_fittables.length !== 0) {
+                if (_data.length !== 0) {
                     /*
                     for (let i = 0; i < 10000; ++i) {
                         _fittables.push(_fittables[0])
                     }
                     */
-                    fittables = _fittables
+                    data = _data  // dataChanged() signal emited automatically
                 }
             }
 

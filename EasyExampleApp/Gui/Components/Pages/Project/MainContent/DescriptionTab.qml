@@ -33,7 +33,8 @@ Rectangle {
             font.family: EaStyle.Fonts.secondFontFamily
             font.pixelSize: EaStyle.Sizes.fontPixelSize * 3
             font.weight: Font.ExtraLight
-            text: Globals.Proxies.main.project.name
+            text: Globals.Proxies.main.project.data.name
+            onEditingFinished: Globals.Proxies.main.project.editData('name', text)
         }
 
         // Project info
@@ -48,7 +49,8 @@ Rectangle {
                 text: qsTr("Description:")
             }
             EaElements.TextInput {
-                text: Globals.Proxies.main.project.description
+                text: Globals.Proxies.main.project.data.description
+                onEditingFinished: Globals.Proxies.main.project.editData('description', text)
             }
 
             EaElements.Label {
@@ -56,7 +58,7 @@ Rectangle {
                 text: qsTr("Location:")
             }
             EaElements.Label {
-                text: Globals.Proxies.main.project.location
+                text: Globals.Proxies.main.project.data.location
             }
 
             EaElements.Label {
@@ -64,7 +66,7 @@ Rectangle {
                 text: qsTr("Created:")
             }
             EaElements.Label {
-                text: Globals.Proxies.main.project.createdDate
+                text: Globals.Proxies.main.project.data.creationDate
             }
         }
 

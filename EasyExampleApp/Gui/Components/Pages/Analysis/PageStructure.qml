@@ -16,14 +16,14 @@ import Gui.Components as Components
 
 
 EaComponents.ContentPage {
-    defaultInfo: Globals.Proxies.main.model.isCreated ?
+    defaultInfo: Globals.Proxies.main.model.created ?
                      "" :
                      qsTr("No analysis done")
 
     mainView: EaComponents.MainContent {
         tabs: [
             EaElements.TabButton {
-                text: Globals.Proxies.main.experiment.isCreated ?
+                text: Globals.Proxies.main.experiment.created ?
                           qsTr("Fitting") :
                           qsTr("Simulation")
             }

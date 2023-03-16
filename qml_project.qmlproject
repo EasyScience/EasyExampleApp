@@ -37,4 +37,6 @@ Project {
         directory: "../EasyApp"
         recursive: true
     }
+
+    mainUiFile: "EasyExampleApp/Gui/Components/Pages/Experiment/SideBarBasic/ExperimentRangesGroup.qml"
 }

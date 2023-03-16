@@ -12,70 +12,64 @@ class Connections(QObject):
         self._proxy = parent
 
         # Project
-        self._proxy.project.nameChanged.connect(self._proxy.project.setNeedSaveToTrue)
-        self._proxy.project.descriptionChanged.connect(self._proxy.project.setNeedSaveToTrue)
-        self._proxy.project.isCreatedChanged.connect(self._proxy.project.save)
+        self._proxy.project.dataChanged.connect(self._proxy.project.setNeedSaveToTrue)
+        self._proxy.project.createdChanged.connect(self._proxy.project.save)
 
         # Experiment
-        self._proxy.experiment.descriptionChanged.connect(self._proxy.project.setNeedSaveToTrue)
-        self._proxy.experiment.isCreatedChanged.connect(self.onExperimentIsCreatedChanged)
-        self._proxy.experiment.parameterEdited.connect(self.onExperimentParameterEdited)
-        self._proxy.experiment.parametersEdited.connect(self.onExperimentParametersEdited)
-        self._proxy.experiment.dataSizeChanged.connect(self.onExperimentDataSizeChanged)
+        self._proxy.experiment.dataLoaded.connect(self.onExperimentDataLoaded)
+        self._proxy.experiment.parameterEdited.connect(self.onParameterEdited)
 
         # Model
-        self._proxy.model.descriptionChanged.connect(self._proxy.project.setNeedSaveToTrue)
-        self._proxy.model.isCreatedChanged.connect(self.onModelIsCreatedChanged)
-        self._proxy.model.parameterEdited.connect(self.onModelParameterEdited)
-        self._proxy.model.parametersEdited.connect(self.onModelParametersEdited)
+        self._proxy.model.dataLoaded.connect(self.onModelDataLoaded)
+        self._proxy.model.currentIndexChanged.connect(self._proxy.model.replaceYArrayOnModelChartAndRedraw)
+        self._proxy.model.parameterEdited.connect(self.onParameterEdited)
+        self._proxy.model.yArraysChanged.connect(self.onModelYArraysChanged)
+
+        # Analysis
+        self._proxy.analysis.createdChanged.connect(self.onAnalysisCreated)
 
         # Fitting
         self._proxy.fitting.fitFinishedChanged.connect(self.onFittingFitFinishedChanged)
 
     # Experiment
 
-    def onExperimentIsCreatedChanged(self):
-        print(f'Experiment created: {self._proxy.experiment.isCreated}')
-        self._proxy.parameters.setFittables()
-        self._proxy.project.setNeedSaveToTrue()
-
-    def onExperimentParameterEdited(self, needSetFittables):
-        self._proxy.experiment.parametersEdited.emit(needSetFittables)
-
-    def onExperimentParametersEdited(self, needSetFittables):
-        print(f'Experiment parameters changed. Need set fittables: {needSetFittables}')
-        self._proxy.experiment.parametersChanged.emit()
-        self._proxy.experiment.loadData()
-        if needSetFittables:
-            self._proxy.parameters.setFittables()
-        self._proxy.project.setNeedSaveToTrue()
-
-    def onExperimentDataSizeChanged(self):
-        print(f'Experiment data size: {self._proxy.experiment.dataSize}')
-        self._proxy.experiment.loadData()
-        if self._proxy.model.isCreated:
-            self._proxy.model.calculateData()
+    def onExperimentDataLoaded(self):
+        self._proxy.experiment.created = True
+        self._proxy.experiment.replaceXYArraysOnExperimentChartAndRedraw()
 
     # Model
 
-    def onModelIsCreatedChanged(self):
-        print(f'Model created: {self._proxy.model.isCreated}')
-        self._proxy.parameters.setFittables()
+    def onModelDataLoaded(self):
+        self._proxy.model.created = True
+        self._proxy.model.calculate()
+        self._proxy.model.replaceXArrayOnModelChart()
+        self._proxy.model.replaceYArrayOnModelChartAndRedraw()
         self._proxy.project.setNeedSaveToTrue()
 
-    def onModelParameterEdited(self, needSetFittables):
-        self._proxy.model.parametersEdited.emit(needSetFittables)
+    def onModelYArraysChanged(self):
+        if self._proxy.analysis.created:
+            self._proxy.analysis.replaceModelTotalYArrayOnAnalysisChartAndRedraw()
 
-    def onModelParametersEdited(self, needSetFittables):
-        self._proxy.model.parametersChanged.emit()
-        self._proxy.model.calculateData()
+    # Analysis
+
+    def onAnalysisCreated(self):
+        self._proxy.fittables.set()
+        self._proxy.analysis.replaceExperimentXYArraysOnAnalysisChart()
+        self._proxy.analysis.replaceModelTotalYArrayOnAnalysisChartAndRedraw()
+
+    # Parameters
+
+    def onParameterEdited(self, needSetFittables):
+        if self._proxy.model.created:
+            self._proxy.model.calculate()
+            self._proxy.model.replaceYArrayOnModelChartAndRedraw()
         if needSetFittables:
-            self._proxy.parameters.setFittables()
+            self._proxy.fittables.set()
         self._proxy.project.setNeedSaveToTrue()
 
     # Fitting
 
     def onFittingFitFinishedChanged(self):
         print(f'Fit finished: {self._proxy.fitting.fitFinished}')
-        needSetFittables = True
-        self._proxy.model.parametersEdited.emit(needSetFittables)
+        #needSetFittables = True
+        #self._proxy.model.parametersEdited.emit(needSetFittables)

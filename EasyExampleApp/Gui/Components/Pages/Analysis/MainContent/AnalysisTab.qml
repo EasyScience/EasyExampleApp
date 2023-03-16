@@ -11,17 +11,23 @@ import Gui.Globals as Globals
 
 
 EaCharts.Plotly1dMeasVsCalc {
-
-    useWebGL: Globals.Proxies.main.plotting.useWebGL1d
-
     xAxisTitle: "x"
     yAxisTitle: "y"
 
-    xData: Globals.Proxies.main.experiment.xData
-    measuredYData: Globals.Proxies.main.experiment.yData
-    calculatedYData: Globals.Proxies.main.model.yData
+    useWebGL: Globals.Proxies.main.plotting.useWebGL1d
 
-    Component.onCompleted: Globals.Refs.app.analysisPage.plotView = this
+    // Data is set in python backend
+
+    onLoadSucceededStatusChanged: {
+        if (loadSucceededStatus) {
+            Globals.Proxies.main.analysis.created = true
+        }
+    }
+
+    Component.onCompleted: {
+        Globals.Refs.app.analysisPage.plotView = this
+        Globals.Proxies.main.plotting.setViewRef('analysis', this)
+    }
 
 }
 

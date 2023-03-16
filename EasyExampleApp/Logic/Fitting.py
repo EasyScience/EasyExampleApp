@@ -27,10 +27,10 @@ class Fitting(QObject):
     @Slot()
     def fit(self):
         self.fitFinished = False
-        if self._proxy.model.parameters['slope']['fit']:
-            self._proxy.model.parameters['slope']['value'] = -3.0015
-            self._proxy.model.parameters['slope']['error'] = 0.0023
-        if self._proxy.model.parameters['yIntercept']['fit']:
-            self._proxy.model.parameters['yIntercept']['value'] = 1.4950
-            self._proxy.model.parameters['yIntercept']['error'] = 0.0045
+        #if self._proxy.model.parameters['slope']['fit']:
+        #    self._proxy.model.parameters['slope']['value'] = -3.0015
+        #    self._proxy.model.parameters['slope']['error'] = 0.0023
+        #if self._proxy.model.parameters['yIntercept']['fit']:
+        #    self._proxy.model.parameters['yIntercept']['value'] = 1.4950
+        #    self._proxy.model.parameters['yIntercept']['error'] = 0.0045
         self.fitFinished = True

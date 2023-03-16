@@ -2,29 +2,27 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
+import numpy as np
+import orjson
+
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
 from Logic.Calculators import LineCalculator
 
 
-class Experiment(QObject):
-    isCreatedChanged = Signal()
-    descriptionChanged = Signal()
-    parameterEdited = Signal(bool)
-    parametersEdited = Signal(bool)
-    parametersChanged = Signal()
-    dataSizeChanged = Signal()
-    xDataChanged = Signal()
-    yDataChanged = Signal()
+_EMPTY_DATA = [
+    {
+        'name': '',
+        'params': {},
+        'xArray': [],
+        'yArray': []
+    }
+]
 
-    def __init__(self, parent):
-        super().__init__(parent)
-        self._proxy = parent
-        self._isCreated = False
-        self._description = {
-            'name': 'PicoScope'
-        }
-        self._parameters = {
+_DEFAULT_DATA = [
+    {
+        'name': 'PicoScope',
+        'params': {
             'xMin': {
                 'value': 0.0,
                 'fittable': False
@@ -34,79 +32,83 @@ class Experiment(QObject):
                 'fittable': False
             },
             'xStep': {
-                'value': 0.01,
+                'value': 0.0001,
                 'fittable': False
+            },
+            'background': {
+                'value': 0.5,
+                'error': 0,
+                'min': -5,
+                'max': 5,
+                'unit': '',
+                'fittable': True,
+                'fit': True
             }
-        }
-        self._dataSize = 300
-        self._xData = []
-        self._yData = []
+        },
+        'xArray': [],
+        'yArray': []
+    }
+]
 
-    @Property('QVariant', notify=descriptionChanged)
-    def description(self):
-        return self._description
 
-    @Property('QVariant', notify=parametersChanged)
-    def parameters(self):
-        return self._parameters
+class Experiment(QObject):
+    dataChanged = Signal()
+    dataLoaded = Signal()
+    dataReseted = Signal()
+    createdChanged = Signal()
+    parameterEdited = Signal(bool)
 
-    @Property(int, notify=dataSizeChanged)
-    def dataSize(self):
-        return self._dataSize
+    def __init__(self, parent):
+        super().__init__(parent)
+        self._proxy = parent
+        self._data = _EMPTY_DATA
+        self._created = False
 
-    @dataSize.setter
-    def dataSize(self, newValue):
-        if self._dataSize == newValue:
+    # QML accessable properties
+
+    @Property('QVariant', notify=dataChanged)
+    def data(self):
+        return self._data
+
+    @Property(bool, notify=createdChanged)
+    def created(self):
+        return self._created
+
+    @created.setter
+    def created(self, newValue):
+        if self._created == newValue:
             return
-        self._dataSize = newValue
-        self.dataSizeChanged.emit()
+        self._created = newValue
+        self.createdChanged.emit()
 
-    @Property('QVariant', notify=xDataChanged)
-    def xData(self):
-        return self._xData
-
-    @xData.setter
-    def xData(self, newData):
-        self._xData = newData
-        self.xDataChanged.emit()
-
-    @Property('QVariant', notify=yDataChanged)
-    def yData(self):
-        return self._yData
-
-    @yData.setter
-    def yData(self, newData):
-        self._yData = newData
-        self.yDataChanged.emit()
-
-    @Property(bool, notify=isCreatedChanged)
-    def isCreated(self):
-        return self._isCreated
-
-    @isCreated.setter
-    def isCreated(self, newValue):
-        if self._isCreated == newValue:
-            return
-        self._isCreated = newValue
-        self.isCreatedChanged.emit()
+    # QML accessable methods
 
     @Slot()
-    def loadData(self):
-        length = self._dataSize
-        slope = -3.0
-        yIntercept = 1.5
-        self.xData = [i / (length - 1) for i in range(length)]
-        self.yData = LineCalculator.pseudoMeasured(self.xData, slope, yIntercept)
-        self.isCreated = True
+    def load(self):
+        self._data = _DEFAULT_DATA
+        xMin = self._data[0]['params']['xMin']['value']
+        xMax = self._data[0]['params']['xMax']['value']
+        xStep = self._data[0]['params']['xStep']['value']
+        xArray = np.arange(xMin, xMax + xStep, xStep)
+        slope1 = -1.0
+        yIntercept1 = 1.5
+        yArray1 = LineCalculator.pseudoMeasured(xArray, slope1, yIntercept1)
+        slope2 = 0.0
+        yIntercept2 = -1.0
+        yArray2 = LineCalculator.pseudoMeasured(xArray, slope2, yIntercept2)
+        background = 0.5
+        yArray = yArray1 + yArray2 + background
+        self._data[0]['xArray'] = xArray
+        self._data[0]['yArray'] = yArray
+        self.dataLoaded.emit()
 
     @Slot()
-    def emptyData(self):
-        self.xData = []
-        self.yData = []
-        self.isCreated = False
+    def reset(self):
+        self._data = _EMPTY_DATA
+        self.dataReseted.emit()
 
-    @Slot(str, str, str, bool)
-    def editParameter(self, name, item, value, needSetFittables):
+    @Slot(int, str, str, str, bool)
+    def editParameter(self, currentExperimentIndex, name, item, value, needSetFittables):
         if item == 'value':
             value = float(value)
         elif item == 'fit':
@@ -114,8 +116,26 @@ class Experiment(QObject):
                 value = True
             elif value == 'false':
                 value = False
-                self._parameters[name]['error'] = 0
-        if self._parameters[name][item] == value:
+            self._data[currentExperimentIndex]['params'][name]['error'] = 0
+        if self._data[currentExperimentIndex]['params'][name][item] == value:
             return
-        self._parameters[name][item] = value
+        self._data[currentExperimentIndex]['params'][name][item] = value
         self.parameterEdited.emit(needSetFittables)
+
+    # Private methods
+
+    def replaceXYArraysOnExperimentChartAndRedraw(self):
+        chart = self._proxy.plotting.viewRefs['experiment']
+        # replace x-array
+        array = self._data[0]['xArray']
+        arrayStr = orjson.dumps(array, option=orjson.OPT_SERIALIZE_NUMPY).decode()
+        scriptFunc = f'setXData({arrayStr})'
+        chart.runJavaScript(scriptFunc, None)
+        # replace y-array
+        array = self._data[0]['yArray']
+        arrayStr = orjson.dumps(array, option=orjson.OPT_SERIALIZE_NUMPY).decode()
+        scriptFunc = f'setMeasuredYData({arrayStr})'
+        chart.runJavaScript(scriptFunc, None)
+        # redraw plot
+        scriptFunc = 'redrawPlot()'
+        chart.runJavaScript(scriptFunc, None)

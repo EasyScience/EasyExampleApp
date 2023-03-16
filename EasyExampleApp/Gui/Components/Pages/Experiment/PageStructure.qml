@@ -15,7 +15,7 @@ import Gui.Components as Components
 
 
 EaComponents.ContentPage {
-    defaultInfo: Globals.Proxies.main.experiment.isCreated ?
+    defaultInfo: Globals.Proxies.main.experiment.created ?
                      "" :
                      qsTr("No experiments loaded")
 
@@ -46,7 +46,7 @@ EaComponents.ContentPage {
             Loader { source: 'SideBarAdvanced.qml' }
         ]
 
-        continueButton.text: Globals.Proxies.main.experiment.isCreated ?
+        continueButton.text: Globals.Proxies.main.experiment.created ?
                                  qsTr("Continue") :
                                  qsTr("Continue without experiment data")
 

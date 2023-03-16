@@ -15,9 +15,9 @@ import Gui.Components as Components
 
 
 EaComponents.ContentPage {
-    defaultInfo: Globals.Proxies.main.model.isCreated ?
+    defaultInfo: Globals.Proxies.main.model.created ?
                      "" :
-                     qsTr("No models added")
+                     qsTr("No models loaded / added")
 
     mainView: EaComponents.MainContent {
         tabs: [
@@ -40,7 +40,7 @@ EaComponents.ContentPage {
             Loader { source: 'SideBarAdvanced.qml' }
         ]
 
-        continueButton.enabled: Globals.Proxies.main.model.isCreated
+        continueButton.enabled: Globals.Proxies.main.model.created
 
         continueButton.onClicked: {
             Globals.Vars.analysisPageEnabled = true

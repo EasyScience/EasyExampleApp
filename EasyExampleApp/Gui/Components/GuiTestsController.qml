@@ -141,15 +141,15 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
 
-        res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.text, 'Add new model manually') )
-        res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.modelPage.loadNewModelFromFileButton.text, 'Add new model manually') )
+        res.push( rc.compare(Globals.Refs.app.modelPage.loadNewModelFromFileButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.text, 'Continue') )
         res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.enabled, false) )
 
-        rc.mouseClick(Globals.Refs.app.modelPage.addNewModelManuallyButton)
+        rc.mouseClick(Globals.Refs.app.modelPage.loadNewModelFromFileButton)
         rc.wait(2000)
 
-        res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.enabled, false) )
+        res.push( rc.compare(Globals.Refs.app.modelPage.loadNewModelFromFileButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.enabled, true) )
 
         res.push( rc.compare(Globals.Refs.app.modelPage.slopeParameter.text, Globals.Tests.expected.created.model.parameters.slope.value) )

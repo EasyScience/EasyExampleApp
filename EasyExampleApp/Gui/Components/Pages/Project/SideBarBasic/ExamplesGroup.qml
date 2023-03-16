@@ -69,6 +69,7 @@ EaComponents.TableView {
         EaComponents.TableViewButton {
             id: uploadColumn
 
+            enabled: false
             fontIcon: "upload"
             ToolTip.text: qsTr("Load this example")
         }

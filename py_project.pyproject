@@ -1,17 +1,19 @@
 {
 "files": [    
     "EasyExampleApp/main.py",
-
+    "EasyExampleApp/Logic/Analysis.py",
     "EasyExampleApp/Logic/Calculator.py",
-    "EasyExampleApp/Logic/Model.py",
+    "EasyExampleApp/Logic/Connections.py",
     "EasyExampleApp/Logic/Experiment.py",
+    "EasyExampleApp/Logic/Fittables.py",
     "EasyExampleApp/Logic/Fitting.py",
-    "EasyExampleApp/Logic/Parameters.py",
-    "EasyExampleApp/Logic/Summary.py",
-    "EasyExampleApp/Logic/Status.py",
+    "EasyExampleApp/Logic/Helpers.py",
+    "EasyExampleApp/Logic/Model.py",
+    "EasyExampleApp/Logic/Plotting.py",
     "EasyExampleApp/Logic/Project.py",
     "EasyExampleApp/Logic/PyProxy.py",
-    "EasyExampleApp/Logic/ResourcePaths.py",
+    "EasyExampleApp/Logic/Status.py",
+    "EasyExampleApp/Logic/Summary.py",
 
     "resources.qrc",
 

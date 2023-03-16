@@ -2,16 +2,15 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-import random
-
+import numpy as np
 
 class LineCalculator:
 
     @staticmethod
     def calculated(xArray, slope, yIntercept):
-        return [slope * x + yIntercept for x in xArray]
+        return slope * xArray + yIntercept
 
     @staticmethod
     def pseudoMeasured(xArray, slope, yIntercept):
-        random.seed(1)
-        return [slope * x + yIntercept + random.uniform(-0.1, 0.1) for x in xArray]
+        np.random.seed(1)
+        return slope * xArray + yIntercept + np.random.uniform(-0.1, 0.1, size=xArray.size)

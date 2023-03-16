@@ -6,10 +6,11 @@ from PySide6.QtCore import QObject, Property
 
 from Logic.Connections import Connections
 from Logic.Project import Project
-from Logic.Model import Model
 from Logic.Experiment import Experiment
+from Logic.Model import Model
+from Logic.Analysis import Analysis
 from Logic.Fitting import Fitting
-from Logic.Parameters import Parameters
+from Logic.Fittables import Fittables
 from Logic.Summary import Summary
 from Logic.Status import Status
 from Logic.Plotting import Plotting
@@ -21,7 +22,8 @@ class PyProxy(QObject):
         self._project = Project(self)
         self._experiment = Experiment(self)
         self._model = Model(self)
-        self._parameters = Parameters(self)
+        self._analysis = Analysis(self)
+        self._fittables = Fittables(self)
         self._fitting = Fitting(self)
         self._summary = Summary(self)
         self._status = Status(self)
@@ -45,12 +47,16 @@ class PyProxy(QObject):
         return self._model
 
     @Property('QVariant', constant=True)
+    def analysis(self):
+        return self._analysis
+
+    @Property('QVariant', constant=True)
     def fitting(self):
         return self._fitting
 
     @Property('QVariant', constant=True)
-    def parameters(self):
-        return self._parameters
+    def fittables(self):
+        return self._fittables
 
     @Property('QVariant', constant=True)
     def summary(self):

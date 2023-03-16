@@ -11,13 +11,13 @@ import EasyApp.Gui.Elements as EaElements
 import Gui.Globals as Globals
 
 
-Grid {
-    columns: 2
+Row {
     spacing: EaStyle.Sizes.fontPixelSize
 
     EaElements.Parameter {
         title: qsTr('Slope')
         width: parameterFieldWidth()
+<<<<<<< Updated upstream
         text: Globals.Proxies.main.model.parameters.slope.value.toFixed(4)
         onEditingFinished: Globals.Proxies.main.model.editParameter('slope', 'value', text, true)
         Component.onCompleted: Globals.Refs.app.modelPage.slopeParameter = this
@@ -26,6 +26,7 @@ Grid {
     EaElements.Parameter {
         title: qsTr('y-Intercept')
         width: parameterFieldWidth()
+<<<<<<< Updated upstream
         text: Globals.Proxies.main.model.parameters.yIntercept.value.toFixed(4)
         onEditingFinished: Globals.Proxies.main.model.editParameter('yIntercept', 'value', text, true)
         Component.onCompleted: Globals.Refs.app.modelPage.yInterceptParameter = this
@@ -35,6 +36,28 @@ Grid {
 
     function parameterFieldWidth() {
         return (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize) / 2
+    }
+
+    function parameterValue(name) {
+        if (!Globals.Proxies.main.model.created) {
+            return ''
+        }
+        const currentModelIndex = Globals.Proxies.main.model.currentIndex
+        const item = 'value'
+        const value = Globals.Proxies.main.model.data[currentModelIndex].params[name][item]
+        const formattedValue = value.toFixed(4)
+        return formattedValue
+    }
+
+    function setParameterValue(name, value) {
+        const currentModelIndex = Globals.Proxies.main.model.currentIndex
+        const item = 'value'
+        const needSetFittables = true
+        Globals.Proxies.main.model.editParameter(currentModelIndex,
+                                                 name,
+                                                 item,
+                                                 value,
+                                                 needSetFittables)
     }
 
 }

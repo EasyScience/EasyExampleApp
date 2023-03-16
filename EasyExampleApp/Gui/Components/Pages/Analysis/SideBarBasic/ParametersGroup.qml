@@ -24,11 +24,13 @@ Column {
 
         defaultInfoText: qsTr("No parameters found")
 
-        // Table model
+        // Table mode
 
         model: EaComponents.JsonListModel {
-            json: JSON.stringify(Globals.Proxies.main.parameters.fittables)
+            json: JSON.stringify(Globals.Proxies.main.fittables.data)
             query: "$[*]"
+
+            //onJsonChanged: print('===============', json, json === '[]')
         }
 
         // Table rows
@@ -59,7 +61,7 @@ Column {
                        errorColumn.width -
                        fitColumn.width
                 headerText: qsTr("Name")
-                text: `${model.group}.${model.parent}.${model.name}`
+                text: `${model.group}.${model.parentName}.${model.name}`
                 textFormat: Text.PlainText
                 elide: Text.ElideMiddle
             }
@@ -70,7 +72,11 @@ Column {
                 width: EaStyle.Sizes.fontPixelSize * 4
                 headerText: qsTr("Value")
                 text: model.value.toFixed(4)
-                onEditingFinished: Globals.Proxies.main.parameters.edit(model.group, model.name, 'value', text)
+                onEditingFinished: Globals.Proxies.main.fittables.edit(model.group,
+                                                                       model.parentIndex,
+                                                                       model.name,
+                                                                       'value',
+                                                                       text)
             }
 
             EaComponents.TableViewLabel {
@@ -92,10 +98,14 @@ Column {
 
             EaComponents.TableViewCheckBox {
                 id: fitColumn
-                enabled: Globals.Proxies.main.experiment.isCreated
+                enabled: Globals.Proxies.main.experiment.created
                 headerText: qsTr("Fit")
                 checked: model.fit
-                onCheckedChanged: Globals.Proxies.main.parameters.edit(model.group, model.name, 'fit', checked)
+                onCheckedChanged: Globals.Proxies.main.fittables.edit(model.group,
+                                                                      model.parentIndex,
+                                                                      model.name,
+                                                                      'fit',
+                                                                      checked)
             }
         }
 
@@ -121,7 +131,7 @@ Column {
     // Control buttons below table
 
     EaElements.SideBarButton {
-        enabled: Globals.Proxies.main.experiment.isCreated
+        enabled: Globals.Proxies.main.experiment.created
         wide: true
 
         fontIcon: 'play-circle'

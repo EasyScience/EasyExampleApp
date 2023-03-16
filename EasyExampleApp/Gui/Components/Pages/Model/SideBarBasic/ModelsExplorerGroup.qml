@@ -20,14 +20,15 @@ Column {
     // Table
 
     EaComponents.TableView {
+        id: table
 
-        defaultInfoText: qsTr("No models loaded")
+        defaultInfoText: qsTr("No models loaded / added")
 
         // Table model
 
         model: EaComponents.JsonListModel {
-            json: Globals.Proxies.main.model.isCreated ?
-                      JSON.stringify([Globals.Proxies.main.model.description]) :
+            json: Globals.Proxies.main.model.created ?
+                      JSON.stringify(Globals.Proxies.main.model.data) :
                       ""
             query: "$[*]"
         }
@@ -56,19 +57,21 @@ Column {
 
             EaComponents.TableViewButton {
                 id: deleteRowColumn
+                enabled: false
                 headerText: qsTr("Del.")
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this model")
-                onClicked: {
-                    Globals.Proxies.main.experiment.emptyData()
-                    Globals.Proxies.main.model.emptyData()
-                    Globals.Vars.experimentPageEnabled = false
-                    Globals.Vars.analysisPageEnabled = false
-                    Globals.Vars.summaryPageEnabled = false
-                }
             }
 
         }
+
+        onCurrentIndexChanged: {
+            if (currentIndex === -1)
+                return
+            Globals.Proxies.main.model.currentIndex = currentIndex
+        }
+
+        Component.onCompleted: Globals.Refs.app.modelPage.modelsExplorer = this
 
     }
 
@@ -78,17 +81,20 @@ Column {
         spacing: EaStyle.Sizes.fontPixelSize
 
         EaElements.SideBarButton {
-            enabled: false
+            enabled: Globals.Proxies.main.model.data.length < 2
             fontIcon: "upload"
             text: qsTr("Load new model from file")
+            onClicked: {
+                Globals.Proxies.main.model.load()
+                table.currentIndex = 0
+            }
+            Component.onCompleted: Globals.Refs.app.modelPage.loadNewModelFromFileButton = this
         }
 
         EaElements.SideBarButton {
-            enabled: !Globals.Proxies.main.model.isCreated
+            enabled: false
             fontIcon: "plus-circle"
             text: qsTr("Add new model manually")
-            onClicked: Globals.Proxies.main.model.calculateData()
-            Component.onCompleted: Globals.Refs.app.modelPage.addNewModelManuallyButton = this
         }
     }
 

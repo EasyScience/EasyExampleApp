@@ -109,8 +109,7 @@ Item {
                 EaElements.Button {
                     text: qsTr("About %1".arg(Globals.Configs.appConfig.name))
                     onClicked: EaGlobals.Variables.showAppAboutDialog = true
-                    Loader { id: aboutDialogLoader }
-                    Component.onCompleted: aboutDialogLoader.source = "AboutDialog.qml"
+                    Loader { source: "AboutDialog.qml" }
                 }
                 EaElements.Button {
                     text: qsTr("Online documentation")

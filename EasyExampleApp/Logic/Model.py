@@ -2,28 +2,28 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
+import numpy as np
+import orjson
+
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
 from Logic.Calculators import LineCalculator
 
 
-class Model(QObject):
-    isCreatedChanged = Signal()
-    descriptionChanged = Signal()
-    parameterEdited = Signal(bool)
-    parametersEdited = Signal(bool)
-    parametersChanged = Signal()
-    yDataChanged = Signal()
+_EMPTY_DATA = [
+    {
+        'name': '',
+        'params': {},
+        'yArray': []
+    }
+]
 
-    def __init__(self, parent):
-        super().__init__(parent)
-        self._proxy = parent
-        self._description = {
-            'name': 'Line'
-        }
-        self._parameters = {
+_DEFAULT_DATA = [
+    {
+        'name': 'LineA',
+        'params': {
             'slope': {
-                'value': 1.0,
+                'value': 3.0,
                 'error': 0,
                 'min': -5,
                 'max': 5,
@@ -32,7 +32,7 @@ class Model(QObject):
                 'fit': True
             },
             'yIntercept': {
-                'value': 0.0,
+                'value': -2.0,
                 'error': 0,
                 'min': -5,
                 'max': 5,
@@ -40,53 +40,105 @@ class Model(QObject):
                 'fittable': True,
                 'fit': True
             }
-        }
-        self._yData = []
-        self._isCreated = False
+        },
+        'yArray': []
+    },
+    {
+        'name': 'LineB',
+        'params': {
+            'slope': {
+                'value': -1.5,
+                'error': 0,
+                'min': -5,
+                'max': 5,
+                'unit': '',
+                'fittable': True,
+                'fit': True
+            },
+            'yIntercept': {
+                'value': 0.7,
+                'error': 0,
+                'min': -5,
+                'max': 5,
+                'unit': '',
+                'fittable': True,
+                'fit': True
+            }
+        },
+        'yArray': []
+    }
+]
 
-    @Property('QVariant', notify=descriptionChanged)
-    def description(self):
-        return self._description
 
-    @Property('QVariant', notify=parametersChanged)
-    def parameters(self):
-        return self._parameters
+class Model(QObject):
+    dataChanged = Signal()
+    dataLoaded = Signal()
+    dataReseted = Signal()
+    createdChanged = Signal()
+    currentIndexChanged = Signal()
+    yArraysChanged = Signal()
+    parameterEdited = Signal(bool)
 
-    @Property('QVariant', notify=yDataChanged)
-    def yData(self):
-        return self._yData
+    def __init__(self, parent):
+        super().__init__(parent)
+        self._proxy = parent
+        self._data = _EMPTY_DATA
+        self._created = False
+        self._totalYArray = np.empty(0)
+        self._currentIndex = 0
 
-    @yData.setter
-    def yData(self, newData):
-        self._yData = newData
-        self.yDataChanged.emit()
+    # QML accessable properties
 
-    @Property(bool, notify=isCreatedChanged)
-    def isCreated(self):
-        return self._isCreated
+    @Property('QVariant', notify=dataChanged)
+    def data(self):
+        return self._data
 
-    @isCreated.setter
-    def isCreated(self, newValue):
-        if self._isCreated == newValue:
+    @Property(bool, notify=createdChanged)
+    def created(self):
+        return self._created
+
+    @created.setter
+    def created(self, newValue):
+        if self._created == newValue:
             return
-        self._isCreated = newValue
-        self.isCreatedChanged.emit()
+        self._created = newValue
+        self.createdChanged.emit()
+
+    @Property(int, notify=currentIndexChanged)
+    def currentIndex(self):
+        return self._currentIndex
+
+    @currentIndex.setter
+    def currentIndex(self, newValue):
+        if self._currentIndex == newValue:
+            return
+        self._currentIndex = newValue
+        self.currentIndexChanged.emit()
+
+    @Property('QVariant', notify=yArraysChanged)
+    def totalYArray(self):
+        return self._totalYArray
+
+    # QML accessable methods
 
     @Slot()
-    def calculateData(self):
-        slope = self._parameters['slope']['value']
-        yIntercept = self._parameters['yIntercept']['value']
-        xData = self._proxy.experiment.xData
-        self.yData = LineCalculator.calculated(xData, slope, yIntercept)
-        self.isCreated = True
+    def load(self):
+        self._data = _DEFAULT_DATA
+        self.dataLoaded.emit()
 
     @Slot()
-    def emptyData(self):
-        self.yData = []
-        self.isCreated = False
+    def reset(self):
+        self._data = _EMPTY_DATA
+        self.dataReseted.emit()
 
-    @Slot(str, str, str, bool)
-    def editParameter(self, name, item, value, needSetFittables):
+    @Slot()
+    def calculate(self):
+        self.calculateYArrays()
+        self.calculateTotalYArray()
+        self.yArraysChanged.emit()
+
+    @Slot(int, str, str, str, bool)
+    def editParameter(self, currentModelIndex, name, item, value, needSetFittables):
         if item == 'value':
             value = float(value)
         elif item == 'fit':
@@ -94,8 +146,42 @@ class Model(QObject):
                 value = True
             elif value == 'false':
                 value = False
-                self._parameters[name]['error'] = 0
-        if self._parameters[name][item] == value:
+            self._data[currentModelIndex]['params'][name]['error'] = 0
+        if self._data[currentModelIndex]['params'][name][item] == value:
             return
-        self._parameters[name][item] = value
+        self._data[currentModelIndex]['params'][name][item] = value
         self.parameterEdited.emit(needSetFittables)
+
+    # Private methods
+
+    def calculateYArrays(self):
+        for i in range(len(self._data)):
+            experimentData = self._proxy.experiment.data[0]
+            slope = self._data[i]['params']['slope']['value']
+            yIntercept = self._data[i]['params']['yIntercept']['value']
+            background = experimentData['params']['background']['value']
+            xArray = experimentData['xArray']
+            yArray = LineCalculator.calculated(xArray, slope, yIntercept) + background
+            self._data[i]['yArray'] = yArray
+
+    def calculateTotalYArray(self):
+        out = np.zeros(len(self._data[0]['yArray']))
+        for i in range(len(self._data)):
+            out += self._data[i]['yArray']
+        self._totalYArray = out
+
+    def replaceXArrayOnModelChart(self):
+        chart = self._proxy.plotting.viewRefs['model']
+        experimentData = self._proxy.experiment.data[0]
+        array = experimentData['xArray']
+        arrayStr = orjson.dumps(array, option=orjson.OPT_SERIALIZE_NUMPY).decode()
+        scriptFunc = f'setXData({arrayStr})'
+        chart.runJavaScript(scriptFunc, None)
+
+    def replaceYArrayOnModelChartAndRedraw(self):
+        chart = self._proxy.plotting.viewRefs['model']
+        array = self._data[self._currentIndex]['yArray']
+        arrayStr = orjson.dumps(array, option=orjson.OPT_SERIALIZE_NUMPY).decode()
+        arrayJsonStr = '{y: [' + arrayStr + ']}'
+        scriptFunc = f'redrawPlotWithNewCalculatedYJson({arrayJsonStr})'
+        chart.runJavaScript(scriptFunc, None)

@@ -39,7 +39,7 @@ EaComponents.ApplicationWindow {
     appBarLeftButtons: [
 
         EaElements.ToolButton {
-            enabled: Globals.Proxies.main.project.isCreated &&
+            enabled: Globals.Proxies.main.project.created &&
                     Globals.Proxies.main.project.needSave
             highlighted: true
             fontIcon: "save"
