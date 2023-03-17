@@ -108,7 +108,7 @@ Item {
 
                 EaElements.Button {
                     text: qsTr("About %1".arg(Globals.Configs.appConfig.name))
-                    onClicked: EaGlobals.Variables.showAppAboutDialog = true
+                    onClicked: EaGlobals.Vars.showAppAboutDialog = true
                     Loader { source: "AboutDialog.qml" }
                 }
                 EaElements.Button {

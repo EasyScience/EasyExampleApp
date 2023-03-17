@@ -12,7 +12,7 @@ import Gui.Globals as Globals
 
 
 EaCharts.Plotly1dMeasVsCalc {
-    useWebGL: EaGlobals.Variables.useOpenGL //Globals.Proxies.main.plotting.useWebGL1d
+    useWebGL: EaGlobals.Vars.useOpenGL //Globals.Proxies.main.plotting.useWebGL1d
 
     xAxisTitle: "x"
     yAxisTitle: "y"

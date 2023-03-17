@@ -12,7 +12,7 @@ import Gui.Globals as Globals
 
 
 EaCharts.QtCharts1dMeasVsCalc {
-    useOpenGL: EaGlobals.Variables.useOpenGL //Globals.Proxies.main.plotting.useWebGL1d
+    useOpenGL: EaGlobals.Vars.useOpenGL //Globals.Proxies.main.plotting.useWebGL1d
 
     xAxisTitle: "x"
     yAxisTitle: "y"

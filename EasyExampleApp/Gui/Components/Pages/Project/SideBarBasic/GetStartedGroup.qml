@@ -25,7 +25,7 @@ Grid {
 
         onClicked: {
             projectDescriptionDialog.source = 'ProjectDescriptionDialog.qml'
-            EaGlobals.Variables.showProjectDescriptionDialog = true
+            EaGlobals.Vars.showProjectDescriptionDialog = true
         }
 
         Loader {

@@ -81,11 +81,11 @@ Column {
         spacing: EaStyle.Sizes.fontPixelSize
 
         EaElements.SideBarButton {
-            enabled: Globals.Proxies.main.model.data.length < 2
             fontIcon: "upload"
             text: qsTr("Load new model from file")
             onClicked: {
                 Globals.Proxies.main.model.load()
+                enabled = false
                 table.currentIndex = 0
             }
             Component.onCompleted: Globals.Refs.app.modelPage.loadNewModelFromFileButton = this

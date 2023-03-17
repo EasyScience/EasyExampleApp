@@ -541,7 +541,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
     // Charts
 
-    property string currentLib1d: EaGlobals.Variables.currentLib1d
+    property string currentLib1d: EaGlobals.Vars.currentLib1d
     onCurrentLib1dChanged: main.plotting.currentLib1d = currentLib1d
 
 }

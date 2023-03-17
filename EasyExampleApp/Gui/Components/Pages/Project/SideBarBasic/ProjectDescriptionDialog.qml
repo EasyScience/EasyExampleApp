@@ -12,8 +12,8 @@ import Gui.Globals as Globals
 
 
 EaComponents.ProjectDescriptionDialog {
-    visible: EaGlobals.Variables.showProjectDescriptionDialog
-    onClosed: EaGlobals.Variables.showProjectDescriptionDialog = false
+    visible: EaGlobals.Vars.showProjectDescriptionDialog
+    onClosed: EaGlobals.Vars.showProjectDescriptionDialog = false
 
     onAccepted: {
         Globals.Proxies.main.project.editData('name', projectName)

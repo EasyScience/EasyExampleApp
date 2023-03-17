@@ -56,3 +56,22 @@ class CommandLineArguments:
         )
 
         return parser.parse_args()
+
+
+class EnvironmentVariables:
+
+    @staticmethod
+    def set():
+        os.environ['QSG_RHI_BACKEND'] = 'opengl'  # For QtCharts XYSeries useOpenGL
+
+
+class WebEngine:
+
+    @staticmethod
+    def initialize():
+        try:
+            from PySide6.QtWebEngineQuick import QtWebEngineQuick
+        except ModuleNotFoundError:
+            print('No module named "PySide6.QtWebEngineQuick" is found.')
+        else:
+            QtWebEngineQuick.initialize()

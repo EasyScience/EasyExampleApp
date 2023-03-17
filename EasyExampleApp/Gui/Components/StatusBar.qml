@@ -14,7 +14,7 @@ import Gui.Globals as Globals
 
 
 EaElements.StatusBar {
-    visible: EaGlobals.Variables.appBarCurrentIndex !== 0
+    visible: EaGlobals.Vars.appBarCurrentIndex !== 0
 
     /*
     model: XmlListModel {

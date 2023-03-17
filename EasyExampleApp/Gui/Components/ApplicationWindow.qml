@@ -80,7 +80,7 @@ EaComponents.ApplicationWindow {
         EaElements.ToolButton {
             fontIcon: "cog"
             ToolTip.text: qsTr("Application preferences")
-            onClicked: EaGlobals.Variables.showAppPreferencesDialog = true
+            onClicked: EaGlobals.Vars.showAppPreferencesDialog = true
         },
 
         EaElements.ToolButton {

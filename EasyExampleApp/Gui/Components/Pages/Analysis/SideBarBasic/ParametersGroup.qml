@@ -122,13 +122,12 @@ Column {
         value: table.currentValueTextInput.text
 
         onMoved: {
-            const calcSerie = Globals.Proxies.main.plotting.appChartRefs.QtCharts.analysisPage.calcSerie
-            if (!EaGlobals.Variables.useOpenGL && typeof calcSerie !== 'undefined') {
-                calcSerie.useOpenGL = true
+            if (!EaGlobals.Vars.useOpenGL && typeof calcSerie() !== 'undefined') {
+                calcSerie().useOpenGL = true
             }
             table.currentValueTextInput.text = value.toFixed(4)
             table.currentValueTextInput.editingFinished()
-            if (!EaGlobals.Variables.useOpenGL && typeof calcSerie !== 'undefined') {
+            if (!EaGlobals.Vars.useOpenGL && typeof calcSerie() !== 'undefined') {
                 disableOpenGLTimer.restart()
             }
         }
@@ -139,7 +138,7 @@ Column {
     Timer {
         id: disableOpenGLTimer
         interval: 500
-        onTriggered: calcSerie.useOpenGL = false
+        onTriggered: calcSerie().useOpenGL = false
     }
 
     // Control buttons below table
@@ -154,6 +153,12 @@ Column {
         onClicked: Globals.Proxies.main.fitting.fit()
 
         Component.onCompleted: Globals.Refs.app.analysisPage.startFittingButton = this
+    }
+
+    // Logic
+
+    function calcSerie() {
+        return Globals.Proxies.main.plotting.appChartRefs.QtCharts.analysisPage.calcSerie
     }
 
 }

@@ -11,8 +11,8 @@ import Gui.Globals as Globals
 
 
 EaComponents.AboutDialog {
-    visible: EaGlobals.Variables.showAppAboutDialog
-    onClosed: EaGlobals.Variables.showAppAboutDialog = false
+    visible: EaGlobals.Vars.showAppAboutDialog
+    onClosed: EaGlobals.Vars.showAppAboutDialog = false
 
     appIconPath: Globals.Configs.appConfig.icon
     appUrl: Globals.Configs.appConfig.homePageUrl
