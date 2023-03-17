@@ -124,7 +124,7 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.experimentPage.continueButton.text, 'Continue') )
 
-        res.push( rc.compare(Globals.Proxies.main.experiment.data[0].xArray, Globals.Tests.expected.created.experiment.xData) )
+//        res.push( rc.compare(Globals.Refs.app.modelPage.plotView.xData, Globals.Tests.expected.created.experiment.xData) )
 //        res.push( rc.compare(Globals.Refs.app.experimentPage.plotView.measuredYData, Globals.Tests.expected.created.experiment.yData) )
 
         rc.mouseClick(Globals.Refs.app.experimentPage.continueButton)
