@@ -52,7 +52,7 @@ jobs:
       - name: Install Python dependences
         run: |
           python -m pip install git+https://github.com/easyscience/EasyApp.git@new-easy-app2
-          python -m pip install numpy json orjson jsbeautifier pytest-image-diff
+          python -m pip install numpy orjson jsbeautifier pytest-image-diff
 
       - name: Run QML GUI tests (run app in testmode, compare properties, save app images)
         run: |
