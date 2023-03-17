@@ -21,17 +21,11 @@ EaComponents.ContentPage {
 
     mainView: EaComponents.MainContent {
         tabs: [
-            EaElements.TabButton { text: qsTr("Data view 1D") },
-            EaElements.TabButton { text: qsTr("Data view 2D") },
-            EaElements.TabButton { text: qsTr("Data view 3D (surface)") },
-            EaElements.TabButton { text: qsTr("Data view 3D (scatter)") }
+            EaElements.TabButton { text: qsTr("Chart view") }
         ]
 
         items: [
-            Loader { source: 'MainContent/DataView1dTab.qml' },
-            Loader { source: 'MainContent/DataView2dTab.qml' },
-            Loader { source: 'MainContent/DataViewSurface3dTab.qml' },
-            Loader { source: 'MainContent/DataViewScatter3dTab.qml' }
+            Loader { source: `MainContent/${EaGlobals.Variables.currentLib1d}1dTab.qml` }
         ]
     }
 

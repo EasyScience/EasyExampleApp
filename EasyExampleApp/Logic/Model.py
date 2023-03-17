@@ -171,17 +171,33 @@ class Model(QObject):
         self._totalYArray = out
 
     def replaceXArrayOnModelChart(self):
-        chart = self._proxy.plotting.viewRefs['model']
-        experimentData = self._proxy.experiment.data[0]
-        array = experimentData['xArray']
-        arrayStr = orjson.dumps(array, option=orjson.OPT_SERIALIZE_NUMPY).decode()
-        scriptFunc = f'setXData({arrayStr})'
-        chart.runJavaScript(scriptFunc, None)
+        currentLib1d = self._proxy.plotting.currentLib1d
+        if currentLib1d == 'QtCharts':  # QtCharts only allows to replace both x and y array. Done in replaceYArrayOnModelChartAndRedraw()
+            pass
+        elif currentLib1d == 'Plotly':
+            chart = self._proxy.plotting.appChartRefs['Plotly']['modelPage']
+            experimentData = self._proxy.experiment.data[0]
+            array = experimentData['xArray']
+            arrayStr = orjson.dumps(array, option=orjson.OPT_SERIALIZE_NUMPY).decode()
+            scriptFunc = f'setXData({arrayStr})'
+            chart.runJavaScript(scriptFunc, None)
+        else:
+            print(f'1D plotting library {currentLib1d} is not supported.')
 
     def replaceYArrayOnModelChartAndRedraw(self):
-        chart = self._proxy.plotting.viewRefs['model']
-        array = self._data[self._currentIndex]['yArray']
-        arrayStr = orjson.dumps(array, option=orjson.OPT_SERIALIZE_NUMPY).decode()
-        arrayJsonStr = '{y: [' + arrayStr + ']}'
-        scriptFunc = f'redrawPlotWithNewCalculatedYJson({arrayJsonStr})'
-        chart.runJavaScript(scriptFunc, None)
+        currentLib1d = self._proxy.plotting.currentLib1d
+        if currentLib1d == 'QtCharts': # QtCharts only allows to replace both x and y array.
+            experimentData = self._proxy.experiment.data[0]
+            xArray = experimentData['xArray']
+            yArray = self._data[self._currentIndex]['yArray']
+            calcSerie = self._proxy.plotting.appChartRefs['QtCharts']['modelPage']['calcSerie']
+            calcSerie.replaceNp(xArray, yArray)
+        elif currentLib1d == 'Plotly':
+            chart = self._proxy.plotting.appChartRefs['Plotly']['modelPage']
+            array = self._data[self._currentIndex]['yArray']
+            arrayStr = orjson.dumps(array, option=orjson.OPT_SERIALIZE_NUMPY).decode()
+            arrayJsonStr = '{y: [' + arrayStr + ']}'
+            scriptFunc = f'redrawPlotWithNewCalculatedYJson({arrayJsonStr})'
+            chart.runJavaScript(scriptFunc, None)
+        else:
+            print(f'1D plotting library {currentLib1d} is not supported.')

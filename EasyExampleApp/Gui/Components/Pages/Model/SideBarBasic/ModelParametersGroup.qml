@@ -17,18 +17,16 @@ Row {
     EaElements.Parameter {
         title: qsTr('Slope')
         width: parameterFieldWidth()
-<<<<<<< Updated upstream
-        text: Globals.Proxies.main.model.parameters.slope.value.toFixed(4)
-        onEditingFinished: Globals.Proxies.main.model.editParameter('slope', 'value', text, true)
+        text: parameterValue('slope')
+        onEditingFinished: setParameterValue('slope', text)
         Component.onCompleted: Globals.Refs.app.modelPage.slopeParameter = this
     }
 
     EaElements.Parameter {
         title: qsTr('y-Intercept')
         width: parameterFieldWidth()
-<<<<<<< Updated upstream
-        text: Globals.Proxies.main.model.parameters.yIntercept.value.toFixed(4)
-        onEditingFinished: Globals.Proxies.main.model.editParameter('yIntercept', 'value', text, true)
+        text: parameterValue('yIntercept')
+        onEditingFinished: setParameterValue('yIntercept', text)
         Component.onCompleted: Globals.Refs.app.modelPage.yInterceptParameter = this
     }
 

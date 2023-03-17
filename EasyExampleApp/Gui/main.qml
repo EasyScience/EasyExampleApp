@@ -5,7 +5,7 @@
 import QtQuick
 import QtQuick.Controls
 
-import QtQuick.Window
+//import QtQuick.Window
 
 import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Elements as EaElements

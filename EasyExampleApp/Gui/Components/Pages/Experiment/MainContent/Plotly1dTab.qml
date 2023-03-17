@@ -5,21 +5,22 @@
 import QtQuick
 import QtQuick.Controls
 
+import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Charts as EaCharts
 
 import Gui.Globals as Globals
 
 
 EaCharts.Plotly1dMeasVsCalc {
+    useWebGL: EaGlobals.Variables.useOpenGL //Globals.Proxies.main.plotting.useWebGL1d
+
     xAxisTitle: "x"
     yAxisTitle: "y"
-
-    useWebGL: Globals.Proxies.main.plotting.useWebGL1d
 
     // Data is set in python backend
 
     Component.onCompleted: {
         Globals.Refs.app.experimentPage.plotView = this
-        Globals.Proxies.main.plotting.setViewRef('experiment', this)
+        Globals.Proxies.main.plotting.setAppPlotlyChartRef('experimentPage', this)
     }
 }

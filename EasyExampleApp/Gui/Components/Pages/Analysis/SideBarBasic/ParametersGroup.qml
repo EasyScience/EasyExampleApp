@@ -5,6 +5,7 @@
 import QtQuick
 import QtQuick.Controls
 
+import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
@@ -29,8 +30,6 @@ Column {
         model: EaComponents.JsonListModel {
             json: JSON.stringify(Globals.Proxies.main.fittables.data)
             query: "$[*]"
-
-            //onJsonChanged: print('===============', json, json === '[]')
         }
 
         // Table rows
@@ -123,9 +122,24 @@ Column {
         value: table.currentValueTextInput.text
 
         onMoved: {
+            const calcSerie = Globals.Proxies.main.plotting.appChartRefs.QtCharts.analysisPage.calcSerie
+            if (!EaGlobals.Variables.useOpenGL && typeof calcSerie !== 'undefined') {
+                calcSerie.useOpenGL = true
+            }
             table.currentValueTextInput.text = value.toFixed(4)
             table.currentValueTextInput.editingFinished()
+            if (!EaGlobals.Variables.useOpenGL && typeof calcSerie !== 'undefined') {
+                disableOpenGLTimer.restart()
+            }
         }
+    }
+
+    // Use OpenGL on slider move only
+
+    Timer {
+        id: disableOpenGLTimer
+        interval: 500
+        onTriggered: calcSerie.useOpenGL = false
     }
 
     // Control buttons below table

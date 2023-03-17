@@ -30,7 +30,7 @@ EaComponents.ContentPage {
         ]
 
         items: [
-            Loader { source: 'MainContent/AnalysisTab.qml' }
+            Loader { source: `MainContent/${EaGlobals.Variables.currentLib1d}1dTab.qml` }
         ]
     }
 

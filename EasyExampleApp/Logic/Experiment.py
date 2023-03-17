@@ -32,7 +32,7 @@ _DEFAULT_DATA = [
                 'fittable': False
             },
             'xStep': {
-                'value': 0.0001,
+                'value': 0.001,
                 'fittable': False
             },
             'background': {
@@ -125,17 +125,29 @@ class Experiment(QObject):
     # Private methods
 
     def replaceXYArraysOnExperimentChartAndRedraw(self):
-        chart = self._proxy.plotting.viewRefs['experiment']
-        # replace x-array
-        array = self._data[0]['xArray']
-        arrayStr = orjson.dumps(array, option=orjson.OPT_SERIALIZE_NUMPY).decode()
-        scriptFunc = f'setXData({arrayStr})'
-        chart.runJavaScript(scriptFunc, None)
-        # replace y-array
-        array = self._data[0]['yArray']
-        arrayStr = orjson.dumps(array, option=orjson.OPT_SERIALIZE_NUMPY).decode()
-        scriptFunc = f'setMeasuredYData({arrayStr})'
-        chart.runJavaScript(scriptFunc, None)
-        # redraw plot
-        scriptFunc = 'redrawPlot()'
-        chart.runJavaScript(scriptFunc, None)
+        currentLib1d = self._proxy.plotting.currentLib1d
+        if currentLib1d == 'QtCharts':
+            xArray = self._data[0]['xArray']
+            yArray = self._data[0]['yArray']
+            measSerie = self._proxy.plotting.appChartRefs['QtCharts']['experimentPage']['measSerie']
+            try:
+                measSerie.replaceNp(xArray, yArray)
+            except AttributeError:
+                print('No Numpy support in QtCharts. Compile PySide6 with "--pyside-numpy-support" to enable it.')
+        elif currentLib1d == 'Plotly':
+            chart = self._proxy.plotting.appChartRefs['Plotly']['experimentPage']
+            # replace x-array
+            array = self._data[0]['xArray']
+            arrayStr = orjson.dumps(array, option=orjson.OPT_SERIALIZE_NUMPY).decode()
+            scriptFunc = f'setXData({arrayStr})'
+            chart.runJavaScript(scriptFunc, None)
+            # replace y-array
+            array = self._data[0]['yArray']
+            arrayStr = orjson.dumps(array, option=orjson.OPT_SERIALIZE_NUMPY).decode()
+            scriptFunc = f'setMeasuredYData({arrayStr})'
+            chart.runJavaScript(scriptFunc, None)
+            # redraw plot
+            scriptFunc = 'redrawPlot()'
+            chart.runJavaScript(scriptFunc, None)
+        else:
+            print(f'1D plotting library {currentLib1d} is not supported.')

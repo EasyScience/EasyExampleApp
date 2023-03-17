@@ -32,7 +32,6 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             'plotView': null
         },
         'modelPage': {
-<<<<<<< Updated upstream
             'continueButton': null,
             'addNewModelManuallyButton': null,
             'plotView': null,

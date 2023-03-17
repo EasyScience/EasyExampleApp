@@ -7,6 +7,7 @@ pragma Singleton
 import QtQuick
 import QtQuick.Controls
 
+import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Logic as EaLogic
 
@@ -537,5 +538,10 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         }
 
     }
+
+    // Charts
+
+    property string currentLib1d: EaGlobals.Variables.currentLib1d
+    onCurrentLib1dChanged: main.plotting.currentLib1d = currentLib1d
 
 }

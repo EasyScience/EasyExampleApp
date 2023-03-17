@@ -2,22 +2,34 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-import sys
+import sys, os
 
-from PySide6.QtGui import QGuiApplication
+from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
-from PySide6.QtWebEngineQuick import QtWebEngineQuick
 
 from Logic.Helpers import ResourcePaths, CommandLineArguments
 from Logic.PyProxy import PyProxy
 
 
+def setEnvironmentVariables():
+    os.environ['QSG_RHI_BACKEND'] = 'opengl'  # For QtCharts XYSeries useOpenGL
+
+def initQtWebEngine():
+    try:
+        from PySide6.QtWebEngineQuick import QtWebEngineQuick
+    except ModuleNotFoundError:
+        print('No module named "PySide6.QtWebEngineQuick" is found.')
+    else:
+        QtWebEngineQuick.initialize()
+
 if __name__ == '__main__':
+    setEnvironmentVariables()
+
     # QtWebEngine initialization for the QML GUI components
-    QtWebEngineQuick.initialize()
+    initQtWebEngine()
 
     # Create application
-    app = QGuiApplication(sys.argv)
+    app = QApplication(sys.argv)  # QGuiApplication crashes when using QtCharts
 
     # Create QML application engine
     engine = QQmlApplicationEngine()
