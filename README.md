@@ -54,10 +54,12 @@ This is the second step of the development, when the GUI prototype is approved. 
 In this case, `EasyApp` is installed via PIP from GitHub.
 
 * Go to the project directory (`EasyScience/EasyExampleApp`)
-* Create Python environment and activate it:
+
+* Create Python environment (make sure to have python3.9 installed and included in the system's PATH on Windows) and activate it:
 	* `python3.9 -m venv .venv`
-	* `source .venv/bin/activate`
-* Upgrade PIP and install `numpy` and `jsbeautifier`
+	* `source .venv/bin/activate` for Linux or MacOS, or
+	* `.venv\Scripts\activate` for Windows using Command Prompt 
+* Upgrade PIP and install `numpy` and `jsbeautifier` (on Windows, run Command Prompt as administrator beforehand)
 	* `pip install --upgrade pip`
 	* `pip install numpy jsbeautifier`
 * Install `EasyApp` from GitHub (`new-easy-app` branch).
