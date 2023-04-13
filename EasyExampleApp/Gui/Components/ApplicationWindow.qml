@@ -68,6 +68,8 @@ EaComponents.ApplicationWindow {
                 Globals.Vars.experimentPageEnabled = false
                 Globals.Vars.analysisPageEnabled = false
                 Globals.Vars.summaryPageEnabled = false
+                Globals.Proxies.main.experiment.removeAllExperiments()
+                Globals.Proxies.main.model.removeAllModels()
             }
             Component.onCompleted: Globals.Refs.app.appbar.resetStateButton = this
         }

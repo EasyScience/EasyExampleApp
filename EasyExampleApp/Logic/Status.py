@@ -10,8 +10,7 @@ class Status(QObject):
 
     def __init__(self, parent):
         super().__init__(parent)
-        self._pyProxy = parent
-
+        self._proxy = parent
         self._as_json = [
             {
                 'label': 'Calculations',

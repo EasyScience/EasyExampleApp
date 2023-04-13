@@ -15,7 +15,7 @@ EaComponents.SideBarColumn {
         collapsible: false
         last: true
 
-        Loader { source: 'SideBarBasic/ParametersGroup.qml' }
+        Loader { source: 'SideBarBasic/FittablesGroup.qml' }
     }
 
 }

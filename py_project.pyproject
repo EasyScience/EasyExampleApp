@@ -2,7 +2,7 @@
 "files": [    
     "EasyExampleApp/main.py",
     "EasyExampleApp/Logic/Analysis.py",
-    "EasyExampleApp/Logic/Calculator.py",
+    "EasyExampleApp/Logic/Calculators.py",
     "EasyExampleApp/Logic/Connections.py",
     "EasyExampleApp/Logic/Experiment.py",
     "EasyExampleApp/Logic/Fittables.py",

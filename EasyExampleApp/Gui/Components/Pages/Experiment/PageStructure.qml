@@ -15,9 +15,9 @@ import Gui.Components as Components
 
 
 EaComponents.ContentPage {
-    defaultInfo: Globals.Proxies.main.experiment.created ?
+    defaultInfo: Globals.Proxies.main.experiment.defined ?
                      "" :
-                     qsTr("No experiments loaded")
+                     qsTr("No experiments defined")
 
     mainView: EaComponents.MainContent {
         tabs: [
@@ -32,15 +32,17 @@ EaComponents.ContentPage {
     sideBar: EaComponents.SideBar {
         tabs: [
             EaElements.TabButton { text: qsTr("Basic controls") },
-            EaElements.TabButton { text: qsTr("Advanced controls") }
+            EaElements.TabButton { text: qsTr("Advanced controls"); enabled: Globals.Proxies.main.experiment.defined },
+            EaElements.TabButton { text: qsTr("Text mode"); enabled: Globals.Proxies.main.experiment.defined }
         ]
 
         items: [
             Loader { source: 'SideBarBasic.qml' },
-            Loader { source: 'SideBarAdvanced.qml' }
+            Loader { source: 'SideBarAdvanced.qml' },
+            Loader { source: 'SideBarText.qml' }
         ]
 
-        continueButton.text: Globals.Proxies.main.experiment.created ?
+        continueButton.text: Globals.Proxies.main.experiment.defined ?
                                  qsTr("Continue") :
                                  qsTr("Continue without experiment data")
 

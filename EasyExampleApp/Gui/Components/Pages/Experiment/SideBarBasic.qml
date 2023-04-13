@@ -16,19 +16,19 @@ EaComponents.SideBarColumn {
         title: qsTr("Experimental data explorer")
         collapsible: false
 
-        Loader { source: 'SideBarBasic/ExperimentalDataExplorerGroup.qml' }
+        Loader { source: 'SideBarBasic/ExperimentDataExplorerGroup.qml' }
     }
 
     EaElements.GroupBox {
-        title: qsTr("Experiment ranges")
-        visible: Globals.Proxies.main.experiment.created
+        title: qsTr("Experimental ranges")
+        visible: Globals.Proxies.main.experiment.defined
 
         Loader { source: 'SideBarBasic/ExperimentRangesGroup.qml' }
     }
 
     EaElements.GroupBox {
-        title: qsTr("Experiment background")
-        visible: Globals.Proxies.main.experiment.created
+        title: qsTr("Experimental background")
+        visible: Globals.Proxies.main.experiment.defined
         last: true
 
         Loader { source: 'SideBarBasic/ExperimentBackgroundGroup.qml' }

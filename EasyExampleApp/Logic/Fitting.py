@@ -26,6 +26,7 @@ class Fitting(QObject):
 
     @Slot()
     def fit(self):
+        print("Minimization process has been started")
         self.fitFinished = False
         #if self._proxy.model.parameters['slope']['fit']:
         #    self._proxy.model.parameters['slope']['value'] = -3.0015

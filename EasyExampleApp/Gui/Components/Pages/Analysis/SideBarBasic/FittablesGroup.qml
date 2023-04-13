@@ -27,15 +27,18 @@ Column {
 
         // Table mode
 
-        model: EaComponents.JsonListModel {
-            json: JSON.stringify(Globals.Proxies.main.fittables.data)
-            query: "$[*]"
-        }
+        // We only use the length of the model object defined in backend logic and
+        // directly access that model in every row using the TableView index property.
+
+        model: Globals.Proxies.main.fittables.data.length
 
         // Table rows
 
         delegate: EaComponents.TableViewDelegate {
+
             property bool isCurrentItem: ListView.isCurrentItem
+            property var item: Globals.Proxies.main.fittables.data[index]
+
             onIsCurrentItemChanged: {
                 if (table.currentValueTextInput != valueColumn) {
                    table.currentValueTextInput = valueColumn
@@ -60,7 +63,7 @@ Column {
                        errorColumn.width -
                        fitColumn.width
                 headerText: qsTr("Name")
-                text: `${model.group}.${model.parentName}.${model.name}`
+                text: `${item.group}.${item.parentName}.${item.name}`
                 textFormat: Text.PlainText
                 elide: Text.ElideMiddle
             }
@@ -70,19 +73,22 @@ Column {
                 horizontalAlignment: Text.AlignRight
                 width: EaStyle.Sizes.fontPixelSize * 4
                 headerText: qsTr("Value")
-                text: model.value.toFixed(4)
-                onEditingFinished: Globals.Proxies.main.fittables.edit(model.group,
-                                                                       model.parentIndex,
-                                                                       model.name,
-                                                                       'value',
-                                                                       text)
+                text: item.value.toFixed(4)
+                onEditingFinished: {
+                    focus = false
+                    Globals.Proxies.main.fittables.edit(item.group,
+                                                        item.parentIndex,
+                                                        item.name,
+                                                        'value',
+                                                        text)
+                }
             }
 
             EaComponents.TableViewLabel {
                 id: unitColumn
                 horizontalAlignment: Text.AlignLeft
                 width: EaStyle.Sizes.fontPixelSize * 2
-                text: model.unit
+                text: item.unit
                 color: EaStyle.Colors.themeForegroundMinor
             }
 
@@ -92,19 +98,19 @@ Column {
                 width: EaStyle.Sizes.fontPixelSize * 4
                 elide: Text.ElideNone
                 headerText: qsTr("Error")
-                text: model.error === 0 ? '' :  model.error.toFixed(4)
+                text: item.error === 0 ? '' : item.error.toFixed(4)
             }
 
             EaComponents.TableViewCheckBox {
                 id: fitColumn
-                enabled: Globals.Proxies.main.experiment.created
+                enabled: Globals.Proxies.main.experiment.defined
                 headerText: qsTr("Fit")
-                checked: model.fit
-                onCheckedChanged: Globals.Proxies.main.fittables.edit(model.group,
-                                                                      model.parentIndex,
-                                                                      model.name,
-                                                                      'fit',
-                                                                      checked)
+                checked: item.fit
+                onToggled: Globals.Proxies.main.fittables.edit(item.group,
+                                                               item.parentIndex,
+                                                               item.name,
+                                                               'fit',
+                                                               checked)
             }
         }
 
@@ -117,17 +123,23 @@ Column {
 
         width: table.width
 
-        from: table.model.get(table.currentIndex).min
-        to: table.model.get(table.currentIndex).max
+        from: Globals.Proxies.main.fittables.data[table.currentIndex].min
+        to: Globals.Proxies.main.fittables.data[table.currentIndex].max
         value: table.currentValueTextInput.text
 
         onMoved: {
-            if (!EaGlobals.Vars.useOpenGL && typeof calcSerie() !== 'undefined') {
-                calcSerie().useOpenGL = true
+            if (!EaGlobals.Vars.useOpenGL && typeof totalCalcSerie() !== 'undefined') {
+                totalCalcSerie().useOpenGL = true
+            }
+            if (!EaGlobals.Vars.useOpenGL && typeof bkgSerie() !== 'undefined') {
+                bkgSerie().useOpenGL = true
             }
             table.currentValueTextInput.text = value.toFixed(4)
             table.currentValueTextInput.editingFinished()
-            if (!EaGlobals.Vars.useOpenGL && typeof calcSerie() !== 'undefined') {
+            if (!EaGlobals.Vars.useOpenGL && typeof totalCalcSerie() !== 'undefined') {
+                disableOpenGLTimer.restart()
+            }
+            if (!EaGlobals.Vars.useOpenGL && typeof bkgSerie() !== 'undefined') {
                 disableOpenGLTimer.restart()
             }
         }
@@ -138,13 +150,16 @@ Column {
     Timer {
         id: disableOpenGLTimer
         interval: 500
-        onTriggered: calcSerie().useOpenGL = false
+        onTriggered: {
+            bkgSerie().useOpenGL = false
+            totalCalcSerie().useOpenGL = false
+        }
     }
 
     // Control buttons below table
 
     EaElements.SideBarButton {
-        enabled: Globals.Proxies.main.experiment.created
+        enabled: Globals.Proxies.main.experiment.defined
         wide: true
 
         fontIcon: 'play-circle'
@@ -157,8 +172,12 @@ Column {
 
     // Logic
 
-    function calcSerie() {
-        return Globals.Proxies.main.plotting.appChartRefs.QtCharts.analysisPage.calcSerie
+    function bkgSerie() {
+        return Globals.Proxies.main.plotting.chartRefs.QtCharts.analysisPage.bkgSerie
+    }
+
+    function totalCalcSerie() {
+        return Globals.Proxies.main.plotting.chartRefs.QtCharts.analysisPage.totalCalcSerie
     }
 
 }

@@ -22,16 +22,14 @@ Column {
     EaComponents.TableView {
         id: table
 
-        defaultInfoText: qsTr("No models loaded / added")
+        defaultInfoText: qsTr("No models defined")
 
         // Table model
 
-        model: EaComponents.JsonListModel {
-            json: Globals.Proxies.main.model.created ?
-                      JSON.stringify(Globals.Proxies.main.model.data) :
-                      ""
-            query: "$[*]"
-        }
+        // We only use the length of the model object defined in backend logic and
+        // directly access that model in every row using the TableView index property.
+
+        model: Globals.Proxies.main.model.dataBlocks.length
 
         // Table rows
 
@@ -40,14 +38,14 @@ Column {
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 2.5
                 headerText: qsTr("No.")
-                text: model.index + 1
+                text: index + 1
             }
 
             EaComponents.TableViewTextInput {
                 horizontalAlignment: Text.AlignLeft
                 width: EaStyle.Sizes.fontPixelSize * 27.9
                 headerText: qsTr("Name")
-                text: model.name
+                text: Globals.Proxies.main.model.dataBlocks[index].name
             }
 
             EaComponents.TableViewLabel {
@@ -57,19 +55,15 @@ Column {
 
             EaComponents.TableViewButton {
                 id: deleteRowColumn
-                enabled: false
                 headerText: qsTr("Del.")
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this model")
+                onClicked: Globals.Proxies.main.model.removeModel(index)
             }
 
         }
 
-        onCurrentIndexChanged: {
-            if (currentIndex === -1)
-                return
-            Globals.Proxies.main.model.currentIndex = currentIndex
-        }
+        onCurrentIndexChanged: Globals.Proxies.main.model.currentIndex = currentIndex
 
         Component.onCompleted: Globals.Refs.app.modelPage.modelsExplorer = this
 
@@ -83,18 +77,15 @@ Column {
         EaElements.SideBarButton {
             fontIcon: "upload"
             text: qsTr("Load new model from file")
-            onClicked: {
-                Globals.Proxies.main.model.load()
-                enabled = false
-                table.currentIndex = 0
-            }
+            onClicked: Globals.Proxies.main.model.loadModelFromFile('/Users/as/Development/GitHub/easyScience/EasyExampleApp/examples/Gaussian.json')
             Component.onCompleted: Globals.Refs.app.modelPage.loadNewModelFromFileButton = this
         }
 
         EaElements.SideBarButton {
-            enabled: false
             fontIcon: "plus-circle"
             text: qsTr("Add new model manually")
+            onClicked: Globals.Proxies.main.model.addDefaultModel()
+            Component.onCompleted: Globals.Refs.app.modelPage.addNewModelManuallyButton = this
         }
     }
 

@@ -11,6 +11,7 @@ import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
 import Gui.Globals as Globals
+import Gui.Tests as Tests
 
 
 EaElements.RemoteController {
@@ -115,13 +116,16 @@ EaElements.RemoteController {
 
         res.push( rc.compare(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton.text, 'Import data from local drive') )
         res.push( rc.compare(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.text, 'Add default experimental data') )
+        res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.experimentPage.continueButton.text, 'Continue without experiment data') )
         res.push( rc.compare(Globals.Refs.app.experimentPage.continueButton.enabled, true) )
 
-        rc.mouseClick(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton)
+        rc.mouseClick(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton)
         rc.wait(2000)
 
         res.push( rc.compare(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton.enabled, false) )
+        res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.experimentPage.continueButton.text, 'Continue') )
 
 //        res.push( rc.compare(Globals.Refs.app.modelPage.plotView.xData, Globals.Tests.expected.created.experiment.xData) )
@@ -143,17 +147,22 @@ EaElements.RemoteController {
 
         res.push( rc.compare(Globals.Refs.app.modelPage.loadNewModelFromFileButton.text, 'Load new model from file') )
         res.push( rc.compare(Globals.Refs.app.modelPage.loadNewModelFromFileButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.text, 'Add new model manually') )
+        res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.text, 'Continue') )
         res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.enabled, false) )
 
         rc.mouseClick(Globals.Refs.app.modelPage.loadNewModelFromFileButton)
+        rc.mouseClick(Globals.Refs.app.modelPage.addNewModelManuallyButton)
         rc.wait(2000)
 
-        res.push( rc.compare(Globals.Refs.app.modelPage.loadNewModelFromFileButton.enabled, false) )
+        res.push( rc.compare(Globals.Refs.app.modelPage.loadNewModelFromFileButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.enabled, true) )
 
-        res.push( rc.compare(Globals.Refs.app.modelPage.slopeParameter.text, Globals.Tests.expected.created.model.parameters.slope.value) )
-        res.push( rc.compare(Globals.Refs.app.modelPage.yInterceptParameter.text, Globals.Tests.expected.created.model.parameters.yIntercept.value) )
+        res.push( rc.compare(parseFloat(Globals.Refs.app.modelPage.shiftParameter.text), Tests.NoProjectCreated.expected.model[0].params.shift.value) )
+        res.push( rc.compare(parseFloat(Globals.Refs.app.modelPage.widthParameter.text), Tests.NoProjectCreated.expected.model[0].params.width.value) )
+        res.push( rc.compare(parseFloat(Globals.Refs.app.modelPage.scaleParameter.text), Tests.NoProjectCreated.expected.model[0].params.scale.value) )
 
 //        res.push( rc.compare(Globals.Refs.app.modelPage.plotView.xData, Globals.Tests.expected.created.experiment.xData) )
 //        res.push( rc.compare(Globals.Refs.app.modelPage.plotView.calculatedYData, Globals.Tests.expected.created.model.yData) )
@@ -202,7 +211,7 @@ EaElements.RemoteController {
 
         // Complete testing process
 
-        rc.mouseClick(Globals.Refs.app.appbar.resetStateButton)
+//        rc.mouseClick(Globals.Refs.app.appbar.resetStateButton)
         //rc.wait(2000)
 
         rc.hidePointer()

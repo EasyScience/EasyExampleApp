@@ -49,7 +49,7 @@ class Project(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._proxy = parent
-        self._data = _EMPTY_DATA
+        self._data = _DEFAULT_DATA
         self._examples = _EXAMPLES
         self._created = False
         self._needSave = False
@@ -104,14 +104,20 @@ class Project(QObject):
 
     @Slot()
     def save(self):
+        print('Save project')
         # Create full project dict
         out = {}
         if self.created:
             out['project'] = self._data
-        if self._proxy.experiment.created:
+        if self._proxy.experiment.defined:
             out['experiment'] = self._proxy.experiment.data
+            for data in out['experiment']:
+                data['xArray'] = data['xArray'].tolist()
+                data['yArray'] = data['yArray'].tolist()
         if self._proxy.model.created:
             out['model'] = self._proxy.model.data
+            for data in out['model']:
+                data['yArray'] = data['yArray'].tolist()
         # Format project as json
         options = jsbeautifier.default_options()
         options.indent_size = 2

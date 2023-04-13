@@ -2,80 +2,52 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-import orjson
+import numpy as np
 
 from PySide6.QtCore import QObject, Signal, Property
 
 
-_EMPTY_DATA = {}
-
 class Analysis(QObject):
-    dataChanged = Signal()
-    createdChanged = Signal()
+    definedChanged = Signal()
+    yCalcTotalChanged = Signal()
 
     def __init__(self, parent):
         super().__init__(parent)
         self._proxy = parent
-        self._data = _EMPTY_DATA
-        self._created = False
+        self._defined = False
+        self._yCalcTotal = np.empty(0)  # MOVE TO ANALYSIS???
 
-    # QML accessable properties
+    # QML accessible properties
 
-    @Property('QVariant', notify=dataChanged)
-    def data(self):
-        return self._data
+    @Property(bool, notify=definedChanged)
+    def defined(self):
+        return self._defined
 
-    @Property(bool, notify=createdChanged)
-    def created(self):
-        return self._created
-
-    @created.setter
-    def created(self, newValue):
-        if self._created == newValue:
+    @defined.setter
+    def defined(self, newValue):
+        if self._defined == newValue:
             return
-        self._created = newValue
-        self.createdChanged.emit()
+        self._defined = newValue
+        print(f"Analysis defined: {newValue}")
+        self.definedChanged.emit()
 
     # Private methods
 
-    def replaceExperimentXYArraysOnAnalysisChart(self):
-        currentLib1d = self._proxy.plotting.currentLib1d
-        if currentLib1d == 'QtCharts':
-            experimentData = self._proxy.experiment.data[0]
-            xArray = experimentData['xArray']
-            yArray = experimentData['yArray']
-            measSerie = self._proxy.plotting.appChartRefs['QtCharts']['analysisPage']['measSerie']
-            measSerie.replaceNp(xArray, yArray)
-        elif currentLib1d == 'Plotly':
-            chart = self._proxy.plotting.appChartRefs['Plotly']['analysisPage']
-            experimentData = self._proxy.experiment.data[0]
-            # replace x-array
-            array = experimentData['xArray']
-            arrayStr = orjson.dumps(array, option=orjson.OPT_SERIALIZE_NUMPY).decode()
-            scriptFunc = f'setXData({arrayStr})'
-            chart.runJavaScript(scriptFunc, None)
-            # replace measured y-array
-            array = experimentData['yArray']
-            arrayStr = orjson.dumps(array, option=orjson.OPT_SERIALIZE_NUMPY).decode()
-            scriptFunc = f'setMeasuredYData({arrayStr})'
-            chart.runJavaScript(scriptFunc, None)
-        else:
-            print(f'1D plotting library {currentLib1d} is not supported.')
+    def sumAllYCalcArays(self):
+        print(f"Summing all y-calculated data to single array")
+        index = self._proxy.experiment.currentIndex
+        sum = np.zeros(len(self._proxy.experiment._xArrays[index]))
+        for i in range(len(self._proxy.model._yCalcArrays)):
+            sum += self._proxy.model._yCalcArrays[i]
+        self._yCalcTotal = sum
 
-    def replaceModelTotalYArrayOnAnalysisChartAndRedraw(self):
-        currentLib1d = self._proxy.plotting.currentLib1d
-        if currentLib1d == 'QtCharts': # QtCharts only allows to replace both x and y array.
-            experimentData = self._proxy.experiment.data[0]
-            xArray = experimentData['xArray']
-            yArray = self._proxy.model.totalYArray
-            calcSerie = self._proxy.plotting.appChartRefs['QtCharts']['analysisPage']['calcSerie']
-            calcSerie.replaceNp(xArray, yArray)
-        elif currentLib1d == 'Plotly':
-            chart = self._proxy.plotting.appChartRefs['Plotly']['analysisPage']
-            array = self._proxy.model.totalYArray
-            arrayStr = orjson.dumps(array, option=orjson.OPT_SERIALIZE_NUMPY).decode()
-            arrayJsonStr = '{y: [' + arrayStr + ']}'
-            scriptFunc = f'redrawPlotWithNewCalculatedYJson({arrayJsonStr})'
-            chart.runJavaScript(scriptFunc, None)
-        else:
-            print(f'1D plotting library {currentLib1d} is not supported.')
+    def addBkgToYCalcTotal(self):
+        print(f"Adding background to total y-calculated array")
+        index = self._proxy.experiment.currentIndex
+        yBkgArray = self._proxy.experiment._yBkgArrays[index]
+        self._yCalcTotal += yBkgArray
+
+    def calculateYCalcTotal(self):
+        self.sumAllYCalcArays()
+        self.addBkgToYCalcTotal()
+        self.yCalcTotalChanged.emit()

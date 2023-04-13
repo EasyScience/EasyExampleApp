@@ -17,17 +17,17 @@ EaCharts.QtCharts1dMeasVsCalc {
     xAxisTitle: "x"
     yAxisTitle: "y"
 
-    xMin: 0
-    xMax: 1
-    yMin: -2
-    yMax: 2
+    xMin: -10
+    xMax: 10
+    yMin: 0
+    yMax: 4
 
     // Data is set in python backend
 
     Component.onCompleted: {
         Globals.Refs.app.experimentPage.plotView = this
-        Globals.Proxies.main.plotting.setAppQtChartsSerieRef('modelPage',
-                                                             'calcSerie',
-                                                             this.calcSerie)
+        Globals.Proxies.main.plotting.setQtChartsSerieRef('modelPage',
+                                                          'calcSerie',
+                                                          this.calcSerie)
     }
 }

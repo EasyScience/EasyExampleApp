@@ -15,13 +15,13 @@ import Gui.Components as Components
 
 
 EaComponents.ContentPage {
-    defaultInfo: Globals.Proxies.main.model.created ?
+    defaultInfo: Globals.Proxies.main.model.defined ?
                      "" :
-                     qsTr("No models loaded / added")
+                     qsTr("No models defined")
 
     mainView: EaComponents.MainContent {
         tabs: [
-            EaElements.TabButton { text: qsTr("Model view 1D") }
+            EaElements.TabButton { text: qsTr("Chart view") }
         ]
 
         items: [
@@ -32,15 +32,17 @@ EaComponents.ContentPage {
     sideBar: EaComponents.SideBar {
         tabs: [
             EaElements.TabButton { text: qsTr("Basic controls") },
-            EaElements.TabButton { text: qsTr("Advanced controls") }
+            EaElements.TabButton { text: qsTr("Advanced controls"); enabled: Globals.Proxies.main.model.defined },
+            EaElements.TabButton { text: qsTr("Text mode"); enabled: Globals.Proxies.main.model.defined }
         ]
 
         items: [
             Loader { source: 'SideBarBasic.qml' },
-            Loader { source: 'SideBarAdvanced.qml' }
+            Loader { source: 'SideBarAdvanced.qml' },
+            Loader { source: 'SideBarText.qml' }
         ]
 
-        continueButton.enabled: Globals.Proxies.main.model.created
+        continueButton.enabled: Globals.Proxies.main.model.defined
 
         continueButton.onClicked: {
             Globals.Vars.analysisPageEnabled = true

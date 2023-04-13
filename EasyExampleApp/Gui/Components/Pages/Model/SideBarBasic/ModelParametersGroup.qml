@@ -15,47 +15,60 @@ Row {
     spacing: EaStyle.Sizes.fontPixelSize
 
     EaElements.Parameter {
-        title: qsTr('Slope')
+        title: qsTr('Shift')
         width: parameterFieldWidth()
-        text: parameterValue('slope')
-        onEditingFinished: setParameterValue('slope', text)
-        Component.onCompleted: Globals.Refs.app.modelPage.slopeParameter = this
+        text: parameterValue('shift')
+        onEditingFinished: {
+            focus = false
+            setParameterValue('shift', text)
+        }
+        Component.onCompleted: Globals.Refs.app.modelPage.shiftParameter = this
     }
 
     EaElements.Parameter {
-        title: qsTr('y-Intercept')
+        title: qsTr('Width')
         width: parameterFieldWidth()
-        text: parameterValue('yIntercept')
-        onEditingFinished: setParameterValue('yIntercept', text)
-        Component.onCompleted: Globals.Refs.app.modelPage.yInterceptParameter = this
+        text: parameterValue('width')
+        onEditingFinished: {
+            focus = false
+            setParameterValue('width', text)
+        }
+        Component.onCompleted: Globals.Refs.app.modelPage.widthParameter = this
+    }
+
+    EaElements.Parameter {
+        title: qsTr('Scale')
+        width: parameterFieldWidth()
+        text: parameterValue('scale')
+        onEditingFinished: {
+            focus = false
+            setParameterValue('scale', text)
+        }
+        Component.onCompleted: Globals.Refs.app.modelPage.scaleParameter = this
     }
 
     // Logic
 
     function parameterFieldWidth() {
-        return (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize) / 2
+        return (EaStyle.Sizes.sideBarContentWidth - 2 * EaStyle.Sizes.fontPixelSize) / 3
     }
 
     function parameterValue(name) {
-        if (!Globals.Proxies.main.model.created) {
+        if (!Globals.Proxies.main.model.defined) {
             return ''
         }
         const currentModelIndex = Globals.Proxies.main.model.currentIndex
         const item = 'value'
-        const value = Globals.Proxies.main.model.data[currentModelIndex].params[name][item]
+        const value = Globals.Proxies.main.model.dataBlocks[currentModelIndex].params[name][item]
         const formattedValue = value.toFixed(4)
         return formattedValue
     }
 
     function setParameterValue(name, value) {
-        const currentModelIndex = Globals.Proxies.main.model.currentIndex
+        const page = 'model'
+        const blockIndex = Globals.Proxies.main.model.currentIndex
         const item = 'value'
-        const needSetFittables = true
-        Globals.Proxies.main.model.editParameter(currentModelIndex,
-                                                 name,
-                                                 item,
-                                                 value,
-                                                 needSetFittables)
+        Globals.Proxies.main.model.editParameter(page, blockIndex, name, item, value)
     }
 
 }

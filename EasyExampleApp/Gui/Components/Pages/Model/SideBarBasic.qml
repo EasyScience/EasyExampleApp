@@ -15,14 +15,14 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Models explorer")
         collapsible: false
-        last: !Globals.Proxies.main.model.created
+        last: !Globals.Proxies.main.model.defined
 
         Loader { source: 'SideBarBasic/ModelsExplorerGroup.qml' }
     }
 
     EaElements.GroupBox {
         title: qsTr("Model parameters")
-        visible: Globals.Proxies.main.model.created
+        visible: Globals.Proxies.main.model.defined
         last: true
 
         Loader { source: 'SideBarBasic/ModelParametersGroup.qml' }

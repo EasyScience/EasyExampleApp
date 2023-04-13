@@ -43,8 +43,8 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                 qmlProxy.experiment.dataChanged.connect(qmlProxy.fittables.set)
 
 
-                qmlProxy.experiment.createdChanged.connect(function() {
-                    print(`Experiment created: ${qmlProxy.experiment.created}`)
+                qmlProxy.experiment.definedChanged.connect(function() {
+                    print(`Experiment created: ${qmlProxy.experiment.defined}`)
                     qmlProxy.fittables.set()
                     qmlProxy.project.setNeedSaveToTrue()
                 })
@@ -187,10 +187,10 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                 if (created) {
                     out['project'] = data
                 }
-                if (qmlProxy.experiment.created) {
+                if (qmlProxy.experiment.defined) {
                     out['experiment'] = qmlProxy.experiment.data
                 }
-                if (qmlProxy.model.created) {
+                if (qmlProxy.model.defined) {
                     out['model'] = qmlProxy.model.data
                 }
                 const filePath = `${out.project.location}/project.json`
@@ -237,7 +237,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             ]
 
             property var data: _EMPTY_DATA
-            property bool created: false
+            property bool defined: false
 
             function load() {
                 data = _DEFAULT_DATA  // dataChanged() signal emited automatically

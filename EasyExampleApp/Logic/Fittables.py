@@ -4,6 +4,7 @@
 
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
+from Logic.Helpers import Converter
 
 _EMPTY_DATA = [
     {
@@ -12,7 +13,7 @@ _EMPTY_DATA = [
         "group": "",
         "max": 1,
         "min": -1,
-        "name": "background",
+        "name": "",
         "parentIndex": 0,
         "parentName": "",
         "unit": "",
@@ -22,28 +23,35 @@ _EMPTY_DATA = [
 
 class Fittables(QObject):
     dataChanged = Signal()
+    dataJsonChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self._proxy = parent
         self._data = _EMPTY_DATA
+        self._dataJson = ''
 
     @Property('QVariant', notify=dataChanged)
     def data(self):
         return self._data
 
+    @Property(str, notify=dataJsonChanged)
+    def dataJson(self):
+        return self._dataJson
+
     @Slot(str, int, str, str, str)
-    def edit(self, group, parentIndex, name, item, value):
-        needSetFittables = False
-        if group == 'experiment':
-            self._proxy.experiment.editParameter(parentIndex, name, item, value, needSetFittables)
-        elif group == 'model':
-            self._proxy.model.editParameter(parentIndex, name, item, value, needSetFittables)
+    def edit(self, block, blockIndex, name, item, value):  # parentIndex -> groupIndex? or index?
+        print(f"Editing fittable '{block}[{blockIndex}].{name}.{item}' to '{value}'")
+        page = 'analysis'
+        if block == 'experiment':
+            self._proxy.experiment.editParameter(page, blockIndex, name, item, value)
+        elif block == 'model':
+            self._proxy.model.editParameter(page, blockIndex, name, item, value)
 
     def set(self):
         _data = []
-        for i in range(len(self._proxy.experiment.data)):
-            block = self._proxy.experiment.data[i]
+        for i in range(len(self._proxy.experiment.dataBlocks)):
+            block = self._proxy.experiment.dataBlocks[i]
             for name, param in block['params'].items():
                 if param['fittable']:
                     fittable = {}
@@ -58,8 +66,8 @@ class Fittables(QObject):
                     fittable['unit'] = param['unit']
                     fittable['fit'] = param['fit']
                     _data.append(fittable)
-        for i in range(len(self._proxy.model.data)):
-            block = self._proxy.model.data[i]
+        for i in range(len(self._proxy.model.dataBlocks)):
+            block = self._proxy.model.dataBlocks[i]
             for name, param in block['params'].items():
                 if param['fittable']:
                     fittable = {}
@@ -77,3 +85,8 @@ class Fittables(QObject):
         if len(_data):
             self._data = _data
             self.dataChanged.emit()
+
+    def setDataJson(self):
+        self._dataJson = Converter.dictToJson(self._data)
+        print(f"Fittables data have been converted to JSON string")
+        self.dataJsonChanged.emit()

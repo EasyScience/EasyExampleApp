@@ -21,7 +21,7 @@ EaCharts.Plotly1dMeasVsCalc {
 
     onLoadSucceededStatusChanged: {
         if (loadSucceededStatus) {
-            Globals.Proxies.main.analysis.created = true
+            Globals.Proxies.main.analysis.defined = true
         }
     }
 

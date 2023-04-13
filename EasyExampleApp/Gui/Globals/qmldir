@@ -4,4 +4,3 @@ singleton Configs Configs.qml
 singleton Proxies Proxies.qml
 singleton Refs Refs.qml
 singleton Vars Vars.qml
-singleton Tests Tests.qml

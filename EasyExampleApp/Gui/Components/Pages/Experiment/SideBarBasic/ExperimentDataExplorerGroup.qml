@@ -21,16 +21,14 @@ Column {
 
     EaComponents.TableView {
 
-        defaultInfoText: qsTr("No experiments loaded")
+        defaultInfoText: qsTr("No experiments defined")
 
         // Table model
 
-        model: EaComponents.JsonListModel {
-            json: Globals.Proxies.main.experiment.created ?
-                      JSON.stringify(Globals.Proxies.main.experiment.data) :
-                      ""
-            query: "$[*]"
-        }
+        // We only use the length of the model object defined in backend logic and
+        // directly access that model in every row using the TableView index property.
+
+        model: Globals.Proxies.main.experiment.dataBlocks.length
 
         // Table rows
 
@@ -39,14 +37,14 @@ Column {
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 2.5
                 headerText: "No."
-                text: model.index + 1
+                text: index + 1
             }
 
             EaComponents.TableViewTextInput {
                 horizontalAlignment: Text.AlignLeft
                 width: EaStyle.Sizes.fontPixelSize * 27.9
                 headerText: "Name"
-                text: model.name
+                text: Globals.Proxies.main.experiment.dataBlocks[index].name
             }
 
             EaComponents.TableViewLabel {
@@ -56,12 +54,14 @@ Column {
 
             EaComponents.TableViewButton {
                 id: deleteRowColumn
-                enabled: false
                 headerText: "Del."
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this dataset")
+                onClicked: Globals.Proxies.main.experiment.removeExperiment(index)
             }
         }
+
+        onCurrentIndexChanged: Globals.Proxies.main.experiment.currentIndex = currentIndex
 
     }
 
@@ -71,17 +71,19 @@ Column {
         spacing: EaStyle.Sizes.fontPixelSize
 
         EaElements.SideBarButton {
-            enabled: !Globals.Proxies.main.experiment.created
+            enabled: !Globals.Proxies.main.experiment.defined
             fontIcon: "upload"
             text: qsTr("Import data from local drive")
-            onClicked: Globals.Proxies.main.experiment.load()
+            onClicked: Globals.Proxies.main.experiment.loadExperimentFromFile('/Users/as/Development/GitHub/easyScience/EasyExampleApp/examples/PicoScope.json')
             Component.onCompleted: Globals.Refs.app.experimentPage.importDataFromLocalDriveButton = this
         }
 
         EaElements.SideBarButton {
-            enabled: false
-            fontIcon: "download"
-            text: qsTr("Download data from SciCat")
+            enabled: !Globals.Proxies.main.experiment.defined
+            fontIcon: "upload"
+            text: qsTr("Add default experimental data")
+            onClicked: Globals.Proxies.main.experiment.addDefaultExperiment()
+            Component.onCompleted: Globals.Refs.app.experimentPage.addDefaultExperimentDataButton = this
         }
     }
 

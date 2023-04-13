@@ -4,12 +4,13 @@
 
 import os
 import argparse
+import orjson
 
 
 class ResourcePaths:
     def __init__(self):
         self.main_qml = ''  # Current app main.qml file
-        self.imports = []   # EasyApp qml components (EasyApp/...) & Current app qml components (Gui/...)
+        self.imports = []  # EasyApp qml components (EasyApp/...) & Current app qml components (Gui/...)
         self.setPaths()
 
     def setPaths(self):
@@ -37,7 +38,7 @@ class ResourcePaths:
         # EasyApp from the local copy
         if os.path.exists('../../EasyApp'):
             self.main_qml = 'Gui/main.qml'
-            self.imports = ['../../EasyApp', '.' ]
+            self.imports = ['../../EasyApp', '.']
             return
         else:
             print('No EasyApp directory is found.')
@@ -75,3 +76,34 @@ class WebEngine:
             print('No module named "PySide6.QtWebEngineQuick" is found.')
         else:
             QtWebEngineQuick.initialize()
+
+    @staticmethod
+    def runJavaScriptWithoutCallback(webEngine, script):
+        callback = None
+        webEngine.runJavaScript(script, callback)
+
+class Converter:
+
+    @staticmethod
+    def jsStrToPyBool(value):
+        if value == 'true':
+            return True
+        elif value == 'false':
+            return False
+        else:
+            print(f'Input value "{value}" is not supported. It should either be "true" or "false".')
+
+    @staticmethod
+    def dictToJson(obj):
+        # Dump to json
+        dumpOption = orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_INDENT_2
+        jsonBytes = orjson.dumps(obj, option=dumpOption)
+        json = jsonBytes.decode()
+        return json
+        #if not formatted:
+        #    return jsonStr
+        ## Format to have arrays shown in one line. Can orjson do this?
+        #formatOptions = jsbeautifier.default_options()
+        #formatOptions.indent_size = 2
+        #formattedJsonStr = jsbeautifier.beautify(jsonStr, formatOptions)
+        #return formattedJsonStr

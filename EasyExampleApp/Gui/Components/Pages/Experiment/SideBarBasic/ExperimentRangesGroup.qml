@@ -34,6 +34,7 @@ Row {
         width: parameterFieldWidth()
         text: parameterValue('xStep')
         onEditingFinished: {
+            focus = false
             setParameterValue('xStep', text)
             Globals.Proxies.main.experiment.load()
         }
@@ -46,24 +47,20 @@ Row {
     }
 
     function parameterValue(name) {
-        if (!Globals.Proxies.main.experiment.created) {
+        if (!Globals.Proxies.main.experiment.defined) {
             return ''
         }
-        const currentExperimentIndex = 0
+        const currentExperimentIndex = Globals.Proxies.main.experiment.currentIndex
         const item = 'value'
-        const value = Globals.Proxies.main.experiment.data[currentExperimentIndex].params[name][item]
+        const value = Globals.Proxies.main.experiment.dataBlocks[currentExperimentIndex].params[name][item]
         const formattedValue = value.toFixed(4)
         return formattedValue
     }
 
     function setParameterValue(name, value) {
-        const currentExperimentIndex = 0
+        const page = 'experiment'
+        const blockIndex = Globals.Proxies.main.experiment.currentIndex
         const item = 'value'
-        const needSetFittables = true
-        Globals.Proxies.main.experiment.editParameter(currentExperimentIndex,
-                                                      name,
-                                                      item,
-                                                      value,
-                                                      needSetFittables)
+        Globals.Proxies.main.experiment.editParameter(page, blockIndex, name, item, value)
     }
 }
