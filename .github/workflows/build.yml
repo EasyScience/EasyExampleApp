@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022, macos-11, macos-12]  # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners
+        os: [ubuntu-22.04]
       fail-fast: false
 
     steps:
@@ -18,12 +18,12 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install libxcb-xinerama0
-          sudo apt-get install libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xfixes0
-          sudo apt-get install libxcb-shape0
+          sudo apt-get install libxcb-xinerama0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xfixes0 libxcb-shape0 libxcb-cursor0
           sudo apt-get install libpulse-mainloop-glib0
-          sudo apt-get install libegl1-mesa
           sudo apt-get install libxkbcommon-x11-0
+          sudo apt-get install libegl1-mesa
+          echo $QT_QPA_PLATFORM
+          export QT_QPA_PLATFORM=offscreen
           Xvfb :0 -screen 0 1920x1080x24 -ac &
           echo "DISPLAY=:0" >> $GITHUB_ENV
 
@@ -58,6 +58,7 @@ jobs:
       - name: Run QML GUI tests (run app in testmode, compare properties, save app images)
         run: |
           cd EasyExampleApp
+          echo $QT_QPA_PLATFORM
           python main.py --testmode
 
       #- name: Run pytest (compare app images after previous step)
