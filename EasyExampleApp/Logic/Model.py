@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
+import os
 import json
 
 from PySide6.QtCore import QObject, Signal, Slot, Property
@@ -106,6 +107,7 @@ class Model(QObject):
 
     @Slot(str)
     def loadModelFromFile(self, fpath):
+        fpath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', fpath))
         print(f"Loading a model from '{fpath}'")
         with open(fpath, 'r') as f:
             dataBlock = json.load(f)

@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
+import os
 import json
 import numpy as np
 
@@ -117,6 +118,7 @@ class Experiment(QObject):
 
     @Slot(str)
     def loadExperimentFromFile(self, fpath):
+        fpath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', fpath))
         print(f"Loading an experiment from '{fpath}'")
         # add to dataBlocks, xArrays, yMeasArrays
         with open(fpath, 'r') as f:

@@ -77,7 +77,7 @@ Column {
         EaElements.SideBarButton {
             fontIcon: "upload"
             text: qsTr("Load new model from file")
-            onClicked: Globals.Proxies.main.model.loadModelFromFile('/Users/as/Development/GitHub/easyScience/EasyExampleApp/examples/Gaussian.json')
+            onClicked: Globals.Proxies.main.model.loadModelFromFile('examples/Gaussian.json')
             Component.onCompleted: Globals.Refs.app.modelPage.loadNewModelFromFileButton = this
         }
 

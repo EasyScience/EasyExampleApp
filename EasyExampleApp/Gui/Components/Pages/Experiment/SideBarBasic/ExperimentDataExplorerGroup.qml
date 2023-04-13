@@ -74,7 +74,7 @@ Column {
             enabled: !Globals.Proxies.main.experiment.defined
             fontIcon: "upload"
             text: qsTr("Import data from local drive")
-            onClicked: Globals.Proxies.main.experiment.loadExperimentFromFile('/Users/as/Development/GitHub/easyScience/EasyExampleApp/examples/PicoScope.json')
+            onClicked: Globals.Proxies.main.experiment.loadExperimentFromFile('examples/PicoScope.json')
             Component.onCompleted: Globals.Refs.app.experimentPage.importDataFromLocalDriveButton = this
         }
 
