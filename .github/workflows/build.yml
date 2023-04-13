@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-22.04]
+        os: [ubuntu-22.04, windows-2022, macos-12]
       fail-fast: false
 
     steps:
@@ -58,7 +58,6 @@ jobs:
       - name: Run QML GUI tests (run app in testmode, compare properties, save app images)
         run: |
           cd EasyExampleApp
-          echo $QT_QPA_PLATFORM
           python main.py --testmode
 
       #- name: Run pytest (compare app images after previous step)
