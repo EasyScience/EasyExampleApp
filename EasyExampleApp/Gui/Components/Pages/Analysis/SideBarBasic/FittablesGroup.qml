@@ -32,6 +32,43 @@ Column {
 
         model: Globals.Proxies.main.fittables.data.length
 
+        // Header row
+
+        header: EaComponents.TableViewHeader {
+            EaComponents.TableViewLabel {
+                width: EaStyle.Sizes.fontPixelSize * 2.5
+                text: qsTr("No.")
+            }
+
+            EaComponents.TableViewLabel {
+                flexibleWidth: true
+                horizontalAlignment: Text.AlignLeft
+                text: qsTr("Name")
+            }
+
+            EaComponents.TableViewLabel {
+                width: EaStyle.Sizes.fontPixelSize * 4.0
+                horizontalAlignment: Text.AlignRight
+                text: qsTr("Value")
+            }
+
+            EaComponents.TableViewLabel {
+                width: EaStyle.Sizes.fontPixelSize * 2.0
+                horizontalAlignment: Text.AlignLeft
+            }
+
+            EaComponents.TableViewLabel {
+                width: EaStyle.Sizes.fontPixelSize * 4.0
+                horizontalAlignment: Text.AlignRight
+                text: qsTr("Error")
+            }
+
+            EaComponents.TableViewLabel {
+                width: EaStyle.Sizes.fontPixelSize * 3.0
+                text: qsTr("Fit")
+            }
+        }
+
         // Table rows
 
         delegate: EaComponents.TableViewDelegate {
@@ -46,23 +83,11 @@ Column {
             }
 
             EaComponents.TableViewLabel {
-                id: numberColumn
-                width: EaStyle.Sizes.fontPixelSize * 2.5
                 headerText: qsTr("No.")
                 text: index + 1
             }
 
             EaComponents.TableViewLabel {
-                id: labelColumn
-                horizontalAlignment: Text.AlignLeft
-                width: table.width -
-                       (parent.children.length - 1) * EaStyle.Sizes.tableColumnSpacing -
-                       numberColumn.width -
-                       valueColumn.width -
-                       unitColumn.width -
-                       errorColumn.width -
-                       fitColumn.width
-                headerText: qsTr("Name")
                 text: `${item.group}.${item.parentName}.${item.name}`
                 textFormat: Text.PlainText
                 elide: Text.ElideMiddle
@@ -70,9 +95,6 @@ Column {
 
             EaComponents.TableViewTextInput {
                 id: valueColumn
-                horizontalAlignment: Text.AlignRight
-                width: EaStyle.Sizes.fontPixelSize * 4
-                headerText: qsTr("Value")
                 text: item.value.toFixed(4)
                 onEditingFinished: {
                     focus = false
@@ -85,26 +107,18 @@ Column {
             }
 
             EaComponents.TableViewLabel {
-                id: unitColumn
-                horizontalAlignment: Text.AlignLeft
-                width: EaStyle.Sizes.fontPixelSize * 2
                 text: item.unit
                 color: EaStyle.Colors.themeForegroundMinor
             }
 
             EaComponents.TableViewLabel {
-                id: errorColumn
-                horizontalAlignment: Text.AlignRight
-                width: EaStyle.Sizes.fontPixelSize * 4
                 elide: Text.ElideNone
-                headerText: qsTr("Error")
                 text: item.error === 0 ? '' : item.error.toFixed(4)
             }
 
             EaComponents.TableViewCheckBox {
                 id: fitColumn
                 enabled: Globals.Proxies.main.experiment.defined
-                headerText: qsTr("Fit")
                 checked: item.fit
                 onToggled: Globals.Proxies.main.fittables.edit(item.group,
                                                                item.parentIndex,

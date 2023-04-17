@@ -31,31 +31,50 @@ Column {
 
         model: Globals.Proxies.main.model.dataBlocks.length
 
+        // Header row
+
+        header: EaComponents.TableViewHeader {
+
+            EaComponents.TableViewLabel {
+                width: EaStyle.Sizes.fontPixelSize * 2.5
+                text: qsTr("No.")
+            }
+
+            EaComponents.TableViewLabel {
+                flexibleWidth: true
+                horizontalAlignment: Text.AlignLeft
+                text: qsTr("Name")
+            }
+
+            EaComponents.TableViewLabel {
+                width: EaStyle.Sizes.fontPixelSize * 3.0
+                text: qsTr("Color")
+            }
+
+            EaComponents.TableViewLabel {
+                width: EaStyle.Sizes.fontPixelSize * 3.0
+                text: qsTr("Del.")
+            }
+
+        }
+
         // Table rows
 
         delegate: EaComponents.TableViewDelegate {
 
             EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 2.5
-                headerText: qsTr("No.")
                 text: index + 1
             }
 
             EaComponents.TableViewTextInput {
-                horizontalAlignment: Text.AlignLeft
-                width: EaStyle.Sizes.fontPixelSize * 27.9
-                headerText: qsTr("Name")
                 text: Globals.Proxies.main.model.dataBlocks[index].name
             }
 
             EaComponents.TableViewLabel {
-                headerText: qsTr("Color")
                 backgroundColor: EaStyle.Colors.chartForegrounds[0]
             }
 
             EaComponents.TableViewButton {
-                id: deleteRowColumn
-                headerText: qsTr("Del.")
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this model")
                 onClicked: Globals.Proxies.main.model.removeModel(index)

@@ -22,57 +22,71 @@ EaComponents.TableView {
 
     // Table model
 
+    /*
     model: EaComponents.JsonListModel {
         json: JSON.stringify(Globals.Proxies.main.project.examples)
         query: "$[*]"
     }
+    */
 
-    // Table rows
+    // We only use the length of the model object defined in backend logic and
+    // directly access that model in every row using the TableView index property.
+
+    model: Globals.Proxies.main.project.examples.length
+
+
+    // Header row
+
+    header: EaComponents.TableViewHeader {
+
+        EaComponents.TableViewLabel {
+            width: EaStyle.Sizes.fontPixelSize * 2.5
+            horizontalAlignment: Text.AlignHCenter
+            text: qsTr("No.")
+        }
+
+        EaComponents.TableViewLabel {
+            width: EaStyle.Sizes.fontPixelSize * 10
+            horizontalAlignment: Text.AlignLeft
+            text: qsTr("Name")
+        }
+
+        EaComponents.TableViewLabel {
+            flexibleWidth: true
+            horizontalAlignment: Text.AlignLeft
+            text: qsTr("Description")
+        }
+
+        EaComponents.TableViewLabel {
+            width: EaStyle.Sizes.fontPixelSize * 3.0
+        }
+
+    }
+
+    // Content rows
 
     delegate: EaComponents.TableViewDelegate {
 
         EaComponents.TableViewLabel {
-            id: indexColumn
-
-            width: EaStyle.Sizes.fontPixelSize * 2.5
-
-            headerText: "No."
-            text: model.index + 1
+            text: index + 1
         }
 
         EaComponents.TableViewLabel {
-            width: tableView.width
-                   - indexColumn.width
-                   - descriptionColumn.width
-                   - uploadColumn.width
-                   - EaStyle.Sizes.tableColumnSpacing * 3
-                   - EaStyle.Sizes.borderThickness
-
-            horizontalAlignment: Text.AlignLeft
-
-            headerText: "Name"
-            text: model.name
+            text: Globals.Proxies.main.project.examples[index].name
         }
 
         EaComponents.TableViewLabelControl {
-            id: descriptionColumn
-
-            width: EaStyle.Sizes.fontPixelSize * 24
-
-            horizontalAlignment: Text.AlignLeft
-
-            headerText: "Description"
-            text: model.description
-            ToolTip.text: model.description
+            width: headerItem.width
+            text: Globals.Proxies.main.project.examples[index].description
+            ToolTip.text: Globals.Proxies.main.project.examples[index].description
         }
 
         EaComponents.TableViewButton {
-            id: uploadColumn
-
             enabled: false
             fontIcon: "upload"
             ToolTip.text: qsTr("Load this example")
         }
+
     }
 
 }

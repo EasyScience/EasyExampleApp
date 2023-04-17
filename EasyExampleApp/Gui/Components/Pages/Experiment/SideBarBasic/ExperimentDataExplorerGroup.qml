@@ -30,35 +30,54 @@ Column {
 
         model: Globals.Proxies.main.experiment.dataBlocks.length
 
-        // Table rows
+        // Header row
 
-        delegate: EaComponents.TableViewDelegate {
+        header: EaComponents.TableViewHeader {
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 2.5
-                headerText: "No."
+                text: qsTr("No.")
+            }
+
+            EaComponents.TableViewLabel {
+                flexibleWidth: true
+                horizontalAlignment: Text.AlignLeft
+                text: qsTr("Name")
+            }
+
+            EaComponents.TableViewLabel {
+                width: EaStyle.Sizes.fontPixelSize * 3.0
+                text: qsTr("Color")
+            }
+
+            EaComponents.TableViewLabel {
+                width: EaStyle.Sizes.fontPixelSize * 3.0
+                text: qsTr("Del.")
+            }
+
+        }
+
+        // Table rows
+        delegate: EaComponents.TableViewDelegate {
+
+            EaComponents.TableViewLabel {
                 text: index + 1
             }
 
             EaComponents.TableViewTextInput {
-                horizontalAlignment: Text.AlignLeft
-                width: EaStyle.Sizes.fontPixelSize * 27.9
-                headerText: "Name"
                 text: Globals.Proxies.main.experiment.dataBlocks[index].name
             }
 
             EaComponents.TableViewLabel {
-                headerText: "Color"
                 backgroundColor: EaStyle.Colors.chartForegroundsExtra[2]
             }
 
             EaComponents.TableViewButton {
-                id: deleteRowColumn
-                headerText: "Del."
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this dataset")
                 onClicked: Globals.Proxies.main.experiment.removeExperiment(index)
             }
+
         }
 
         onCurrentIndexChanged: Globals.Proxies.main.experiment.currentIndex = currentIndex
