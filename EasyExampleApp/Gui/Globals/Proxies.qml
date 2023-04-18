@@ -159,7 +159,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                 }
             ]
 
-            property var data: _EMPTY_DATA
+            property var data: _DEFAULT_DATA
             property var examples: _EXAMPLES
             property bool created: false
             property bool needSave: false
@@ -169,6 +169,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             }
 
             function create() {
+                data = _DEFAULT_DATA
                 data.creationDate = `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`
                 dataChanged()  // Emit signal, as it is not emited automatically
                 created = true
@@ -188,10 +189,10 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                     out['project'] = data
                 }
                 if (qmlProxy.experiment.defined) {
-                    out['experiment'] = qmlProxy.experiment.data
+                    out['experiment'] = qmlProxy.experiment.dataBlocks
                 }
                 if (qmlProxy.model.defined) {
-                    out['model'] = qmlProxy.model.data
+                    out['model'] = qmlProxy.model.dataBlocks
                 }
                 const filePath = `${out.project.location}/project.json`
                 EaLogic.Utils.writeFile(filePath, JSON.stringify(project))
