@@ -20,6 +20,9 @@ if __name__ == '__main__':
 
     # Create application
     app = QApplication(sys.argv)  # QGuiApplication crashes when using QtCharts
+    app.setApplicationName('EasyExample')
+    app.setOrganizationName('EasyScience')
+    app.setOrganizationDomain('easyscience.software')
 
     # Create QML application engine
     engine = QQmlApplicationEngine()
