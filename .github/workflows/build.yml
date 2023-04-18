@@ -45,11 +45,9 @@ jobs:
         with:
             python-version: 3.8
 
-      - name: Upgrade PIP
-        run: pip install --upgrade pip
-
       - name: Install Python dependences
         run: |
+          pip install --upgrade pip
           pip install git+https://github.com/easyscience/EasyApp.git@new-easy-app2
           pip install numpy orjson jsbeautifier pytest-image-diff
 
