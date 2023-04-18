@@ -42,3 +42,4 @@ settings.ini*
 .ci/
 .idea/
 .build/
+temp/
