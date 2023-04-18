@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-2022]
+        os: [ubuntu-22.04, macos-12]
       fail-fast: false
 
     steps:

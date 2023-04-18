@@ -21,11 +21,10 @@ EaElements.RemoteController {
 
     Timer {
         running: true
-        interval: 10000
+        interval: 1000
         onTriggered: {
-            Qt.exit(-1)
-            //runBasicGuiTest()
-            //processTestResults()
+            runBasicGuiTest()
+            processTestResults()
         }
     }
 
@@ -64,8 +63,6 @@ EaElements.RemoteController {
         // Set up testing process
 
         print('Run basic suit of GUI tests')
-
-        return
 
         //const saveImagesDir = '../.tests/GuiTests/BasicGuiTest/ActualImages'
 
