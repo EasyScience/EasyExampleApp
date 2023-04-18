@@ -50,7 +50,7 @@ class Model(QObject):
     dataBlocksChanged = Signal()
     dataBlocksJsonChanged = Signal()
     yCalcArraysChanged = Signal()
-    parameterEdited = Signal(str, str)
+    parameterEdited = Signal(str, int, str)
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -154,7 +154,7 @@ class Model(QObject):
         self._dataBlocks[blockIndex]['params'][name][item] = value
         print(f"Parameter '{block}[{blockIndex}].{name}.{item}' has been changed to '{value}'")
         # Signalling value has been changed
-        self.parameterEdited.emit(page, name)
+        self.parameterEdited.emit(page, blockIndex, name)
         print(f"Data blocks for '{block}' has been changed")
         self.dataBlocksChanged.emit()
 
@@ -172,11 +172,14 @@ class Model(QObject):
         yCalcArray = GaussianCalculator.calculated(xArray, params)
         return yCalcArray
 
-    def updateCurrentModelYCalcArray(self):
-        index = self._currentIndex
+    def updateYCalcArrayByIndex(self, index):
         self._yCalcArrays[index] = self.calculateYCalcArray(index)
         print(f"Pattern for model no. {index + 1} has been calculated")
         self.yCalcArraysChanged.emit()
+
+    def updateCurrentModelYCalcArray(self):
+        index = self._currentIndex
+        self.updateYCalcArrayByIndex(index)
 
     def addDataBlock(self, dataBlock):
         print(f"Adding data block (model parameters). Model no. {len(self._dataBlocks) + 1}")

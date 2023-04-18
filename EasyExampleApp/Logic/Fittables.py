@@ -49,7 +49,7 @@ class Fittables(QObject):
             self._proxy.model.editParameter(page, blockIndex, name, item, value)
 
     def set(self):
-        print('Fitables have been changed')
+        print('Fittables have been changed')
         _data = []
         for i in range(len(self._proxy.experiment.dataBlocks)):
             block = self._proxy.experiment.dataBlocks[i]

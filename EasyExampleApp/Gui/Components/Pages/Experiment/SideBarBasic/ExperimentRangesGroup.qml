@@ -29,7 +29,7 @@ Row {
     }
 
     EaElements.Parameter {
-        enabled: Globals.Vars.allowEditExperimentalRanges
+        enabled: false
         title: qsTr('X step')
         width: parameterFieldWidth()
         text: parameterValue('xStep')

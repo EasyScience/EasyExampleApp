@@ -32,6 +32,7 @@ class Connections(QObject):
         self._proxy.analysis.definedChanged.connect(self.onAnalysisDefined)
         self._proxy.analysis.yCalcTotalChanged.connect(self.onAnalysisYCalcTotalChanged)
 
+        # Fittables
         self._proxy.fittables.dataChanged.connect(self.onFittablesDataChanged)
 
         # Fitting
@@ -75,11 +76,13 @@ class Connections(QObject):
         self._proxy.analysis.calculateYCalcTotal()
         self._proxy.plotting.drawCalculatedOnModelChart()
 
-    def onModelParameterEdited(self, page, name):
+    def onModelParameterEdited(self, page, blockIndex, name):
         self._proxy.model.setDataBlocksJson()
-        self._proxy.model.updateCurrentModelYCalcArray()  # !!!!!! if called from 'analysis' page, one need to update YCalcArray associated with the changed value !!!!!
         if page != 'analysis':
             self._proxy.fittables.set()
+            self._proxy.model.updateCurrentModelYCalcArray()
+        else:
+            self._proxy.model.updateYCalcArrayByIndex(blockIndex)
         self._proxy.project.setNeedSaveToTrue()
 
     def onModelCurrentIndexChanged(self):
@@ -98,16 +101,6 @@ class Connections(QObject):
 
     def onFittablesDataChanged(self):
         self._proxy.fittables.setDataJson()
-
-    # Parameters
-
-    def onParameterEdited(self, needSetFittables):
-        if self._proxy.model.created:
-            self._proxy.model.calculate()
-            self._proxy.model.replaceYArrayOnModelChartAndRedraw()
-        if needSetFittables:
-            self._proxy.fittables.set()
-        self._proxy.project.setNeedSaveToTrue()
 
     # Fitting
 
