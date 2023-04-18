@@ -17,11 +17,16 @@ EaCharts.Plotly1dMeasVsCalc {
     xAxisTitle: "x"
     yAxisTitle: "y"
 
+    xMin: -10
+    xMax: 10
+    yMin: 0
+    yMax: 4
+
     // Data is set in python backend
 
     Component.onCompleted: {
         Globals.Refs.app.modelPage.plotView = this
-        Globals.Proxies.main.plotting.setAppPlotlyChartRef('modelPage', this)
+        Globals.Proxies.main.plotting.setPlotlyChartRef('modelPage', this)
     }
 }
 
