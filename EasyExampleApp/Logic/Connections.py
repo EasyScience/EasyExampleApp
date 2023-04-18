@@ -42,6 +42,7 @@ class Connections(QObject):
     def onExperimentDataBlocksChanged(self):
         self._proxy.experiment.defined = bool(len(self._proxy.experiment.dataBlocks))
         self._proxy.experiment.setDataBlocksJson()
+        self._proxy.project.setNeedSaveToTrue()
 
     def onExperimentYMeasArraysChanged(self):
         self._proxy.plotting.drawMeasuredOnExperimentChart()
@@ -57,6 +58,7 @@ class Connections(QObject):
             self._proxy.experiment.updateCurrentExperimentYBkgArray()
         if page != 'analysis':
             self._proxy.fittables.set()
+        self._proxy.project.setNeedSaveToTrue()
 
     def onExperimentCurrentIndexChanged(self):
         self._proxy.plotting.drawMeasuredOnExperimentChart()
@@ -67,6 +69,7 @@ class Connections(QObject):
     def onModelDataBlocksChanged(self):
         self._proxy.model.defined = bool(len(self._proxy.model.dataBlocks))
         self._proxy.model.setDataBlocksJson()
+        self._proxy.project.setNeedSaveToTrue()
 
     def onModelYCalcArraysChanged(self):
         self._proxy.analysis.calculateYCalcTotal()
@@ -77,6 +80,7 @@ class Connections(QObject):
         self._proxy.model.updateCurrentModelYCalcArray()  # !!!!!! if called from 'analysis' page, one need to update YCalcArray associated with the changed value !!!!!
         if page != 'analysis':
             self._proxy.fittables.set()
+        self._proxy.project.setNeedSaveToTrue()
 
     def onModelCurrentIndexChanged(self):
         self._proxy.plotting.drawCalculatedOnModelChart()

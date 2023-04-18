@@ -36,7 +36,6 @@ EaElements.RemoteController {
 
             //print('Stop saving screenshots.')
             //saveScreenshotTimer.stop()
-
         }
     }
 

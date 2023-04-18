@@ -125,11 +125,11 @@ class Experiment(QObject):
             dataBlock = json.load(f)
         xArray = self.defaultXArray()  # NEED FIX
         yMeasArray = self.defaultYMeasArray()  # NEED FIX
-        if 'xArray' and 'yArray' in dataBlock.keys():
+        if 'xArray' and 'yMeasArray' in dataBlock.keys():
             xArray = np.array(dataBlock['xArray'])
-            yMeasArray = np.array(dataBlock['yArray'])
+            yMeasArray = np.array(dataBlock['yMeasArray'])
             del dataBlock['xArray']
-            del dataBlock['yArray']
+            del dataBlock['yMeasArray']
         self.addDataBlock(dataBlock)
         self.addXArray(xArray)
         self.addYMeasArray(yMeasArray)

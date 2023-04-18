@@ -40,7 +40,7 @@ class Fittables(QObject):
         return self._dataJson
 
     @Slot(str, int, str, str, str)
-    def edit(self, block, blockIndex, name, item, value):  # parentIndex -> groupIndex? or index?
+    def edit(self, block, blockIndex, name, item, value):
         print(f"Editing fittable '{block}[{blockIndex}].{name}.{item}' to '{value}'")
         page = 'analysis'
         if block == 'experiment':
@@ -49,6 +49,7 @@ class Fittables(QObject):
             self._proxy.model.editParameter(page, blockIndex, name, item, value)
 
     def set(self):
+        print('Fitables have been changed')
         _data = []
         for i in range(len(self._proxy.experiment.dataBlocks)):
             block = self._proxy.experiment.dataBlocks[i]
@@ -88,5 +89,5 @@ class Fittables(QObject):
 
     def setDataJson(self):
         self._dataJson = Converter.dictToJson(self._data)
-        print(f"Fittables data have been converted to JSON string")
+        print("Fittables data have been converted to JSON string")
         self.dataJsonChanged.emit()

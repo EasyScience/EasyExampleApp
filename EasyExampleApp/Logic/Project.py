@@ -110,14 +110,14 @@ class Project(QObject):
         if self.created:
             out['project'] = self._data
         if self._proxy.experiment.defined:
-            out['experiment'] = self._proxy.experiment.data
-            for data in out['experiment']:
-                data['xArray'] = data['xArray'].tolist()
-                data['yArray'] = data['yArray'].tolist()
-        if self._proxy.model.created:
-            out['model'] = self._proxy.model.data
-            for data in out['model']:
-                data['yArray'] = data['yArray'].tolist()
+            out['experiment'] = self._proxy.experiment.dataBlocks
+            for idx, data in enumerate(out['experiment']):
+                data['xArray'] = self._proxy.experiment._xArrays[idx].tolist()
+                data['yMeasArray'] = self._proxy.experiment._yMeasArrays[idx].tolist()
+        if self._proxy.model.defined:
+            out['model'] = self._proxy.model.dataBlocks
+            for idx, data in enumerate(out['model']):
+                data['yCalcArray'] = self._proxy.model._yCalcArrays[idx].tolist()
         # Format project as json
         options = jsbeautifier.default_options()
         options.indent_size = 2
