@@ -5,6 +5,9 @@
 import os
 import argparse
 import orjson
+
+from PySide6.QtCore import QObject, Signal, Slot, Property
+
 from Logic.Logging import log
 
 
@@ -109,3 +112,16 @@ class Converter:
         #formatOptions.indent_size = 2
         #formattedJsonStr = jsbeautifier.beautify(jsonStr, formatOptions)
         #return formattedJsonStr
+
+
+class ExitHelper(QObject):
+
+    def __init__(self, app, parent=None):
+        super().__init__(parent)
+        self._app = app
+
+    @Slot(int)
+    def exitApp(self, exitCode):
+        log.debug('Exiting application')
+        self._app.exit(exitCode)
+

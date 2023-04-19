@@ -51,7 +51,8 @@ EaElements.RemoteController {
         Globals.Proxies.main.logger.debug(`${res.length} total, ${res.length - failedTests} passed, ${failedTests} failed`)
         Globals.Proxies.main.logger.debug("============================= GUI TEST REPORT END ==============================")
 
-        Qt.callLater(Qt.exit, exitCode)
+        //Qt.callLater(Qt.exit, exitCode)
+        pyExitHelper.exitApp(exitCode)
         Globals.Proxies.main.logger.debug(`Qt.exit(${exitCode}) has been called from QML`)
     }
 
