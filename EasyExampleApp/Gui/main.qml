@@ -14,7 +14,9 @@ import Gui.Globals as Globals
 import Gui.Components as Components
 
 
-Components.ApplicationWindow {}
+Components.ApplicationWindow {
+  id: applicationWindow
+}
 
 /*
 EaElements.SplashScreen {
