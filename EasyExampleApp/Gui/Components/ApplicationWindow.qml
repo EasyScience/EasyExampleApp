@@ -26,10 +26,10 @@ EaComponents.ApplicationWindow {
     onClosing: Qt.quit()
 
     Component.onCompleted: {
-        print("Application window loaded:", this)
+        Globals.Proxies.main.logger.debug(`Application window loaded: ${this}`)
         Globals.Vars.applicationWindowCreated = true
     }
-    Component.onDestruction: print("Application window destroyed:", this)
+    Component.onDestruction: Globals.Proxies.main.logger.debug(`Application window destroyed: ${this}`)
 
     ///////////////////
     // APPLICATION BAR

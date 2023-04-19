@@ -26,12 +26,12 @@ EaElements.RemoteController {
         interval: 1000
 
         onTriggered: {
-            print('Application is lunched in test mode.')
+            Globals.Proxies.main.logger.debug('Application is lunched in test mode.')
 
             //print('Start saving screenshots.')
             //saveScreenshotTimer.start()
 
-            print("Run basic GUI test.")
+            Globals.Proxies.main.logger.debug("Run basic GUI test.")
             runBasicGuiTest()
 
             //print('Stop saving screenshots.')

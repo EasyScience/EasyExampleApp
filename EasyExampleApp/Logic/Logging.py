@@ -5,16 +5,31 @@
 # https://docs.python.org/3/library/logging.html
 # https://docs.python.org/3/howto/logging-cookbook.html
 # https://stackoverflow.com/questions/384076/how-can-i-color-python-logging-output
+# https://stackoverflow.com/questions/42936810/python-logging-module-set-formatter-dynamically
 
-from PySide6.QtCore import QObject, Signal, Property
+from PySide6.QtCore import QObject, Signal, Slot, Property
 import logging
 
 
-logging.basicConfig(level=logging.DEBUG,
-                    format=' py: %(asctime)s.%(msecs)04d %(lineno)5d: %(filename)-17s %(funcName)-33s %(levelname)8s: %(message)s',
-                    datefmt='%H:%M:%S')
+pyFormat = logging.Formatter(' py: %(asctime)s.%(msecs)04d %(lineno)5d: %(filename)-17s %(funcName)-33s %(levelname)8s: %(message)s',
+                             datefmt='%H:%M:%S')
+
+qmlFormat = logging.Formatter('qml: %(asctime)s.%(msecs)04d %(levelname)67s: %(message)s',
+                              datefmt='%H:%M:%S')
+
 
 log = logging.getLogger('main')
+log.setLevel(logging.DEBUG)
+
+consoleHandler = logging.StreamHandler()
+#consoleHandler.setLevel(logging.DEBUG)
+consoleHandler.setFormatter(pyFormat)
+
+log.addHandler(consoleHandler)
+
+#qmlLog = logging.getLogger('qml')
+#qmlLog.setFormatter(qmlFormat)
+#qmlLog.setLevel(logging.DEBUG)
 
 LEVELS = {
     'Critical': logging.CRITICAL,
@@ -47,7 +62,21 @@ class Logger(QObject):
         self._level = newValue
         self.levelChanged.emit()
 
+    @Slot(str)
+    def info(self, message):
+        consoleHandler.setFormatter(qmlFormat)
+        log.info(message)
+        consoleHandler.setFormatter(pyFormat)
+
+    @Slot(str)
+    def debug(self, message):
+        consoleHandler.setFormatter(qmlFormat)
+        log.debug(message)
+        consoleHandler.setFormatter(pyFormat)
+
+
     # Private methods
 
     def onLevelChanged(self):
         log.setLevel(LEVELS[self.level])
+        #qmlLog.setLevel(LEVELS[self.level])

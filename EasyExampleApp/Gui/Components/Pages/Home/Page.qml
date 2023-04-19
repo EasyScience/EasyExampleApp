@@ -127,18 +127,18 @@ Item {
                 EaElements.Button {
                     enabled: false
                     text: qsTr("Tutorial") + " 1: " + qsTr("App interface")
-                    onClicked: print("Tutorial 1 button clicked")
+                    onClicked: Globals.Proxies.main.logger.debug("Tutorial 1 button clicked")
                 }
                 EaElements.Button {
                     enabled: false
                     text: qsTr("Tutorial") + " 2: " + qsTr("Basic usage")
-                    onClicked: print("Tutorial 2 button clicked")
+                    onClicked: Globals.Proxies.main.logger.debug("Tutorial 2 button clicked")
                 }
                 EaElements.Button {
                     //enabled: false
                     text: qsTr("Tutorial") + " 3: " + qsTr("Advanced usage")
                     onClicked: {
-                        print("Tutorial 3 button clicked")
+                        Globals.Proxies.main.logger.debug("Tutorial 3 button clicked")
                         dataFittingTutorialTimer.start()
                     }
                 }
@@ -147,10 +147,10 @@ Item {
     }
 
     Component.onCompleted: {
-        print("Home page loaded:", this)
+        Globals.Proxies.main.logger.debug(`Home page loaded: ${this}`)
         Globals.Vars.homePageCreated = true
     }
-    Component.onDestruction: print("Home page destroyed:", this)
+    Component.onDestruction: Globals.Proxies.main.logger.debug(`Home page destroyed: ${this}`)
 
     // User tutorials
 

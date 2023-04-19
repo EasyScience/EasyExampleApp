@@ -35,23 +35,23 @@ EaElements.RemoteController {
         let okTests = 0
         let failedTests = 0
 
-        print("============================ GUI TEST REPORT START =============================")
+        Globals.Proxies.main.logger.debug("============================ GUI TEST REPORT START =============================")
 
         for (let i in res) {
             if (res[i].startsWith('FAIL')) {
                 success = -1
                 failedTests += 1
-                print(res[i])
+                Globals.Proxies.main.logger.debug(res[i])
             } else {
                 okTests +=1
             }
         }
 
-        print("--------------------------------------------------------------------------------")
-        print(`${res.length} total, ${res.length - failedTests} passed, ${failedTests} failed`)
-        print("============================= GUI TEST REPORT END ==============================")
+        Globals.Proxies.main.logger.debug("--------------------------------------------------------------------------------")
+        Globals.Proxies.main.logger.debug(`${res.length} total, ${res.length - failedTests} passed, ${failedTests} failed`)
+        Globals.Proxies.main.logger.debug("============================= GUI TEST REPORT END ==============================")
 
-        print("Closing app after test mode.")
+        Globals.Proxies.main.logger.debug("Closing app after test mode.")
         Qt.exit(success)
     }
 
@@ -62,7 +62,7 @@ EaElements.RemoteController {
     function runBasicGuiTest() {
         // Set up testing process
 
-        print('Run basic suit of GUI tests')
+        Globals.Proxies.main.logger.debug('Run basic suit of GUI tests')
 
         //const saveImagesDir = '../.tests/GuiTests/BasicGuiTest/ActualImages'
 
@@ -202,7 +202,7 @@ EaElements.RemoteController {
 //        res.push( rc.compare(Globals.Refs.app.analysisPage.plotView.measuredYData, Globals.Tests.expected.created.experiment.yData) )
 //        res.push( rc.compare(Globals.Refs.app.analysisPage.plotView.calculatedYData, Globals.Tests.expected.fitted.model.yData) )
 
-        rc.mouseClick(Globals.Refs.app.analysisPage.continueButton)
+//        rc.mouseClick(Globals.Refs.app.analysisPage.continueButton)
         //rc.wait(2000)
 
         // Summary page
