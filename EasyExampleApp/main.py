@@ -10,6 +10,7 @@ from PySide6.QtQml import QQmlApplicationEngine
 
 from Logic.Helpers import ResourcePaths, CommandLineArguments, EnvironmentVariables, WebEngine
 from Logic.PyProxy import PyProxy
+from Logic.Logging import log
 
 
 if __name__ == '__main__':
@@ -53,5 +54,5 @@ if __name__ == '__main__':
     if not engine.rootObjects():
         sys.exit(-1)
     exitCode = app.exec()
-    print('App is exiting')
+    log.debug(f"Application event loop is exited with code {exitCode}")
     sys.exit(exitCode)

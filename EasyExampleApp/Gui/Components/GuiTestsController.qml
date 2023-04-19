@@ -53,7 +53,6 @@ EaElements.RemoteController {
 
         Qt.exit(exitCode)
         Globals.Proxies.main.logger.debug(`After Qt.exit(${exitCode})`)
-
     }
 
     function saveImage(dirName, fileName) {
