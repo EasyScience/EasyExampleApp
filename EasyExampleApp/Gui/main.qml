@@ -16,6 +16,9 @@ import Gui.Components as Components
 
 Components.ApplicationWindow {
   id: applicationWindow
+
+   Component.onDestruction: Globals.Proxies.main.logger.debug(`Application window destroyed (main.qml): ${this}`)
+
 }
 
 /*
