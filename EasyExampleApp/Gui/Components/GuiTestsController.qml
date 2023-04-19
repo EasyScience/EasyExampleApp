@@ -53,8 +53,8 @@ EaElements.RemoteController {
 
         //Qt.exit(exitCode)  // Doesn't work on GH Windows-2022
         applicationWindow.close()
-        Qt.callLater(Qt.exit, exitCode)  // Still doesn't work on GH Windows-2022
-        //pyExitHelper.exitApp(exitCode)  // Still doesn't work on GH Windows-2022
+        //Qt.callLater(Qt.exit, exitCode)  // Still doesn't work on GH Windows-2022
+        pyExitHelper.exitApp(exitCode)  // Still doesn't work on GH Windows-2022
         Globals.Proxies.main.logger.debug(`Qt.exit(${exitCode}) has been called from QML`)
     }
 
