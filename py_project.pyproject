@@ -1,7 +1,6 @@
 {
 "files": [    
     "EasyExampleApp/main.py",
-    "EasyExampleApp/Logic/Application.py",
     "EasyExampleApp/Logic/Analysis.py",
     "EasyExampleApp/Logic/Calculators.py",
     "EasyExampleApp/Logic/Connections.py",

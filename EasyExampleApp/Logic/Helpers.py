@@ -6,7 +6,8 @@ import os
 import argparse
 import orjson
 
-from PySide6.QtCore import QObject, Signal, Slot, Property
+from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import QCoreApplication, QObject, Slot
 
 from Logic.Logging import log
 
@@ -114,6 +115,15 @@ class Converter:
         #return formattedJsonStr
 
 
+class Application(QApplication):  # QGuiApplication crashes when using in combination with QtCharts
+
+    def __init__(self, sys_argv):
+        super(Application, self).__init__(sys_argv)
+        self.setApplicationName('EasyExample')
+        self.setOrganizationName('EasyScience')
+        self.setOrganizationDomain('easyscience.software')
+
+
 class ExitHelper(QObject):
 
     def __init__(self, app, parent=None):
@@ -122,6 +132,11 @@ class ExitHelper(QObject):
 
     @Slot(int)
     def exitApp(self, exitCode):
-        log.debug('Exiting application')
+        log.debug('Closing all application windows')
+        QApplication.closeAllWindows()
+        log.debug('Quitting application')
+        QApplication.quit()
+        QCoreApplication.quit()
+        self._app.quit()
+        log.debug(f'Exiting application with code {exitCode}')
         self._app.exit(exitCode)
-

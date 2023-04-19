@@ -5,11 +5,9 @@
 import sys
 import pathlib
 
-from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
 
-from Logic.Application import Application
-from Logic.Helpers import ResourcePaths, CommandLineArguments, EnvironmentVariables, WebEngine, ExitHelper
+from Logic.Helpers import ResourcePaths, CommandLineArguments, EnvironmentVariables, WebEngine, Application, ExitHelper
 from Logic.PyProxy import PyProxy
 from Logic.Logging import log
 
@@ -40,7 +38,7 @@ if __name__ == '__main__':
     settingsIniFilePath = str(homeDirPath.joinpath(f'.{appName}', settingsIniFileName))
     engine.rootContext().setContextProperty('pySettingsPath', settingsIniFilePath)
 
-    exitHelper = ExitHelper(app, engine)
+    exitHelper = ExitHelper(app)
     engine.rootContext().setContextProperty('pyExitHelper', exitHelper)
 
     # Add paths to be accessible from the QML components
