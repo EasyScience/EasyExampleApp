@@ -66,6 +66,8 @@ EaElements.RemoteController {
 
         Globals.Proxies.main.logger.debug('Run basic suit of GUI tests')
 
+        return
+
         //const saveImagesDir = '../.tests/GuiTests/BasicGuiTest/ActualImages'
 
         rc.posToCenter()

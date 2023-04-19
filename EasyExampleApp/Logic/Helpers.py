@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-import os
+import os, sys
 import argparse
 import orjson
 
@@ -132,6 +132,8 @@ class ExitHelper(QObject):
 
     @Slot(int)
     def exitApp(self, exitCode):
+        log.debug(f'Calling sys.exit({exitCode})')
+        sys.exit(exitCode)
         log.debug('Closing all application windows')
         QApplication.closeAllWindows()
         log.debug('Quitting application')
