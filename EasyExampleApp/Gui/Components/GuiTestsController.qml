@@ -28,6 +28,24 @@ EaElements.RemoteController {
         }
     }
 
+Timer {
+    id: exitTimr
+        
+        interval: 3000
+        onTriggered: {
+
+        Globals.Proxies.main.logger.debug(`Calling Qt.exit(${exitCode}) from QML`)
+
+             //Qt.exit(exitCode)  // Doesn't work on GH Windows-2022
+        //Qt.callLater(Qt.exit, exitCode)  // Still doesn't work on GH Windows-2022
+        pyExitHelper.exitApp(exitCode)  // Still doesn't work on GH Windows-2022
+        Globals.Proxies.main.logger.debug(`Qt.exit(${exitCode}) has been called from QML`)
+ 
+           
+        }
+    }
+
+
     // Tests
 
     function processTestResults() {
@@ -51,11 +69,9 @@ EaElements.RemoteController {
         Globals.Proxies.main.logger.debug(`${res.length} total, ${res.length - failedTests} passed, ${failedTests} failed`)
         Globals.Proxies.main.logger.debug("============================= GUI TEST REPORT END ==============================")
 
-        //Qt.exit(exitCode)  // Doesn't work on GH Windows-2022
-        applicationWindow.close()
-        //Qt.callLater(Qt.exit, exitCode)  // Still doesn't work on GH Windows-2022
-        pyExitHelper.exitApp(exitCode)  // Still doesn't work on GH Windows-2022
-        Globals.Proxies.main.logger.debug(`Qt.exit(${exitCode}) has been called from QML`)
+              Globals.Proxies.main.logger.debug(`closing ApplicationWindow`)
+  applicationWindow.close()
+
     }
 
     function saveImage(dirName, fileName) {
