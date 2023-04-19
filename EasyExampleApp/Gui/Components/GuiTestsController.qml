@@ -72,6 +72,8 @@ Timer {
               Globals.Proxies.main.logger.debug(`closing ApplicationWindow`)
   applicationWindow.close()
 
+exitTimr.start()
+
     }
 
     function saveImage(dirName, fileName) {
