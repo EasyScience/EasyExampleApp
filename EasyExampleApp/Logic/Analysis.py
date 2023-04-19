@@ -5,6 +5,7 @@
 import numpy as np
 
 from PySide6.QtCore import QObject, Signal, Property
+from Logic.Logging import log
 
 
 class Analysis(QObject):
@@ -28,13 +29,13 @@ class Analysis(QObject):
         if self._defined == newValue:
             return
         self._defined = newValue
-        print(f"Analysis defined: {newValue}")
+        log.debug(f"Analysis defined: {newValue}")
         self.definedChanged.emit()
 
     # Private methods
 
     def sumAllYCalcArays(self):
-        print(f"Summing all y-calculated data to single array")
+        log.debug("Summing all y-calculated data to single array")
         index = self._proxy.experiment.currentIndex
         sum = np.zeros(len(self._proxy.experiment._xArrays[index]))
         for i in range(len(self._proxy.model._yCalcArrays)):
@@ -42,7 +43,7 @@ class Analysis(QObject):
         self._yCalcTotal = sum
 
     def addBkgToYCalcTotal(self):
-        print(f"Adding background to total y-calculated array")
+        log.debug(f"Adding background to total y-calculated array")
         index = self._proxy.experiment.currentIndex
         yBkgArray = self._proxy.experiment._yBkgArrays[index]
         self._yCalcTotal += yBkgArray

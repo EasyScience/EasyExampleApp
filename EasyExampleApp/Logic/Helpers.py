@@ -5,6 +5,7 @@
 import os
 import argparse
 import orjson
+from Logic.Logging import log
 
 
 class ResourcePaths:
@@ -19,22 +20,22 @@ class ResourcePaths:
         # EasyApp from resources.py file
         try:
             import resources
-            print(f'Resources: {resources}')
+            log.debug(f'Resources: {resources}')
             self.main_qml = 'qrc:/Gui/main.qml'
             self.imports = ['qrc:/EasyApp', 'qrc:/']
             return
         except ImportError:
-            print('No rc resources file is found.')
+            log.info('No rc resources file is found.')
 
         # EasyApp from the module installed via pip
         try:
             import EasyApp
-            print(f'EasyApp: {EasyApp.__path__[0]}')
+            log.debug(f'EasyApp: {EasyApp.__path__[0]}')
             self.main_qml = 'Gui/main.qml'
             self.imports = [os.path.join(EasyApp.__path__[0], '..'), '.']
             return
         except ImportError:
-            print('No EasyApp module is installed.')
+            log.info('No EasyApp module is installed.')
 
         # EasyApp from the local copy
         if os.path.exists('../../EasyApp'):
@@ -42,7 +43,7 @@ class ResourcePaths:
             self.imports = ['../../EasyApp', '.']
             return
         else:
-            print('No EasyApp directory is found.')
+            log.debug('No EasyApp directory is found.')
 
 
 class CommandLineArguments:
@@ -74,7 +75,7 @@ class WebEngine:
         try:
             from PySide6.QtWebEngineQuick import QtWebEngineQuick
         except ModuleNotFoundError:
-            print('No module named "PySide6.QtWebEngineQuick" is found.')
+            log.debug('No module named "PySide6.QtWebEngineQuick" is found.')
         else:
             QtWebEngineQuick.initialize()
 
@@ -92,7 +93,7 @@ class Converter:
         elif value == 'false':
             return False
         else:
-            print(f'Input value "{value}" is not supported. It should either be "true" or "false".')
+            log.debug(f'Input value "{value}" is not supported. It should either be "true" or "false".')
 
     @staticmethod
     def dictToJson(obj):

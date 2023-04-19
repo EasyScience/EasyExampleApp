@@ -9,6 +9,7 @@ from PySide6.QtCore import QObject, Signal, Slot, Property
 
 from Logic.Calculators import GaussianCalculator
 from Logic.Helpers import Converter
+from Logic.Logging import log
 
 
 _DEFAULT_DATA_BLOCK = {
@@ -72,7 +73,7 @@ class Model(QObject):
         if self._defined == newValue:
             return
         self._defined = newValue
-        print(f"Model defined: {newValue}")
+        log.debug(f"Model defined: {newValue}")
         self.definedChanged.emit()
 
     @Property(int, notify=currentIndexChanged)
@@ -84,7 +85,7 @@ class Model(QObject):
         if self._currentIndex == newValue:
             return
         self._currentIndex = newValue
-        print(f"Current model index: {newValue}")
+        log.debug(f"Current model index: {newValue}")
         self.currentIndexChanged.emit()
 
     @Property('QVariant', notify=dataBlocksChanged)
@@ -99,7 +100,7 @@ class Model(QObject):
 
     @Slot()
     def addDefaultModel(self):
-        print("Adding default model")
+        log.debug("Adding default model")
         dataBlock = _DEFAULT_DATA_BLOCK
         self.addDataBlock(dataBlock)
         yCalcArray = self.defaultYCalcArray()
@@ -108,7 +109,7 @@ class Model(QObject):
     @Slot(str)
     def loadModelFromFile(self, fpath):
         fpath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', fpath))
-        print(f"Loading a model from '{fpath}'")
+        log.debug(f"Loading a model from '{fpath}'")
         with open(fpath, 'r') as f:
             dataBlock = json.load(f)
         index = len(self._dataBlocks) - 1
@@ -118,12 +119,12 @@ class Model(QObject):
 
     @Slot(int)
     def removeModel(self, index):
-        print(f"Removing model no. {index + 1}")
+        log.debug(f"Removing model no. {index + 1}")
         del self._dataBlocks[index]
         del self._yCalcArrays[index]
         self.dataBlocksChanged.emit()
         self.yCalcArraysChanged.emit()
-        print(f"Model no. {index + 1} has been removed")
+        log.debug(f"Model no. {index + 1} has been removed")
 
     @Slot()
     def removeAllModels(self):
@@ -131,14 +132,14 @@ class Model(QObject):
         self._yCalcArrays.clear()
         self.dataBlocksChanged.emit()
         self.yCalcArraysChanged.emit()
-        print("All models have been removed")
+        log.debug("All models have been removed")
 
     @Slot(str, int, str, str, str)
     def editParameter(self, page, blockIndex, name, item, value):
         block = 'model'
         if blockIndex is None:
             blockIndex = self._currentIndex
-        print(f"Editing parameter '{block}[{blockIndex}].{name}.{item}' to '{value}' requested from '{page}' page")
+        log.debug(f"Editing parameter '{block}[{blockIndex}].{name}.{item}' to '{value}' requested from '{page}' page")
         # Convert input value
         if item == 'value':
             value = float(value)
@@ -152,10 +153,10 @@ class Model(QObject):
         if self._dataBlocks[blockIndex]['params'][name][item] == value:
             return
         self._dataBlocks[blockIndex]['params'][name][item] = value
-        print(f"Parameter '{block}[{blockIndex}].{name}.{item}' has been changed to '{value}'")
+        log.debug(f"Parameter '{block}[{blockIndex}].{name}.{item}' has been changed to '{value}'")
         # Signalling value has been changed
         self.parameterEdited.emit(page, blockIndex, name)
-        print(f"Data blocks for '{block}' has been changed")
+        log.debug(f"Data blocks for '{block}' has been changed")
         self.dataBlocksChanged.emit()
 
     # Private methods
@@ -174,7 +175,7 @@ class Model(QObject):
 
     def updateYCalcArrayByIndex(self, index):
         self._yCalcArrays[index] = self.calculateYCalcArray(index)
-        print(f"Pattern for model no. {index + 1} has been calculated")
+        log.debug(f"Pattern for model no. {index + 1} has been calculated")
         self.yCalcArraysChanged.emit()
 
     def updateCurrentModelYCalcArray(self):
@@ -182,12 +183,12 @@ class Model(QObject):
         self.updateYCalcArrayByIndex(index)
 
     def addDataBlock(self, dataBlock):
-        print(f"Adding data block (model parameters). Model no. {len(self._dataBlocks) + 1}")
+        log.debug(f"Adding data block (model parameters). Model no. {len(self._dataBlocks) + 1}")
         self._dataBlocks.append(dataBlock)
         self.dataBlocksChanged.emit()
 
     def addYCalcArray(self, yCalcArray):
-        print(f"Adding y-calculated data. Model no. {len(self._dataBlocks)}")
+        log.debug(f"Adding y-calculated data. Model no. {len(self._dataBlocks)}")
         self._yCalcArrays.append(yCalcArray)
         self.yCalcArraysChanged.emit()
 
@@ -202,5 +203,5 @@ class Model(QObject):
 
     def setDataBlocksJson(self):
         self._dataBlocksJson = Converter.dictToJson(self._dataBlocks)
-        print(f"Model dataBlocks have been converted to JSON string")
+        log.debug(f"Model dataBlocks have been converted to JSON string")
         self.dataBlocksJsonChanged.emit()

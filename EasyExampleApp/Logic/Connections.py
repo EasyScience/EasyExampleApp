@@ -3,6 +3,7 @@
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 from PySide6.QtCore import QObject
+from Logic.Logging import log
 
 
 class Connections(QObject):
@@ -105,6 +106,7 @@ class Connections(QObject):
     # Fitting
 
     def onFittingFitFinishedChanged(self):
-        print(f'Fit finished: {self._proxy.fitting.fitFinished}')
+        pass
+        #print(f'Fit finished: {self._proxy.fitting.fitFinished}')
         #needSetFittables = True
         #self._proxy.model.parametersEdited.emit(needSetFittables)

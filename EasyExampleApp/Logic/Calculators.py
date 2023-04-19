@@ -3,6 +3,7 @@
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 import numpy as np
+from Logic.Logging import log
 
 
 class LineCalculator:

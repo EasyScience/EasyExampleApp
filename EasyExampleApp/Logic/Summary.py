@@ -3,6 +3,7 @@
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 from PySide6.QtCore import QObject, Signal, Property
+from Logic.Logging import log
 
 
 class Summary(QObject):

@@ -8,6 +8,7 @@ from PySide6.QtCore import QObject, Signal, Slot, Property
 from PySide6 import QtCharts
 
 from Logic.Helpers import Converter, WebEngine
+from Logic.Logging import log
 
 
 _LIBS_1D = ['QtCharts', 'Plotly']
@@ -92,7 +93,7 @@ class Plotting(QObject):
 
     def drawMeasuredOnExperimentChart(self):
         lib = self._proxy.plotting.currentLib1d
-        print(f"Updating measured curve on experiment page. Plotting lib: '{lib}'")
+        log.debug(f"Updating measured curve on experiment page. Plotting lib: '{lib}'")
         if lib == 'QtCharts':
             self.qtchartsReplaceMeasuredOnExperimentChartAndRedraw()
         elif lib == 'Plotly':
@@ -102,7 +103,7 @@ class Plotting(QObject):
 
     def drawBackgroundOnExperimentChart(self):
         lib = self._proxy.plotting.currentLib1d
-        print(f"Updating background curve on experiment page. Plotting lib: '{lib}'")
+        log.debug(f"Updating background curve on experiment page. Plotting lib: '{lib}'")
         if lib == 'QtCharts':
             self.qtchartsReplaceBackgroundOnExperimentChartAndRedraw()
         elif lib == 'Plotly':
@@ -110,7 +111,7 @@ class Plotting(QObject):
 
     def drawCalculatedOnModelChart(self):
         lib = self._proxy.plotting.currentLib1d
-        print(f"Updating calculated curve on model page. Plotting lib: '{lib}'")
+        log.debug(f"Updating calculated curve on model page. Plotting lib: '{lib}'")
         if lib == 'QtCharts':
             self.qtchartsReplaceCalculatedOnModelChartAndRedraw()
         elif lib == 'Plotly':
@@ -127,7 +128,7 @@ class Plotting(QObject):
 
     def drawAllOnAnalysisChart(self):
         lib = self._proxy.plotting.currentLib1d
-        print(f"Updating all curves on analysis page. Plotting lib: '{lib}'")
+        log.debug(f"Updating all curves on analysis page. Plotting lib: '{lib}'")
         if lib == 'QtCharts':
             self.qtchartsReplaceMeasuredOnAnalysisChartAndRedraw()
             self.qtchartsReplaceBackgroundOnAnalysisChartAndRedraw()
@@ -140,7 +141,7 @@ class Plotting(QObject):
 
     def redrawCalculatedOnAnalysisChart(self):
         lib = self._proxy.plotting.currentLib1d
-        print(f"Updating total calculated curve on analysis page. Plotting lib: '{lib}'")
+        log.debug(f"Updating total calculated curve on analysis page. Plotting lib: '{lib}'")
         if lib == 'QtCharts':
             self.qtchartsReplaceTotalCalculatedOnAnalysisChartAndRedraw()
         elif lib == 'Plotly':
@@ -148,7 +149,7 @@ class Plotting(QObject):
 
     def redrawBackgroundOnAnalysisChart(self):
         lib = self._proxy.plotting.currentLib1d
-        print(f"Updating background curve on analysis page. Plotting lib: '{lib}'")
+        log.debug(f"Updating background curve on analysis page. Plotting lib: '{lib}'")
         if lib == 'QtCharts':
             self.qtchartsReplaceBackgroundOnAnalysisChartAndRedraw()
         elif lib == 'Plotly':

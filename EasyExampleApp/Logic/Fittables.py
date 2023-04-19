@@ -5,6 +5,7 @@
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
 from Logic.Helpers import Converter
+from Logic.Logging import log
 
 _EMPTY_DATA = [
     {
@@ -41,7 +42,7 @@ class Fittables(QObject):
 
     @Slot(str, int, str, str, str)
     def edit(self, block, blockIndex, name, item, value):
-        print(f"Editing fittable '{block}[{blockIndex}].{name}.{item}' to '{value}'")
+        log.debug(f"Editing fittable '{block}[{blockIndex}].{name}.{item}' to '{value}'")
         page = 'analysis'
         if block == 'experiment':
             self._proxy.experiment.editParameter(page, blockIndex, name, item, value)
@@ -49,7 +50,7 @@ class Fittables(QObject):
             self._proxy.model.editParameter(page, blockIndex, name, item, value)
 
     def set(self):
-        print('Fittables have been changed')
+        log.debug('Fittables have been changed')
         _data = []
         for i in range(len(self._proxy.experiment.dataBlocks)):
             block = self._proxy.experiment.dataBlocks[i]
@@ -89,5 +90,5 @@ class Fittables(QObject):
 
     def setDataJson(self):
         self._dataJson = Converter.dictToJson(self._data)
-        print("Fittables data have been converted to JSON string")
+        log.debug("Fittables data have been converted to JSON string")
         self.dataJsonChanged.emit()

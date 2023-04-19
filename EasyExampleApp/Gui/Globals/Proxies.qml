@@ -545,4 +545,9 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     property string currentLib1d: EaGlobals.Vars.currentLib1d
     onCurrentLib1dChanged: main.plotting.currentLib1d = currentLib1d
 
+    // Logging
+
+    property string loggingLevel: EaGlobals.Vars.loggingLevel
+    onLoggingLevelChanged: main.logger.level = loggingLevel
+
 }

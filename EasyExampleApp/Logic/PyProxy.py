@@ -14,11 +14,13 @@ from Logic.Fittables import Fittables
 from Logic.Summary import Summary
 from Logic.Status import Status
 from Logic.Plotting import Plotting
+from Logic.Logging import Logger
 
 
 class PyProxy(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self._logger = Logger(self)
         self._project = Project(self)
         self._experiment = Experiment(self)
         self._model = Model(self)
@@ -29,6 +31,10 @@ class PyProxy(QObject):
         self._status = Status(self)
         self._plotting = Plotting(self)
         self._connections = Connections(self)
+
+    @Property('QVariant', constant=True)
+    def logger(self):
+        return self._logger
 
     @Property('QVariant', constant=True)
     def connections(self):

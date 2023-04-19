@@ -7,6 +7,7 @@ import json, jsbeautifier
 from datetime import datetime
 
 from PySide6.QtCore import QObject, Signal, Slot, Property
+from Logic.Logging import log
 
 
 _EMPTY_DATA = {
@@ -104,7 +105,7 @@ class Project(QObject):
 
     @Slot()
     def save(self):
-        print('Save project')
+        log.debug('Save project')
         # Create full project dict
         out = {}
         if self.created:
