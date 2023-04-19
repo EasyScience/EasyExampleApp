@@ -3,6 +3,7 @@
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 import sys
+import pathlib
 
 from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
@@ -33,6 +34,12 @@ if __name__ == '__main__':
 
     cliArgs = CommandLineArguments()
     engine.rootContext().setContextProperty('pyIsTestMode', cliArgs.testmode)
+
+    appName = app.applicationName()
+    homeDirPath = pathlib.Path.home()
+    settingsIniFileName = 'settings.ini'
+    settingsIniFilePath = str(homeDirPath.joinpath(f'.{appName}', settingsIniFileName))
+    engine.rootContext().setContextProperty('pySettingsPath', settingsIniFilePath)
 
     # Add paths to be accessible from the QML components
     resourcePaths = ResourcePaths()

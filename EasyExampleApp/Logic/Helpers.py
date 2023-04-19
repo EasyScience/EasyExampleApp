@@ -11,6 +11,7 @@ class ResourcePaths:
     def __init__(self):
         self.main_qml = ''  # Current app main.qml file
         self.imports = []  # EasyApp qml components (EasyApp/...) & Current app qml components (Gui/...)
+        self.settings_ini = ''  # Persistent settings ini file location
         self.setPaths()
 
     def setPaths(self):
