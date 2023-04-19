@@ -34,8 +34,9 @@ jobs:
       - name: Set up screen (Windows)
         if: runner.os == 'Windows'
         run: |
-          Set-DisplayResolution -Width 1920 -Height 1080 -Force
           Get-DisplayResolution
+      #    Set-DisplayResolution -Width 1920 -Height 1080 -Force
+      #    Get-DisplayResolution
 
       - name: Check-out repository
         uses: actions/checkout@v3

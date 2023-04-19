@@ -52,4 +52,6 @@ if __name__ == '__main__':
     # Event loop
     if not engine.rootObjects():
         sys.exit(-1)
-    sys.exit(app.exec())
+    exitCode = app.exec()
+    print('App is exiting')
+    sys.exit(exitCode)

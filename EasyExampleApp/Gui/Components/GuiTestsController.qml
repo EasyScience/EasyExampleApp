@@ -18,7 +18,6 @@ EaElements.RemoteController {
     id: rc
 
     property var res: []
-    property int exitCode: 0
 
     Timer {
         running: true
@@ -29,19 +28,10 @@ EaElements.RemoteController {
         }
     }
 
-    Timer {
-        id: exitAppTimer
-
-        interval: 1000
-        onTriggered: {
-            Globals.Proxies.main.logger.debug("Closing app after running in test mode.")
-            Qt.exit(exitCode)
-        }
-    }
-
     // Tests
 
     function processTestResults() {
+        let exitCode = 0
         let okTests = 0
         let failedTests = 0
 
@@ -61,7 +51,9 @@ EaElements.RemoteController {
         Globals.Proxies.main.logger.debug(`${res.length} total, ${res.length - failedTests} passed, ${failedTests} failed`)
         Globals.Proxies.main.logger.debug("============================= GUI TEST REPORT END ==============================")
 
-        exitAppTimer.start()
+        Qt.exit(exitCode)
+        Globals.Proxies.main.logger.debug(`After Qt.exit(${exitCode})`)
+
     }
 
     function saveImage(dirName, fileName) {
