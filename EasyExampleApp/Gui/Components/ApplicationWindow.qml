@@ -29,7 +29,7 @@ EaComponents.ApplicationWindow {
         Globals.Proxies.main.logger.debug(`Application window loaded: ${this}`)
         Globals.Vars.applicationWindowCreated = true
     }
-    ///Component.onDestruction: Globals.Proxies.main.logger.debug(`Application window destroyed: ${this}`)
+    Component.onDestruction: Globals.Proxies.main.logger.debug(`Application window destroyed: ${this}`)
 
     ///////////////////
     // APPLICATION BAR
