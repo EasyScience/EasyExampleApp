@@ -10,11 +10,11 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-12]
+        os: [ubuntu-22.04, macos-12, windows-2022]
       fail-fast: false
 
     steps:
-      - name: Set up screen settings (Linux)
+      - name: Set up screen (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
@@ -25,13 +25,13 @@ jobs:
           Xvfb :0 -screen 0 1920x1080x24 -ac &
           echo "DISPLAY=:0" >> $GITHUB_ENV
 
-      - name: Set up screen settings (macOS)
+      - name: Set up screen (macOS)
         if: runner.os == 'macOS'
         run: |
           "/Library/Application Support/VMware Tools/vmware-resolutionSet" 1920 1080
           system_profiler SPDisplaysDataType | grep Resolution
 
-      - name: Set up screen settings (Windows)
+      - name: Set up screen (Windows)
         if: runner.os == 'Windows'
         run: |
           Set-DisplayResolution -Width 1920 -Height 1080 -Force
@@ -51,7 +51,7 @@ jobs:
           python -m pip install git+https://github.com/easyscience/EasyApp.git@new-easy-app2
           python -m pip install numpy orjson jsbeautifier pytest-image-diff
 
-      - name: Run QML GUI tests (run app in testmode, compare properties, save app images)
+      - name: Run QML GUI tests
         run: |
           cd EasyExampleApp
           python main.py --testmode
