@@ -22,14 +22,10 @@ log = logging.getLogger('main')
 log.setLevel(logging.DEBUG)
 
 consoleHandler = logging.StreamHandler()
-#consoleHandler.setLevel(logging.DEBUG)
 consoleHandler.setFormatter(pyFormat)
 
 log.addHandler(consoleHandler)
 
-#qmlLog = logging.getLogger('qml')
-#qmlLog.setFormatter(qmlFormat)
-#qmlLog.setLevel(logging.DEBUG)
 
 LEVELS = {
     'Critical': logging.CRITICAL,

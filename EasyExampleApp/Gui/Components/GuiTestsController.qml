@@ -52,7 +52,8 @@ EaElements.RemoteController {
         Globals.Proxies.main.logger.debug("============================= GUI TEST REPORT END ==============================")
 
         Globals.Proxies.main.logger.debug("Closing app after test mode.")
-        Qt.exit(success)
+        //Qt.exit(success)  // Fails on Windows. NEED FIX.
+        Qt.quit()
     }
 
     function saveImage(dirName, fileName) {
