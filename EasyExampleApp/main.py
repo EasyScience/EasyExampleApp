@@ -52,6 +52,7 @@ if __name__ == '__main__':
     # Event loop
     if not engine.rootObjects():
         sys.exit(-1)
-    exitCode = app.exec()
-    log.debug(f"Application event loop is exited with code {exitCode}")
-    sys.exit(exitCode)
+    #exitCode = app.exec()
+    #log.debug(f"Application event loop is exited with code {exitCode}")
+    #sys.exit(exitCode)
+    app.exec()
