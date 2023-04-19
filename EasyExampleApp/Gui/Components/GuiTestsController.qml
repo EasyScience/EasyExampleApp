@@ -18,6 +18,7 @@ EaElements.RemoteController {
     id: rc
 
     property var res: []
+    property int exitCode: 0
 
     Timer {
         running: true
@@ -28,10 +29,19 @@ EaElements.RemoteController {
         }
     }
 
+    Timer {
+        id: exitAppTimer
+
+        interval: 1000
+        onTriggered: {
+            Globals.Proxies.main.logger.debug("Closing app after running in test mode.")
+            Qt.exit(exitCode)
+        }
+    }
+
     // Tests
 
     function processTestResults() {
-        let success = 0
         let okTests = 0
         let failedTests = 0
 
@@ -39,7 +49,7 @@ EaElements.RemoteController {
 
         for (let i in res) {
             if (res[i].startsWith('FAIL')) {
-                success = -1
+                exitCode = -1
                 failedTests += 1
                 Globals.Proxies.main.logger.debug(res[i])
             } else {
@@ -51,9 +61,7 @@ EaElements.RemoteController {
         Globals.Proxies.main.logger.debug(`${res.length} total, ${res.length - failedTests} passed, ${failedTests} failed`)
         Globals.Proxies.main.logger.debug("============================= GUI TEST REPORT END ==============================")
 
-        Globals.Proxies.main.logger.debug("Closing app after test mode.")
-        //Qt.exit(success)  // Fails on Windows. NEED FIX.
-        Qt.quit()
+        exitAppTimer.start()
     }
 
     function saveImage(dirName, fileName) {
