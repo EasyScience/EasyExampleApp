@@ -150,7 +150,7 @@ Item {
         Globals.Proxies.main.logger.debug(`Home page loaded: ${this}`)
         Globals.Vars.homePageCreated = true
     }
-    //Component.onDestruction: Globals.Proxies.main.logger.debug(`Home page destroyed: ${this}`)
+    Component.onDestruction: Globals.Proxies.main.logger.debug(`Home page destroyed: ${this}`)
 
     // User tutorials
 

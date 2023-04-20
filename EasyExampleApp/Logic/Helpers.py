@@ -122,6 +122,9 @@ class Application(QApplication):  # QGuiApplication crashes when using in combin
         self.setApplicationName('EasyExample')
         self.setOrganizationName('EasyScience')
         self.setOrganizationDomain('easyscience.software')
+        print('!!!!! quitOnLastWindowClosed', self.quitOnLastWindowClosed())
+        self.setQuitOnLastWindowClosed(False)
+        print('!!!!! quitOnLastWindowClosed', self.quitOnLastWindowClosed())
 
 
 class ExitHelper(QObject):
@@ -132,6 +135,8 @@ class ExitHelper(QObject):
 
     @Slot(int)
     def exitApp(self, exitCode):
+        log.debug(f'-----------------')
+        print('!!!!! quitOnLastWindowClosed', self._app.quitOnLastWindowClosed())
         #log.debug(f'Calling sys.exit({exitCode})')
         #sys.exit(exitCode)
         #log.debug('Closing all application windows')
@@ -139,7 +144,10 @@ class ExitHelper(QObject):
         #log.debug('Quitting application')
         #QApplication.quit()
         #QCoreApplication.quit()
-        #self._app.quit()
+        for i in range(1000):
+            self._app.quit()
+            QApplication.quit()
+            QCoreApplication.quit()
         #log.debug(f'Exiting application with code {exitCode}')
         #self._app.exit(exitCode)
         log.debug(f'Calling sys.exit({exitCode})')

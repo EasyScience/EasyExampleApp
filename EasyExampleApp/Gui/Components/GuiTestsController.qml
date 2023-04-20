@@ -29,17 +29,19 @@ EaElements.RemoteController {
     }
 
 Timer {
-    id: exitTimr
+    id: exitTimer
         
         interval: 3000
         onTriggered: {
 
-        Globals.Proxies.main.logger.debug(`Calling Qt.exit(${exitCode}) from QML`)
+        let exitCode = 0
 
-             //Qt.exit(exitCode)  // Doesn't work on GH Windows-2022
+        Globals.Proxies.main.logger.debug(`Calling pyExitHelper.exitApp(${exitCode}) from QML`)
+
+        //Qt.exit(exitCode)  // Doesn't work on GH Windows-2022
         //Qt.callLater(Qt.exit, exitCode)  // Still doesn't work on GH Windows-2022
         pyExitHelper.exitApp(exitCode)  // Still doesn't work on GH Windows-2022
-        Globals.Proxies.main.logger.debug(`Qt.exit(${exitCode}) has been called from QML`)
+        Globals.Proxies.main.logger.debug(`pyExitHelper.exitApp(${exitCode}) has been called from QML`)
  
            
         }
@@ -69,11 +71,12 @@ Timer {
         Globals.Proxies.main.logger.debug(`${res.length} total, ${res.length - failedTests} passed, ${failedTests} failed`)
         Globals.Proxies.main.logger.debug("============================= GUI TEST REPORT END ==============================")
 
-              Globals.Proxies.main.logger.debug(`closing ApplicationWindow`)
-  applicationWindow.close()
-
-exitTimr.start()
-
+        Globals.Proxies.main.logger.debug(`closing ApplicationWindow by applicationWindow.close() from QML`)
+        applicationWindow.close()
+        Globals.Proxies.main.logger.debug(`Calling Qt.exit(${exitCode}) from QML`)
+        Qt.exit(exitCode)
+        Globals.Proxies.main.logger.debug(`starting exit timer`)
+        exitTimer.start()
     }
 
     function saveImage(dirName, fileName) {
