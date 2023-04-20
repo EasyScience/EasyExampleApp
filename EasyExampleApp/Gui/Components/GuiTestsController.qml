@@ -71,10 +71,10 @@ Timer {
         Globals.Proxies.main.logger.debug(`${res.length} total, ${res.length - failedTests} passed, ${failedTests} failed`)
         Globals.Proxies.main.logger.debug("============================= GUI TEST REPORT END ==============================")
 
-        Globals.Proxies.main.logger.debug(`closing ApplicationWindow by applicationWindow.close() from QML`)
-        applicationWindow.close()
-        Globals.Proxies.main.logger.debug(`Calling Qt.exit(${exitCode}) from QML`)
-        Qt.exit(exitCode)
+        //Globals.Proxies.main.logger.debug(`closing ApplicationWindow by applicationWindow.close() from QML`)
+        //applicationWindow.close()
+        //Globals.Proxies.main.logger.debug(`Calling Qt.exit(${exitCode}) from QML`)
+        //Qt.exit(exitCode)
         Globals.Proxies.main.logger.debug(`starting exit timer`)
         exitTimer.start()
     }
