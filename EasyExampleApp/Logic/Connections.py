@@ -3,7 +3,6 @@
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 from PySide6.QtCore import QObject
-from Logic.Logging import log
 
 
 class Connections(QObject):

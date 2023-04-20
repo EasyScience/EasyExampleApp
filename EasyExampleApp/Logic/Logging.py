@@ -77,4 +77,3 @@ class Logger(QObject):
 
     def onLevelChanged(self):
         log.setLevel(LEVELS[self.level])
-        #qmlLog.setLevel(LEVELS[self.level])

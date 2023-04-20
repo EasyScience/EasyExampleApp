@@ -2,12 +2,12 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-import os, sys
+import os
 import argparse
 import orjson
 
 from PySide6.QtWidgets import QApplication
-from PySide6.QtCore import QCoreApplication, QObject, Slot
+from PySide6.QtCore import QObject, Slot
 
 from Logic.Logging import log
 

@@ -43,7 +43,7 @@ class Analysis(QObject):
         self._yCalcTotal = sum
 
     def addBkgToYCalcTotal(self):
-        log.debug(f"Adding background to total y-calculated array")
+        log.debug("Adding background to total y-calculated array")
         index = self._proxy.experiment.currentIndex
         yBkgArray = self._proxy.experiment._yBkgArrays[index]
         self._yCalcTotal += yBkgArray
