@@ -135,7 +135,7 @@ class ExitHelper(QObject):
 
     @Slot(int)
     def exitApp(self, exitCode):
-        log.debug(f'-----------------')
+        log.debug('-----------------')
         print('!!!!! quitOnLastWindowClosed', self._app.quitOnLastWindowClosed())
         #log.debug(f'Calling sys.exit({exitCode})')
         #sys.exit(exitCode)

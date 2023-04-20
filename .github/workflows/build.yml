@@ -52,8 +52,10 @@ jobs:
           python -m pip install numpy orjson jsbeautifier
 
       - name: Run QML GUI tests
+        shell: bash
         run: |
           cd EasyExampleApp
+          ls
           python main.py --testmode
 
       #- name: Run pytest (compare app images after previous step)
