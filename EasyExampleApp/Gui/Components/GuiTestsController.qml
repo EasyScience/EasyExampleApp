@@ -17,6 +17,7 @@ import Gui.Tests as Tests
 EaElements.RemoteController {
     id: rc
 
+    property int exitCode: 0
     property var res: []
 
     Timer {
@@ -28,30 +29,20 @@ EaElements.RemoteController {
         }
     }
 
-Timer {
-    id: exitTimer
-        
+    Timer {
+        id: exitTimer
+
         interval: 3000
         onTriggered: {
-
-        let exitCode = 0
-
-        Globals.Proxies.main.logger.debug(`Calling pyExitHelper.exitApp(${exitCode}) from QML`)
-
-        //Qt.exit(exitCode)  // Doesn't work on GH Windows-2022
-        //Qt.callLater(Qt.exit, exitCode)  // Still doesn't work on GH Windows-2022
-        pyExitHelper.exitApp(exitCode)  // Still doesn't work on GH Windows-2022
-        Globals.Proxies.main.logger.debug(`pyExitHelper.exitApp(${exitCode}) has been called from QML`)
- 
-           
+            Globals.Proxies.main.logger.debug(`Starting forced exit timer`)
+            Globals.Proxies.main.logger.debug(`Calling exitHelper from QML with code ${exitCode}`)
+            Globals.Proxies.main.exitHelper.exitApp(exitCode)
         }
     }
-
 
     // Tests
 
     function processTestResults() {
-        let exitCode = 0
         let okTests = 0
         let failedTests = 0
 
@@ -59,7 +50,7 @@ Timer {
 
         for (let i in res) {
             if (res[i].startsWith('FAIL')) {
-                exitCode = -1
+                exitCode = 1
                 failedTests += 1
                 Globals.Proxies.main.logger.debug(res[i])
             } else {
@@ -71,11 +62,12 @@ Timer {
         Globals.Proxies.main.logger.debug(`${res.length} total, ${res.length - failedTests} passed, ${failedTests} failed`)
         Globals.Proxies.main.logger.debug("============================= GUI TEST REPORT END ==============================")
 
-        //Globals.Proxies.main.logger.debug(`closing ApplicationWindow by applicationWindow.close() from QML`)
+        Globals.Proxies.main.logger.debug(`Exiting application from QML with code ${exitCode}`)
         //applicationWindow.close()
-        //Globals.Proxies.main.logger.debug(`Calling Qt.exit(${exitCode}) from QML`)
-        //Qt.exit(exitCode)
-        Globals.Proxies.main.logger.debug(`starting exit timer`)
+        //Qt.callLater(Qt.exit, exitCode)  // Doesn't work on GH Windows if running app via `python main.py`
+        Qt.exit(exitCode)  // Doesn't work on GH Windows if running app via `python main.py`
+
+        // Start timer to force python exit if normal way above doesn't work
         exitTimer.start()
     }
 
@@ -87,8 +79,6 @@ Timer {
         // Set up testing process
 
         Globals.Proxies.main.logger.debug('Run basic suit of GUI tests')
-
-        return
 
         //const saveImagesDir = '../.tests/GuiTests/BasicGuiTest/ActualImages'
 
@@ -106,8 +96,10 @@ Timer {
         res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
 
-        res.push( rc.compare(Globals.Refs.app.homePage.startButton.text, 'Start') )
+        res.push( rc.compare(Globals.Refs.app.homePage.startButton.text, 'Start2') )
         res.push( rc.compare(Globals.Refs.app.homePage.startButton.enabled, true) )
+
+        return
 
         rc.mouseClick(Globals.Refs.app.homePage.startButton)
         //rc.wait(2000)

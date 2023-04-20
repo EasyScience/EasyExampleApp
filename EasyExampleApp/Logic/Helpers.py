@@ -117,42 +117,20 @@ class Converter:
 
 class Application(QApplication):  # QGuiApplication crashes when using in combination with QtCharts
 
-    def __init__(self, sys_argv):
-        super(Application, self).__init__(sys_argv)
+    def __init__(self, sysArgv):
+        super(Application, self).__init__(sysArgv)
         self.setApplicationName('EasyExample')
         self.setOrganizationName('EasyScience')
         self.setOrganizationDomain('easyscience.software')
-        log.debug(f'quitOnLastWindowClosed [1] {self.quitOnLastWindowClosed()}')
-        self.setQuitOnLastWindowClosed(False)
-        log.debug(f'quitOnLastWindowClosed [2] {self.quitOnLastWindowClosed()}')
 
 
 class ExitHelper(QObject):
 
-    def __init__(self, app, parent=None):
+    def __init__(self, parent):
         super().__init__(parent)
-        self._app = app
+        self._proxy = parent
 
     @Slot(int)
     def exitApp(self, exitCode):
-        log.debug('-----------------')
-        os._exit(-1)
-        return
-        quit()
-        return
-        log.debug(f'quitOnLastWindowClosed [3] {self._app.quitOnLastWindowClosed()}')
-        #log.debug(f'Calling sys.exit({exitCode})')
-        #sys.exit(exitCode)
-        #log.debug('Closing all application windows')
-        #QApplication.closeAllWindows()
-        #log.debug('Quitting application')
-        #QApplication.quit()
-        #QCoreApplication.quit()
-        for i in range(1000):
-            self._app.quit()
-            QApplication.quit()
-            QCoreApplication.quit()
-        #log.debug(f'Exiting application with code {exitCode}')
-        #self._app.exit(exitCode)
-        log.debug(f'Calling sys.exit({exitCode})')
-        sys.exit(exitCode)
+        log.debug(f'Force exiting application with code {exitCode}')
+        os._exit(exitCode)

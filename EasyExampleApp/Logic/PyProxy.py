@@ -15,6 +15,7 @@ from Logic.Summary import Summary
 from Logic.Status import Status
 from Logic.Plotting import Plotting
 from Logic.Logging import Logger
+from Logic.Helpers import ExitHelper
 
 
 class PyProxy(QObject):
@@ -31,6 +32,7 @@ class PyProxy(QObject):
         self._status = Status(self)
         self._plotting = Plotting(self)
         self._connections = Connections(self)
+        self._exitHelper = ExitHelper(self)
 
     @Property('QVariant', constant=True)
     def logger(self):
@@ -75,3 +77,7 @@ class PyProxy(QObject):
     @Property('QVariant', constant=True)
     def plotting(self):
         return self._plotting
+
+    @Property('QVariant', constant=True)
+    def exitHelper(self):
+        return self._exitHelper
