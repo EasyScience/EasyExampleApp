@@ -7,6 +7,7 @@
 # https://stackoverflow.com/questions/384076/how-can-i-color-python-logging-output
 # https://stackoverflow.com/questions/42936810/python-logging-module-set-formatter-dynamically
 # https://doc.qt.io/qt-6/qtquick-debugging.html
+# https://raymii.org/s/articles/Disable_logging_in_QT_and_QML.html
 
 from PySide6.QtCore import QObject, Signal, Slot, Property
 import logging

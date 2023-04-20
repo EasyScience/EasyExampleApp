@@ -52,7 +52,6 @@ jobs:
           python -m pip install numpy orjson jsbeautifier
 
       - name: Run QML GUI tests
-        shell: bash
         run: |
           cd EasyExampleApp
           python main.py --testmode
