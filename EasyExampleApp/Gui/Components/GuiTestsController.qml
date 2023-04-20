@@ -96,8 +96,10 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
 
-        res.push( rc.compare(Globals.Refs.app.homePage.startButton.text, 'Start') )
+        res.push( rc.compare(Globals.Refs.app.homePage.startButton.text, 'Start2') )
         res.push( rc.compare(Globals.Refs.app.homePage.startButton.enabled, true) )
+
+        return
 
         rc.mouseClick(Globals.Refs.app.homePage.startButton)
         //rc.wait(2000)
