@@ -146,7 +146,7 @@ Column {
             enableOpenGL()
             table.currentValueTextInput.text = value.toFixed(4)
             table.currentValueTextInput.editingFinished()
-            disableOpenGLTimer.restart()
+            disableOpenGL()
         }
     }
 
@@ -155,7 +155,7 @@ Column {
     Timer {
         id: disableOpenGLTimer
         interval: 500
-        onTriggered: disableOpenGL()
+        onTriggered: disableOpenGLFromTimer()
     }
 
     // Control buttons below table
@@ -175,12 +175,20 @@ Column {
     // Logic
 
     function enableOpenGL() {
-        Globals.Refs.app.experimentPage.plotView.useOpenGL = true
-        Globals.Refs.app.modelPage.plotView.useOpenGL = true
-        Globals.Refs.app.analysisPage.plotView.useOpenGL = true
+        if (Globals.Proxies.main.plotting.currentLib1d === 'QtCharts') {
+            Globals.Refs.app.experimentPage.plotView.useOpenGL = true
+            Globals.Refs.app.modelPage.plotView.useOpenGL = true
+            Globals.Refs.app.analysisPage.plotView.useOpenGL = true
+        }
     }
 
     function disableOpenGL() {
+        if (Globals.Proxies.main.plotting.currentLib1d === 'QtCharts') {
+            disableOpenGLTimer.restart()
+        }
+    }
+
+    function disableOpenGLFromTimer() {
         Globals.Refs.app.experimentPage.plotView.useOpenGL = false
         Globals.Refs.app.modelPage.plotView.useOpenGL = false
         Globals.Refs.app.analysisPage.plotView.useOpenGL = false
