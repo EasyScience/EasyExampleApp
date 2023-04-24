@@ -143,20 +143,10 @@ Column {
         value: table.currentValueTextInput.text
 
         onMoved: {
-            if (!EaGlobals.Vars.useOpenGL && typeof totalCalcSerie() !== 'undefined') {
-                totalCalcSerie().useOpenGL = true
-            }
-            if (!EaGlobals.Vars.useOpenGL && typeof bkgSerie() !== 'undefined') {
-                bkgSerie().useOpenGL = true
-            }
+            enableOpenGL()
             table.currentValueTextInput.text = value.toFixed(4)
             table.currentValueTextInput.editingFinished()
-            if (!EaGlobals.Vars.useOpenGL && typeof totalCalcSerie() !== 'undefined') {
-                disableOpenGLTimer.restart()
-            }
-            if (!EaGlobals.Vars.useOpenGL && typeof bkgSerie() !== 'undefined') {
-                disableOpenGLTimer.restart()
-            }
+            disableOpenGLTimer.restart()
         }
     }
 
@@ -165,10 +155,7 @@ Column {
     Timer {
         id: disableOpenGLTimer
         interval: 500
-        onTriggered: {
-            bkgSerie().useOpenGL = false
-            totalCalcSerie().useOpenGL = false
-        }
+        onTriggered: disableOpenGL()
     }
 
     // Control buttons below table
@@ -187,12 +174,16 @@ Column {
 
     // Logic
 
-    function bkgSerie() {
-        return Globals.Proxies.main.plotting.chartRefs.QtCharts.analysisPage.bkgSerie
+    function enableOpenGL() {
+        Globals.Refs.app.experimentPage.plotView.useOpenGL = true
+        Globals.Refs.app.modelPage.plotView.useOpenGL = true
+        Globals.Refs.app.analysisPage.plotView.useOpenGL = true
     }
 
-    function totalCalcSerie() {
-        return Globals.Proxies.main.plotting.chartRefs.QtCharts.analysisPage.totalCalcSerie
+    function disableOpenGL() {
+        Globals.Refs.app.experimentPage.plotView.useOpenGL = false
+        Globals.Refs.app.modelPage.plotView.useOpenGL = false
+        Globals.Refs.app.analysisPage.plotView.useOpenGL = false
     }
 
 }
