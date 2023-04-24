@@ -148,7 +148,7 @@ class Model(QObject):
                 value = True
             elif value == 'false':
                 value = False
-            self._dataBlocks[blockIndex]['params'][name]['error'] = 0
+            #####self._dataBlocks[blockIndex]['params'][name]['error'] = 0
         # Update value
         if self._dataBlocks[blockIndex]['params'][name][item] == value:
             return
