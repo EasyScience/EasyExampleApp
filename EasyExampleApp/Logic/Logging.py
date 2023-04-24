@@ -13,11 +13,13 @@ from PySide6.QtCore import QObject, Signal, Slot, Property
 import logging
 
 
-pyFormat = logging.Formatter(' py: %(asctime)s.%(msecs)04d %(lineno)5d: %(filename)-17s %(funcName)-33s %(levelname)8s: %(message)s',
-                             datefmt='%H:%M:%S')
+pyFormat = logging.Formatter(' py: {asctime}.{msecs:04.0f} {lineno:5d} {filename:17.17s} {funcName:34.34s} {levelname:>8s}: {message}',
+                             datefmt='%H:%M:%S',
+                             style='{')
 
-qmlFormat = logging.Formatter('qml: %(asctime)s.%(msecs)04d %(levelname)67s: %(message)s',
-                              datefmt='%H:%M:%S')
+qmlFormat = logging.Formatter('qml: {asctime}.{msecs:04.0f} {lineno:5d} {levelname:>61s}: {message}',
+                              datefmt='%H:%M:%S',
+                              style='{')
 
 
 log = logging.getLogger('main')
