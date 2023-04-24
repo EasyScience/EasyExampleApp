@@ -14,12 +14,7 @@ import Gui.Globals as Globals
 import Gui.Components as Components
 
 
-Components.ApplicationWindow {
-  id: applicationWindow
-
-   Component.onDestruction: Globals.Proxies.main.logger.debug(`Application window destroyed (main.qml): ${this}`)
-
-}
+Components.ApplicationWindow {}
 
 /*
 EaElements.SplashScreen {
