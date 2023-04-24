@@ -19,9 +19,19 @@ class Status(QObject):
             {
                 'label': 'Minimization',
                 'value': 'lmfit'
+                },
+            {
+                'label': 'Points count',
+                'value': ''
             }
         ]
 
     @Property('QVariant', notify=asJsonChanged)
     def asJson(self):
         return self._as_json
+
+    def refresh(self):
+        index = self._proxy.experiment.currentIndex
+        pointsCount = self._proxy.experiment._xArrays[index].size  # NEED FIX
+        self._as_json[2]['value'] = str(pointsCount)
+        self.asJsonChanged.emit()

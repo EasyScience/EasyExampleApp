@@ -46,6 +46,7 @@ class Connections(QObject):
         self._proxy.project.setNeedSaveToTrue()
 
     def onExperimentYMeasArraysChanged(self):
+        self._proxy.status.refresh()
         self._proxy.plotting.drawMeasuredOnExperimentChart()
 
     def onExperimentYBkgArraysChanged(self):
