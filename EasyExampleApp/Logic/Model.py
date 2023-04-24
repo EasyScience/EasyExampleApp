@@ -202,6 +202,7 @@ class Model(QObject):
     #    self.calculatedDataChanged.emit()
 
     def setDataBlocksJson(self):
+        log.debug("Converting model dataBlocks to JSON string")
         self._dataBlocksJson = Converter.dictToJson(self._dataBlocks)
         log.debug("Model dataBlocks have been converted to JSON string")
         self.dataBlocksJsonChanged.emit()

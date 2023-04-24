@@ -98,6 +98,7 @@ Column {
                 text: item.value.toFixed(4)
                 onEditingFinished: {
                     focus = false
+                    Globals.Proxies.main.logger.debug('-------------------- Fittable editing on Analysis page finished --------------------')
                     Globals.Proxies.main.fittables.edit(item.group,
                                                         item.parentIndex,
                                                         item.name,

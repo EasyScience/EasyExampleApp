@@ -146,6 +146,7 @@ class Plotting(QObject):
             self.qtchartsReplaceTotalCalculatedOnAnalysisChartAndRedraw()
         elif lib == 'Plotly':
             self.plotlyReplaceTotalCalculatedYOnAnalysisChartAndRedraw()
+        log.debug("Total calculated curve on analysis page has been updated")
 
     def redrawBackgroundOnAnalysisChart(self):
         lib = self._proxy.plotting.currentLib1d
@@ -167,7 +168,9 @@ class Plotting(QObject):
             xArray = self._proxy.experiment._xArrays[index]
             yMeasArray = self._proxy.experiment._yMeasArrays[index]
         measSerie = self._chartRefs['QtCharts']['experimentPage']['measSerie']
+        log.debug(f"Replacing x and y numpy arrays of size {xArray.size} with measured data on QtChart serie has been started")
         measSerie.replaceNp(xArray, yMeasArray)
+        log.debug(f"Replacing x and y numpy arrays of size {xArray.size} with measured data on QtChart serie has been finished")
 
     def qtchartsReplaceBackgroundOnExperimentChartAndRedraw(self):
         index = self._proxy.experiment.currentIndex
@@ -226,6 +229,7 @@ class Plotting(QObject):
             yTotalCalcArray = self._proxy.analysis._yCalcTotal
         calcSerie = self._chartRefs['QtCharts']['analysisPage']['totalCalcSerie']
         calcSerie.replaceNp(xArray, yTotalCalcArray)
+        log.debug("Total calculated curve data on analysis page have been replaced")
 
     # Plotly: Experiment
 
