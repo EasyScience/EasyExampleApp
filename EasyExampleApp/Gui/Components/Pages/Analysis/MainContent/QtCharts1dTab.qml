@@ -25,7 +25,7 @@ EaCharts.QtCharts1dMeasVsCalc {
     // Data is set in python backend
 
     Component.onCompleted: {
-        Globals.Refs.app.experimentPage.plotView = this
+        Globals.Refs.app.analysisPage.plotView = this
         Globals.Proxies.main.plotting.setQtChartsSerieRef('analysisPage',
                                                           'measSerie',
                                                           this.measSerie)
