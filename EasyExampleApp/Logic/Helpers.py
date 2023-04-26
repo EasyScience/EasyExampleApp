@@ -9,7 +9,7 @@ import orjson
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QObject, Slot
 
-from Logic.Logging import console
+#from Logic.Logging import console
 
 
 class ResourcePaths:
@@ -24,22 +24,24 @@ class ResourcePaths:
         # EasyApp from resources.py file
         try:
             import resources
-            console.debug(f'Resources: {resources}')
+            #console.debug(f'Resources: {resources}')
             self.main_qml = 'qrc:/Gui/main.qml'
             self.imports = ['qrc:/EasyApp', 'qrc:/']
             return
         except ImportError:
-            console.info('No rc resources file is found.')
+            #console.info('No rc resources file is found.')
+            pass
 
         # EasyApp from the module installed via pip
         try:
             import EasyApp
-            console.debug(f'EasyApp: {EasyApp.__path__[0]}')
+            #console.debug(f'EasyApp: {EasyApp.__path__[0]}')
             self.main_qml = 'Gui/main.qml'
             self.imports = [os.path.join(EasyApp.__path__[0], '..'), '.']
             return
         except ImportError:
-            console.info('No EasyApp module is installed.')
+            #console.info('No EasyApp module is installed.')
+            pass
 
         # EasyApp from the local copy
         if os.path.exists('../../EasyApp'):
@@ -47,7 +49,8 @@ class ResourcePaths:
             self.imports = ['../../EasyApp', '.']
             return
         else:
-            console.debug('No EasyApp directory is found.')
+            #console.debug('No EasyApp directory is found.')
+            pass
 
 
 class CommandLineArguments:
@@ -83,7 +86,8 @@ class WebEngine:
         try:
             from PySide6.QtWebEngineQuick import QtWebEngineQuick
         except ModuleNotFoundError:
-            console.debug('No module named "PySide6.QtWebEngineQuick" is found.')
+            #console.debug('No module named "PySide6.QtWebEngineQuick" is found.')
+            pass
         else:
             QtWebEngineQuick.initialize()
 
@@ -101,7 +105,8 @@ class Converter:
         elif value == 'false':
             return False
         else:
-            console.debug(f'Input value "{value}" is not supported. It should either be "true" or "false".')
+            #console.debug(f'Input value "{value}" is not supported. It should either be "true" or "false".')
+            pass
 
     @staticmethod
     def dictToJson(obj):
@@ -136,5 +141,5 @@ class ExitHelper(QObject):
 
     @Slot(int)
     def exitApp(self, exitCode):
-        console.debug(f'Force exiting application with code {exitCode}')
+        #console.debug(f'Force exiting application with code {exitCode}')
         os._exit(exitCode)

@@ -6,16 +6,29 @@ import sys
 import pathlib
 
 from PySide6.QtQml import QQmlApplicationEngine
-from PySide6.QtCore import qInstallMessageHandler
+from PySide6.QtCore import qInstallMessageHandler, qDebug
 
-from Logic.Logging import console, qtMessageHandler
+#from Logic.Logging import console, qtMessageHandler
 from Logic.Helpers import ResourcePaths, CommandLineArguments, EnvironmentVariables, WebEngine, Application, ExitHelper
 from Logic.PyProxy import PyProxy
 
+from Logic.Logging import CustomLogger
+console = CustomLogger()
+
+
+def qtMessageHandler(msgType, context, message):
+    funcname = context.function
+    fileurl = context.file
+    lineno = context.line
+    print(f'{msgType} {message} {funcname} {fileurl} {lineno}')
 
 if __name__ == '__main__':
     # Set custom Qt message handler
     qInstallMessageHandler(qtMessageHandler)
+
+    print('print')
+    qDebug('qDebug')
+    console.debug('console.debug')
 
     # Set environment variables
     EnvironmentVariables.set()
@@ -57,5 +70,5 @@ if __name__ == '__main__':
     if not engine.rootObjects():
         sys.exit(-1)
     exitCode = app.exec()
-    console.debug(f"Application is exited with code {exitCode}")
+    #console.debug(f"Application is exited with code {exitCode}")
     sys.exit(exitCode)

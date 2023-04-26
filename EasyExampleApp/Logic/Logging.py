@@ -10,6 +10,7 @@
 # https://raymii.org/s/articles/Disable_logging_in_QT_and_QML.html
 
 import inspect
+import logging
 
 from PySide6.QtCore import QObject, Signal, Property, qDebug, QtMsgType, QTime
 
@@ -21,6 +22,34 @@ LOGGER_LEVELS = {
     'debug': 10  # logging.NOTSET, logging.DEBUG, QtMsgType.QtDebugMsg
 }
 
+
+class CustomLogger(QObject):
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._level = 'disabled'
+        self.caller = None
+        self.params = {}
+
+        self.format = logging.Formatter('{asctime}.{msecs:03.0f}   PY {levelname:<8}   {message:<80.80}   {funcName:34.34} file://{pathname}:{lineno:d}',
+                                    datefmt='%H:%M:%S',
+                                    style='{')
+
+        self.consoleHandler = logging.StreamHandler()
+        self.consoleHandler.setFormatter(self.format)
+
+        self.console = logging.getLogger('main')
+        self.console.setLevel(logging.DEBUG)
+        self.console.addHandler(self.consoleHandler)
+
+    def getLogger(self):
+        return self.console
+
+    def info(self, msg):
+        self.console.info(msg)
+
+    def debug(self, msg):
+        self.console.debug(msg)
 
 class Logger(QObject):
     levelChanged = Signal()
@@ -72,9 +101,12 @@ class Logger(QObject):
     def colorizeMessage(self, message):
         return message
         colors = {
-            'debug': '\033[92m',
-            'info': '\033[97m',
-            'error': '\033[91m'
+            'debug': '\033[92m',  # green
+            'info': '\033[97m',  # white
+            'error': '\033[91m'  # red
+
+                #     '\033[98m' # light grey
+                # '\033[93m',  # yellow
         }
         colorStart = colors[self.params['level']]
         colorEnd = '\033[0m'
