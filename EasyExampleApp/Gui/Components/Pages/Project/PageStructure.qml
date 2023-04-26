@@ -52,6 +52,6 @@ EaComponents.ContentPage {
         Component.onCompleted: Globals.Refs.app.projectPage.continueButton = continueButton
     }
 
-    Component.onCompleted: Globals.Proxies.main.logger.debug(`Project page loaded: ${this}`)
-    Component.onDestruction: Globals.Proxies.main.logger.debug(`Project page destroyed: ${this}`)
+    Component.onCompleted: console.debug(`Project page loaded: ${this}`)
+    Component.onDestruction: console.debug(`Project page destroyed: ${this}`)
 }

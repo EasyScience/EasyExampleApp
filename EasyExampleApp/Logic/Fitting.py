@@ -3,7 +3,7 @@
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 from PySide6.QtCore import QObject, Signal, Slot, Property
-from Logic.Logging import log
+from Logic.Logging import console
 
 
 class Fitting(QObject):
@@ -27,7 +27,7 @@ class Fitting(QObject):
 
     @Slot()
     def fit(self):
-        log.debug("Minimization process has been started")
+        console.debug("Minimization process has been started")
         self.fitFinished = False
         #if self._proxy.model.parameters['slope']['fit']:
         #    self._proxy.model.parameters['slope']['value'] = -3.0015

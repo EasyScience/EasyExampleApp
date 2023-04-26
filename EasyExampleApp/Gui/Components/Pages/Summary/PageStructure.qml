@@ -44,6 +44,6 @@ EaComponents.ContentPage {
         continueButton.visible: false
     }
 
-    Component.onCompleted: Globals.Proxies.main.logger.debug(`Summary page loaded: ${this}`)
-    Component.onDestruction: Globals.Proxies.main.logger.debug(`Summary page destroyed: ${this}`)
+    Component.onCompleted: console.debug(`Summary page loaded: ${this}`)
+    Component.onDestruction: console.debug(`Summary page destroyed: ${this}`)
 }

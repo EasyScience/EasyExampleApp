@@ -34,8 +34,8 @@ EaElements.RemoteController {
 
         interval: 3000
         onTriggered: {
-            Globals.Proxies.main.logger.debug(`Starting forced exit timer`)
-            Globals.Proxies.main.logger.debug(`Calling exitHelper from QML with code ${exitCode}`)
+            console.debug(`Starting forced exit timer`)
+            console.debug(`Calling exitHelper from QML with code ${exitCode}`)
             Globals.Proxies.main.exitHelper.exitApp(exitCode)
         }
     }
@@ -46,23 +46,23 @@ EaElements.RemoteController {
         let okTests = 0
         let failedTests = 0
 
-        Globals.Proxies.main.logger.debug("============================ GUI TEST REPORT START =============================")
+        console.debug("============================ GUI TEST REPORT START =============================")
 
         for (let i in res) {
             if (res[i].startsWith('FAIL')) {
                 exitCode = 1
                 failedTests += 1
-                Globals.Proxies.main.logger.debug(res[i])
+                console.debug(res[i])
             } else {
                 okTests +=1
             }
         }
 
-        Globals.Proxies.main.logger.debug("--------------------------------------------------------------------------------")
-        Globals.Proxies.main.logger.debug(`${res.length} total, ${res.length - failedTests} passed, ${failedTests} failed`)
-        Globals.Proxies.main.logger.debug("============================= GUI TEST REPORT END ==============================")
+        console.debug("--------------------------------------------------------------------------------")
+        console.debug(`${res.length} total, ${res.length - failedTests} passed, ${failedTests} failed`)
+        console.debug("============================= GUI TEST REPORT END ==============================")
 
-        Globals.Proxies.main.logger.debug(`Exiting application from QML with code ${exitCode}`)
+        console.debug(`Exiting application from QML with code ${exitCode}`)
         //applicationWindow.close()
         //Qt.callLater(Qt.exit, exitCode)  // Doesn't work on GH Windows if running app via `python main.py`
         Qt.exit(exitCode)  // Doesn't work on GH Windows if running app via `python main.py`
@@ -78,7 +78,7 @@ EaElements.RemoteController {
     function runBasicGuiTest() {
         // Set up testing process
 
-        Globals.Proxies.main.logger.debug('Run basic suit of GUI tests')
+        console.debug('Run basic suit of GUI tests')
 
         //const saveImagesDir = '../.tests/GuiTests/BasicGuiTest/ActualImages'
 

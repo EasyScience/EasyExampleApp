@@ -10,7 +10,7 @@ from PySide6.QtCore import QObject, Signal, Slot, Property
 
 from Logic.Calculators import GaussianCalculator
 from Logic.Helpers import Converter
-from Logic.Logging import log
+from Logic.Logging import console
 
 
 _DEFAULT_DATA_BLOCK = {
@@ -80,7 +80,7 @@ class Experiment(QObject):
         if self._defined == newValue:
             return
         self._defined = newValue
-        log.debug(f"Experiment defined: {newValue}")
+        console.debug(f"Experiment defined: {newValue}")
         self.definedChanged.emit()
 
     @Property(int, notify=currentIndexChanged)
@@ -92,7 +92,7 @@ class Experiment(QObject):
         if self._currentIndex == newValue:
             return
         self._currentIndex = newValue
-        log.debug(f"Current experiment index: {newValue}")
+        console.debug(f"Current experiment index: {newValue}")
         self.currentIndexChanged.emit()
 
     @Property('QVariant', notify=dataBlocksChanged)
@@ -107,7 +107,7 @@ class Experiment(QObject):
 
     @Slot()
     def addDefaultExperiment(self):
-        log.debug('Adding default experiment')
+        console.debug('Adding default experiment')
         dataBlock = _DEFAULT_DATA_BLOCK
         xArray = self.defaultXArray()
         yMeasArray = self.defaultYMeasArray()
@@ -120,7 +120,7 @@ class Experiment(QObject):
     @Slot(str)
     def loadExperimentFromFile(self, fpath):
         fpath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', fpath))
-        log.debug(f"Loading an experiment from '{fpath}'")
+        console.debug(f"Loading an experiment from '{fpath}'")
         # add to dataBlocks, xArrays, yMeasArrays
         with open(fpath, 'r') as f:
             dataBlock = json.load(f)
@@ -143,7 +143,7 @@ class Experiment(QObject):
 
     @Slot(int)
     def removeExperiment(self, index):
-        log.debug(f"Removing experiment no. {index + 1}")
+        console.debug(f"Removing experiment no. {index + 1}")
         self.currentIndex = index - 1
         del self._dataBlocks[index]
         del self._xArrays[index]
@@ -152,7 +152,7 @@ class Experiment(QObject):
         self.dataBlocksChanged.emit()
         self.yMeasArraysChanged.emit()
         self.yBkgArraysChanged.emit()
-        log.debug(f"Experiment no. {index + 1} has been removed")
+        console.debug(f"Experiment no. {index + 1} has been removed")
 
     @Slot()
     def removeAllExperiments(self):
@@ -162,14 +162,14 @@ class Experiment(QObject):
         self.dataBlocksChanged.emit()
         self.yMeasArraysChanged.emit()
         self.yBkgArraysChanged.emit()
-        log.debug("All experiments have been removed")
+        console.debug("All experiments have been removed")
 
     @Slot(str, int, str, str, str)
     def editParameter(self, page, blockIndex, name, item, value):
         block = 'experiment'
         if blockIndex is None:
             blockIndex = self._currentIndex
-        log.debug(f"Editing parameter '{block}[{blockIndex}].{name}.{item}' to '{value}' requested from '{page}' page")
+        console.debug(f"Editing parameter '{block}[{blockIndex}].{name}.{item}' to '{value}' requested from '{page}' page")
         # Convert input value
         if item == 'value':
             value = float(value)
@@ -183,10 +183,10 @@ class Experiment(QObject):
         if self._dataBlocks[blockIndex]['params'][name][item] == value:
             return
         self._dataBlocks[blockIndex]['params'][name][item] = value
-        log.debug(f"Parameter '{block}[{blockIndex}].{name}.{item}' has been changed to '{value}'")
+        console.debug(f"Parameter '{block}[{blockIndex}].{name}.{item}' has been changed to '{value}'")
         # Signalling value has been changed
         self.parameterEdited.emit(page, name)
-        log.debug(f"Data blocks for '{block}' has been changed")
+        console.debug(f"Data blocks for '{block}' has been changed")
         self.dataBlocksChanged.emit()
 
     # Private methods
@@ -233,30 +233,30 @@ class Experiment(QObject):
     def updateCurrentExperimentYBkgArray(self):
         index = self._currentIndex
         self._yBkgArrays[index] = self.calculateYBkgArray(index)
-        log.debug(f"Background for experiment no. {index + 1} has been calculated")
+        console.debug(f"Background for experiment no. {index + 1} has been calculated")
         self.yBkgArraysChanged.emit()
 
     def addDataBlock(self, dataBlock):
-        log.debug(f"Adding data block (instrument parameters). Experiment no. {len(self._dataBlocks) + 1}")
+        console.debug(f"Adding data block (instrument parameters). Experiment no. {len(self._dataBlocks) + 1}")
         self._dataBlocks.append(dataBlock)
         self.dataBlocksChanged.emit()
 
     def addXArray(self, xArray):
-        log.debug(f"Adding x data. Experiment no. {len(self._dataBlocks)}")
+        console.debug(f"Adding x data. Experiment no. {len(self._dataBlocks)}")
         self._xArrays.append(xArray)
 
     def addYMeasArray(self, yMeasArray):
-        log.debug(f"Adding y-measured data. Experiment no. {len(self._dataBlocks)}")
+        console.debug(f"Adding y-measured data. Experiment no. {len(self._dataBlocks)}")
         self._yMeasArrays.append(yMeasArray)
         self.yMeasArraysChanged.emit()
 
     def addYBkgArray(self, yBkgArray):
-        log.debug(f"Adding y-background data. Experiment no. {len(self._dataBlocks)}")
+        console.debug(f"Adding y-background data. Experiment no. {len(self._dataBlocks)}")
         self._yBkgArrays.append(yBkgArray)
         self.yBkgArraysChanged.emit()
 
     def setDataBlocksJson(self):
-        log.debug("Converting experiment dataBlocks to JSON string")
+        console.debug("Converting experiment dataBlocks to JSON string")
         self._dataBlocksJson = Converter.dictToJson(self._dataBlocks)
-        log.debug("Experiment dataBlocks have been converted to JSON string")
+        console.debug("Experiment dataBlocks have been converted to JSON string")
         self.dataBlocksJsonChanged.emit()

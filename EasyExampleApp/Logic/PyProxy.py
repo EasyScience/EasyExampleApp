@@ -14,8 +14,8 @@ from Logic.Fittables import Fittables
 from Logic.Summary import Summary
 from Logic.Status import Status
 from Logic.Plotting import Plotting
-from Logic.Logging import Logger
 from Logic.Helpers import ExitHelper
+from Logic.Logging import Logger
 
 
 class PyProxy(QObject):

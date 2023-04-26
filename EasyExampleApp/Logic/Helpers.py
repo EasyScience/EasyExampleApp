@@ -9,7 +9,7 @@ import orjson
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QObject, Slot
 
-from Logic.Logging import log
+from Logic.Logging import console
 
 
 class ResourcePaths:
@@ -24,22 +24,22 @@ class ResourcePaths:
         # EasyApp from resources.py file
         try:
             import resources
-            log.debug(f'Resources: {resources}')
+            console.debug(f'Resources: {resources}')
             self.main_qml = 'qrc:/Gui/main.qml'
             self.imports = ['qrc:/EasyApp', 'qrc:/']
             return
         except ImportError:
-            log.info('No rc resources file is found.')
+            console.info('No rc resources file is found.')
 
         # EasyApp from the module installed via pip
         try:
             import EasyApp
-            log.debug(f'EasyApp: {EasyApp.__path__[0]}')
+            console.debug(f'EasyApp: {EasyApp.__path__[0]}')
             self.main_qml = 'Gui/main.qml'
             self.imports = [os.path.join(EasyApp.__path__[0], '..'), '.']
             return
         except ImportError:
-            log.info('No EasyApp module is installed.')
+            console.info('No EasyApp module is installed.')
 
         # EasyApp from the local copy
         if os.path.exists('../../EasyApp'):
@@ -47,7 +47,7 @@ class ResourcePaths:
             self.imports = ['../../EasyApp', '.']
             return
         else:
-            log.debug('No EasyApp directory is found.')
+            console.debug('No EasyApp directory is found.')
 
 
 class CommandLineArguments:
@@ -70,6 +70,10 @@ class EnvironmentVariables:
     @staticmethod
     def set():
         os.environ['QSG_RHI_BACKEND'] = 'opengl'  # For QtCharts XYSeries useOpenGL
+        #os.environ['QT_MESSAGE_PATTERN'] = "\033[32m%{time h:mm:ss.zzz}%{if-category}\033[32m %{category}:%{endif} %{if-debug}\033[34m%{function}%{endif}%{if-warning}\033[31m%{backtrace depth=3}%{endif}%{if-critical}\033[31m%{backtrace depth=3}%{endif}%{if-fatal}\033[31m%{backtrace depth=3}%{endif}\033[0m %{message}"
+        #os.environ['QT_MESSAGE_PATTERN'] = "\033[32m%{time h:mm:ss.zzz}%{if-category}\033[32m %{category}:%{endif} %{if-debug}\033[34m%{function}%{endif}\033[0m %{message}"
+        #os.environ['QT_MESSAGE_PATTERN'] = "[%{time process} %{type}] %{file}:%{line} %{function} - %{message}"
+        #os.environ['QT_MESSAGE_PATTERN'] = "%{time yyyyMMdd h:mm:ss.zzz t} %{function} %{type}:%{message} %{file}:%{line}"
 
 
 class WebEngine:
@@ -79,7 +83,7 @@ class WebEngine:
         try:
             from PySide6.QtWebEngineQuick import QtWebEngineQuick
         except ModuleNotFoundError:
-            log.debug('No module named "PySide6.QtWebEngineQuick" is found.')
+            console.debug('No module named "PySide6.QtWebEngineQuick" is found.')
         else:
             QtWebEngineQuick.initialize()
 
@@ -97,7 +101,7 @@ class Converter:
         elif value == 'false':
             return False
         else:
-            log.debug(f'Input value "{value}" is not supported. It should either be "true" or "false".')
+            console.debug(f'Input value "{value}" is not supported. It should either be "true" or "false".')
 
     @staticmethod
     def dictToJson(obj):
@@ -132,5 +136,5 @@ class ExitHelper(QObject):
 
     @Slot(int)
     def exitApp(self, exitCode):
-        log.debug(f'Force exiting application with code {exitCode}')
+        console.debug(f'Force exiting application with code {exitCode}')
         os._exit(exitCode)

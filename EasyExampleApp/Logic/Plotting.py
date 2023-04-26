@@ -8,7 +8,7 @@ from PySide6.QtCore import QObject, Signal, Slot, Property
 from PySide6 import QtCharts
 
 from Logic.Helpers import Converter, WebEngine
-from Logic.Logging import log
+from Logic.Logging import console
 
 
 _LIBS_1D = ['QtCharts', 'Plotly']
@@ -93,7 +93,7 @@ class Plotting(QObject):
 
     def drawMeasuredOnExperimentChart(self):
         lib = self._proxy.plotting.currentLib1d
-        log.debug(f"Updating measured curve on experiment page. Plotting lib: '{lib}'")
+        console.debug(f"Updating measured curve on experiment page. Plotting lib: '{lib}'")
         if lib == 'QtCharts':
             self.qtchartsReplaceMeasuredOnExperimentChartAndRedraw()
         elif lib == 'Plotly':
@@ -103,7 +103,7 @@ class Plotting(QObject):
 
     def drawBackgroundOnExperimentChart(self):
         lib = self._proxy.plotting.currentLib1d
-        log.debug(f"Updating background curve on experiment page. Plotting lib: '{lib}'")
+        console.debug(f"Updating background curve on experiment page. Plotting lib: '{lib}'")
         if lib == 'QtCharts':
             self.qtchartsReplaceBackgroundOnExperimentChartAndRedraw()
         elif lib == 'Plotly':
@@ -111,7 +111,7 @@ class Plotting(QObject):
 
     def drawCalculatedOnModelChart(self):
         lib = self._proxy.plotting.currentLib1d
-        log.debug(f"Updating calculated curve on model page. Plotting lib: '{lib}'")
+        console.debug(f"Updating calculated curve on model page. Plotting lib: '{lib}'")
         if lib == 'QtCharts':
             self.qtchartsReplaceCalculatedOnModelChartAndRedraw()
         elif lib == 'Plotly':
@@ -128,7 +128,7 @@ class Plotting(QObject):
 
     def drawAllOnAnalysisChart(self):
         lib = self._proxy.plotting.currentLib1d
-        log.debug(f"Updating all curves on analysis page. Plotting lib: '{lib}'")
+        console.debug(f"Updating all curves on analysis page. Plotting lib: '{lib}'")
         if lib == 'QtCharts':
             self.qtchartsReplaceMeasuredOnAnalysisChartAndRedraw()
             self.qtchartsReplaceBackgroundOnAnalysisChartAndRedraw()
@@ -141,16 +141,16 @@ class Plotting(QObject):
 
     def redrawCalculatedOnAnalysisChart(self):
         lib = self._proxy.plotting.currentLib1d
-        log.debug(f"Updating total calculated curve on analysis page. Plotting lib: '{lib}'")
+        console.debug(f"Updating total calculated curve on analysis page. Plotting lib: '{lib}'")
         if lib == 'QtCharts':
             self.qtchartsReplaceTotalCalculatedOnAnalysisChartAndRedraw()
         elif lib == 'Plotly':
             self.plotlyReplaceTotalCalculatedYOnAnalysisChartAndRedraw()
-        log.debug("Total calculated curve on analysis page has been updated")
+        console.debug("Total calculated curve on analysis page has been updated")
 
     def redrawBackgroundOnAnalysisChart(self):
         lib = self._proxy.plotting.currentLib1d
-        log.debug(f"Updating background curve on analysis page. Plotting lib: '{lib}'")
+        console.debug(f"Updating background curve on analysis page. Plotting lib: '{lib}'")
         if lib == 'QtCharts':
             self.qtchartsReplaceBackgroundOnAnalysisChartAndRedraw()
         elif lib == 'Plotly':
@@ -168,9 +168,9 @@ class Plotting(QObject):
             xArray = self._proxy.experiment._xArrays[index]
             yMeasArray = self._proxy.experiment._yMeasArrays[index]
         measSerie = self._chartRefs['QtCharts']['experimentPage']['measSerie']
-        log.debug(f"Replacing x and y numpy arrays of size {xArray.size} with measured data on QtChart serie has been started")
+        console.debug(f"Replacing x and y numpy arrays of size {xArray.size} with measured data on QtChart serie has been started")
         measSerie.replaceNp(xArray, yMeasArray)
-        log.debug(f"Replacing x and y numpy arrays of size {xArray.size} with measured data on QtChart serie has been finished")
+        console.debug(f"Replacing x and y numpy arrays of size {xArray.size} with measured data on QtChart serie has been finished")
 
     def qtchartsReplaceBackgroundOnExperimentChartAndRedraw(self):
         index = self._proxy.experiment.currentIndex
@@ -229,7 +229,7 @@ class Plotting(QObject):
             yTotalCalcArray = self._proxy.analysis._yCalcTotal
         calcSerie = self._chartRefs['QtCharts']['analysisPage']['totalCalcSerie']
         calcSerie.replaceNp(xArray, yTotalCalcArray)
-        log.debug("Total calculated curve data on analysis page have been replaced")
+        console.debug("Total calculated curve data on analysis page have been replaced")
 
     # Plotly: Experiment
 
