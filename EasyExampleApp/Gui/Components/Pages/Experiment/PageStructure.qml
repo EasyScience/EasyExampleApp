@@ -56,9 +56,9 @@ EaComponents.ContentPage {
 
     Component.onCompleted: {
         console.debug(`Experiment page loaded: ${this}`)
-        console.info(`Experiment page loaded: ${this}`)
-        console.warn(`Experiment page loaded: ${this}`)
-        console.error(`Experiment page loaded: ${this}`)
+        //console.info(`Experiment page loaded: ${this}`)
+        //console.warn(`Experiment page loaded: ${this}`)
+        //console.error(`Experiment page loaded: ${this}`)
 
 
     }
