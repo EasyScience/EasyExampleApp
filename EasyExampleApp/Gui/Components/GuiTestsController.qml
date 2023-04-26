@@ -85,8 +85,6 @@ EaElements.RemoteController {
         rc.posToCenter()
         rc.showPointer()
 
-        return
-
         // Home Page
 
         //saveImage(saveImagesDir, 'HomePage.png')

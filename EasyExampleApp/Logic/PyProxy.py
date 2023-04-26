@@ -15,13 +15,13 @@ from Logic.Summary import Summary
 from Logic.Status import Status
 from Logic.Plotting import Plotting
 from Logic.Helpers import ExitHelper
-from Logic.Logging import Logger
+from Logic.Logging import LoggerLevelHandler
 
 
 class PyProxy(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._logger = Logger(self)
+        self._logger = LoggerLevelHandler(self)
         self._project = Project(self)
         self._experiment = Experiment(self)
         self._model = Model(self)

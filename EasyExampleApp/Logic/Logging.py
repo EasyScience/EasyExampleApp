@@ -9,57 +9,128 @@
 # https://doc.qt.io/qt-6/qtquick-debugging.html
 # https://raymii.org/s/articles/Disable_logging_in_QT_and_QML.html
 
+import os
+import sys
+import time
 import inspect
 import logging
 
-from PySide6.QtCore import QObject, Signal, Property, qDebug, QtMsgType, QTime
+from PySide6.QtCore import QObject, Signal, Property, QtMsgType, QUrl
 
 
 LOGGER_LEVELS = {
     'disabled': 40,
-    'error': 30,  # logging.CRITICAL, logging.ERROR, QtMsgType.QtSystemMsg, QtMsgType.QtCriticalMsg, QtMsgType.QtFatalMsg
-    'info': 20,  # logging.INFO, logging.WARNING, QtMsgType.QtInfoMsg, QtMsgType.QtWarningMsg
-    'debug': 10  # logging.NOTSET, logging.DEBUG, QtMsgType.QtDebugMsg
+    'error': 30,    # logging.CRITICAL, logging.ERROR, QtMsgType.QtSystemMsg, QtMsgType.QtCriticalMsg, QtMsgType.QtFatalMsg
+    'info': 20,     # logging.INFO, logging.WARNING, QtMsgType.QtInfoMsg, QtMsgType.QtWarningMsg
+    'debug': 10     # logging.NOTSET, logging.DEBUG, QtMsgType.QtDebugMsg
 }
 
 
-class CustomLogger(QObject):
+class Logger:
 
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self._level = 'disabled'
-        self.caller = None
-        self.params = {}
+    def __init__(self):
+        self._count = 0
+        self._level = 'debug'
+        #self._timestamp = QTime.currentTime().toString("hh:mm:ss.zzz")
+        self._startTime = time.time()
 
-        self.format = logging.Formatter('{asctime}.{msecs:03.0f}   PY {levelname:<8}   {message:<80.80}   {funcName:34.34} file://{pathname}:{lineno:d}',
-                                    datefmt='%H:%M:%S',
-                                    style='{')
+        #self._consoleFormat = logging.Formatter('{asctime}.{msecs:03.0f} {message}', datefmt='%H:%M:%S', style='{')
+        self._consoleFormat = logging.Formatter('{message}', datefmt='%H:%M:%S', style='{')
+        self._consoleHandler = logging.StreamHandler()
+        self._consoleHandler.setFormatter(self._consoleFormat)
 
-        self.consoleHandler = logging.StreamHandler()
-        self.consoleHandler.setFormatter(self.format)
-
-        self.console = logging.getLogger('main')
-        self.console.setLevel(logging.DEBUG)
-        self.console.addHandler(self.consoleHandler)
-
-    def getLogger(self):
-        return self.console
-
-    def info(self, msg):
-        self.console.info(msg)
+        self._logger = logging.getLogger()
+        self._logger.setLevel(logging.DEBUG)
+        self._logger.addHandler(self._consoleHandler)
 
     def debug(self, msg):
-        self.console.debug(msg)
+        level = 'debug'
+        self._pyMessageHandler(level, msg)
 
-class Logger(QObject):
+    def info(self, msg):
+        level = 'info'
+        self._pyMessageHandler(level, msg)
+
+    def error(self, msg):
+        level = 'error'
+        self._pyMessageHandler(level, msg)
+
+    def qmlMessageHandler(self, msgType, context, message):
+        level = Logger.qtMsgTypeToCustomLevel(msgType)
+        if LOGGER_LEVELS[level] < LOGGER_LEVELS[self._level]:
+            return
+        category = 'qml'
+        funcName = context.function
+        filePath = QUrl(context.file).toLocalFile()
+        if filePath == '':
+            filePath = None
+        lineNo = context.line
+        msg = self._formattedConsoleMsg(message, level, category, funcName, filePath, lineNo)
+        self._logger.debug(msg)
+
+    def _pyMessageHandler(self, level, msg):
+        if LOGGER_LEVELS[level] < LOGGER_LEVELS[self._level]:
+            return
+        category = 'py'
+        caller = inspect.getframeinfo(sys._getframe(2))
+        funcName = caller.function
+        filePath = os.path.relpath(caller.filename)
+        lineNo = caller.lineno
+        msg = self._formattedConsoleMsg(msg, level, category, funcName, filePath, lineNo)
+        self._logger.debug(msg)
+
+    def _timing(self):
+        endTime = time.time()
+        timing = endTime - self._startTime
+        self._startTime = endTime
+        if timing < 0.001:
+            return ' ' * 8
+        elif timing < 60:
+            return f'{timing:7.3f}s'
+        elif timing < 3600:
+            timing /= 60
+            return f'{timing:7.3f}m'
+        else:
+            timing /= 3600
+            return f'{timing:7.3f}h'
+
+    def _formattedConsoleMsg(self, msg, level, category, funcName, filePath, lineNo):
+        self._count += 1
+        if funcName is None:
+            funcName = ''
+        sourceUrl = ''
+        try:
+            cwd = os.getcwd()
+            parent = os.path.join(cwd, '..')
+            start = os.path.abspath(parent)
+            relativePath = os.path.relpath(filePath, start)
+            fileUrl = f'file://{relativePath}'
+            sourceUrl = f'{fileUrl}:{lineNo}'
+        except:
+            console.error(f"Failed to convert '{filePath}:{lineNo}' to url")
+        return f'{self._count:>5d} {self._timing()} {category:>4} {level:<7} {msg:<80.80} {funcName:<34.34} {sourceUrl}'
+
+    @staticmethod
+    def qtMsgTypeToCustomLevel(msgType):
+        return {
+            QtMsgType.QtDebugMsg: 'debug',
+            QtMsgType.QtInfoMsg: 'info',
+            QtMsgType.QtWarningMsg: 'info',
+            QtMsgType.QtCriticalMsg: 'error',
+            QtMsgType.QtSystemMsg: 'error',
+            QtMsgType.QtFatalMsg: 'error'
+        }[msgType]
+
+
+console = Logger()
+
+
+class LoggerLevelHandler(QObject):
     levelChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._level = 'disabled'
-        self.caller = None
-        self.params = {}
-
+        self._level = 'debug'
 
     # QML accessible properties
 
@@ -69,103 +140,9 @@ class Logger(QObject):
 
     @level.setter
     def level(self, newValue):
+        newValue = newValue.lower()
         if self._level == newValue:
             return
         self._level = newValue
         self.levelChanged.emit()
-
-    ###
-
-    def setCaller(self):
-        self.caller = inspect.getframeinfo(inspect.stack()[1][0])
-
-    def setParamsQmlCategory(self, message, level, funcname, fileurl, lineno):
-        self.params['category'] = 'qml'
-        self.params['message'] = message
-        self.params['level'] = level
-        self.params['funcname'] = funcname
-        self.params['fileurl'] = fileurl
-        self.params['lineno'] = lineno
-
-    def setParamsPyCategory(self, message, level, caller):
-        self.params['category'] = 'py'
-        self.params['message'] = message
-        self.params['level'] = level
-        self.params['funcname'] = caller.function
-        self.params['fileurl'] = f'file://{caller.filename}'
-        self.params['lineno'] = caller.lineno
-
-    def setTimeStamp(self):
-        self.params['timestamp'] = QTime.currentTime().toString("hh:mm:ss.zzz")
-
-    def colorizeMessage(self, message):
-        return message
-        colors = {
-            'debug': '\033[92m',  # green
-            'info': '\033[97m',  # white
-            'error': '\033[91m'  # red
-
-                #     '\033[98m' # light grey
-                # '\033[93m',  # yellow
-        }
-        colorStart = colors[self.params['level']]
-        colorEnd = '\033[0m'
-        return f'{colorStart}{message}{colorEnd}'
-
-    def consoleMessage(self):
-        timestamp = self.params['timestamp']
-        category = self.params['category']
-        level = self.params['level']
-        message = self.params['message']
-        funcname = self.params['funcname']
-        fileurl = self.params['fileurl']
-        lineno = self.params['lineno']
-        return self.colorizeMessage(f"{timestamp} {category:>4} {level:<8}   {message:<80.80}   {funcname:<34.34} {fileurl}:{lineno}")
-
-    def printConsoleMessage(self):
-        #if LOGGER_LEVELS[self.params['level'].lower()] > LOGGER_LEVELS[self.level.lower()]:
-        print(self.consoleMessage())
-
-    def printPyCategory(self, message, level, caller):
-        self.setParamsPyCategory(message, level, caller)
-        self.setTimeStamp()
-        self.printConsoleMessage()
-
-    def printQmlCategory(self, message, level, funcname, fileurl, lineno):
-        self.setParamsQmlCategory(message, level, funcname, fileurl, lineno)
-        self.setTimeStamp()
-        self.printConsoleMessage()
-
-    def info(self, message):
-        caller = inspect.getframeinfo(inspect.stack()[1][0])
-        self.printPyCategory(message, 'info', caller)
-    #
-    def debug(self, message):
-        caller = inspect.getframeinfo(inspect.stack()[1][0])
-        self.printPyCategory(message, 'debug', caller)
-
-    def error(self, message):
-        caller = inspect.getframeinfo(inspect.stack()[1][0])
-        self.printPyCategory(message, 'error', caller)
-
-
-
-console = Logger()
-
-
-def qtMsgTypeToCustomLevel(msgType):
-    return {
-        QtMsgType.QtDebugMsg: 'debug',
-        QtMsgType.QtInfoMsg: 'info',
-        QtMsgType.QtWarningMsg: 'info',
-        QtMsgType.QtCriticalMsg: 'error',
-        QtMsgType.QtSystemMsg: 'error',
-        QtMsgType.QtFatalMsg: 'error'
-    }[msgType]
-
-def qtMessageHandler(msgType, context, message):
-    level = qtMsgTypeToCustomLevel(msgType)
-    funcname = context.function
-    fileurl = context.file
-    lineno = context.line
-    console.printQmlCategory(message, level, funcname, fileurl, lineno)
+        console._level = self._level

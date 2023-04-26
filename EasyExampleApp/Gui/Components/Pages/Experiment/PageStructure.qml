@@ -59,8 +59,6 @@ EaComponents.ContentPage {
         //console.info(`Experiment page loaded: ${this}`)
         //console.warn(`Experiment page loaded: ${this}`)
         //console.error(`Experiment page loaded: ${this}`)
-
-
     }
     Component.onDestruction: console.debug(`Experiment page destroyed: ${this}`)
 }

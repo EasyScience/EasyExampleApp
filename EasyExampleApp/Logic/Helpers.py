@@ -9,7 +9,7 @@ import orjson
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QObject, Slot
 
-#from Logic.Logging import console
+from Logic.Logging import console
 
 
 class ResourcePaths:
@@ -24,33 +24,34 @@ class ResourcePaths:
         # EasyApp from resources.py file
         try:
             import resources
-            #console.debug(f'Resources: {resources}')
+            console.info(f'Resources: {resources}')
             self.main_qml = 'qrc:/Gui/main.qml'
             self.imports = ['qrc:/EasyApp', 'qrc:/']
             return
         except ImportError:
-            #console.info('No rc resources file is found.')
-            pass
+            console.debug('No rc resources file is found. Trying to find installed EasyApp module')
 
         # EasyApp from the module installed via pip
         try:
             import EasyApp
-            #console.debug(f'EasyApp: {EasyApp.__path__[0]}')
+            console.info(f'EasyApp: {EasyApp.__path__[0]}')
             self.main_qml = 'Gui/main.qml'
             self.imports = [os.path.join(EasyApp.__path__[0], '..'), '.']
             return
         except ImportError:
-            #console.info('No EasyApp module is installed.')
-            pass
+            console.debug('No EasyApp module is installed. Trying to find local copy of EasyApp')
 
         # EasyApp from the local copy
-        if os.path.exists('../../EasyApp'):
+        path = '../../EasyApp'
+        if os.path.exists(path):
+            console.info(f'EasyApp: {os.path.abspath(path)}')
             self.main_qml = 'Gui/main.qml'
             self.imports = ['../../EasyApp', '.']
             return
         else:
-            #console.debug('No EasyApp directory is found.')
-            pass
+            console.debug('No EasyApp directory is found at ../../EasyApp')
+
+        console.error('EasyApp is not found.')
 
 
 class CommandLineArguments:
