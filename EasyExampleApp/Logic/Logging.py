@@ -70,6 +70,7 @@ class Logger(QObject):
         self.params['timestamp'] = QTime.currentTime().toString("hh:mm:ss.zzz")
 
     def colorizeMessage(self, message):
+        return message
         colors = {
             'debug': '\033[92m',
             'info': '\033[97m',
