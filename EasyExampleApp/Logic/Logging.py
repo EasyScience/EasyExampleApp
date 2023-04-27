@@ -12,10 +12,11 @@
 import os
 import sys
 import time
+import pathlib
 import inspect
 import logging
 
-from PySide6.QtCore import QObject, Signal, Property, QtMsgType, QUrl
+from PySide6.QtCore import QObject, Signal, Property, QtMsgType, QUrl, QSettings
 
 
 LOGGER_LEVELS = {
@@ -30,7 +31,8 @@ class Logger:
 
     def __init__(self):
         self._count = 0
-        self._level = 'debug'
+        self._level = self._getLevelFromSettings()
+        self._getLevelFromSettings()
         #self._timestamp = QTime.currentTime().toString("hh:mm:ss.zzz")
         self._startTime = time.time()
 
@@ -40,7 +42,7 @@ class Logger:
         self._consoleHandler.setFormatter(self._consoleFormat)
 
         self._logger = logging.getLogger()
-        self._logger.setLevel(logging.DEBUG)
+        self._logger.setLevel(logging.NOTSET)
         self._logger.addHandler(self._consoleHandler)
 
     def debug(self, msg):
@@ -78,6 +80,17 @@ class Logger:
         lineNo = caller.lineno
         msg = self._formattedConsoleMsg(msg, level, category, funcName, filePath, lineNo)
         self._logger.debug(msg)
+
+    def _getLevelFromSettings(self):
+        # NEED FIX: Duplication from main.py
+        appName = 'EasyExample'
+        homeDirPath = pathlib.Path.home()
+        settingsIniFileName = 'settings.ini'
+        settingsIniFilePath = str(homeDirPath.joinpath(f'.{appName}', settingsIniFileName))
+        settings = QSettings(settingsIniFilePath, QSettings.IniFormat)
+        level = settings.value("Preferences.Develop/loggingLevel", 'debug')
+        level = level.lower()
+        return level
 
     def _timing(self):
         endTime = time.time()
