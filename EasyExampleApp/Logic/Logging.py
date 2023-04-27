@@ -120,7 +120,7 @@ class Logger:
             fileUrl = f'file://{relativePath}'
             sourceUrl = f'{fileUrl}:{lineNo}'
         except:
-            console.error(f"Failed to convert '{filePath}:{lineNo}' to url")
+            pass
         return f'{self._count:>5d} {self._timing()} {category:>4} {level:<7} {msg:<80.80} {funcName:<34.34} {sourceUrl}'
 
     @staticmethod
