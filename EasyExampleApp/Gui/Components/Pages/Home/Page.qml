@@ -87,6 +87,7 @@ Item {
             fontIcon: "rocket"
             text: qsTr("Start")
             onClicked: {
+                console.debug(`Clicking '${text}' button: ${this}`)
                 Globals.Vars.projectPageEnabled = true
                 Globals.Refs.app.appbar.projectButton.toggle()
             }

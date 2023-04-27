@@ -93,7 +93,10 @@ Column {
             enabled: !Globals.Proxies.main.experiment.defined
             fontIcon: "upload"
             text: qsTr("Import data from local drive")
-            onClicked: Globals.Proxies.main.experiment.loadExperimentFromFile('examples/PicoScope.json')
+            onClicked: {
+                console.debug(`Clicking '${text}' button: ${this}`)
+                Globals.Proxies.main.experiment.loadExperimentFromFile('examples/PicoScope.json')
+            }
             Component.onCompleted: Globals.Refs.app.experimentPage.importDataFromLocalDriveButton = this
         }
 
@@ -101,7 +104,10 @@ Column {
             enabled: !Globals.Proxies.main.experiment.defined
             fontIcon: "upload"
             text: qsTr("Add default experimental data")
-            onClicked: Globals.Proxies.main.experiment.addDefaultExperiment()
+            onClicked: {
+                Globals.Proxies.main.experiment.addDefaultExperiment()
+                console.debug(`Clicking '${text}' button: ${this}`)
+            }
             Component.onCompleted: Globals.Refs.app.experimentPage.addDefaultExperimentDataButton = this
         }
     }

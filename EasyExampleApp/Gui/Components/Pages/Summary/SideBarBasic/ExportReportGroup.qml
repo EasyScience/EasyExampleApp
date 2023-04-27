@@ -85,6 +85,7 @@ Column {
         fontIcon: 'download'
         text: qsTr('Save')
         onClicked: {
+            console.debug(`Clicking '${text}' button: ${this}`)
             if (formatField.currentValue === 'html') {
                 Globals.Proxies.main.summary.saveHtmlReport(reportLocationField.text)
             } else if (formatField.currentValue === 'pdf') {

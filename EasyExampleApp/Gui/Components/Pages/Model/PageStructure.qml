@@ -45,6 +45,7 @@ EaComponents.ContentPage {
         continueButton.enabled: Globals.Proxies.main.model.defined
 
         continueButton.onClicked: {
+            console.debug(`Clicking '${continueButton.text}' button: ${this}`)
             Globals.Vars.analysisPageEnabled = true
             Globals.Refs.app.appbar.analysisButton.toggle()
         }

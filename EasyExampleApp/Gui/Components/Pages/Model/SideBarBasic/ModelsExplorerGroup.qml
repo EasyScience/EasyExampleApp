@@ -96,14 +96,20 @@ Column {
         EaElements.SideBarButton {
             fontIcon: "upload"
             text: qsTr("Load new model from file")
-            onClicked: Globals.Proxies.main.model.loadModelFromFile('examples/Gaussian.json')
+            onClicked: {
+                console.debug(`Clicking '${text}' button: ${this}`)
+                Globals.Proxies.main.model.loadModelFromFile('examples/Gaussian.json')
+            }
             Component.onCompleted: Globals.Refs.app.modelPage.loadNewModelFromFileButton = this
         }
 
         EaElements.SideBarButton {
             fontIcon: "plus-circle"
             text: qsTr("Add new model manually")
-            onClicked: Globals.Proxies.main.model.addDefaultModel()
+            onClicked: {
+                console.debug(`Clicking '${text}' button: ${this}`)
+                Globals.Proxies.main.model.addDefaultModel()
+            }
             Component.onCompleted: Globals.Refs.app.modelPage.addNewModelManuallyButton = this
         }
     }

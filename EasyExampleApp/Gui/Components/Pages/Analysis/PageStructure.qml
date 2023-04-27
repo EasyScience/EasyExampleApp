@@ -48,6 +48,7 @@ EaComponents.ContentPage {
         ]
 
         continueButton.onClicked: {
+            console.debug(`Clicking '${continueButton.text}' button: ${this}`)
             Globals.Vars.summaryPageEnabled = true
             Globals.Refs.app.appbar.summaryButton.toggle()
         }

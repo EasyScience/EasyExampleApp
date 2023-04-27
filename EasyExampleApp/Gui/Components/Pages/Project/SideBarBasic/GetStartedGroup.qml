@@ -24,6 +24,7 @@ Grid {
         text: qsTr("Create a new project")
 
         onClicked: {
+            console.debug(`Clicking '${text}' button: ${this}`)
             projectDescriptionDialog.source = 'ProjectDescriptionDialog.qml'
             EaGlobals.Vars.showProjectDescriptionDialog = true
         }

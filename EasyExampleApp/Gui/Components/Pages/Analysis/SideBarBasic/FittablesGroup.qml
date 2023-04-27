@@ -167,7 +167,10 @@ Column {
         fontIcon: 'play-circle'
         text: qsTr('Start fitting')
 
-        onClicked: Globals.Proxies.main.fitting.fit()
+        onClicked: {
+            console.debug(`Clicking '${text}' button: ${this}`)
+            Globals.Proxies.main.fitting.fit()
+        }
 
         Component.onCompleted: Globals.Refs.app.analysisPage.startFittingButton = this
     }

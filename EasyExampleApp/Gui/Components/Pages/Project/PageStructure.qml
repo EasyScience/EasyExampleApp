@@ -45,6 +45,7 @@ EaComponents.ContentPage {
                                  qsTr("Continue without project")
 
         continueButton.onClicked: {            
+            console.debug(`Clicking '${continueButton.text}' button: ${this}`)
             Globals.Vars.experimentPageEnabled = true
             Globals.Refs.app.appbar.experimentButton.toggle()
         }
