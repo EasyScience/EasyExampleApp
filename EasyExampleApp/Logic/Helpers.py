@@ -142,5 +142,5 @@ class ExitHelper(QObject):
 
     @Slot(int)
     def exitApp(self, exitCode):
-        #console.debug(f'Force exiting application with code {exitCode}')
+        console.debug(f'Force exiting application with code {exitCode}')
         os._exit(exitCode)

@@ -107,6 +107,27 @@ class Logger:
             timing /= 3600
             return f'{timing:7.3f}h'
 
+    def _colorize(self, txt, level, category):
+        # https://www.unixtutorial.org/how-to-show-colour-numbers-in-unix-terminal/
+        grey = '\x1b[38;5;252m'
+        green = '\x1b[38;5;149m'
+        blue = '\x1b[38;5;81m'
+        yellow = '\x1b[38;5;222m'
+        red = '\x1b[38;5;204m'
+        reset = '\x1b[0m'
+        if level == 'error':
+            return f'{red}{txt}{reset}'
+        elif level == 'info':
+            return f'{blue}{txt}{reset}'
+        elif level == 'debug':
+            if category == 'py':
+                return f'{yellow}{txt}{reset}'
+            elif category == 'qml':
+                return f'{green}{txt}{reset}'
+            else:
+                return f'{grey}{txt}{reset}'
+        return txt
+
     def _formattedConsoleMsg(self, msg, level, category, funcName, filePath, lineNo):
         self._count += 1
         if funcName is None:
@@ -121,7 +142,9 @@ class Logger:
             sourceUrl = f'{fileUrl}:{lineNo}'
         except:
             pass
-        return f'{self._count:>5d} {self._timing()} {category:>4} {level:<7} {msg:<80.80} {funcName:<34.34} {sourceUrl}'
+        txt = f'{self._count:>5d} {self._timing()} {category:>4} {level:<7} {msg:<80.80} {funcName:<34.34} {sourceUrl}'
+        txt = self._colorize(txt, level, category)
+        return txt
 
     @staticmethod
     def qtMsgTypeToCustomLevel(msgType):
