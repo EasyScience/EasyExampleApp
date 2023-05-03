@@ -3,9 +3,9 @@
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 import numpy as np
-
 from PySide6.QtCore import QObject, Signal, Property
-from Logic.Logging import console
+
+from EasyApp.Logic.Logging import console
 
 
 class Analysis(QObject):

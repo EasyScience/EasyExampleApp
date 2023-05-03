@@ -8,7 +8,6 @@
     "EasyExampleApp/Logic/Fittables.py",
     "EasyExampleApp/Logic/Fitting.py",
     "EasyExampleApp/Logic/Helpers.py",
-    "EasyExampleApp/Logic/Logging.py",
     "EasyExampleApp/Logic/Model.py",
     "EasyExampleApp/Logic/Plotting.py",
     "EasyExampleApp/Logic/Project.py",

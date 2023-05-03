@@ -3,7 +3,8 @@
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 from PySide6.QtCore import QObject, Signal, Slot, Property
-from Logic.Logging import console
+
+from EasyApp.Logic.Logging import console
 
 
 class Fitting(QObject):

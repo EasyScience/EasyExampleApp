@@ -5,9 +5,9 @@
 import os
 import json, jsbeautifier
 from datetime import datetime
-
 from PySide6.QtCore import QObject, Signal, Slot, Property
-from Logic.Logging import console
+
+from EasyApp.Logic.Logging import console
 
 
 _EMPTY_DATA = {

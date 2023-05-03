@@ -4,6 +4,7 @@
 
 from PySide6.QtCore import QObject, Property
 
+from EasyApp.Logic.Logging import LoggerLevelHandler
 from Logic.Connections import Connections
 from Logic.Project import Project
 from Logic.Experiment import Experiment
@@ -15,7 +16,6 @@ from Logic.Summary import Summary
 from Logic.Status import Status
 from Logic.Plotting import Plotting
 from Logic.Helpers import ExitHelper
-from Logic.Logging import LoggerLevelHandler
 
 
 class PyProxy(QObject):

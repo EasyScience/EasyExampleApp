@@ -2,7 +2,11 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-from Logic.Logging import console
+# Import logger from EasyApp module
+import sys
+EASYAPP_LOCAL_PATH = '../../EasyApp'
+sys.path.append(EASYAPP_LOCAL_PATH)
+from EasyApp.Logic.Logging import console
 
 console.debug('Starting default Python modules import')
 import sys
@@ -56,7 +60,7 @@ if __name__ == '__main__':
         engine.addImportPath(p)
 
     console.debug('Loading the root QML file')
-    engine.load(resourcePaths.main_qml)
+    engine.load(resourcePaths.mainQml)
 
     console.debug('Starting event loop')
     if not engine.rootObjects():

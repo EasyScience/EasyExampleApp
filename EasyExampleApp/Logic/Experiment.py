@@ -5,12 +5,11 @@
 import os
 import json
 import numpy as np
-
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
+from EasyApp.Logic.Logging import console
 from Logic.Calculators import GaussianCalculator
 from Logic.Helpers import Converter
-from Logic.Logging import console
 
 
 _DEFAULT_DATA_BLOCK = {

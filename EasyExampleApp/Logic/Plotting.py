@@ -3,12 +3,11 @@
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 import numpy as np
-
 from PySide6.QtCore import QObject, Signal, Slot, Property
 from PySide6 import QtCharts
 
+from EasyApp.Logic.Logging import console
 from Logic.Helpers import Converter, WebEngine
-from Logic.Logging import console
 
 
 _LIBS_1D = ['QtCharts', 'Plotly']

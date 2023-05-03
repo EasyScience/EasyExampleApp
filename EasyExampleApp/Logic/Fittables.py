@@ -4,8 +4,8 @@
 
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
+from EasyApp.Logic.Logging import console
 from Logic.Helpers import Converter
-from Logic.Logging import console
 
 _EMPTY_DATA = [
     {

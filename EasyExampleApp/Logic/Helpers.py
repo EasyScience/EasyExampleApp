@@ -5,53 +5,43 @@
 import os
 import argparse
 import orjson
-
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QObject, Slot
 
-from Logic.Logging import console
+from EasyApp.Logic.Logging import console
 
 
 class ResourcePaths:
     def __init__(self):
-        self.main_qml = ''  # Current app main.qml file
+        self.mainQml = ''  # Current app main.qml file
         self.imports = []  # EasyApp qml components (EasyApp/...) & Current app qml components (Gui/...)
         self.settings_ini = ''  # Persistent settings ini file location
         self.setPaths()
 
     def setPaths(self):
 
-        # EasyApp from resources.py file
+        console.debug('Trying to import python resources.py file with EasyApp')
         try:
             import resources
             console.info(f'Resources: {resources}')
-            self.main_qml = 'qrc:/Gui/main.qml'
+            self.mainQml = 'qrc:/Gui/main.qml'
             self.imports = ['qrc:/EasyApp', 'qrc:/']
             return
         except ImportError:
-            console.debug('No rc resources file is found. Trying to find installed EasyApp module')
+            console.debug('No rc resources file is found')
 
-        # EasyApp from the module installed via pip
+        console.debug('Trying to import the locally installed EasyApp module')
         try:
             import EasyApp
-            console.info(f'EasyApp: {EasyApp.__path__[0]}')
-            self.main_qml = 'Gui/main.qml'
-            self.imports = [os.path.join(EasyApp.__path__[0], '..'), '.']
+            easyAppPath = os.path.abspath(EasyApp.__path__[0])
+            console.info(f'EasyApp: {easyAppPath}')
+            self.mainQml = 'Gui/main.qml'
+            self.imports = [os.path.join(easyAppPath, '..'), '.']
             return
         except ImportError:
-            console.debug('No EasyApp module is installed. Trying to find local copy of EasyApp')
+            console.debug('No EasyApp module is installed')
 
-        # EasyApp from the local copy
-        path = '../../EasyApp'
-        if os.path.exists(path):
-            console.info(f'EasyApp: {os.path.abspath(path)}')
-            self.main_qml = 'Gui/main.qml'
-            self.imports = ['../../EasyApp', '.']
-            return
-        else:
-            console.debug('No EasyApp directory is found at ../../EasyApp')
-
-        console.error('EasyApp is not found.')
+        console.error('EasyApp module is not found.')
 
 
 class CommandLineArguments:
