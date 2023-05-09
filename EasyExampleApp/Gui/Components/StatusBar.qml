@@ -15,6 +15,7 @@ import Gui.Globals as Globals
 
 EaElements.StatusBar {
     visible: EaGlobals.Vars.appBarCurrentIndex !== 0
+    fittingInProgress: Globals.Proxies.main.fitting.isFittingNow
 
     /*
     model: XmlListModel {

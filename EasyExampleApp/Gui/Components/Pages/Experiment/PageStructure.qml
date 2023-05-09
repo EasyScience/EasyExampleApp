@@ -55,11 +55,6 @@ EaComponents.ContentPage {
         Component.onCompleted: Globals.Refs.app.experimentPage.continueButton = continueButton
     }
 
-    Component.onCompleted: {
-        console.debug(`Experiment page loaded: ${this}`)
-        //console.info(`Experiment page loaded: ${this}`)
-        //console.warn(`Experiment page loaded: ${this}`)
-        //console.error(`Experiment page loaded: ${this}`)
-    }
+    Component.onCompleted: console.debug(`Experiment page loaded: ${this}`)
     Component.onDestruction: console.debug(`Experiment page destroyed: ${this}`)
 }
