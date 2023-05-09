@@ -36,7 +36,7 @@ class Connections(QObject):
         self._proxy.fittables.dataChanged.connect(self.onFittablesDataChanged)
 
         # Fitting
-        self._proxy.fitting.fitFinishedChanged.connect(self.onFittingFitFinishedChanged)
+        #self._proxy.fitting.isFittingNowChanged.connect(self.onIsFittingNowChanged)
 
     # Experiment
 
@@ -105,7 +105,7 @@ class Connections(QObject):
 
     # Fitting
 
-    def onFittingFitFinishedChanged(self):
+    def onIsFittingNowChanged(self):
         pass
         #print(f'Fit finished: {self._proxy.fitting.fitFinished}')
         #needSetFittables = True

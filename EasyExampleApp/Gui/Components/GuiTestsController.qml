@@ -210,6 +210,8 @@ EaElements.RemoteController {
 
         rc.mouseClick(Globals.Refs.app.analysisPage.startFittingButton)
         rc.wait(2000)
+        rc.mouseClick(Globals.Refs.app.analysisPage.startFittingButton)
+        rc.wait(3000)
 
 //        res.push( rc.compare(Globals.Refs.app.modelPage.slopeParameter.text, Globals.Tests.expected.fitted.model.parameters.slope.value) )
 //        res.push( rc.compare(Globals.Refs.app.modelPage.yInterceptParameter.text, Globals.Tests.expected.fitted.model.parameters.yIntercept.value) )

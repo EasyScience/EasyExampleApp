@@ -23,6 +23,7 @@ Column {
 
         property var currentValueTextInput: null
 
+        enabled: !Globals.Proxies.main.fitting.isFittingNow
         defaultInfoText: qsTr("No parameters found")
 
         // Table mode
@@ -136,6 +137,7 @@ Column {
     EaElements.Slider {
         id: slider
 
+        enabled: !Globals.Proxies.main.fitting.isFittingNow
         width: table.width
 
         from: Globals.Proxies.main.fittables.data[table.currentIndex].min
@@ -164,12 +166,12 @@ Column {
         enabled: Globals.Proxies.main.experiment.defined
         wide: true
 
-        fontIcon: 'play-circle'
-        text: qsTr('Start fitting')
+        fontIcon: Globals.Proxies.main.fitting.isFittingNow ? 'stop-circle' : 'play-circle'
+        text: Globals.Proxies.main.fitting.isFittingNow ? qsTr('Cancel fitting') : qsTr('Start fitting')
 
         onClicked: {
             console.debug(`Clicking '${text}' button: ${this}`)
-            Globals.Proxies.main.fitting.fit()
+            Globals.Proxies.main.fitting.startStop()
         }
 
         Component.onCompleted: Globals.Refs.app.analysisPage.startFittingButton = this

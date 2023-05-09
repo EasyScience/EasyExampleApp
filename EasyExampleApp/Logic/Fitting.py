@@ -2,38 +2,69 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-from PySide6.QtCore import QObject, Signal, Slot, Property
+import time
+
+from PySide6.QtCore import QObject, Signal, Slot, Property, QThreadPool
 
 from EasyApp.Logic.Logging import console
 
 
+class Worker(QObject):
+    finished = Signal()
+    cancelled = Signal()
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._needCancel = False
+
+    def run(self):
+        for i in range (10):
+            if self._needCancel:
+                self._needCancel = False
+                self.cancelled.emit()
+                console.error('Minimization process has been cancelled')
+                return
+            time.sleep(3)
+        self.finished.emit()
+        console.info('Minimization process has been finished')
+
+
 class Fitting(QObject):
-    fitFinishedChanged = Signal()
+    isFittingNowChanged = Signal()
 
     def __init__(self, parent):
         super().__init__(parent)
         self._proxy = parent
-        self._fitFinished = False
+        self._threadpool = QThreadPool.globalInstance()
+        self._worker = Worker()
+        self._isFittingNow = False
 
-    @Property(bool, notify=fitFinishedChanged)
-    def fitFinished(self):
-        return self._fitFinished
+        self._worker.finished.connect(self.setIsFittingNowToFalse)
+        self._worker.cancelled.connect(self.setIsFittingNowToFalse)
 
-    @fitFinished.setter
-    def fitFinished(self, newValue):
-        if self._fitFinished == newValue:
+    @Property(bool, notify=isFittingNowChanged)
+    def isFittingNow(self):
+        return self._isFittingNow
+
+    @isFittingNow.setter
+    def isFittingNow(self, newValue):
+        if self._isFittingNow == newValue:
             return
-        self._fitFinished = newValue
-        self.fitFinishedChanged.emit()
+        self._isFittingNow = newValue
+        self.isFittingNowChanged.emit()
 
     @Slot()
-    def fit(self):
-        console.debug("Minimization process has been started")
-        self.fitFinished = False
-        #if self._proxy.model.parameters['slope']['fit']:
-        #    self._proxy.model.parameters['slope']['value'] = -3.0015
-        #    self._proxy.model.parameters['slope']['error'] = 0.0023
-        #if self._proxy.model.parameters['yIntercept']['fit']:
-        #    self._proxy.model.parameters['yIntercept']['value'] = 1.4950
-        #    self._proxy.model.parameters['yIntercept']['error'] = 0.0045
-        self.fitFinished = True
+    def startStop(self):
+        if self._worker._needCancel:
+            console.debug('Minimization process has been already requested to cancel')
+            return
+        if self.isFittingNow:
+            self._worker._needCancel = True
+            console.debug('Minimization process has been requested to cancel')
+        else:
+            self.isFittingNow = True
+            self._threadpool.start(self._worker.run)
+            console.debug('Minimization process has been started in a separate thread')
+
+    def setIsFittingNowToFalse(self):
+        self.isFittingNow = False
