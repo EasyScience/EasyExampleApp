@@ -2,7 +2,16 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
+from EasyApp.Logic.Logging import console
+
+try:
+    import cryspy
+    console.debug('CrysPy module has been imported')
+except ImportError:
+    console.debug('No CrysPy module has been found')
+
 import numpy as np
+console.debug('Numpy module has been imported')
 
 
 class LineCalculator:

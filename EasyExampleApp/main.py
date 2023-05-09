@@ -8,64 +8,70 @@ EASYAPP_LOCAL_PATH = '../../EasyApp'
 sys.path.append(EASYAPP_LOCAL_PATH)
 from EasyApp.Logic.Logging import console
 
-console.debug('Starting default Python modules import')
-import sys
-import pathlib
 
-console.debug('Starting PySide6 Python modules import')
-from PySide6.QtQml import QQmlApplicationEngine
-from PySide6.QtCore import qInstallMessageHandler
-
-console.debug('Starting custom Python modules import')
-from Logic.Helpers import ResourcePaths, CommandLineArguments, EnvironmentVariables, WebEngine, Application, ExitHelper
-from Logic.PyProxy import PyProxy
-
-
-console.debug('Starting __main__')
 if __name__ == '__main__':
-    console.debug('Set custom Qt message handler')
+
+    from PySide6.QtCore import qInstallMessageHandler
     qInstallMessageHandler(console.qmlMessageHandler)
+    console.debug('Custom Qt message handler has been defined')
 
-    console.debug('Set environment variables')
+    from Logic.Helpers import EnvironmentVariables
     EnvironmentVariables.set()
+    console.debug('Environment variables have been defined')
 
-    console.debug('QtWebEngine initialization for the QML GUI components')
+    from Logic.Helpers import WebEngine
     WebEngine.initialize()
+    console.debug('QtWebEngine for the QML GUI components has been initialized')
 
-    console.debug('Creating application')
+    from Logic.Helpers import Application
     app = Application(sys.argv)
+    console.debug('Qt Application has been created')
 
-    console.debug('Creating QML application engine')
+    from PySide6.QtQml import QQmlApplicationEngine
     engine = QQmlApplicationEngine()
+    console.debug('QML application engine has been created')
 
-    console.debug('Exposing the Python objects to QML')
-    proxy = PyProxy()
-    engine.rootContext().setContextProperty('pyProxy', proxy)
+    from Logic.Helpers import ResourcePaths
+    resourcePaths = ResourcePaths()
+    for p in resourcePaths.imports:
+        engine.addImportPath(p)
+    console.debug('Paths to be accessible from the QML components has been added')
 
-    cliArgs = CommandLineArguments()
-    engine.rootContext().setContextProperty('pyIsTestMode', cliArgs.testmode)
-
+    import pathlib
     appName = app.applicationName()
     homeDirPath = pathlib.Path.home()
     settingsIniFileName = 'settings.ini'
     settingsIniFilePath = str(homeDirPath.joinpath(f'.{appName}', settingsIniFileName))
     engine.rootContext().setContextProperty('pySettingsPath', settingsIniFilePath)
+    console.debug('Persistent settings file path has been exposed to QML')
 
-    exitHelper = ExitHelper(app)
+    from Logic.Helpers import CommandLineArguments
+    cliArgs = CommandLineArguments()
+    engine.rootContext().setContextProperty('pyIsTestMode', cliArgs.testmode)
+    console.debug('pyIsTestMode object has been exposed to QML')
+
+    from Logic.Helpers import ExitHelper
+    exitHelper = ExitHelper()
     engine.rootContext().setContextProperty('pyExitHelper', exitHelper)
+    console.debug('pyExitHelper object has been exposed to QML')
 
-    console.debug('Adding paths to be accessible from the QML components')
-    resourcePaths = ResourcePaths()
-    for p in resourcePaths.imports:
-        engine.addImportPath(p)
+    from Logic.Helpers import PyProxyWorker
+    from PySide6.QtCore import QThreadPool
+    worker = PyProxyWorker(engine)
+    worker.pyProxyExposedToQml.connect(lambda: engine.load(resourcePaths.mainQml))
+    threadpool = QThreadPool.globalInstance()
+    threadpool.start(worker.exposePyProxyToQml)
+    console.debug('PyProxy object is creating in a separate thread and exposing to QML')
 
-    console.debug('Loading the root QML file')
-    engine.load(resourcePaths.mainQml)
+    engine.load(resourcePaths.splashScreenQml)
+    console.debug('Splash screen QML component has been loaded')
 
-    console.debug('Starting event loop')
     if not engine.rootObjects():
         sys.exit(-1)
+    console.debug('QML engine has been checked for having root component')
+
+    console.debug('Application event loop is about to start')
     exitCode = app.exec()
 
-    console.debug(f"Exiting application with exit code {exitCode}")
+    console.debug(f'Application is about to exit with code {exitCode}')
     sys.exit(exitCode)

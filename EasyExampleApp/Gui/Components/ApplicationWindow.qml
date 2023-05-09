@@ -20,8 +20,8 @@ EaComponents.ApplicationWindow {
     appVersion: Globals.Configs.appConfig.version
     appDate: Globals.Configs.appConfig.date
 
-    //opacity: Globals.Vars.splashScreenAnimoFinished ? 1 : 0
-    //Behavior on opacity { EaAnimations.ThemeChange {} }
+    opacity: Globals.Vars.splashScreenAnimoFinished ? 1 : 0
+    Behavior on opacity { EaAnimations.ThemeChange {} }
 
     onClosing: Qt.quit()
 

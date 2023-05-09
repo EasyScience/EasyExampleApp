@@ -6,7 +6,7 @@ import os
 import argparse
 import orjson
 from PySide6.QtWidgets import QApplication
-from PySide6.QtCore import QObject, Slot
+from PySide6.QtCore import QObject, Signal, Slot, QCoreApplication
 
 from EasyApp.Logic.Logging import console
 
@@ -14,6 +14,7 @@ from EasyApp.Logic.Logging import console
 class ResourcePaths:
     def __init__(self):
         self.mainQml = ''  # Current app main.qml file
+        self.splashScreenQml = ''  # Splash screen .qml file
         self.imports = []  # EasyApp qml components (EasyApp/...) & Current app qml components (Gui/...)
         self.settings_ini = ''  # Persistent settings ini file location
         self.setPaths()
@@ -25,10 +26,11 @@ class ResourcePaths:
             import resources
             console.info(f'Resources: {resources}')
             self.mainQml = 'qrc:/Gui/main.qml'
+            self.splashScreenQml = 'qrc:/Gui/Components/SplashScreen.qml'
             self.imports = ['qrc:/EasyApp', 'qrc:/']
             return
         except ImportError:
-            console.debug('No rc resources file is found')
+            console.debug('No rc resources file has been found')
 
         console.debug('Trying to import the locally installed EasyApp module')
         try:
@@ -36,12 +38,13 @@ class ResourcePaths:
             easyAppPath = os.path.abspath(EasyApp.__path__[0])
             console.info(f'EasyApp: {easyAppPath}')
             self.mainQml = 'Gui/main.qml'
+            self.splashScreenQml = 'Gui/Components/SplashScreen.qml'
             self.imports = [os.path.join(easyAppPath, '..'), '.']
             return
         except ImportError:
             console.debug('No EasyApp module is installed')
 
-        console.error('EasyApp module is not found.')
+        console.error('No EasyApp module has been found')
 
 
 class CommandLineArguments:
@@ -65,9 +68,6 @@ class EnvironmentVariables:
     def set():
         os.environ['QSG_RHI_BACKEND'] = 'opengl'  # For QtCharts XYSeries useOpenGL
         #os.environ['QT_MESSAGE_PATTERN'] = "\033[32m%{time h:mm:ss.zzz}%{if-category}\033[32m %{category}:%{endif} %{if-debug}\033[34m%{function}%{endif}%{if-warning}\033[31m%{backtrace depth=3}%{endif}%{if-critical}\033[31m%{backtrace depth=3}%{endif}%{if-fatal}\033[31m%{backtrace depth=3}%{endif}\033[0m %{message}"
-        #os.environ['QT_MESSAGE_PATTERN'] = "\033[32m%{time h:mm:ss.zzz}%{if-category}\033[32m %{category}:%{endif} %{if-debug}\033[34m%{function}%{endif}\033[0m %{message}"
-        #os.environ['QT_MESSAGE_PATTERN'] = "[%{time process} %{type}] %{file}:%{line} %{function} - %{message}"
-        #os.environ['QT_MESSAGE_PATTERN'] = "%{time yyyyMMdd h:mm:ss.zzz t} %{function} %{type}:%{message} %{file}:%{line}"
 
 
 class WebEngine:
@@ -126,11 +126,28 @@ class Application(QApplication):  # QGuiApplication crashes when using in combin
 
 class ExitHelper(QObject):
 
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         super().__init__(parent)
-        self._proxy = parent
 
     @Slot(int)
     def exitApp(self, exitCode):
         console.debug(f'Force exiting application with code {exitCode}')
         os._exit(exitCode)
+
+
+class PyProxyWorker(QObject):
+    pyProxyExposedToQml = Signal()
+
+    def __init__(self, engine, parent=None):
+        super().__init__(parent)
+        self._engine = engine
+
+    def exposePyProxyToQml(self):
+        from Logic.PyProxy import PyProxy
+        mainThread = QCoreApplication.instance().thread()
+        proxy = PyProxy()
+        console.debug('PyProxy object has been created')
+        proxy.moveToThread(mainThread)
+        self._engine.rootContext().setContextProperty('pyProxy', proxy)
+        self.pyProxyExposedToQml.emit()
+        console.debug('PyProxy object has been exposed to QML')
