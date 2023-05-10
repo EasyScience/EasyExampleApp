@@ -143,6 +143,9 @@ class PyProxyWorker(QObject):
         self._engine = engine
 
     def exposePyProxyToQml(self):
+        import time
+        time.sleep(0.5)
+        console.debug('Slept for 0.5s to allow splash screen to start')
         from Logic.PyProxy import PyProxy
         mainThread = QCoreApplication.instance().thread()
         proxy = PyProxy()
