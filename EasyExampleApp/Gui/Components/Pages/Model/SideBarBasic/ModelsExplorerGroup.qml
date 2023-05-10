@@ -71,7 +71,7 @@ Column {
             }
 
             EaComponents.TableViewLabel {
-                backgroundColor: EaStyle.Colors.chartForegrounds[0]
+                backgroundColor: EaStyle.Colors.chartForegroundsExtra[index]
             }
 
             EaComponents.TableViewButton {

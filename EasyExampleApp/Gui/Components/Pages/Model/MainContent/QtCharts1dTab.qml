@@ -5,6 +5,7 @@
 import QtQuick
 import QtQuick.Controls
 
+import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Charts as EaCharts
 
@@ -21,6 +22,8 @@ EaCharts.QtCharts1dMeasVsCalc {
     xMax: 10
     yMin: 0
     yMax: 4
+
+    calcSerieColor: EaStyle.Colors.chartForegroundsExtra[Globals.Proxies.main.model.currentIndex]
 
     // Data is set in python backend
 
