@@ -21,7 +21,7 @@ EaElements.SplashScreen {
 
     onAnimationFinishedChanged: Globals.Vars.splashScreenAnimoFinished = animationFinished
 
-    Component.onCompleted: print("Splash screen loaded:", this)
-    Component.onDestruction: print("Splash screen destroyed:", this)
+    Component.onCompleted: console.debug(`Splash screen loaded: ${this}`)
+    Component.onDestruction: console.debug(`Splash screen destroyed: ${this}`)
 
 }

@@ -119,7 +119,7 @@ class Experiment(QObject):
     @Slot(str)
     def loadExperimentFromFile(self, fpath):
         fpath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', fpath))
-        console.debug(f"Loading an experiment from '{fpath}'")
+        console.debug(f"Loading an experiment from {fpath}")
         # add to dataBlocks, xArrays, yMeasArrays
         with open(fpath, 'r') as f:
             dataBlock = json.load(f)

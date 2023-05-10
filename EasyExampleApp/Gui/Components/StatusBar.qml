@@ -4,28 +4,17 @@
 
 import QtQuick
 import QtQuick.Controls
-//import QtQuick.XmlListModel 2.15
 
 import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
-
 import Gui.Globals as Globals
 
 
 EaElements.StatusBar {
+
     visible: EaGlobals.Vars.appBarCurrentIndex !== 0
     fittingInProgress: Globals.Proxies.main.fitting.isFittingNow
-
-    /*
-    model: XmlListModel {
-        xml: Globals.Proxies.main.status.asXml
-        query: "/root/item"
-
-        XmlRole { name: "label"; query: "label/string()" }
-        XmlRole { name: "value"; query: "value/string()" }
-    }
-    */
 
     model: EaComponents.JsonListModel {
         json: JSON.stringify(Globals.Proxies.main.status.asJson)

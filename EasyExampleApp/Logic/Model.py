@@ -108,7 +108,7 @@ class Model(QObject):
     @Slot(str)
     def loadModelFromFile(self, fpath):
         fpath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', fpath))
-        console.debug(f"Loading a model from '{fpath}'")
+        console.debug(f"Loading a model from {fpath}")
         with open(fpath, 'r') as f:
             dataBlock = json.load(f)
         index = len(self._dataBlocks) - 1

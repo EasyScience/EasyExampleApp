@@ -11,6 +11,7 @@ import Gui.Globals as Globals
 
 
 EaComponents.AboutDialog {
+
     visible: EaGlobals.Vars.showAppAboutDialog
     onClosed: EaGlobals.Vars.showAppAboutDialog = false
 
@@ -34,4 +35,5 @@ EaComponents.AboutDialog {
     developerIcons: Globals.Configs.appConfig.developerIcons
     developerYearsFrom: Globals.Configs.appConfig.developerYearsFrom
     developerYearsTo: Globals.Configs.appConfig.developerYearsTo
+
 }

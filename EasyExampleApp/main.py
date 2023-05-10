@@ -55,6 +55,13 @@ if __name__ == '__main__':
     engine.rootContext().setContextProperty('pyExitHelper', exitHelper)
     console.debug('pyExitHelper object has been exposed to QML')
 
+    engine.load(resourcePaths.splashScreenQml)
+    console.debug('Splash screen QML component has been loaded')
+
+    if not engine.rootObjects():
+        sys.exit(-1)
+    console.debug('QML engine has been checked for having root component')
+
     from Logic.Helpers import PyProxyWorker
     from PySide6.QtCore import QThreadPool
     worker = PyProxyWorker(engine)
@@ -62,13 +69,6 @@ if __name__ == '__main__':
     threadpool = QThreadPool.globalInstance()
     threadpool.start(worker.exposePyProxyToQml)
     console.debug('PyProxy object is creating in a separate thread and exposing to QML')
-
-    engine.load(resourcePaths.splashScreenQml)
-    console.debug('Splash screen QML component has been loaded')
-
-    if not engine.rootObjects():
-        sys.exit(-1)
-    console.debug('QML engine has been checked for having root component')
 
     console.debug('Application event loop is about to start')
     exitCode = app.exec()
