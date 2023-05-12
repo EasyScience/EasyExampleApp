@@ -39,7 +39,8 @@ class Plotting(QObject):
                 'analysisPage': {
                     'measSerie': QtCharts.QXYSeries,
                     'bkgSerie': QtCharts.QXYSeries,
-                    'totalCalcSerie': QtCharts.QXYSeries
+                    'totalCalcSerie': QtCharts.QXYSeries,
+                    'residSerie': QtCharts.QXYSeries
                 }
             }
         }
@@ -132,6 +133,7 @@ class Plotting(QObject):
             self.qtchartsReplaceMeasuredOnAnalysisChartAndRedraw()
             self.qtchartsReplaceBackgroundOnAnalysisChartAndRedraw()
             self.qtchartsReplaceTotalCalculatedOnAnalysisChartAndRedraw()
+            self.qtchartsReplaceResidualOnAnalysisChartAndRedraw()
         elif lib == 'Plotly':
             self.plotlyReplaceXOnAnalysisChart()
             self.plotlyReplaceMeasuredYOnAnalysisChart()
@@ -154,6 +156,15 @@ class Plotting(QObject):
             self.qtchartsReplaceBackgroundOnAnalysisChartAndRedraw()
         elif lib == 'Plotly':
             pass
+
+    def redrawResidualOnAnalysisChart(self):
+        lib = self._proxy.plotting.currentLib1d
+        console.debug(f"Updating residual curve on analysis page. Plotting lib: '{lib}'")
+        if lib == 'QtCharts':
+            self.qtchartsReplaceResidualOnAnalysisChartAndRedraw()
+        elif lib == 'Plotly':
+            pass
+        console.debug("Residual curve on analysis page has been updated")
 
     # Backend private methods
 
@@ -204,6 +215,7 @@ class Plotting(QObject):
             yMeasArray = self._proxy.experiment._yMeasArrays[index]
         measSerie = self._chartRefs['QtCharts']['analysisPage']['measSerie']
         measSerie.replaceNp(xArray, yMeasArray)
+        console.debug("Measured curve data on analysis page have been replaced")
 
     def qtchartsReplaceBackgroundOnAnalysisChartAndRedraw(self):
         if not self._proxy.analysis.defined:
@@ -216,6 +228,7 @@ class Plotting(QObject):
             yBkgArray = self._proxy.experiment._yBkgArrays[index]
         bkgSerie = self._chartRefs['QtCharts']['analysisPage']['bkgSerie']
         bkgSerie.replaceNp(xArray, yBkgArray)
+        console.debug("Background curve data on analysis page have been replaced")
 
     def qtchartsReplaceTotalCalculatedOnAnalysisChartAndRedraw(self):
         if not self._proxy.analysis.defined:
@@ -229,6 +242,21 @@ class Plotting(QObject):
         calcSerie = self._chartRefs['QtCharts']['analysisPage']['totalCalcSerie']
         calcSerie.replaceNp(xArray, yTotalCalcArray)
         console.debug("Total calculated curve data on analysis page have been replaced")
+
+    def qtchartsReplaceResidualOnAnalysisChartAndRedraw(self):
+        if not self._proxy.analysis.defined:
+            return
+        index = self._proxy.experiment.currentIndex
+        xArray = np.empty(0)
+        yResidArray = np.empty(0)
+        if index > -1 and len(self._proxy.experiment._xArrays):  # NEED FIX
+            xArray = self._proxy.experiment._xArrays[index]  # NEED FIX
+            yMeasArray = self._proxy.experiment._yMeasArrays[index]
+            yTotalCalcArray = self._proxy.analysis._yCalcTotal
+            yResidArray = yMeasArray - yTotalCalcArray
+        residSerie = self._chartRefs['QtCharts']['analysisPage']['residSerie']
+        residSerie.replaceNp(xArray, yResidArray)
+        console.debug("Residual curve data on analysis page have been replaced")
 
     # Plotly: Experiment
 

@@ -97,6 +97,7 @@ class Connections(QObject):
 
     def onAnalysisYCalcTotalChanged(self):
         self._proxy.plotting.redrawCalculatedOnAnalysisChart()
+        self._proxy.plotting.redrawResidualOnAnalysisChart()
 
     # Fittables
 

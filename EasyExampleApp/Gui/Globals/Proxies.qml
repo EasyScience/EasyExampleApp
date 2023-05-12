@@ -23,6 +23,14 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
     readonly property var qmlProxy: QtObject {
 
+        //////////
+        // Logger
+        //////////
+
+        readonly property var logger: QtObject {
+            property string level: 'debug'
+        }
+
         //////////////
         // Connections
         //////////////
@@ -111,11 +119,13 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
                 // Fitting
 
+                /*
                 qmlProxy.fitting.fitFinishedChanged.connect(function() {
                     print(`Fit finished: ${qmlProxy.fitting.fitFinished}`)
                     const needSetFittables = true
                     qmlProxy.model.parametersEdited(needSetFittables)
                 })
+                */
 
             }
 
@@ -396,10 +406,11 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         //////////
 
         readonly property var fitting: QtObject {
-            property bool fitFinished: false
+            property bool isFittingNow: false
 
             function fit() {
-                fitFinished = false
+                isFittingNow = true
+                /*
                 if (qmlProxy.model.fittables.slope.fit) {
                     qmlProxy.model.fittables.slope.value = -3.0015
                     qmlProxy.model.fittables.slope.error = 0.0023
@@ -408,7 +419,8 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                     qmlProxy.model.fittables.yIntercept.value = 1.4950
                     qmlProxy.model.fittables.yIntercept.error = 0.0045
                 }
-                fitFinished = true
+                */
+                isFittingNow = false
             }
         }
 
