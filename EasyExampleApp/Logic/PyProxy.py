@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: 2023 EasyExample contributors
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
-
 from PySide6.QtCore import QObject, Property
 
 from EasyApp.Logic.Logging import LoggerLevelHandler
@@ -19,21 +18,14 @@ from Logic.Status import Status
 from Logic.Plotting import Plotting
 from Logic.Helpers import ExitHelper
 
-console.error('CCC 1')
 
 class PyProxy(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._logger = LoggerLevelHandler(self)
         self._project = Project(self)
-        console.error('CCC 2')
-
         self._experiment = Experiment(self)
-        console.error('CCC 3')
-
         self._model = Model(self)
-        console.error('CCC 4')
-
         self._data = Data(self)
         self._analysis = Analysis(self)
         self._fittables = Fittables(self)

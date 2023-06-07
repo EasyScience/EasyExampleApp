@@ -12,15 +12,11 @@ from Logic.Calculators import GaussianCalculator
 from Logic.Fittables import Parameter
 from Logic.Helpers import Converter
 
-console.error('BBB 1')
-
 try:
     import cryspy
     console.debug('CrysPy module has been imported')
 except ImportError:
     console.debug('No CrysPy module has been found')
-
-console.error('BBB 2')
 
 _DEFAULT_DATA_BLOCK = {
     'name': 'PicoScopeB',
@@ -58,27 +54,18 @@ _DEFAULT_DATA_BLOCK = {
     }
 }
 
-console.error('BBB 3')
 
 class Experiment(QObject):
-    console.error('BBB 4')
-
     definedChanged = Signal()
     currentIndexChanged = Signal()
     dataBlocksChanged = Signal()
     dataBlocksJsonChanged = Signal()
     yMeasArraysChanged = Signal()
     yBkgArraysChanged = Signal()
-    console.error('BBB 4b')
     parameterEdited = Signal(str, str)
-    console.error('BBB 4c')
 
     def __init__(self, parent):
-        console.error('BBB 5')
-
         super().__init__(parent)
-        console.error('BBB 6')
-
         self._proxy = parent
         self._defined = False
         self._currentIndex = 0

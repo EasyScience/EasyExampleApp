@@ -24,18 +24,24 @@ _EMPTY_DATA = [
 
 class Parameter(dict):
 
-    def __init__(self, value, fittable=False):
+    def __init__(self,
+                value,
+                error=0.0,
+                min=-1.0,
+                max=1.0,
+                unit='',
+                fittable=False):
         self['value'] = value
         self['fittable'] = fittable
         self['fit'] = False
-        self['error'] = 0
+        self['error'] = error
         self['group'] = ""
-        self['max'] = 100
-        self['min'] = -100
-        self['name'] = ""
+        self['min'] = min
+        self['max'] = max
+        self['name'] = ''
         self['parentIndex'] = 0
-        self['parentName'] = ""
-        self['unit'] = ""
+        self['parentName'] = ''
+        self['unit'] = unit
 
 
 class Fittables(QObject):

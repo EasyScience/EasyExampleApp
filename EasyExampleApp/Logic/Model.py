@@ -4,10 +4,12 @@
 
 import os
 import json
+import numpy as np
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
 from EasyApp.Logic.Logging import console
 from Logic.Calculators import GaussianCalculator
+from Logic.Fittables import Parameter
 from Logic.Helpers import Converter
 
 try:
@@ -17,7 +19,6 @@ try:
     console.debug('CrysPy module has been imported')
 except ImportError:
     console.debug('No CrysPy module has been found')
-
 
 _DEFAULT_DATA_BLOCK = {
     'name': 'GaussianB',
@@ -68,6 +69,9 @@ class Model(QObject):
         self._dataBlocks = []
         self._dataBlocksJson = ''
         self._yCalcArrays = []
+
+        self._cryspyDict = {}
+        self._cryspyInOutDict = {}
 
     # QML accessible properties
 
@@ -128,22 +132,10 @@ class Model(QObject):
     def loadModelFromFile(self, fpath):
         fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'PbSO4.rcif')
         console.debug(f"Loading a model from {fpath}")
-
-        # Load RCIF file by cryspy and convert it into easydiffraction data block
+        # Load RCIF file by cryspy and extract phases into easydiffraction data block
         cryspyObj = cryspy.load_file(fpath)
-        cryspyDict = cryspyObj.get_dictionary()
-        edDict = self.createEdDict(cryspyObj, cryspyDict)
-
-        # Calculate data based on...
-        cryspyInOutDict = {}
-        rhochi_calc_chi_sq_by_dictionary(cryspyDict,
-                                         dict_in_out=cryspyInOutDict,
-                                         flag_use_precalculated_data=False,
-                                         flag_calc_analytical_derivatives=False)
-
-        first_experiment_name = list(edDict['experiments'][0].keys())[0]
-        yCalcArray = cryspyInOutDict[f'pd_{first_experiment_name}']['signal_plus']
-        self.addYCalcArray(yCalcArray)
+        self._cryspyDict = cryspyObj.get_dictionary()
+        self.parseModels(cryspyObj)
 
     @Slot(int)
     def removeModel(self, index):
@@ -182,6 +174,18 @@ class Model(QObject):
             return
         self._dataBlocks[blockIndex]['params'][name][item] = value
         console.debug(f"Parameter '{block}[{blockIndex}].{name}.{item}' has been changed to '{value}'")
+
+        # Updating cryspy_dict: NEED FIX
+        blockName = self._dataBlocks[blockIndex]['name']
+        cryspyBlockName = f'crystal_{blockName}'
+        cryspyBlock = self._cryspyDict[cryspyBlockName]
+        if name == '_cell_length_a': cryspyBlock['unit_cell_parameters'][0] = value
+        if name == '_cell_length_b': cryspyBlock['unit_cell_parameters'][1] = value
+        if name == '_cell_length_c': cryspyBlock['unit_cell_parameters'][2] = value
+        if name == '_cell_angle_alpha': cryspyBlock['unit_cell_parameters'][3] = np.deg2rad(value)
+        if name == '_cell_angle_beta': cryspyBlock['unit_cell_parameters'][4] = np.deg2rad(value)
+        if name == '_cell_angle_gamma': cryspyBlock['unit_cell_parameters'][5] = np.deg2rad(value)
+
         # Signalling value has been changed
         self.parameterEdited.emit(page, blockIndex, name)
         console.debug(f"Data blocks for '{block}' has been changed")
@@ -195,10 +199,18 @@ class Model(QObject):
         yCalcArray = GaussianCalculator.calculated(xArray, params)
         return yCalcArray
 
-    def calculateYCalcArray(self, index):
+    def calculateYCalcArray_OLD(self, index):
         xArray = self._proxy.experiment._xArrays[0]  # NEED FIX
         params = self._dataBlocks[index]['params']
         yCalcArray = GaussianCalculator.calculated(xArray, params)
+        return yCalcArray
+
+    def calculateYCalcArray(self, index):
+        print('SSSSSSS')
+        # Update cryspy_dict
+        #pass
+        # Re-calculate diffraction pattern
+        yCalcArray = self.calculateDiffractionPattern()
         return yCalcArray
 
     def updateYCalcArrayByIndex(self, index):
@@ -235,30 +247,31 @@ class Model(QObject):
         console.debug("Model dataBlocks have been converted to JSON string")
         self.dataBlocksJsonChanged.emit()
 
-    # Convert cryspy_obj and cryspy_dict into easydiffraction_dict for further use as datablock
-    def createEdDict(self, cryspy_obj, cryspy_dict):
-        phase_names = [name.replace('crystal_', '') for name in cryspy_dict.keys() if name.startswith('crystal_')]
-        experiment_names = [name.replace('pd_', '') for name in cryspy_dict.keys() if name.startswith('pd_')]
-        ed_dict = {}
+    # Extract phases from cryspy_obj and cryspy_dict into internal ed_dict
+    def parseModels(self, cryspy_obj):
+        ed_dict = self._proxy.data.edDict
+        phase_names = [name.replace('crystal_', '') for name in self._cryspyDict.keys() if name.startswith('crystal_')]
         for data_block in cryspy_obj.items:
             data_block_name = data_block.data_name
             # Phase datablock
             if data_block_name in phase_names:
                 ed_dict['phases'] = []
-                ed_phase = {data_block_name: {}}
+                ed_phase = {'name': data_block_name,
+                                 'params': {},
+                                 'loops': {}}
                 cryspy_phase = data_block.items
                 for item in cryspy_phase:
                     # Space group section
                     if type(item) == cryspy.C_item_loop_classes.cl_2_space_group.SpaceGroup:
-                        ed_phase[data_block_name]['_space_group_name_H-M_alt'] = item.name_hm_alt
+                        ed_phase['params']['_space_group_name_H-M_alt'] = Parameter(item.name_hm_alt)
                     # Cell section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_cell.Cell:
-                        ed_phase[data_block_name]['_cell_length_a'] = item.length_a
-                        ed_phase[data_block_name]['_cell_length_b'] = item.length_b
-                        ed_phase[data_block_name]['_cell_length_c'] = item.length_c
-                        ed_phase[data_block_name]['_cell_angle_alpha'] = item.angle_alpha
-                        ed_phase[data_block_name]['_cell_angle_beta'] = item.angle_beta
-                        ed_phase[data_block_name]['_cell_angle_gamma'] = item.angle_gamma
+                        ed_phase['params']['_cell_length_a'] = Parameter(item.length_a, min=1, max=10, fittable=True)
+                        ed_phase['params']['_cell_length_b'] = Parameter(item.length_b, min=1, max=10, fittable=True)
+                        ed_phase['params']['_cell_length_c'] = Parameter(item.length_c, min=1, max=10, fittable=True)
+                        ed_phase['params']['_cell_angle_alpha'] = Parameter(item.angle_alpha, min=0, max=180, fittable=True)
+                        ed_phase['params']['_cell_angle_beta'] = Parameter(item.angle_beta, min=0, max=180, fittable=True)
+                        ed_phase['params']['_cell_angle_gamma'] = Parameter(item.angle_gamma, min=0, max=180, fittable=True)
                     # Atoms section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_atom_site.AtomSiteL:
                         ed_atoms = []
@@ -276,68 +289,19 @@ class Model(QObject):
                             ed_atom['_multiplicity'] = cryspy_atom.multiplicity
                             ed_atom['_Wyckoff_symbol'] = cryspy_atom.wyckoff_symbol
                             ed_atoms.append(ed_atom)
-                        ed_phase[data_block_name]['_atom_site'] = ed_atoms
+                        ed_phase['loops']['_atom_site'] = ed_atoms
                 ed_dict['phases'].append(ed_phase)
-                # Experiment datablock
-            if data_block_name in experiment_names:
-                ed_dict['experiments'] = []
-                ed_experiment = {data_block_name: {}}
-                cryspy_experiment = data_block.items
-                for item in cryspy_experiment:
-                    # Ranges section
-                    if type(item) == cryspy.C_item_loop_classes.cl_1_range.Range:
-                        ed_experiment[data_block_name]['_pd_meas_2theta_range_min'] = item.ttheta_min
-                        ed_experiment[data_block_name]['_pd_meas_2theta_range_max'] = item.ttheta_max
-                        ed_experiment[data_block_name]['_pd_meas_2theta_range_inc'] = 0.05  # NEED FIX
-                    # Setup section
-                    elif type(item) == cryspy.C_item_loop_classes.cl_1_setup.Setup:
-                        ed_experiment[data_block_name]['_diffrn_radiation_probe'] = item.radiation.replace('neutrons', 'neutron').replace('X-rays', 'x-ray')
-                        ed_experiment[data_block_name]['_diffrn_radiation_wavelength'] = item.wavelength
-                        ed_experiment[data_block_name]['_pd_meas_2theta_offset'] = item.offset_ttheta
-                    # Instrument resolution section
-                    elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_instr_resolution.PdInstrResolution:
-                        ed_experiment[data_block_name]['_pd_instr_resolution_u'] = item.u
-                        ed_experiment[data_block_name]['_pd_instr_resolution_v'] = item.v
-                        ed_experiment[data_block_name]['_pd_instr_resolution_w'] = item.w
-                        ed_experiment[data_block_name]['_pd_instr_resolution_x'] = item.x
-                        ed_experiment[data_block_name]['_pd_instr_resolution_y'] = item.y
-                    # Peak assymetries section
-                    elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_instr_reflex_asymmetry.PdInstrReflexAsymmetry:
-                        ed_experiment[data_block_name]['_pd_instr_reflex_asymmetry_p1'] = item.p1
-                        ed_experiment[data_block_name]['_pd_instr_reflex_asymmetry_p2'] = item.p2
-                        ed_experiment[data_block_name]['_pd_instr_reflex_asymmetry_p3'] = item.p3
-                        ed_experiment[data_block_name]['_pd_instr_reflex_asymmetry_p4'] = item.p4
-                    # Phases section
-                    elif type(item) == cryspy.C_item_loop_classes.cl_1_phase.PhaseL:
-                        ed_phases = []
-                        cryspy_phases = item.items
-                        for cryspy_phase in cryspy_phases:
-                            ed_phase = {}
-                            ed_phase['_label'] = cryspy_phase.label
-                            ed_phase['_scale'] = cryspy_phase.scale
-                            ed_phases.append(ed_phase)
-                        ed_experiment[data_block_name]['_phase'] = ed_phases
-                    # Background section
-                    elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_background.PdBackgroundL:
-                        ed_bkg_points = []
-                        cryspy_bkg_points = item.items
-                        for cryspy_bkg_point in cryspy_bkg_points:
-                            ed_bkg_point = {}
-                            ed_bkg_point['_2theta'] = cryspy_bkg_point.ttheta
-                            ed_bkg_point['_intensity'] = cryspy_bkg_point.intensity
-                            ed_bkg_points.append(ed_bkg_point)
-                        ed_experiment[data_block_name]['_pd_background'] = ed_bkg_points
-                    # Measured data section
-                    elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_meas.PdMeasL:
-                        ed_meas_points = []
-                        cryspy_meas_points = item.items
-                        for cryspy_meas_point in cryspy_meas_points:
-                            ed_meas_point = {}
-                            ed_meas_point['_2theta'] = cryspy_meas_point.ttheta
-                            ed_meas_point['_intensity'] = cryspy_meas_point.intensity
-                            ed_meas_point['_intensity_sigma'] = cryspy_meas_point.intensity_sigma
-                            ed_meas_points.append(ed_meas_point)
-                        ed_experiment[data_block_name]['_pd_meas'] = ed_meas_points
-                ed_dict['experiments'].append(ed_experiment)
-        return ed_dict
+                self.addDataBlock(ed_phase)
 
+                # Calculate data based on...
+                y_calc_array = self.calculateDiffractionPattern()
+                self.addYCalcArray(y_calc_array)
+
+    def calculateDiffractionPattern(self):
+        rhochi_calc_chi_sq_by_dictionary(self._cryspyDict,
+                                         dict_in_out=self._cryspyInOutDict,
+                                         flag_use_precalculated_data=False,
+                                         flag_calc_analytical_derivatives=False)
+        first_experiment_name = self._proxy.data.edDict['experiments'][0]['name']  # NEED FIX
+        y_calc_array = self._cryspyInOutDict[f'pd_{first_experiment_name}']['signal_plus']
+        return y_calc_array
