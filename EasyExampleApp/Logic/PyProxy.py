@@ -5,10 +5,12 @@
 from PySide6.QtCore import QObject, Property
 
 from EasyApp.Logic.Logging import LoggerLevelHandler
+from EasyApp.Logic.Logging import console
 from Logic.Connections import Connections
 from Logic.Project import Project
 from Logic.Experiment import Experiment
 from Logic.Model import Model
+from Logic.Data import Data
 from Logic.Analysis import Analysis
 from Logic.Fitting import Fitting
 from Logic.Fittables import Fittables
@@ -17,14 +19,22 @@ from Logic.Status import Status
 from Logic.Plotting import Plotting
 from Logic.Helpers import ExitHelper
 
+console.error('CCC 1')
 
 class PyProxy(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._logger = LoggerLevelHandler(self)
         self._project = Project(self)
+        console.error('CCC 2')
+
         self._experiment = Experiment(self)
+        console.error('CCC 3')
+
         self._model = Model(self)
+        console.error('CCC 4')
+
+        self._data = Data(self)
         self._analysis = Analysis(self)
         self._fittables = Fittables(self)
         self._fitting = Fitting(self)
@@ -53,6 +63,10 @@ class PyProxy(QObject):
     @Property('QVariant', constant=True)
     def model(self):
         return self._model
+
+    @Property('QVariant', constant=True)
+    def data(self):
+        return self._data
 
     @Property('QVariant', constant=True)
     def analysis(self):

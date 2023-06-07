@@ -4,16 +4,24 @@
 
 from PySide6.QtCore import QObject
 
+from EasyApp.Logic.Logging import console
+
+console.error('DDD 1')
+
 
 class Connections(QObject):
+    console.error('DDD 2')
 
     def __init__(self, parent):
+        console.error('DDD 3')
         super().__init__(parent)
+        console.error('DDD 4')
         self._proxy = parent
 
         # Project
         self._proxy.project.dataChanged.connect(self._proxy.project.setNeedSaveToTrue)
         self._proxy.project.createdChanged.connect(self._proxy.project.save)
+        console.error('DDD 2')
 
         # Experiment
         self._proxy.experiment.dataBlocksChanged.connect(self.onExperimentDataBlocksChanged)
@@ -22,11 +30,15 @@ class Connections(QObject):
         self._proxy.experiment.parameterEdited.connect(self.onExperimentParameterEdited)
         self._proxy.experiment.currentIndexChanged.connect(self.onExperimentCurrentIndexChanged)
 
+        console.error('DDD 3')
+
         # Model
         self._proxy.model.dataBlocksChanged.connect(self.onModelDataBlocksChanged)
         self._proxy.model.yCalcArraysChanged.connect(self.onModelYCalcArraysChanged)
         self._proxy.model.parameterEdited.connect(self.onModelParameterEdited)
         self._proxy.model.currentIndexChanged.connect(self.onModelCurrentIndexChanged)
+
+        console.error('DDD 4')
 
         # Analysis
         self._proxy.analysis.definedChanged.connect(self.onAnalysisDefined)
@@ -41,6 +53,7 @@ class Connections(QObject):
     # Experiment
 
     def onExperimentDataBlocksChanged(self):
+        console.error('DDD 5')
         self._proxy.experiment.defined = bool(len(self._proxy.experiment.dataBlocks))
         self._proxy.experiment.setDataBlocksJson()
         self._proxy.project.setNeedSaveToTrue()

@@ -22,6 +22,22 @@ _EMPTY_DATA = [
     }
 ]
 
+class Parameter(dict):
+
+    def __init__(self, value, fittable=False):
+        self['value'] = value
+        self['fittable'] = fittable
+        self['fit'] = False
+        self['error'] = 0
+        self['group'] = ""
+        self['max'] = 100
+        self['min'] = -100
+        self['name'] = ""
+        self['parentIndex'] = 0
+        self['parentName'] = ""
+        self['unit'] = ""
+
+
 class Fittables(QObject):
     dataChanged = Signal()
     dataJsonChanged = Signal()
