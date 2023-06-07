@@ -18,10 +18,10 @@ EaCharts.QtCharts1dMeasVsCalc {
     xAxisTitle: "x"
     yAxisTitle: "y"
 
-    xMin: -10
-    xMax: 10
-    yMin: 0
-    yMax: 4
+    xMin: 0
+    xMax: 150
+    yMin: -100
+    yMax: 3000
 
     calcSerieColor: EaStyle.Colors.chartForegroundsExtra[Globals.Proxies.main.model.currentIndex]
 
