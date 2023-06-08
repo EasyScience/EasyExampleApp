@@ -134,22 +134,38 @@ Column {
 
     // Parameter change slider
 
-    EaElements.Slider {
-        id: slider
+    Row {
+        spacing: EaStyle.Sizes.fontPixelSize
 
-        enabled: !Globals.Proxies.main.fitting.isFittingNow
-        width: table.width
-
-        from: Globals.Proxies.main.fittables.data[table.currentIndex].min
-        to: Globals.Proxies.main.fittables.data[table.currentIndex].max
-        value: table.currentValueTextInput.text
-
-        onMoved: {
-            enableOpenGL()
-            table.currentValueTextInput.text = value.toFixed(4)
-            table.currentValueTextInput.editingFinished()
-            disableOpenGL()
+        EaElements.TextField {
+            width: EaStyle.Sizes.fontPixelSize * 6
+            text: slider.from.toFixed(4)
         }
+
+        EaElements.Slider {
+            id: slider
+
+            enabled: !Globals.Proxies.main.fitting.isFittingNow
+            width: table.width - EaStyle.Sizes.fontPixelSize * 14
+
+
+            from: Globals.Proxies.main.fittables.data[table.currentIndex].min
+            to: Globals.Proxies.main.fittables.data[table.currentIndex].max
+            value: table.currentValueTextInput.text
+
+            onMoved: {
+                enableOpenGL()
+                table.currentValueTextInput.text = value.toFixed(4)
+                table.currentValueTextInput.editingFinished()
+                disableOpenGL()
+            }
+        }
+
+        EaElements.TextField {
+            width: EaStyle.Sizes.fontPixelSize * 6
+            text: slider.to.toFixed(4)
+        }
+
     }
 
     // Use OpenGL on slider move only
@@ -158,23 +174,6 @@ Column {
         id: disableOpenGLTimer
         interval: 500
         onTriggered: disableOpenGLFromTimer()
-    }
-
-    // Control buttons below table
-
-    EaElements.SideBarButton {
-        enabled: Globals.Proxies.main.experiment.defined
-        wide: true
-
-        fontIcon: Globals.Proxies.main.fitting.isFittingNow ? 'stop-circle' : 'play-circle'
-        text: Globals.Proxies.main.fitting.isFittingNow ? qsTr('Cancel fitting') : qsTr('Start fitting')
-
-        onClicked: {
-            console.debug(`Clicking '${text}' button: ${this}`)
-            Globals.Proxies.main.fitting.startStop()
-        }
-
-        Component.onCompleted: Globals.Refs.app.analysisPage.startFittingButton = this
     }
 
     // Logic
