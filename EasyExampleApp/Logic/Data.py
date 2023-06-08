@@ -12,6 +12,8 @@ class Data(QObject):
         super().__init__(parent)
         self._proxy = parent
         self._edDict = {}
+        self._cryspyDict = {}
+        self._cryspyInOutDict = {}
 
     # QML accessible properties
 

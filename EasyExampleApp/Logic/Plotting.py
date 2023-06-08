@@ -16,12 +16,14 @@ class Plotting(QObject):
     currentLib1dChanged = Signal()
     useAcceleration1dChanged = Signal()
     chartRefsChanged = Signal()
+    chartRangesChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self._proxy = parent
         self._currentLib1d = 'QtCharts'
         self._useAcceleration1d = True
+        self._chartRanges = {}
         self._chartRefs = {
             'Plotly': {
                 'experimentPage': None,
@@ -68,6 +70,10 @@ class Plotting(QObject):
             return
         self._useAcceleration1d = newValue
         self.useAcceleration1dChanged.emit()
+
+    @Property('QVariant', notify=chartRangesChanged)
+    def chartRanges(self):
+        return self._chartRanges
 
     @Property('QVariant', notify=chartRefsChanged)
     def chartRefs(self):
@@ -257,6 +263,15 @@ class Plotting(QObject):
         residSerie = self._chartRefs['QtCharts']['analysisPage']['residSerie']
         residSerie.replaceNp(xArray, yResidArray)
         console.debug("Residual curve data on analysis page have been replaced")
+
+        y_min = float(yResidArray.min())
+        y_max = float(yResidArray.max())
+        y_range = y_max - y_min
+        y_extra = y_range * 0.1
+        y_min -= y_extra
+        y_max += y_extra
+        self._chartRanges = {'yMin': y_min, 'yMax': y_max}
+        self.chartRangesChanged.emit()
 
     # Plotly: Experiment
 

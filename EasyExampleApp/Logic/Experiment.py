@@ -62,6 +62,7 @@ class Experiment(QObject):
     dataBlocksJsonChanged = Signal()
     yMeasArraysChanged = Signal()
     yBkgArraysChanged = Signal()
+    chartRangesChanged = Signal()
     parameterEdited = Signal(str, str)
 
     def __init__(self, parent):
@@ -74,8 +75,13 @@ class Experiment(QObject):
         self._xArrays = []
         self._yMeasArrays = []
         self._yBkgArrays = []
+        self._chartRanges = []
 
     # QML accessible properties
+
+    @Property('QVariant', notify=chartRangesChanged)
+    def chartRanges(self):
+        return self._chartRanges
 
     @Property(bool, notify=definedChanged)
     def defined(self):
@@ -149,12 +155,13 @@ class Experiment(QObject):
 
     @Slot(str)
     def loadExperimentFromFile(self, fpath):
-        fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'PbSO4.rcif')
+        fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'PbSO4_experiment.cif')
         console.debug(f"Loading an experiment from {fpath}")
         # Load RCIF file by cryspy and extract experiments into easydiffraction data block
-        cryspyObj = cryspy.load_file(fpath)
-        cryspyDict = cryspyObj.get_dictionary()
-        self.parseExperiments(cryspyObj, cryspyDict)
+        cryspyExperimentObj = cryspy.load_file(fpath)
+        cryspyExperimentDict = cryspyExperimentObj.get_dictionary()
+        self._proxy.data._cryspyDict.update(cryspyExperimentDict)
+        self.parseExperiments(cryspyExperimentObj)
 
     @Slot(int)
     def removeExperiment(self, index):
@@ -277,8 +284,9 @@ class Experiment(QObject):
         self.dataBlocksJsonChanged.emit()
 
     # Extract experiments from cryspy_obj and cryspy_dict into internal ed_dict
-    def parseExperiments(self, cryspy_obj, cryspy_dict):
+    def parseExperiments(self, cryspy_obj):
         ed_dict = self._proxy.data.edDict
+        cryspy_dict = self._proxy.data._cryspyDict
         experiment_names = [name.replace('pd_', '') for name in cryspy_dict.keys() if name.startswith('pd_')]
         for data_block in cryspy_obj.items:
             data_block_name = data_block.data_name
@@ -295,27 +303,27 @@ class Experiment(QObject):
                 for item in cryspy_experiment:
                     # Ranges section
                     if type(item) == cryspy.C_item_loop_classes.cl_1_range.Range:
-                        ed_experiment['params']['_pd_meas_2theta_range_min'] = Parameter(item.ttheta_min)
-                        ed_experiment['params']['_pd_meas_2theta_range_max'] = Parameter(item.ttheta_min)
-                        ed_experiment['params']['_pd_meas_2theta_range_inc'] = Parameter(0.05)  # NEED FIX
+                        ed_experiment['params']['_pd_meas_2theta_range_min'] = dict(Parameter(item.ttheta_min))
+                        ed_experiment['params']['_pd_meas_2theta_range_max'] = dict(Parameter(item.ttheta_max))
+                        ed_experiment['params']['_pd_meas_2theta_range_inc'] = dict(Parameter(0.05))  # NEED FIX
                     # Setup section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_setup.Setup:
-                        ed_experiment['params']['_diffrn_radiation_probe'] = Parameter(item.radiation.replace('neutrons', 'neutron').replace('X-rays', 'x-ray'))
-                        ed_experiment['params']['_diffrn_radiation_wavelength'] = Parameter(item.wavelength, fittable=True)
-                        ed_experiment['params']['_pd_meas_2theta_offset'] = Parameter(item.offset_ttheta, fittable=True)
+                        ed_experiment['params']['_diffrn_radiation_probe'] = dict(Parameter(item.radiation.replace('neutrons', 'neutron').replace('X-rays', 'x-ray')))
+                        ed_experiment['params']['_diffrn_radiation_wavelength'] = dict(Parameter(item.wavelength, fittable=True))
+                        ed_experiment['params']['_pd_meas_2theta_offset'] = dict(Parameter(item.offset_ttheta, fittable=True))
                     # Instrument resolution section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_instr_resolution.PdInstrResolution:
-                        ed_experiment['params']['_pd_instr_resolution_u'] = Parameter(item.u, fittable=True)
-                        ed_experiment['params']['_pd_instr_resolution_v'] = Parameter(item.v, fittable=True)
-                        ed_experiment['params']['_pd_instr_resolution_w'] = Parameter(item.w, fittable=True)
-                        ed_experiment['params']['_pd_instr_resolution_x'] = Parameter(item.x, fittable=True)
-                        ed_experiment['params']['_pd_instr_resolution_y'] = Parameter(item.y, fittable=True)
+                        ed_experiment['params']['_pd_instr_resolution_u'] = dict(Parameter(item.u, fittable=True))
+                        ed_experiment['params']['_pd_instr_resolution_v'] = dict(Parameter(item.v, fittable=True))
+                        ed_experiment['params']['_pd_instr_resolution_w'] = dict(Parameter(item.w, fittable=True))
+                        ed_experiment['params']['_pd_instr_resolution_x'] = dict(Parameter(item.x, fittable=True))
+                        ed_experiment['params']['_pd_instr_resolution_y'] = dict(Parameter(item.y, fittable=True))
                     # Peak assymetries section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_instr_reflex_asymmetry.PdInstrReflexAsymmetry:
-                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p1'] = Parameter(item.p1, fittable=True)
-                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p2'] = Parameter(item.p2, fittable=True)
-                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p3'] = Parameter(item.p3, fittable=True)
-                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p4'] = Parameter(item.p4, fittable=True)
+                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p1'] = dict(Parameter(item.p1, fittable=True))
+                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p2'] = dict(Parameter(item.p2, fittable=True))
+                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p3'] = dict(Parameter(item.p3, fittable=True))
+                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p4'] = dict(Parameter(item.p4, fittable=True))
                     # Phases section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_phase.PhaseL:
                         ed_phases = []
@@ -345,6 +353,20 @@ class Experiment(QObject):
                         x_array = np.array(x_array)
                         y_meas_array = np.array(y_meas_array)
                         y_bkg_array = np.zeros_like(x_array)
+                        # Ranges (for charts)
+                        x_min = dict(Parameter(float(x_array.min())))
+                        x_max = dict(Parameter(float(x_array.max())))
+                        y_min = float(y_meas_array.min())
+                        y_max = float(y_meas_array.max())
+                        y_range = y_max - y_min
+                        y_extra = y_range * 0.1
+                        y_min = dict(Parameter(y_min - y_extra))
+                        y_max = dict(Parameter(y_max + y_extra))
+                        self.chartRanges.append({'xMin': x_min,
+                                                 'xMax': x_max,
+                                                 'yMin': y_min,
+                                                 'yMax': y_max})
+                        self.chartRangesChanged.emit()
                 ed_dict['experiments'].append(ed_experiment)
                 self.addDataBlock(ed_experiment)
                 self.addXArray(x_array)

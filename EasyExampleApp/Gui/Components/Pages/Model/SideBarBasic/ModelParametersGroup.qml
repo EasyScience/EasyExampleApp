@@ -15,42 +15,76 @@ Row {
     spacing: EaStyle.Sizes.fontPixelSize
 
     EaElements.Parameter {
-        title: qsTr('Shift')
+        title: qsTr('a')
         width: parameterFieldWidth()
-        text: parameterValue('shift')
+        text: parameterValue('_cell_length_a')
         onEditingFinished: {
             focus = false
-            setParameterValue('shift', text)
+            setParameterValue('_cell_length_a', text)
         }
-        Component.onCompleted: Globals.Refs.app.modelPage.shiftParameter = this
+        //Component.onCompleted: Globals.Refs.app.modelPage.shiftParameter = this
     }
 
     EaElements.Parameter {
-        title: qsTr('Width')
+        title: qsTr('b')
         width: parameterFieldWidth()
-        text: parameterValue('width')
+        text: parameterValue('_cell_length_b')
         onEditingFinished: {
             focus = false
-            setParameterValue('width', text)
+            setParameterValue('_cell_length_b', text)
         }
-        Component.onCompleted: Globals.Refs.app.modelPage.widthParameter = this
+        //Component.onCompleted: Globals.Refs.app.modelPage.shiftParameter = this
     }
 
     EaElements.Parameter {
-        title: qsTr('Scale')
+        title: qsTr('c')
         width: parameterFieldWidth()
-        text: parameterValue('scale')
+        text: parameterValue('_cell_length_c')
         onEditingFinished: {
             focus = false
-            setParameterValue('scale', text)
+            setParameterValue('_cell_length_c', text)
         }
-        Component.onCompleted: Globals.Refs.app.modelPage.scaleParameter = this
+        //Component.onCompleted: Globals.Refs.app.modelPage.shiftParameter = this
     }
+
+    EaElements.Parameter {
+        title: qsTr('alpha')
+        width: parameterFieldWidth()
+        text: parameterValue('_cell_angle_alpha')
+        onEditingFinished: {
+            focus = false
+            setParameterValue('_cell_angle_alpha', text)
+        }
+        //Component.onCompleted: Globals.Refs.app.modelPage.shiftParameter = this
+    }
+
+    EaElements.Parameter {
+        title: qsTr('beta')
+        width: parameterFieldWidth()
+        text: parameterValue('_cell_angle_beta')
+        onEditingFinished: {
+            focus = false
+            setParameterValue('_cell_angle_beta', text)
+        }
+        //Component.onCompleted: Globals.Refs.app.modelPage.shiftParameter = this
+    }
+
+    EaElements.Parameter {
+        title: qsTr('gamma')
+        width: parameterFieldWidth()
+        text: parameterValue('_cell_angle_gamma')
+        onEditingFinished: {
+            focus = false
+            setParameterValue('_cell_angle_gamma', text)
+        }
+        //Component.onCompleted: Globals.Refs.app.modelPage.shiftParameter = this
+    }
+
 
     // Logic
 
     function parameterFieldWidth() {
-        return (EaStyle.Sizes.sideBarContentWidth - 2 * EaStyle.Sizes.fontPixelSize) / 3
+        return (EaStyle.Sizes.sideBarContentWidth - 5 * EaStyle.Sizes.fontPixelSize) / 6
     }
 
     function parameterValue(name) {

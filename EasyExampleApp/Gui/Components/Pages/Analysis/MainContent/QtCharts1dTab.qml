@@ -46,10 +46,10 @@ Column {
             xAxisTitle: "X"
             yAxisTitle: "Imeas, Icalc"
 
-            xMin: 0
-            xMax: 150
-            yMin: -100
-            yMax: 3000
+            xMin: parameterValue('xMin')
+            xMax: parameterValue('xMax')
+            yMin: parameterValue('yMin')
+            yMax: parameterValue('yMax')
 
             xAxisTitleVisible: false
             xAxisLabelsVisible: false
@@ -111,8 +111,8 @@ Column {
             yAxisTitle: 'Imeas - Icalc'
             xMin: mainChart.xMin
             xMax: mainChart.xMax
-            yMin: -1
-            yMax: 1
+            yMin: Globals.Proxies.main.plotting.chartRanges.yMin
+            yMax: Globals.Proxies.main.plotting.chartRanges.yMax
 
             LineSeries {
                 id: residSerie
@@ -144,6 +144,18 @@ Column {
                                                           'residSerie',
                                                           this.residSerie)
         Globals.Proxies.main.analysis.defined = true
+    }
+
+    // Logic
+
+    function parameterValue(name) {
+        if (!Globals.Proxies.main.experiment.defined) {
+            return ''
+        }
+        const currentExperimentIndex = Globals.Proxies.main.experiment.currentIndex
+        const value = Globals.Proxies.main.experiment.chartRanges[currentExperimentIndex][name].value
+        const formattedValue = value.toFixed(4)
+        return formattedValue
     }
 
 }

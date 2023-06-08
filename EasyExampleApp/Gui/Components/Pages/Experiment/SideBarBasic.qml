@@ -13,25 +13,40 @@ import Gui.Globals as Globals
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
-        title: qsTr("Experimental data explorer")
+        title: qsTr("Experiment data explorer")
         collapsible: false
+        last: !Globals.Proxies.main.experiment.defined
 
         Loader { source: 'SideBarBasic/ExperimentDataExplorerGroup.qml' }
     }
 
     EaElements.GroupBox {
-        title: qsTr("Experimental ranges")
+        title: qsTr("Diffrn radiation")
         visible: Globals.Proxies.main.experiment.defined
 
-        Loader { source: 'SideBarBasic/ExperimentRangesGroup.qml' }
+        Loader { source: 'SideBarBasic/DiffrnRadiationGroup.qml' }
     }
 
     EaElements.GroupBox {
-        title: qsTr("Experimental background")
+        title: qsTr("Pd meas 2θ range")
+        visible: Globals.Proxies.main.experiment.defined
+
+        Loader { source: 'SideBarBasic/PdMeas2ThetaRangeGroup.qml' }
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Pd instr resolution")
+        visible: Globals.Proxies.main.experiment.defined
+
+        Loader { source: 'SideBarBasic/PdInstrResolutionGroup.qml' }
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Pd instr reflex asymmetry")
         visible: Globals.Proxies.main.experiment.defined
         last: true
 
-        Loader { source: 'SideBarBasic/ExperimentBackgroundGroup.qml' }
+        Loader { source: 'SideBarBasic/PdInstrReflexAsymmetryGroup.qml' }
     }
 
 }

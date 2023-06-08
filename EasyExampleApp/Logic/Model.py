@@ -70,9 +70,6 @@ class Model(QObject):
         self._dataBlocksJson = ''
         self._yCalcArrays = []
 
-        self._cryspyDict = {}
-        self._cryspyInOutDict = {}
-
     # QML accessible properties
 
     @Property(bool, notify=definedChanged)
@@ -130,12 +127,13 @@ class Model(QObject):
 
     @Slot(str)
     def loadModelFromFile(self, fpath):
-        fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'PbSO4.rcif')
+        fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'PbSO4_model.cif')
         console.debug(f"Loading a model from {fpath}")
         # Load RCIF file by cryspy and extract phases into easydiffraction data block
-        cryspyObj = cryspy.load_file(fpath)
-        self._cryspyDict = cryspyObj.get_dictionary()
-        self.parseModels(cryspyObj)
+        cryspyModelObj = cryspy.load_file(fpath)
+        cryspyModelDict = cryspyModelObj.get_dictionary()
+        self._proxy.data._cryspyDict.update(cryspyModelDict)
+        self.parseModels(cryspyModelObj)
 
     @Slot(int)
     def removeModel(self, index):
@@ -154,12 +152,22 @@ class Model(QObject):
         self.yCalcArraysChanged.emit()
         console.debug("All models have been removed")
 
-    @Slot(str, int, str, str, str)
-    def editParameter(self, page, blockIndex, name, item, value):
+    @Slot(str, result=str)
+    def parameter(self, name):
+        return name
+        console.error(f'self.defined {self.defined}')
+        if not self.defined:
+            return ''
+        value = self.dataBlocks[self.currentIndex].params[name]['value']
+        formattedValue = "{:.4f}".format(value)
+        console.error(f'formattedValue {formattedValue}')
+        return formattedValue
+
+    @Slot(str, str, str)
+    def editParameter(self, name, item, value):
         block = 'model'
-        if blockIndex is None:
-            blockIndex = self._currentIndex
-        console.debug(f"Editing parameter '{block}[{blockIndex}].{name}.{item}' to '{value}' requested from '{page}' page")
+        blockIndex = self._currentIndex
+        console.debug(f"Editing '{block}' block parameter '{block}[{blockIndex}].{name}.{item}' to '{value}'")
         # Convert input value
         if item == 'value':
             value = float(value)
@@ -178,7 +186,7 @@ class Model(QObject):
         # Updating cryspy_dict: NEED FIX
         blockName = self._dataBlocks[blockIndex]['name']
         cryspyBlockName = f'crystal_{blockName}'
-        cryspyBlock = self._cryspyDict[cryspyBlockName]
+        cryspyBlock = self._proxy.data._cryspyDict[cryspyBlockName]
         if name == '_cell_length_a': cryspyBlock['unit_cell_parameters'][0] = value
         if name == '_cell_length_b': cryspyBlock['unit_cell_parameters'][1] = value
         if name == '_cell_length_c': cryspyBlock['unit_cell_parameters'][2] = value
@@ -187,6 +195,7 @@ class Model(QObject):
         if name == '_cell_angle_gamma': cryspyBlock['unit_cell_parameters'][5] = np.deg2rad(value)
 
         # Signalling value has been changed
+        page = 'model'  # ???????
         self.parameterEdited.emit(page, blockIndex, name)
         console.debug(f"Data blocks for '{block}' has been changed")
         self.dataBlocksChanged.emit()
@@ -206,9 +215,6 @@ class Model(QObject):
         return yCalcArray
 
     def calculateYCalcArray(self, index):
-        print('SSSSSSS')
-        # Update cryspy_dict
-        #pass
         # Re-calculate diffraction pattern
         yCalcArray = self.calculateDiffractionPattern()
         return yCalcArray
@@ -250,7 +256,8 @@ class Model(QObject):
     # Extract phases from cryspy_obj and cryspy_dict into internal ed_dict
     def parseModels(self, cryspy_obj):
         ed_dict = self._proxy.data.edDict
-        phase_names = [name.replace('crystal_', '') for name in self._cryspyDict.keys() if name.startswith('crystal_')]
+        cryspy_dict = self._proxy.data._cryspyDict
+        phase_names = [name.replace('crystal_', '') for name in cryspy_dict.keys() if name.startswith('crystal_')]
         for data_block in cryspy_obj.items:
             data_block_name = data_block.data_name
             # Phase datablock
@@ -263,15 +270,17 @@ class Model(QObject):
                 for item in cryspy_phase:
                     # Space group section
                     if type(item) == cryspy.C_item_loop_classes.cl_2_space_group.SpaceGroup:
-                        ed_phase['params']['_space_group_name_H-M_alt'] = Parameter(item.name_hm_alt)
+                        ed_phase['params']['_space_group_name_H-M_alt'] = dict(Parameter(item.name_hm_alt))
+                        ed_phase['params']['_space_group_IT_coordinate_system_code'] = dict(Parameter(item.it_coordinate_system_code))
+                        pass
                     # Cell section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_cell.Cell:
-                        ed_phase['params']['_cell_length_a'] = Parameter(item.length_a, min=1, max=10, fittable=True)
-                        ed_phase['params']['_cell_length_b'] = Parameter(item.length_b, min=1, max=10, fittable=True)
-                        ed_phase['params']['_cell_length_c'] = Parameter(item.length_c, min=1, max=10, fittable=True)
-                        ed_phase['params']['_cell_angle_alpha'] = Parameter(item.angle_alpha, min=0, max=180, fittable=True)
-                        ed_phase['params']['_cell_angle_beta'] = Parameter(item.angle_beta, min=0, max=180, fittable=True)
-                        ed_phase['params']['_cell_angle_gamma'] = Parameter(item.angle_gamma, min=0, max=180, fittable=True)
+                        ed_phase['params']['_cell_length_a'] = dict(Parameter(item.length_a, min=1, max=10, fittable=True))
+                        ed_phase['params']['_cell_length_b'] = dict(Parameter(item.length_b, min=1, max=10, fittable=True))
+                        ed_phase['params']['_cell_length_c'] = dict(Parameter(item.length_c, min=1, max=10, fittable=True))
+                        ed_phase['params']['_cell_angle_alpha'] = dict(Parameter(item.angle_alpha, min=0, max=180, fittable=True))
+                        ed_phase['params']['_cell_angle_beta'] = dict(Parameter(item.angle_beta, min=0, max=180, fittable=True))
+                        ed_phase['params']['_cell_angle_gamma'] = dict(Parameter(item.angle_gamma, min=0, max=180, fittable=True))
                     # Atoms section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_atom_site.AtomSiteL:
                         ed_atoms = []
@@ -297,11 +306,11 @@ class Model(QObject):
                 y_calc_array = self.calculateDiffractionPattern()
                 self.addYCalcArray(y_calc_array)
 
-    def calculateDiffractionPattern(self):
-        rhochi_calc_chi_sq_by_dictionary(self._cryspyDict,
-                                         dict_in_out=self._cryspyInOutDict,
+    def calculateDiffractionPattern(self):        
+        rhochi_calc_chi_sq_by_dictionary(self._proxy.data._cryspyDict,
+                                         dict_in_out=self._proxy.data._cryspyInOutDict,
                                          flag_use_precalculated_data=False,
                                          flag_calc_analytical_derivatives=False)
         first_experiment_name = self._proxy.data.edDict['experiments'][0]['name']  # NEED FIX
-        y_calc_array = self._cryspyInOutDict[f'pd_{first_experiment_name}']['signal_plus']
+        y_calc_array = self._proxy.data._cryspyInOutDict[f'pd_{first_experiment_name}']['signal_plus']
         return y_calc_array

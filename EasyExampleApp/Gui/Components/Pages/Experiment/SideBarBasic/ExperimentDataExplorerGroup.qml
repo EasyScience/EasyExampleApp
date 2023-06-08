@@ -101,9 +101,9 @@ Column {
         }
 
         EaElements.SideBarButton {
-            enabled: !Globals.Proxies.main.experiment.defined
+            enabled: false  //!Globals.Proxies.main.experiment.defined
             fontIcon: "upload"
-            text: qsTr("Add default experimental data")
+            text: qsTr("Add default experiment data")
             onClicked: {
                 Globals.Proxies.main.experiment.addDefaultExperiment()
                 console.debug(`Clicking '${text}' button: ${this}`)

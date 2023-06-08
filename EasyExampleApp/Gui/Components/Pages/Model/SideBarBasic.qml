@@ -21,11 +21,18 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
-        title: qsTr("Model parameters")
+        title: qsTr("Space group")
+        visible: Globals.Proxies.main.model.defined
+
+        Loader { source: 'SideBarBasic/SpaceGroupGroup.qml' }
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Cell")
         visible: Globals.Proxies.main.model.defined
         last: true
 
-        Loader { source: 'SideBarBasic/ModelParametersGroup.qml' }
+        Loader { source: 'SideBarBasic/CellGroup.qml' }
     }
 
 }

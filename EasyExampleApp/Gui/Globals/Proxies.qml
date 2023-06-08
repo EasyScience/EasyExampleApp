@@ -562,4 +562,39 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     property string loggingLevel: EaGlobals.Vars.loggingLevel
     onLoggingLevelChanged: main.logger.level = loggingLevel
 
+
+    // Common functions
+
+    function modelParameterValue(name) {
+        if (!main.model.defined) {
+            return ''
+        }
+        const currentModelIndex = main.model.currentIndex
+        const item = 'value'
+        const value = main.model.dataBlocks[currentModelIndex].params[name][item]
+        const formattedValue = typeof value === "number" ? value.toFixed(4) : value
+        return formattedValue
+    }
+
+    function setModelParameterValue(name, value) {
+        const item = 'value'
+        main.model.editParameter(name, item, value)
+    }
+
+    function experimentParameterValue(name) {
+        if (!main.experiment.defined) {
+            return ''
+        }
+        const currentExperimentIndex = main.experiment.currentIndex
+        const item = 'value'
+        const value = main.experiment.dataBlocks[currentExperimentIndex].params[name][item]
+        const formattedValue = typeof value === "number" ? value.toFixed(4) : value
+        return formattedValue
+    }
+
+    function setExperimentValue(name, value) {
+        const item = 'value'
+        main.experiment.editParameter(page, blockIndex, name, item, value)
+    }
+
 }

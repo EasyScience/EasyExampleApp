@@ -18,10 +18,10 @@ EaCharts.QtCharts1dMeasVsCalc {
     xAxisTitle: "x"
     yAxisTitle: "y"
 
-    xMin: 0
-    xMax: 150
-    yMin: -100
-    yMax: 3000
+    xMin: parameterValue('xMin')
+    xMax: parameterValue('xMax')
+    yMin: parameterValue('yMin')
+    yMax: parameterValue('yMax')
 
     calcSerieColor: EaStyle.Colors.chartForegroundsExtra[Globals.Proxies.main.model.currentIndex]
 
@@ -33,4 +33,17 @@ EaCharts.QtCharts1dMeasVsCalc {
                                                           'calcSerie',
                                                           this.calcSerie)
     }
+
+    // Logic
+
+    function parameterValue(name) {
+        if (!Globals.Proxies.main.experiment.defined) {
+            return ''
+        }
+        const currentExperimentIndex = Globals.Proxies.main.experiment.currentIndex
+        const value = Globals.Proxies.main.experiment.chartRanges[currentExperimentIndex][name].value
+        const formattedValue = value.toFixed(4)
+        return formattedValue
+    }
+
 }
