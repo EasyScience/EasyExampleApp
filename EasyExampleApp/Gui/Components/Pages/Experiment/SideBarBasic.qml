@@ -44,9 +44,23 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Pd instr reflex asymmetry")
         visible: Globals.Proxies.main.experiment.defined
-        last: true
 
         Loader { source: 'SideBarBasic/PdInstrReflexAsymmetryGroup.qml' }
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Pd background")
+        visible: Globals.Proxies.main.experiment.defined
+
+        Loader { source: 'SideBarBasic/PdBackgroundGroup.qml' }
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Phase")
+        visible: Globals.Proxies.main.experiment.defined
+        last: true
+
+        Loader { source: 'SideBarBasic/PhaseGroup.qml' }
     }
 
 }

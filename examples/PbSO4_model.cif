@@ -3,7 +3,7 @@ data_pbso4
 _space_group_name_H-M_alt "P n m a"
 _space_group_IT_coordinate_system_code abc
 
-_cell_length_a 8.477930
+_cell_length_a 8.477930()
 _cell_length_b 5.396820
 _cell_length_c 6.958100
 _cell_angle_alpha 90.000000

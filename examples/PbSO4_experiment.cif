@@ -4,7 +4,7 @@ _range_2theta_min 10.0
 _range_2theta_max 155.45
 
 _setup_wavelength 1.9120
-_setup_offset_2theta -0.138
+_setup_offset_2theta -0.138()
 _setup_radiation neutrons
 
 _pd_instr_reflex_asymmetry_p1 0.0
@@ -22,12 +22,12 @@ loop_
 _phase_label
 _phase_scale
 _phase_igsize
-  pbso4   10.000   0.0
+  pbso4   2.100()   0.0
 
 loop_
 _pd_background_2theta
 _pd_background_intensity
-   11.0   204.08117310851338
+   11.0   204.08117310851338()
    15.0   193.54599453303575
    20.0   192.53638097127742
    30.0   188.34868653923004

@@ -330,8 +330,8 @@ class Experiment(QObject):
                         cryspy_phases = item.items
                         for cryspy_phase in cryspy_phases:
                             ed_phase = {}
-                            ed_phase['_label'] = cryspy_phase.label
-                            ed_phase['_scale'] = cryspy_phase.scale
+                            ed_phase['_label'] = dict(Parameter(cryspy_phase.label))
+                            ed_phase['_scale'] = dict(Parameter(cryspy_phase.scale, fittable=True))
                             ed_phases.append(ed_phase)
                         ed_experiment['loops']['_phase'] = ed_phases
                     # Background section
@@ -340,8 +340,8 @@ class Experiment(QObject):
                         cryspy_bkg_points = item.items
                         for cryspy_bkg_point in cryspy_bkg_points:
                             ed_bkg_point = {}
-                            ed_bkg_point['_2theta'] = cryspy_bkg_point.ttheta
-                            ed_bkg_point['_intensity'] = cryspy_bkg_point.intensity
+                            ed_bkg_point['_2theta'] = dict(Parameter(cryspy_bkg_point.ttheta))
+                            ed_bkg_point['_intensity'] = dict(Parameter(cryspy_bkg_point.intensity, fittable=True))
                             ed_bkg_points.append(ed_bkg_point)
                         ed_experiment['loops']['_pd_background'] = ed_bkg_points
                     # Measured data section

@@ -30,9 +30,16 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Cell")
         visible: Globals.Proxies.main.model.defined
-        last: true
 
         Loader { source: 'SideBarBasic/CellGroup.qml' }
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Atom site")
+        visible: Globals.Proxies.main.model.defined
+        last: true
+
+        Loader { source: 'SideBarBasic/AtomSiteGroup.qml' }
     }
 
 }

@@ -200,6 +200,34 @@ class Model(QObject):
         console.debug(f"Data blocks for '{block}' has been changed")
         self.dataBlocksChanged.emit()
 
+    #
+    @Slot(str, str, int, float)
+    def editLoopParameterValue(self, loopName, parameterName, parameterIndex, value):
+        block = 'model'
+        blockIndex = self._currentIndex
+
+        oldValue = self._dataBlocks[blockIndex]['loops'][loopName][parameterIndex][parameterName]['value']
+        if oldValue == value:
+            return
+        self._dataBlocks[blockIndex]['loops'][loopName][parameterIndex][parameterName]['value'] = value
+        console.debug(f"Parameter {block}[{blockIndex}].loops['{loopName}'][{parameterIndex}]['{parameterName}']['value'] changed: '{oldValue}' -> '{value}'")
+
+        # Updating cryspy_dict: NEED FIX
+        blockName = self._dataBlocks[blockIndex]['name']
+        cryspyBlockName = f'crystal_{blockName}'
+        cryspyBlock = self._proxy.data._cryspyDict[cryspyBlockName]
+        if loopName == '_atom_site':
+            if parameterName == '_fract_x': cryspyBlock['atom_fract_xyz'][0][parameterIndex] = value
+            if parameterName == '_fract_y': cryspyBlock['atom_fract_xyz'][1][parameterIndex] = value
+            if parameterName == '_fract_z': cryspyBlock['atom_fract_xyz'][2][parameterIndex] = value
+            if parameterName == '_occupancy': cryspyBlock['atom_occupancy'][parameterIndex] = value
+
+        # Signalling value has been changed
+        page = 'model'  # ???????
+        self.parameterEdited.emit(page, blockIndex, parameterName)  # parameterName not needed???
+        console.debug(f"Data blocks for '{block}' has been changed")
+        self.dataBlocksChanged.emit()
+
     # Private methods
 
     def defaultYCalcArray(self):
@@ -272,7 +300,6 @@ class Model(QObject):
                     if type(item) == cryspy.C_item_loop_classes.cl_2_space_group.SpaceGroup:
                         ed_phase['params']['_space_group_name_H-M_alt'] = dict(Parameter(item.name_hm_alt))
                         ed_phase['params']['_space_group_IT_coordinate_system_code'] = dict(Parameter(item.it_coordinate_system_code))
-                        pass
                     # Cell section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_cell.Cell:
                         ed_phase['params']['_cell_length_a'] = dict(Parameter(item.length_a, min=1, max=10, fittable=True))
@@ -287,16 +314,16 @@ class Model(QObject):
                         cryspy_atoms = item.items
                         for cryspy_atom in cryspy_atoms:
                             ed_atom = {}
-                            ed_atom['_label'] = cryspy_atom.label
-                            ed_atom['_type_symbol'] = cryspy_atom.type_symbol
-                            ed_atom['_fract_x'] = cryspy_atom.fract_x
-                            ed_atom['_fract_y'] = cryspy_atom.fract_y
-                            ed_atom['_fract_z'] = cryspy_atom.fract_z
-                            ed_atom['_occupancy'] = cryspy_atom.occupancy
-                            ed_atom['_adp_type'] = cryspy_atom.adp_type
-                            ed_atom['_B_iso_or_equiv'] = cryspy_atom.b_iso_or_equiv
-                            ed_atom['_multiplicity'] = cryspy_atom.multiplicity
-                            ed_atom['_Wyckoff_symbol'] = cryspy_atom.wyckoff_symbol
+                            ed_atom['_label'] = dict(Parameter(cryspy_atom.label))
+                            ed_atom['_type_symbol'] = dict(Parameter(cryspy_atom.type_symbol))
+                            ed_atom['_fract_x'] = dict(Parameter(cryspy_atom.fract_x, min=-1, max=1, fittable=True))
+                            ed_atom['_fract_y'] = dict(Parameter(cryspy_atom.fract_y, min=-1, max=1, fittable=True))
+                            ed_atom['_fract_z'] = dict(Parameter(cryspy_atom.fract_z, min=-1, max=1, fittable=True))
+                            ed_atom['_occupancy'] = dict(Parameter(cryspy_atom.occupancy, min=0, max=1, fittable=True))
+                            ed_atom['_adp_type'] = dict(Parameter(cryspy_atom.adp_type))
+                            ed_atom['_B_iso_or_equiv'] = dict(Parameter(cryspy_atom.b_iso_or_equiv, min=0, max=1, fittable=True))
+                            ed_atom['_multiplicity'] = dict(Parameter(cryspy_atom.multiplicity))
+                            ed_atom['_Wyckoff_symbol'] = dict(Parameter(cryspy_atom.wyckoff_symbol))
                             ed_atoms.append(ed_atom)
                         ed_phase['loops']['_atom_site'] = ed_atoms
                 ed_dict['phases'].append(ed_phase)
