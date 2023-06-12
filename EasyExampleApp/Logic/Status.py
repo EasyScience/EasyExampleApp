@@ -27,6 +27,14 @@ class Status(QObject):
                 'value': 'Undefined'
             },
             {
+                'label': 'Fittables count',
+                'value': 'Undefined'
+            },
+            {
+                'label': 'Fit iteration',
+                'value': 'Undefined'
+            },
+            {
                 'label': 'Reduced χ2',
                 'value': 'Undefined'
             }
@@ -41,11 +49,17 @@ class Status(QObject):
         pointsCount = f'{self._proxy.experiment._xArrays[index].size}'  # NEED FIX
         self._as_json[2]['value'] = pointsCount
 
+        fittablesCount = self._proxy.fitting._fittablesCount
+        self._as_json[3]['value'] = f'{fittablesCount}'
+
+        fitIteration = self._proxy.fitting._fitIteration
+        self._as_json[4]['value'] = f'{fitIteration}'
+
         chiSq = self._proxy.fitting.chiSq
         pointsCount = self._proxy.fitting._pointsCount
         reducedChiSq = 'Undefined'
         if self._proxy.fitting._chiSq != np.inf and self._proxy.fitting._pointsCount != 0:
             reducedChiSq = f'{chiSq/pointsCount:0.2f}'  # NEED FIX
-        self._as_json[3]['value'] = reducedChiSq
+        self._as_json[5]['value'] = reducedChiSq
 
         self.asJsonChanged.emit()

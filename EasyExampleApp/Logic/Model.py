@@ -339,5 +339,5 @@ class Model(QObject):
                                          flag_use_precalculated_data=False,
                                          flag_calc_analytical_derivatives=False)
         first_experiment_name = self._proxy.data.edDict['experiments'][0]['name']  # NEED FIX
-        y_calc_array = self._proxy.data._cryspyInOutDict[f'pd_{first_experiment_name}']['signal_plus']
+        y_calc_array = self._proxy.data._cryspyInOutDict[f'pd_{first_experiment_name}']['signal_minus'] + self._proxy.data._cryspyInOutDict[f'pd_{first_experiment_name}']['signal_plus']
         return y_calc_array

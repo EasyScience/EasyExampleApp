@@ -311,6 +311,7 @@ class Experiment(QObject):
                         ed_experiment['params']['_diffrn_radiation_probe'] = dict(Parameter(item.radiation.replace('neutrons', 'neutron').replace('X-rays', 'x-ray')))
                         ed_experiment['params']['_diffrn_radiation_wavelength'] = dict(Parameter(item.wavelength, fittable=True))
                         ed_experiment['params']['_pd_meas_2theta_offset'] = dict(Parameter(item.offset_ttheta, fittable=True))
+                        print("ed_experiment['params']['_pd_meas_2theta_offset']", ed_experiment['params']['_pd_meas_2theta_offset'], item.offset_ttheta)
                     # Instrument resolution section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_instr_resolution.PdInstrResolution:
                         ed_experiment['params']['_pd_instr_resolution_u'] = dict(Parameter(item.u, fittable=True))
@@ -352,7 +353,13 @@ class Experiment(QObject):
                         #sy_meas_array = [point.intensity_sigma for point in cryspy_meas_points]
                         x_array = np.array(x_array)
                         y_meas_array = np.array(y_meas_array)
-                        y_bkg_array = np.zeros_like(x_array)
+                        # Background
+                        y_bkg_array_interp = np.zeros_like(x_array)
+                        if '_pd_background' in ed_experiment['loops'].keys():
+                            bkg = ed_experiment['loops']['_pd_background']
+                            x_bkg_array = [point['_2theta']['value'] for point in bkg]
+                            y_bkg_array = [point['_intensity']['value'] for point in bkg]
+                            y_bkg_array_interp = np.interp(x_array, x_bkg_array, y_bkg_array)
                         # Ranges (for charts)
                         x_min = dict(Parameter(float(x_array.min())))
                         x_max = dict(Parameter(float(x_array.max())))
@@ -371,4 +378,4 @@ class Experiment(QObject):
                 self.addDataBlock(ed_experiment)
                 self.addXArray(x_array)
                 self.addYMeasArray(y_meas_array)
-                self.addYBkgArray(y_bkg_array)
+                self.addYBkgArray(y_bkg_array_interp)

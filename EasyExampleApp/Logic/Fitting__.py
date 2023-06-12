@@ -39,7 +39,6 @@ class Worker(QObject):
 
         def callbackFunc(params, iter, resid, *args, **kws):
             console.debug(f"Iteration: {iter:5d},   Reduced chi2 per {self._proxy.fitting._pointsCount} points: {self._proxy.fitting._chiSq/self._proxy.fitting._pointsCount:16.6f}")
-            self._proxy.fitting._fitIteration = iter
             if self._needCancel:
                 self._needCancel = False
                 self._cryspyDict = self._cryspyDictInitial
@@ -83,17 +82,36 @@ class Worker(QObject):
             paramsLmfit.add(nameStr, value=val)
         ###for name, val in zip(parameter_names_free, param_0):
         ###    print(f" - {name:}  {val:.5f}")
-        self._proxy.fitting._fittablesCount = len(param_0)
+
 
         # Minimization: lmfit.minimize
+        # 'lbfgsb'
+        #Warning: uncertainties could not be estimated:
+        #    this fitting method does not natively calculate uncertainties
+        #    and numdifftools is not installed for lmfit to do this. Use
+        #    `pip install numdifftools` for lmfit to estimate uncertainties
+        #    with this fitting method.
         self._cryspyUsePrecalculatedData = True
-        method = 'bfgs'
-        kws = dict(options=dict(xrtol=1e-5))
+        #method='least_squares'  # fails
+        #method='leastsq'  # freezes
+        method = 'bfgs'  # 47s
+        #method = 'nelder'
+        #method = 'lbfgsb'  # 18s
+        #tol = 1000.0
+        ###fitter = lmfit.Minimizer(lm_min, params, fcn_args=(x, ydata), fit_kws={'xatol':0.01})
+        #leastsq_kws = dict(tol=0.000000000000001)
+        #leastsq_kws = dict(ftol=1e-09, xtol=1e-09, gtol=1e-09, max_nfev=200)
+        #leastsq_nelder = dict(tol=tol, options=dict(fatol=tol, xatol=tol, maxfev=100))
+        #leastsq_bfgs = dict(tol=tol, options=dict(eps=0.1, xrtol=tol))
+        #print('----',type(param_0))
+        #leastsq_bfgs = dict(options=dict(eps=0.01 * np.array(param_0)))
+        #leastsq_bfgs = dict(options=dict(eps=0.001))
+        leastsq_bfgs = dict(options=dict(xrtol=1e-5))
         result = lmfit.minimize(chiSqFunc,
                                 paramsLmfit,
                                 method=method,
                                 iter_cb=callbackFunc,
-                                **kws)
+                                **leastsq_bfgs)
         lmfit.report_fit(result)
 
         # Calculate optimal chi2
@@ -126,8 +144,6 @@ class Fitting(QObject):
 
         self._chiSq = np.inf
         self._pointsCount = 0 # self._proxy.experiment._xArrays[self._proxy.experiment.currentIndex].size  # ???
-        self._fittablesCount = 0
-        self._fitIteration = 0
 
         self._worker.finished.connect(self.setIsFittingNowToFalse)
         self._worker.cancelled.connect(self.setIsFittingNowToFalse)
@@ -165,9 +181,9 @@ class Fitting(QObject):
             console.debug('Minimization process has been requested to cancel')
         else:
             self.isFittingNow = True
-            #self._worker.run()
-            self._threadpool.start(self._worker.run)
-            console.debug('Minimization process has been started in a separate thread')
+            self._worker.run()
+            #self._threadpool.start(self._worker.run)
+            #console.debug('Minimization process has been started in a separate thread')
 
     def setIsFittingNowToFalse(self):
         self.isFittingNow = False
