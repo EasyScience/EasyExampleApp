@@ -39,7 +39,9 @@ class Connections(QObject):
 
         # Fitting
         #self._proxy.fitting.isFittingNowChanged.connect(self.onIsFittingNowChanged)
-        self._proxy.fitting.fitFinished.connect(self.onFitFinished)
+        self._proxy.fitting.fitFinished.connect(self.onFittingFitFinished)
+        self._proxy.fitting.chiSqChanged.connect(self.onFittingChiSqChanged)
+
 
     # Experiment
 
@@ -115,6 +117,9 @@ class Connections(QObject):
         #needSetFittables = True
         #self._proxy.model.parametersEdited.emit(needSetFittables)
 
-    def onFitFinished(self):
+    def onFittingFitFinished(self):
         self._proxy.model.setDataBlocksJson()
         self._proxy.model.updateYCalcArrayByIndex(0)  # NED FIX
+
+    def onFittingChiSqChanged(self):
+        self._proxy.status.refresh()
