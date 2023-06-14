@@ -565,20 +565,18 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
     // Common functions
 
-    function modelParameterValue(name) {
+    function modelMainParameterValue(name) {
         if (!main.model.defined) {
             return ''
         }
         const currentModelIndex = main.model.currentIndex
-        const item = 'value'
-        const value = main.model.dataBlocks[currentModelIndex].params[name][item]
+        const value = main.model.dataBlocks[currentModelIndex].params[name]['value']
         const formattedValue = typeof value === "number" ? value.toFixed(4) : value
         return formattedValue
     }
 
-    function setModelParameterValue(name, value) {
-        const item = 'value'
-        main.model.editParameter(name, item, value)
+    function setModelMainParameterValue(name, value) {
+        main.model.editParameter(name, 'value', value)
     }
 
     function modelLoopParameterValue(loopName, parameterName, parameterIndex) {
@@ -586,8 +584,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             return ''
         }
         const currentModelIndex = main.model.currentIndex
-        const item = 'value'
-        const value = main.model.dataBlocks[currentModelIndex].loops[loopName][parameterIndex][parameterName][item]
+        const value = main.model.dataBlocks[currentModelIndex].loops[loopName][parameterIndex][parameterName]['value']
         const formattedValue = typeof value === "number" ? value.toFixed(4) : value
         return formattedValue
     }
@@ -596,20 +593,14 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         main.model.editLoopParameterValue(loopName, parameterName, parameterIndex, value)
     }
 
-    function experimentParameterValue(name) {
+    function experimentMainParameterValue(name) {
         if (!main.experiment.defined) {
             return ''
         }
         const currentExperimentIndex = main.experiment.currentIndex
-        const item = 'value'
-        const value = main.experiment.dataBlocks[currentExperimentIndex].params[name][item]
+        const value = main.experiment.dataBlocks[currentExperimentIndex].params[name]['value']
         const formattedValue = typeof value === "number" ? value.toFixed(4) : value
         return formattedValue
-    }
-
-    function setExperimentValue(name, value) {
-        const item = 'value'
-        main.experiment.editParameter(page, blockIndex, name, item, value)
     }
 
     function experimentLoopParameterValue(loopName, parameterName, parameterIndex) {
@@ -617,8 +608,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             return ''
         }
         const currentExperimentIndex = main.experiment.currentIndex
-        const item = 'value'
-        const value = main.experiment.dataBlocks[currentExperimentIndex].loops[loopName][parameterIndex][parameterName][item]
+        const value = main.experiment.dataBlocks[currentExperimentIndex].loops[loopName][parameterIndex][parameterName]['value']
         const formattedValue = typeof value === "number" ? value.toFixed(4) : value
         return formattedValue
     }
