@@ -38,19 +38,21 @@ Column {
         header: EaComponents.TableViewHeader {
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 2.5
-                text: qsTr("No.")
+                //text: qsTr("No.")
             }
 
             EaComponents.TableViewLabel {
                 flexibleWidth: true
                 horizontalAlignment: Text.AlignLeft
-                text: qsTr("Name")
+                color: EaStyle.Colors.themeForegroundMinor
+                text: qsTr("name")
             }
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 4.0
                 horizontalAlignment: Text.AlignRight
-                text: qsTr("Value")
+                color: EaStyle.Colors.themeForegroundMinor
+                text: qsTr("value")
             }
 
             EaComponents.TableViewLabel {
@@ -61,12 +63,14 @@ Column {
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 4.0
                 horizontalAlignment: Text.AlignRight
-                text: qsTr("Error")
+                color: EaStyle.Colors.themeForegroundMinor
+                text: qsTr("error")
             }
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 3.0
-                text: qsTr("Fit")
+                color: EaStyle.Colors.themeForegroundMinor
+                text: qsTr("vary")
             }
         }
 
@@ -84,7 +88,7 @@ Column {
             }
 
             EaComponents.TableViewLabel {
-                headerText: qsTr("No.")
+                color: EaStyle.Colors.themeForegroundMinor
                 text: index + 1
             }
 

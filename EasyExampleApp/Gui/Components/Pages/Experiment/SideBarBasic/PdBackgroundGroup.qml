@@ -31,18 +31,20 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 2.5
-                text: qsTr("No.")
+                //text: qsTr("No.")
             }
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 11.0
                 horizontalAlignment: Text.AlignRight
+                color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("2θ")
             }
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 11.0
                 horizontalAlignment: Text.AlignRight
+                color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("Intensity")
             }
 
@@ -52,7 +54,7 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 3.0
-                text: qsTr("Del.")
+                //text: qsTr("Del.")
             }
 
         }
@@ -62,6 +64,7 @@ EaElements.GroupColumn {
         delegate: EaComponents.TableViewDelegate {
 
             EaComponents.TableViewLabel {
+                color: EaStyle.Colors.themeForegroundMinor
                 text: index + 1
             }
 

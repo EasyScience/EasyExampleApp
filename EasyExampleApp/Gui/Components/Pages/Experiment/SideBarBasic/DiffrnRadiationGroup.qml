@@ -14,10 +14,10 @@ import Gui.Globals as Globals
 EaElements.GroupRow {
 
     EaElements.Parameter {
-        enabled: false
+        //enabled: false
         title: qsTr('probe')
         text: Globals.Proxies.experimentParameterValue('_diffrn_radiation_probe')
-        horizontalAlignment: TextField.AlignLeft
+        //horizontalAlignment: TextField.AlignLeft
     }
 
     EaElements.Parameter {

@@ -32,54 +32,60 @@ EaElements.GroupColumn {
             EaComponents.TableViewLabel {
                 enabled: false
                 width: EaStyle.Sizes.fontPixelSize * 2.5
-                text: qsTr("No.")
+                //text: qsTr("No.")
             }
 
             EaComponents.TableViewLabel {
                 id: atomSiteLabel
                 width: EaStyle.Sizes.fontPixelSize * 4.39
                 horizontalAlignment: Text.AlignLeft
-                text: qsTr("Label")
+                color: EaStyle.Colors.themeForegroundMinor
+                text: qsTr("label")
             }
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 3.0
                 horizontalAlignment: Text.AlignLeft
-                text: qsTr("Type")
+                color: EaStyle.Colors.themeForegroundMinor
+                text: qsTr("type")
             }
 
             EaComponents.TableViewLabel {
                 width: atomSiteLabel.width
                 horizontalAlignment: Text.AlignRight
-                text: qsTr("Fract X")
+                color: EaStyle.Colors.themeForegroundMinor
+                text: qsTr("fract x")
             }
 
             EaComponents.TableViewLabel {
                 width: atomSiteLabel.width
                 horizontalAlignment: Text.AlignRight
-                text: qsTr("Fract Y")
+                color: EaStyle.Colors.themeForegroundMinor
+                text: qsTr("fract y")
             }
 
             EaComponents.TableViewLabel {
                 width: atomSiteLabel.width
                 horizontalAlignment: Text.AlignRight
-                text: qsTr("Fract Z")
+                color: EaStyle.Colors.themeForegroundMinor
+                text: qsTr("fract z")
             }
 
             EaComponents.TableViewLabel {
                 width: atomSiteLabel.width
                 horizontalAlignment: Text.AlignRight
-                text: qsTr("Occup")
+                color: EaStyle.Colors.themeForegroundMinor
+                text: qsTr("occ.")
             }
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 3.0
-                text: qsTr("Color")
+                //text: qsTr("Color")
             }
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 3.0
-                text: qsTr("Del.")
+                //text: qsTr("Del.")
             }
 
         }
@@ -89,8 +95,8 @@ EaElements.GroupColumn {
         delegate: EaComponents.TableViewDelegate {
 
             EaComponents.TableViewLabel {
-                enabled: false
                 text: index + 1
+                color: EaStyle.Colors.themeForegroundMinor
             }
 
             EaComponents.TableViewTextInput {
@@ -127,8 +133,8 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewButton {
                 fontIcon: "minus-circle"
-                ToolTip.text: qsTr("Remove this model")
-                onClicked: Globals.Proxies.main.model.removeModel(index)
+                ToolTip.text: qsTr("Remove this atom")
+                //onClicked: Globals.Proxies.main.model.removeModel(index)
             }
 
         }

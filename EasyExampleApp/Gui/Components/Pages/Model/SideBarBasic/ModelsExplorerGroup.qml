@@ -37,23 +37,24 @@ Column {
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 2.5
-                text: qsTr("No.")
+                //text: qsTr("No.")
             }
 
             EaComponents.TableViewLabel {
                 flexibleWidth: true
                 horizontalAlignment: Text.AlignLeft
-                text: qsTr("Name")
+                color: EaStyle.Colors.themeForegroundMinor
+                text: qsTr("label")
             }
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 3.0
-                text: qsTr("Color")
+                //text: qsTr("Color")
             }
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 3.0
-                text: qsTr("Del.")
+                //text: qsTr("Del.")
             }
 
         }
@@ -63,6 +64,7 @@ Column {
         delegate: EaComponents.TableViewDelegate {
 
             EaComponents.TableViewLabel {
+                enabled: false
                 text: index + 1
             }
 
