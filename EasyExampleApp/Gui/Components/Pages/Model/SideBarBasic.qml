@@ -17,21 +17,21 @@ EaComponents.SideBarColumn {
         collapsible: false
         last: !Globals.Proxies.main.model.defined
 
-        Loader { source: 'SideBarBasic/ModelsExplorerGroup.qml' }
+        Loader { source: 'SideBarBasic/ModelsExplorer.qml' }
     }
 
     EaElements.GroupBox {
         title: qsTr("Space group")
         visible: Globals.Proxies.main.model.defined
 
-        Loader { source: 'SideBarBasic/SpaceGroupGroup.qml' }
+        Loader { source: 'SideBarBasic/SpaceGroup.qml' }
     }
 
     EaElements.GroupBox {
         title: qsTr("Cell")
         visible: Globals.Proxies.main.model.defined
 
-        Loader { source: 'SideBarBasic/CellGroup.qml' }
+        Loader { source: 'SideBarBasic/Cell.qml' }
     }
 
     EaElements.GroupBox {
@@ -39,7 +39,7 @@ EaComponents.SideBarColumn {
         visible: Globals.Proxies.main.model.defined
         last: true
 
-        Loader { source: 'SideBarBasic/AtomSiteGroup.qml' }
+        Loader { source: 'SideBarBasic/AtomSite.qml' }
     }
 
 }

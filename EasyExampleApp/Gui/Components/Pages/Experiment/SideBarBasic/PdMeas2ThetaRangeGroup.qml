@@ -15,17 +15,17 @@ EaElements.GroupRow {
 
     EaElements.Parameter {
         title: qsTr('min')
-        text: Globals.Proxies.experimentParameterValue('_pd_meas_2theta_range_min')
+        text: Globals.Proxies.experimentMainParameterValue('_pd_meas_2theta_range_min')
     }
 
     EaElements.Parameter {
         title: qsTr('max')
-        text: Globals.Proxies.experimentParameterValue('_pd_meas_2theta_range_max')
+        text: Globals.Proxies.experimentMainParameterValue('_pd_meas_2theta_range_max')
     }
 
     EaElements.Parameter {
         title: qsTr('inc')
-        text: Globals.Proxies.experimentParameterValue('_pd_meas_2theta_range_inc')
+        text: Globals.Proxies.experimentMainParameterValue('_pd_meas_2theta_range_inc')
     }
 
 }

@@ -15,32 +15,32 @@ EaElements.GroupRow {
 
     EaElements.Parameter {
         title: qsTr('u')
-        text: Globals.Proxies.experimentParameterValue('_pd_instr_resolution_u')
-        onEditingFinished: Globals.Proxies.setExperimentParameterValue('_pd_instr_resolution_u', text)
+        text: Globals.Proxies.experimentMainParameterValue('_pd_instr_resolution_u')
+        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_pd_instr_resolution_u', text)
     }
 
     EaElements.Parameter {
         title: qsTr('v')
-        text: Globals.Proxies.experimentParameterValue('_pd_instr_resolution_v')
-        onEditingFinished: Globals.Proxies.setExperimentParameterValue('_pd_instr_resolution_v', text)
+        text: Globals.Proxies.experimentMainParameterValue('_pd_instr_resolution_v')
+        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_pd_instr_resolution_v', text)
     }
 
     EaElements.Parameter {
         title: qsTr('w')
-        text: Globals.Proxies.experimentParameterValue('_pd_instr_resolution_w')
-        onEditingFinished: Globals.Proxies.setExperimentParameterValue('_pd_instr_resolution_w', text)
+        text: Globals.Proxies.experimentMainParameterValue('_pd_instr_resolution_w')
+        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_pd_instr_resolution_w', text)
     }
 
     EaElements.Parameter {
         title: qsTr('x')
-        text: Globals.Proxies.experimentParameterValue('_pd_instr_resolution_x')
-        onEditingFinished: Globals.Proxies.setExperimentParameterValue('_pd_instr_resolution_x', text)
+        text: Globals.Proxies.experimentMainParameterValue('_pd_instr_resolution_x')
+        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_pd_instr_resolution_x', text)
     }
 
     EaElements.Parameter {
         title: qsTr('y')
-        text: Globals.Proxies.experimentParameterValue('_pd_instr_resolution_y')
-        onEditingFinished: Globals.Proxies.setExperimentParameterValue('_pd_instr_resolution_y', text)
+        text: Globals.Proxies.experimentMainParameterValue('_pd_instr_resolution_y')
+        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_pd_instr_resolution_y', text)
     }
 
 }

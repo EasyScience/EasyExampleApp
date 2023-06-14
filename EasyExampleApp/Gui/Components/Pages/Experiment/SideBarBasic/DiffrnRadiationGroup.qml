@@ -16,14 +16,14 @@ EaElements.GroupRow {
     EaElements.Parameter {
         //enabled: false
         title: qsTr('probe')
-        text: Globals.Proxies.experimentParameterValue('_diffrn_radiation_probe')
+        text: Globals.Proxies.experimentMainParameterValue('_diffrn_radiation_probe')
         //horizontalAlignment: TextField.AlignLeft
     }
 
     EaElements.Parameter {
         title: qsTr('wavelength')
-        text: Globals.Proxies.experimentParameterValue('_diffrn_radiation_wavelength')
-        onEditingFinished: Globals.Proxies.setExperimentParameterValue('_diffrn_radiation_wavelength', text)
+        text: Globals.Proxies.experimentMainParameterValue('_diffrn_radiation_wavelength')
+        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_diffrn_radiation_wavelength', text)
     }
 
 }

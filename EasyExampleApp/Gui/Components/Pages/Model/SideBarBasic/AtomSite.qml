@@ -134,12 +134,10 @@ EaElements.GroupColumn {
             EaComponents.TableViewButton {
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this atom")
-                //onClicked: Globals.Proxies.main.model.removeModel(index)
             }
 
         }
 
-        onCurrentIndexChanged: Globals.Proxies.main.model.currentIndex = currentIndex
     }
 
 }

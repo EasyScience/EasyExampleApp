@@ -16,14 +16,14 @@ EaElements.GroupRow {
     EaElements.Parameter {
         //enabled: false
         title: qsTr('name H-M alt')
-        text: Globals.Proxies.modelParameterValue('_space_group_name_H-M_alt')
+        text: Globals.Proxies.modelMainParameterValue('_space_group_name_H-M_alt')
         //horizontalAlignment: TextField.AlignLeft
     }
 
     EaElements.Parameter {
         //enabled: false
         title: qsTr('IT coordinate system code')
-        text: Globals.Proxies.modelParameterValue('_space_group_IT_coordinate_system_code')
+        text: Globals.Proxies.modelMainParameterValue('_space_group_IT_coordinate_system_code')
         //horizontalAlignment: TextField.AlignLeft
     }
 
