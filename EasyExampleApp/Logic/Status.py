@@ -6,6 +6,8 @@ import numpy as np
 
 from PySide6.QtCore import QObject, Property, Signal
 
+from EasyApp.Logic.Logging import console
+
 
 class Status(QObject):
     asJsonChanged = Signal()
@@ -20,23 +22,23 @@ class Status(QObject):
             },
             {
                 'label': 'Minimization',
-                'value': 'lmfit'
+                'value': 'Lmfit-BFGS'
             },
             {
-                'label': 'Points count',
-                'value': 'Undefined'
+                'label': 'Data points',
+                'value': None
             },
             {
-                'label': 'Fittables count',
-                'value': 'Undefined'
+                'label': 'Variables',
+                'value': None
             },
             {
                 'label': 'Fit iteration',
-                'value': 'Undefined'
+                'value': None
             },
             {
-                'label': 'Reduced χ2',
-                'value': 'Undefined'
+                'label': 'Goodness-of-fit (χ2)',
+                'value': None
             }
         ]
 
@@ -45,21 +47,8 @@ class Status(QObject):
         return self._as_json
 
     def refresh(self):
-        index = self._proxy.experiment.currentIndex
-        pointsCount = f'{self._proxy.experiment._xArrays[index].size}'  # NEED FIX
-        self._as_json[2]['value'] = pointsCount
-
-        fittablesCount = self._proxy.fitting._fittablesCount
-        self._as_json[3]['value'] = f'{fittablesCount}'
-
-        fitIteration = self._proxy.fitting._fitIteration
-        self._as_json[4]['value'] = f'{fitIteration}'
-
-        chiSq = self._proxy.fitting.chiSq
-        pointsCount = self._proxy.fitting._pointsCount
-        reducedChiSq = 'Undefined'
-        if self._proxy.fitting._chiSq != np.inf and self._proxy.fitting._pointsCount != 0:
-            reducedChiSq = f'{chiSq/pointsCount:0.2f}'  # NEED FIX
-        self._as_json[5]['value'] = reducedChiSq
-
+        self._as_json[2]['value'] = f'{self._proxy.experiment._xArrays[self._proxy.experiment.currentIndex].size}'  # NEED FIX
+        self._as_json[3]['value'] = f'{self._proxy.fitting._fittablesCount}'  # NEED FIX
+        self._as_json[4]['value'] = f'{self._proxy.fitting._fitIteration}'  # NEED FIX
+        self._as_json[5]['value'] = f'{self._proxy.fitting._chiSqStr}'  # NEED FIX
         self.asJsonChanged.emit()

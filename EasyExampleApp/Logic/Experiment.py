@@ -155,7 +155,7 @@ class Experiment(QObject):
 
     @Slot(str)
     def loadExperimentFromFile(self, fpath):
-        fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'PbSO4_experiment.cif')
+        fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'Co2SiO4_experiment.cif')
         console.debug(f"Loading an experiment from {fpath}")
         # Load RCIF file by cryspy and extract experiments into easydiffraction data block
         cryspyExperimentObj = cryspy.load_file(fpath)
@@ -309,22 +309,22 @@ class Experiment(QObject):
                     # Setup section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_setup.Setup:
                         ed_experiment['params']['_diffrn_radiation_probe'] = dict(Parameter(item.radiation.replace('neutrons', 'neutron').replace('X-rays', 'x-ray')))
-                        ed_experiment['params']['_diffrn_radiation_wavelength'] = dict(Parameter(item.wavelength, fittable=True))
-                        ed_experiment['params']['_pd_meas_2theta_offset'] = dict(Parameter(item.offset_ttheta, fittable=True))
+                        ed_experiment['params']['_diffrn_radiation_wavelength'] = dict(Parameter(item.wavelength, fittable=True, fit=item.wavelength_refinement))
+                        ed_experiment['params']['_pd_meas_2theta_offset'] = dict(Parameter(item.offset_ttheta, fittable=True, fit=item.offset_ttheta_refinement))
                         print("ed_experiment['params']['_pd_meas_2theta_offset']", ed_experiment['params']['_pd_meas_2theta_offset'], item.offset_ttheta)
                     # Instrument resolution section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_instr_resolution.PdInstrResolution:
-                        ed_experiment['params']['_pd_instr_resolution_u'] = dict(Parameter(item.u, fittable=True))
-                        ed_experiment['params']['_pd_instr_resolution_v'] = dict(Parameter(item.v, fittable=True))
-                        ed_experiment['params']['_pd_instr_resolution_w'] = dict(Parameter(item.w, fittable=True))
-                        ed_experiment['params']['_pd_instr_resolution_x'] = dict(Parameter(item.x, fittable=True))
-                        ed_experiment['params']['_pd_instr_resolution_y'] = dict(Parameter(item.y, fittable=True))
+                        ed_experiment['params']['_pd_instr_resolution_u'] = dict(Parameter(item.u, fittable=True, fit=item.u_refinement))
+                        ed_experiment['params']['_pd_instr_resolution_v'] = dict(Parameter(item.v, fittable=True, fit=item.v_refinement))
+                        ed_experiment['params']['_pd_instr_resolution_w'] = dict(Parameter(item.w, fittable=True, fit=item.w_refinement))
+                        ed_experiment['params']['_pd_instr_resolution_x'] = dict(Parameter(item.x, fittable=True, fit=item.x_refinement))
+                        ed_experiment['params']['_pd_instr_resolution_y'] = dict(Parameter(item.y, fittable=True, fit=item.y_refinement))
                     # Peak assymetries section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_instr_reflex_asymmetry.PdInstrReflexAsymmetry:
-                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p1'] = dict(Parameter(item.p1, fittable=True))
-                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p2'] = dict(Parameter(item.p2, fittable=True))
-                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p3'] = dict(Parameter(item.p3, fittable=True))
-                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p4'] = dict(Parameter(item.p4, fittable=True))
+                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p1'] = dict(Parameter(item.p1, fittable=True, fit=item.p1_refinement))
+                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p2'] = dict(Parameter(item.p2, fittable=True, fit=item.p2_refinement))
+                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p3'] = dict(Parameter(item.p3, fittable=True, fit=item.p3_refinement))
+                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p4'] = dict(Parameter(item.p4, fittable=True, fit=item.p4_refinement))
                     # Phases section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_phase.PhaseL:
                         ed_phases = []
@@ -332,7 +332,7 @@ class Experiment(QObject):
                         for cryspy_phase in cryspy_phases:
                             ed_phase = {}
                             ed_phase['_label'] = dict(Parameter(cryspy_phase.label))
-                            ed_phase['_scale'] = dict(Parameter(cryspy_phase.scale, fittable=True))
+                            ed_phase['_scale'] = dict(Parameter(cryspy_phase.scale, fittable=True, fit=cryspy_phase.scale_refinement))
                             ed_phases.append(ed_phase)
                         ed_experiment['loops']['_phase'] = ed_phases
                     # Background section
@@ -342,7 +342,7 @@ class Experiment(QObject):
                         for cryspy_bkg_point in cryspy_bkg_points:
                             ed_bkg_point = {}
                             ed_bkg_point['_2theta'] = dict(Parameter(cryspy_bkg_point.ttheta))
-                            ed_bkg_point['_intensity'] = dict(Parameter(cryspy_bkg_point.intensity, fittable=True))
+                            ed_bkg_point['_intensity'] = dict(Parameter(cryspy_bkg_point.intensity, fittable=True, fit=cryspy_bkg_point.intensity_refinement))
                             ed_bkg_points.append(ed_bkg_point)
                         ed_experiment['loops']['_pd_background'] = ed_bkg_points
                     # Measured data section

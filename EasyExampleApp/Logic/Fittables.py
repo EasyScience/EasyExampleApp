@@ -30,10 +30,11 @@ class Parameter(dict):
                 min=-1.0,
                 max=1.0,
                 unit='',
-                fittable=False):
+                fittable=False,
+                fit=False):
         self['value'] = value
         self['fittable'] = fittable
-        self['fit'] = False
+        self['fit'] = fit
         self['error'] = error
         self['group'] = ""
         self['min'] = min

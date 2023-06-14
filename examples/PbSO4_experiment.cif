@@ -7,36 +7,34 @@ _setup_wavelength 1.9120
 _setup_offset_2theta 0.0()
 _setup_radiation neutrons
 
-_pd_instr_reflex_asymmetry_p1 -0.32
+_pd_instr_reflex_asymmetry_p1 -0.000000000032
 _pd_instr_reflex_asymmetry_p2  0.00
-_pd_instr_reflex_asymmetry_p3 -0.09
-_pd_instr_reflex_asymmetry_p4 -0.10
+_pd_instr_reflex_asymmetry_p3 -0.000000000009
+_pd_instr_reflex_asymmetry_p4 -0.000000000010
 
-_pd_instr_resolution_U  0.151
-_pd_instr_resolution_V -0.421
-_pd_instr_resolution_W  0.356
+_pd_instr_resolution_U  0.151()
+_pd_instr_resolution_V -0.421()
+_pd_instr_resolution_W  0.356()
 _pd_instr_resolution_X  0.000
-_pd_instr_resolution_Y  0.139
+_pd_instr_resolution_Y  0.139()
 
 loop_
 _phase_label
 _phase_scale
 _phase_igsize
-  pbso4   1.0()   0.0
+  pbso4   1.5()   0.0
 
 loop_
 _pd_background_2theta
 _pd_background_intensity
-   11.0   204.090561
-   15.0   193.650655
-   20.0   192.662011
-   30.0   187.565174
-   50.0   199.313286
-   70.0   198.687025
-   90.0   193.229054
-  110.0   224.679170
-  130.0   194.034148
-  153.0   223.986689
+   11.0   200.0()
+   15.0   200.0()
+   20.0   200.0()
+   30.0   200.0()
+   50.0   200.0()
+   70.0   200.0()
+  120.0   200.0()
+  153.0   200.0()
 
 loop_
 _pd_meas_2theta

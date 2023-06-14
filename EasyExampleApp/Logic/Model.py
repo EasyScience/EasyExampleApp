@@ -127,7 +127,7 @@ class Model(QObject):
 
     @Slot(str)
     def loadModelFromFile(self, fpath):
-        fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'PbSO4_model.cif')
+        fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'Co2SiO4_model.cif')
         console.debug(f"Loading a model from {fpath}")
         # Load RCIF file by cryspy and extract phases into easydiffraction data block
         cryspyModelObj = cryspy.load_file(fpath)
@@ -302,12 +302,12 @@ class Model(QObject):
                         ed_phase['params']['_space_group_IT_coordinate_system_code'] = dict(Parameter(item.it_coordinate_system_code))
                     # Cell section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_cell.Cell:
-                        ed_phase['params']['_cell_length_a'] = dict(Parameter(item.length_a, min=1, max=10, fittable=True))
-                        ed_phase['params']['_cell_length_b'] = dict(Parameter(item.length_b, min=1, max=10, fittable=True))
-                        ed_phase['params']['_cell_length_c'] = dict(Parameter(item.length_c, min=1, max=10, fittable=True))
-                        ed_phase['params']['_cell_angle_alpha'] = dict(Parameter(item.angle_alpha, min=0, max=180, fittable=True))
-                        ed_phase['params']['_cell_angle_beta'] = dict(Parameter(item.angle_beta, min=0, max=180, fittable=True))
-                        ed_phase['params']['_cell_angle_gamma'] = dict(Parameter(item.angle_gamma, min=0, max=180, fittable=True))
+                        ed_phase['params']['_cell_length_a'] = dict(Parameter(item.length_a, min=1, max=10, fittable=True, fit=item.length_a_refinement))
+                        ed_phase['params']['_cell_length_b'] = dict(Parameter(item.length_b, min=1, max=10, fittable=True, fit=item.length_b_refinement))
+                        ed_phase['params']['_cell_length_c'] = dict(Parameter(item.length_c, min=1, max=10, fittable=True, fit=item.length_c_refinement))
+                        ed_phase['params']['_cell_angle_alpha'] = dict(Parameter(item.angle_alpha, min=0, max=180, fittable=True, fit=item.angle_alpha_refinement))
+                        ed_phase['params']['_cell_angle_beta'] = dict(Parameter(item.angle_beta, min=0, max=180, fittable=True, fit=item.angle_beta_refinement))
+                        ed_phase['params']['_cell_angle_gamma'] = dict(Parameter(item.angle_gamma, min=0, max=180, fittable=True, fit=item.angle_gamma_refinement))
                     # Atoms section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_atom_site.AtomSiteL:
                         ed_atoms = []
@@ -316,12 +316,12 @@ class Model(QObject):
                             ed_atom = {}
                             ed_atom['_label'] = dict(Parameter(cryspy_atom.label))
                             ed_atom['_type_symbol'] = dict(Parameter(cryspy_atom.type_symbol))
-                            ed_atom['_fract_x'] = dict(Parameter(cryspy_atom.fract_x, min=-1, max=1, fittable=True))
-                            ed_atom['_fract_y'] = dict(Parameter(cryspy_atom.fract_y, min=-1, max=1, fittable=True))
-                            ed_atom['_fract_z'] = dict(Parameter(cryspy_atom.fract_z, min=-1, max=1, fittable=True))
+                            ed_atom['_fract_x'] = dict(Parameter(cryspy_atom.fract_x, min=-1, max=1, fittable=True, fit=cryspy_atom.fract_x_refinement))
+                            ed_atom['_fract_y'] = dict(Parameter(cryspy_atom.fract_y, min=-1, max=1, fittable=True, fit=cryspy_atom.fract_y_refinement))
+                            ed_atom['_fract_z'] = dict(Parameter(cryspy_atom.fract_z, min=-1, max=1, fittable=True, fit=cryspy_atom.fract_z_refinement))
                             ed_atom['_occupancy'] = dict(Parameter(cryspy_atom.occupancy, min=0, max=1, fittable=True))
                             ed_atom['_adp_type'] = dict(Parameter(cryspy_atom.adp_type))
-                            ed_atom['_B_iso_or_equiv'] = dict(Parameter(cryspy_atom.b_iso_or_equiv, min=0, max=1, fittable=True))
+                            ed_atom['_B_iso_or_equiv'] = dict(Parameter(cryspy_atom.b_iso_or_equiv, min=0, max=1, fittable=True, fit=cryspy_atom.b_iso_or_equiv_refinement))
                             ed_atom['_multiplicity'] = dict(Parameter(cryspy_atom.multiplicity))
                             ed_atom['_Wyckoff_symbol'] = dict(Parameter(cryspy_atom.wyckoff_symbol))
                             ed_atoms.append(ed_atom)
@@ -333,6 +333,8 @@ class Model(QObject):
                 y_calc_array = self.calculateDiffractionPattern()
                 self.addYCalcArray(y_calc_array)
 
+                pass
+
     def calculateDiffractionPattern(self):        
         rhochi_calc_chi_sq_by_dictionary(self._proxy.data._cryspyDict,
                                          dict_in_out=self._proxy.data._cryspyInOutDict,
@@ -340,4 +342,7 @@ class Model(QObject):
                                          flag_calc_analytical_derivatives=False)
         first_experiment_name = self._proxy.data.edDict['experiments'][0]['name']  # NEED FIX
         y_calc_array = self._proxy.data._cryspyInOutDict[f'pd_{first_experiment_name}']['signal_minus'] + self._proxy.data._cryspyInOutDict[f'pd_{first_experiment_name}']['signal_plus']
+
+        self._proxy.experiment._yBkgArrays[0] = self._proxy.data._cryspyInOutDict[f'pd_{first_experiment_name}']['signal_background']  # NEED FIX
+
         return y_calc_array

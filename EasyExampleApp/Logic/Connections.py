@@ -4,8 +4,6 @@
 
 from PySide6.QtCore import QObject
 
-from EasyApp.Logic.Logging import console
-
 
 class Connections(QObject):
 
@@ -41,6 +39,7 @@ class Connections(QObject):
         #self._proxy.fitting.isFittingNowChanged.connect(self.onIsFittingNowChanged)
         self._proxy.fitting.fitFinished.connect(self.onFittingFitFinished)
         self._proxy.fitting.chiSqChanged.connect(self.onFittingChiSqChanged)
+        self._proxy.fitting.chiSqNoticeablyChanged.connect(self.onFittingChiSqNoticeablyChanged)
 
 
     # Experiment
@@ -102,6 +101,7 @@ class Connections(QObject):
 
     def onAnalysisYCalcTotalChanged(self):
         self._proxy.plotting.redrawCalculatedOnAnalysisChart()
+        self._proxy.plotting.redrawBackgroundOnAnalysisChart()
         self._proxy.plotting.redrawResidualOnAnalysisChart()
 
     # Fittables
@@ -123,3 +123,6 @@ class Connections(QObject):
 
     def onFittingChiSqChanged(self):
         self._proxy.status.refresh()
+
+    def onFittingChiSqNoticeablyChanged(self):
+        self._proxy.model.updateYCalcArrayByIndex(0)
