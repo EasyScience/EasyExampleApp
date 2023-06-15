@@ -311,7 +311,6 @@ class Experiment(QObject):
                         ed_experiment['params']['_diffrn_radiation_probe'] = dict(Parameter(item.radiation.replace('neutrons', 'neutron').replace('X-rays', 'x-ray')))
                         ed_experiment['params']['_diffrn_radiation_wavelength'] = dict(Parameter(item.wavelength, fittable=True, fit=item.wavelength_refinement))
                         ed_experiment['params']['_pd_meas_2theta_offset'] = dict(Parameter(item.offset_ttheta, fittable=True, fit=item.offset_ttheta_refinement))
-                        print("ed_experiment['params']['_pd_meas_2theta_offset']", ed_experiment['params']['_pd_meas_2theta_offset'], item.offset_ttheta)
                     # Instrument resolution section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_instr_resolution.PdInstrResolution:
                         ed_experiment['params']['_pd_instr_resolution_u'] = dict(Parameter(item.u, fittable=True, fit=item.u_refinement))

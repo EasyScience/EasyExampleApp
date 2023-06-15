@@ -8,6 +8,7 @@ import QtCharts
 
 import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Globals as EaGlobals
+import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Charts as EaCharts
 
 import Gui.Globals as Globals
@@ -54,7 +55,7 @@ Column {
                 axisX.max: parameterValue('xMax')
                 axisX.onRangeChanged: alignAllCharts()
 
-                axisY.title: "Imeas, Icalc"
+                axisY.title: "Imeas, Icalc, Ibkg"
                 axisY.min: parameterValue('yMin')
                 axisY.max: parameterValue('yMax')
                 axisY.onRangeChanged: adjustResidualChartRangeY()
@@ -63,6 +64,7 @@ Column {
                 plotAreaColor: "transparent"
 
                 // Measured points
+                /*
                 ScatterSeries {
                     id: measSerie
 
@@ -76,6 +78,18 @@ Column {
                     color: EaStyle.Colors.chartForegroundsExtra[2]
                     borderColor: this.color
                 }
+                */
+                LineSeries {
+                    id: measSerie
+
+                    axisX: mainChart.axisX
+                    axisY: mainChart.axisY
+
+                    useOpenGL: mainChart.useOpenGL
+
+                    color: EaStyle.Colors.chartForegroundsExtra[2]
+                    width: 2
+                }
 
                 // Background curve
                 LineSeries {
@@ -87,7 +101,7 @@ Column {
                     useOpenGL: mainChart.useOpenGL
 
                     color: EaStyle.Colors.chartForegrounds[1]
-                    width: 2
+                    width: 1
                 }
 
                 // Calculated curve
@@ -101,15 +115,6 @@ Column {
 
                     color: calcSerieColor
                     width: 2
-
-                    ///
-                    onCountChanged: {
-                        console.info(`calcSerie.onCountChanged --- mx: ${mainChart.plotArea.x}, xx: ${xAxisChart.plotArea.x} --- mw: ${mainChart.plotArea.width}, xw: ${xAxisChart.plotArea.width}`)
-                    }
-
-                    onPointsReplaced: {
-                        console.info(`calcSerie.onPointsReplaced --- mx: ${mainChart.plotArea.x}, xx: ${xAxisChart.plotArea.x} --- mw: ${mainChart.plotArea.width}, xw: ${xAxisChart.plotArea.width}`)
-                    }
                 }
             }
         }
@@ -124,8 +129,8 @@ Column {
 
                 useOpenGL: container.useOpenGL
 
-                axisX.min: mainChart.xMin
-                axisX.max: mainChart.xMax
+                axisX.min: mainChart.axisX.min
+                axisX.max: mainChart.axisX.max
                 axisY.min: Globals.Proxies.main.plotting.chartRanges.yMin
                 axisY.max: Globals.Proxies.main.plotting.chartRanges.yMax
 
@@ -147,7 +152,7 @@ Column {
 
                     useOpenGL: residualChart.useOpenGL
 
-                    color: EaStyle.Colors.chartForegroundsExtra[2]
+                    color: EaStyle.Colors.chartForegrounds[2]
                 }
             }
         }
@@ -164,8 +169,8 @@ Column {
             id: xAxisChart
 
             axisX.title: mainChart.xAxisTitle
-            axisX.min: mainChart.xMin
-            axisX.max: mainChart.xMax
+            axisX.min: mainChart.axisX.min
+            axisX.max: mainChart.axisX.max
             axisX.lineVisible: false
             axisX.gridVisible: false
 
@@ -187,6 +192,43 @@ Column {
                         adjustResidualChartRangeY()
                     }
                 }
+            }
+        }
+    }
+
+    // Legend
+    Rectangle {
+        parent: container.parent
+
+        x: mainChart.plotArea.x + mainChart.plotArea.width - width - 12 - EaStyle.Sizes.fontPixelSize
+        y: mainChart.plotArea.y - 12 + EaStyle.Sizes.fontPixelSize
+        width: childrenRect.width
+        height: childrenRect.height
+
+        color: EaStyle.Colors.mainContentBackgroundHalfTransparent
+        border.color: EaStyle.Colors.chartGridLine
+
+        Column {
+            leftPadding: EaStyle.Sizes.fontPixelSize
+            rightPadding: EaStyle.Sizes.fontPixelSize
+            topPadding: EaStyle.Sizes.fontPixelSize * 0.5
+            bottomPadding: EaStyle.Sizes.fontPixelSize * 0.5
+
+            EaElements.Label {
+                text: '▬ Imeas (measured)'
+                color: measSerie.color
+            }
+            EaElements.Label {
+                text: '▬ Icalc (calculated)'
+                color: calcSerie.color
+            }
+            EaElements.Label {
+                text: '▬ Ibkg (background)'
+                color: bkgSerie.color
+            }
+            EaElements.Label {
+                text: '▬ Imeas - Icalc (residual)'
+                color: residSerie.color
             }
         }
     }

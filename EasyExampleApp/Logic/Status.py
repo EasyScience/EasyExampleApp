@@ -17,12 +17,12 @@ class Status(QObject):
         self._proxy = parent
         self._as_json = [
             {
-                'label': 'Calculations',
+                'label': 'Calculator',
                 'value': 'CrysPy'
             },
             {
-                'label': 'Minimization',
-                'value': 'Lmfit-BFGS'
+                'label': 'Minimizer',
+                'value': 'Lmfit (BFGS)'
             },
             {
                 'label': 'Data points',
@@ -37,7 +37,7 @@ class Status(QObject):
                 'value': None
             },
             {
-                'label': 'Goodness-of-fit (χ2)',
+                'label': 'Goodness-of-fit',
                 'value': None
             }
         ]
@@ -50,5 +50,5 @@ class Status(QObject):
         self._as_json[2]['value'] = f'{self._proxy.experiment._xArrays[self._proxy.experiment.currentIndex].size}'  # NEED FIX
         self._as_json[3]['value'] = f'{self._proxy.fitting._fittablesCount}'  # NEED FIX
         self._as_json[4]['value'] = f'{self._proxy.fitting._fitIteration}'  # NEED FIX
-        self._as_json[5]['value'] = f'{self._proxy.fitting._chiSqStr}'  # NEED FIX
+        self._as_json[5]['value'] = f'{self._proxy.fitting._chiSqStatus}'  # NEED FIX
         self.asJsonChanged.emit()

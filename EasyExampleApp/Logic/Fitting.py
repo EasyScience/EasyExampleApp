@@ -38,6 +38,9 @@ class Worker(QObject):
         self._paramsInit = lmfit.Parameters()
         self._paramsFinal = lmfit.Parameters()
 
+        self._gofPrevIter = None
+        self._gofLastIter = None
+
         ###QThread.setTerminationEnabled()
 
     def run(self):
@@ -45,13 +48,26 @@ class Worker(QObject):
         def callbackFunc(params, iter, resid, *args, **kws):
             console.debug(f"Iteration: {iter:5d},   Reduced chi2 per {self._proxy.fitting._pointsCount} points: {self._proxy.fitting._chiSq/self._proxy.fitting._pointsCount:16.6f}")
             self._proxy.fitting._fitIteration = iter
+            # Check if fitting termination is requested
             if self._needCancel:
                 self._needCancel = False
                 self._cryspyDict = self._cryspyDictInitial
                 self.cancelled.emit()
                 console.error('Terminating the execution of the minimization thread')
-                ###QThread.terminate()
+                ###QThread.terminate()  # Not needed for Lmfit
                 return True
+            # Calc goodnes-of-fit (GOF) value shift between iterations
+            if iter == 1:
+                self._gofPrevIter = self._proxy.fitting._chiSqStart
+            self._gofLastIter = self._proxy.fitting.chiSq
+            gofShift = abs(self._gofLastIter - self._gofPrevIter) / self._proxy.fitting._pointsCount
+            self._gofPrevIter = self._gofLastIter
+            # Update goodnes-of-fit (GOF) value updated in the status bar
+            if iter == 1 or gofShift > 0.01:
+                reducedGofStart = self._proxy.fitting._chiSqStart / self._proxy.fitting._pointsCount
+                reducedGofLastIter = self._gofLastIter / self._proxy.fitting._pointsCount
+                self._proxy.fitting._chiSqStatus = f'{reducedGofStart:0.2f} → {reducedGofLastIter:0.2f}'
+                self._proxy.fitting.chiSqNoticeablyChanged.emit()
             return False
 
         def chiSqFunc(params):
@@ -62,11 +78,17 @@ class Worker(QObject):
                 #val = val * (max_val - min_val) + min_val
                 #self._cryspyDict[way[0]][way[1]][way[2]] = params[param].value * val
                 self._cryspyDict[way[0]][way[1]][way[2]] = params[param].value #* self._paramsInit[param].value / SCALE
+            #chiSqBefore = self._proxy.fitting.chiSq
             self._proxy.fitting.chiSq, _, _, _, _ = rhochi_calc_chi_sq_by_dictionary(
                 self._cryspyDict,
                 dict_in_out=self._cryspyDictInOut,
                 flag_use_precalculated_data=self._cryspyUsePrecalculatedData,
                 flag_calc_analytical_derivatives=self._cryspyCalcAnalyticalDerivatives)
+            #chiSqAfter = self._proxy.fitting.chiSq
+            #chiSqShift = abs(chiSqBefore - chiSqAfter) / self._proxy.fitting._pointsCount
+            #if chiSqShift > 0.01:
+            #    self._proxy.fitting._chiSqStatus = f'{self._chiSqStart/self._pointsCount:0.2f} ➔ {self._chiSq/self._pointsCount:0.2f}'
+            #    self._proxy.fitting.chiSqNoticeablyChanged.emit()
             return self._proxy.fitting.chiSq
 
         # Save initial state of cryspyDict if cancel fit is requested
@@ -104,6 +126,7 @@ class Worker(QObject):
         #paramsLmfit.pretty_print()
 
         # Minimization: lmfit.minimize
+        self._proxy.fitting._chiSqStart = self._proxy.fitting.chiSq
         self._cryspyUsePrecalculatedData = True
         method = 'BFGS'
         #tol = 1e+5
@@ -126,25 +149,27 @@ class Worker(QObject):
         if result.success:
             print('------------------Minimization is finished with success------------------')
 
-        # Calculate optimal chi2
-        self._cryspyDictInOut = {}
-        self._cryspyUsePrecalculatedData = False
-        self._cryspyCalcAnalyticalDerivatives = False
-        self._proxy.fitting.chiSq, _, _, _, _ = rhochi_calc_chi_sq_by_dictionary(
-            self._cryspyDict,
-            dict_in_out=self._cryspyDictInOut,
-            flag_use_precalculated_data=self._cryspyUsePrecalculatedData,
-            flag_calc_analytical_derivatives=self._cryspyCalcAnalyticalDerivatives)
-        console.info(f"Optimal reduced chi2 per {self._proxy.fitting._pointsCount} points: {self._proxy.fitting._chiSq/self._proxy.fitting._pointsCount:.2f}")
+            # Calculate optimal chi2
+            self._cryspyDictInOut = {}
+            self._cryspyUsePrecalculatedData = False
+            self._cryspyCalcAnalyticalDerivatives = False
+            self._proxy.fitting.chiSq, _, _, _, _ = rhochi_calc_chi_sq_by_dictionary(
+                self._cryspyDict,
+                dict_in_out=self._cryspyDictInOut,
+                flag_use_precalculated_data=self._cryspyUsePrecalculatedData,
+                flag_calc_analytical_derivatives=self._cryspyCalcAnalyticalDerivatives)
+            console.info(f"Optimal reduced chi2 per {self._proxy.fitting._pointsCount} points: {self._proxy.fitting._chiSq/self._proxy.fitting._pointsCount:.2f}")
 
-        self._paramsInit.pretty_print()
-        result.params.pretty_print()
-        #for param in result.params:
-            #val = result.params[param].value
-            #val = val * (max_val - min_val) + min_val
-            #self._paramsFinal[param].value = result.params[param].value * val
-        #    self._paramsFinal[param].value = result.params[param].value #* self._paramsInit[param].value / SCALE
-        #self._paramsFinal.pretty_print()
+            self._proxy.fitting._chiSqStart = self._proxy.fitting.chiSq
+
+            self._paramsInit.pretty_print()
+            result.params.pretty_print()
+            #for param in result.params:
+                #val = result.params[param].value
+                #val = val * (max_val - min_val) + min_val
+                #self._paramsFinal[param].value = result.params[param].value * val
+            #    self._paramsFinal[param].value = result.params[param].value #* self._paramsInit[param].value / SCALE
+            #self._paramsFinal.pretty_print()
 
         # Finishing
         self.finished.emit()
@@ -164,8 +189,9 @@ class Fitting(QObject):
         self._worker = Worker(self._proxy)
         self._isFittingNow = False
 
+        self._chiSqStart = None
         self._chiSq = None
-        self._chiSqStr = None
+        self._chiSqStatus = None
         self._pointsCount = None # self._proxy.experiment._xArrays[self._proxy.experiment.currentIndex].size  # ???
         self._fittablesCount = None
         self._fitIteration = None
@@ -193,14 +219,6 @@ class Fitting(QObject):
     def chiSq(self, newValue):
         if self._chiSq == newValue:
             return
-        # NEED FIX
-        # --------
-        if self._pointsCount is not None and self._chiSq is not None:
-            shift = abs(self._chiSq - newValue)/self._pointsCount
-            if shift > 0.01:
-                self._chiSqStr = f'{self._chiSq/self._pointsCount:0.2f}'
-                self.chiSqNoticeablyChanged.emit()
-        # --------
         self._chiSq = newValue
         self.chiSqChanged.emit()
 
