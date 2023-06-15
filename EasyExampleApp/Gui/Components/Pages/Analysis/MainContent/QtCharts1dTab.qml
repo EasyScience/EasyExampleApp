@@ -26,103 +26,167 @@ Column {
     property string calcSerieColor: EaStyle.Colors.chartForegrounds[0]
 
     property int extraMargin: -12
-    property real residChartHeightCoeff: 0.4
-    property real mainChartHeightCoeff: 1 - residChartHeightCoeff
+    property real residualToMainChartHeightRatio: 0.33
+    property real mainChartHeightCoeff: 1 - residualToMainChartHeightRatio
 
     property bool useOpenGL: EaGlobals.Vars.useOpenGL //Globals.Proxies.main.plotting.useWebGL1d
 
     //property alias
 
-    // Main chart container
-    Item {
-        width: container.width
-        height: container.height * mainChartHeightCoeff
+    Column {
+        width: parent.width
+        height: parent.height - 3 * EaStyle.Sizes.fontPixelSize + 2
 
-        EaCharts.QtCharts1dBase {
-            id: mainChart
+        // Main chart container
+        Item {
+            width: parent.width
+            height: parent.height * mainChartHeightCoeff
 
-            useOpenGL: container.useOpenGL
+            EaCharts.QtCharts1dBase {
+                id: mainChart
 
-            xAxisTitle: "X"
-            yAxisTitle: "Imeas, Icalc"
+                useOpenGL: container.useOpenGL
 
-            xMin: parameterValue('xMin')
-            xMax: parameterValue('xMax')
-            yMin: parameterValue('yMin')
-            yMax: parameterValue('yMax')
+                axisX.title: "2θ (degree)"
+                axisX.titleVisible: false
+                axisX.labelsVisible: false
+                axisX.min: parameterValue('xMin')
+                axisX.max: parameterValue('xMax')
+                axisX.onRangeChanged: alignAllCharts()
 
-            xAxisTitleVisible: false
-            xAxisLabelsVisible: false
+                axisY.title: "Imeas, Icalc"
+                axisY.min: parameterValue('yMin')
+                axisY.max: parameterValue('yMax')
+                axisY.onRangeChanged: adjustResidualChartRangeY()
 
-            // Measured points
-            ScatterSeries {
-                id: measSerie
+                backgroundColor: "transparent"
+                plotAreaColor: "transparent"
 
-                axisX: mainChart.axisX
-                axisY: mainChart.axisY
+                // Measured points
+                ScatterSeries {
+                    id: measSerie
 
-                useOpenGL: mainChart.useOpenGL
+                    axisX: mainChart.axisX
+                    axisY: mainChart.axisY
 
-                markerSize: 5
-                borderWidth: 1
-                color: EaStyle.Colors.chartForegroundsExtra[2]
-                borderColor: this.color
+                    useOpenGL: mainChart.useOpenGL
+
+                    markerSize: 5
+                    borderWidth: 1
+                    color: EaStyle.Colors.chartForegroundsExtra[2]
+                    borderColor: this.color
+                }
+
+                // Background curve
+                LineSeries {
+                    id: bkgSerie
+
+                    axisX: mainChart.axisX
+                    axisY: mainChart.axisY
+
+                    useOpenGL: mainChart.useOpenGL
+
+                    color: EaStyle.Colors.chartForegrounds[1]
+                    width: 2
+                }
+
+                // Calculated curve
+                LineSeries {
+                    id: calcSerie
+
+                    axisX: mainChart.axisX
+                    axisY: mainChart.axisY
+
+                    useOpenGL: mainChart.useOpenGL
+
+                    color: calcSerieColor
+                    width: 2
+
+                    ///
+                    onCountChanged: {
+                        console.info(`calcSerie.onCountChanged --- mx: ${mainChart.plotArea.x}, xx: ${xAxisChart.plotArea.x} --- mw: ${mainChart.plotArea.width}, xw: ${xAxisChart.plotArea.width}`)
+                    }
+
+                    onPointsReplaced: {
+                        console.info(`calcSerie.onPointsReplaced --- mx: ${mainChart.plotArea.x}, xx: ${xAxisChart.plotArea.x} --- mw: ${mainChart.plotArea.width}, xw: ${xAxisChart.plotArea.width}`)
+                    }
+                }
             }
+        }
 
-            // Background curve
-            LineSeries {
-                id: bkgSerie
+        // Residual chart container
+        Item {
+            width: parent.width
+            height: parent.height * residualToMainChartHeightRatio
 
-                axisX: mainChart.axisX
-                axisY: mainChart.axisY
+            EaCharts.QtCharts1dBase {
+                id: residualChart
 
-                useOpenGL: mainChart.useOpenGL
+                useOpenGL: container.useOpenGL
 
-                color: EaStyle.Colors.chartForegrounds[1]
-                width: 2
-            }
+                axisX.min: mainChart.xMin
+                axisX.max: mainChart.xMax
+                axisY.min: Globals.Proxies.main.plotting.chartRanges.yMin
+                axisY.max: Globals.Proxies.main.plotting.chartRanges.yMax
 
-            // Calculated curve
-            LineSeries {
-                id: calcSerie
+                axisX.titleVisible: false
+                axisX.labelsVisible: false
+                axisY.title: 'Imeas - Icalc'
 
-                axisX: mainChart.axisX
-                axisY: mainChart.axisY
+                axisY.tickType: ValueAxis.TicksFixed
+                axisY.tickCount: 3
 
-                useOpenGL: mainChart.useOpenGL
+                backgroundColor: "transparent"
+                plotAreaColor: "transparent"
 
-                color: calcSerieColor
-                width: 2
+                LineSeries {
+                    id: residSerie
+
+                    axisX: residualChart.axisX
+                    axisY: residualChart.axisY
+
+                    useOpenGL: residualChart.useOpenGL
+
+                    color: EaStyle.Colors.chartForegroundsExtra[2]
+                }
             }
         }
     }
 
-    // Residual chart container
+    // X-axis chart container
     Item {
-        width: container.width
-        height: container.height * residChartHeightCoeff
+        z: -1
+        width: parent.width
+        height: container.height
+        parent: container.parent
 
         EaCharts.QtCharts1dBase {
-            id: residChart
+            id: xAxisChart
 
-            useOpenGL: container.useOpenGL
+            axisX.title: mainChart.xAxisTitle
+            axisX.min: mainChart.xMin
+            axisX.max: mainChart.xMax
+            axisX.lineVisible: false
+            axisX.gridVisible: false
 
-            xAxisTitle: mainChart.xAxisTitle
-            yAxisTitle: 'Imeas - Icalc'
-            xMin: mainChart.xMin
-            xMax: mainChart.xMax
-            yMin: Globals.Proxies.main.plotting.chartRanges.yMin
-            yMax: Globals.Proxies.main.plotting.chartRanges.yMax
+            axisY.titleVisible: false
+            axisY.labelsVisible: false
+            axisY.visible: false
 
             LineSeries {
-                id: residSerie
+                axisX: xAxisChart.axisX
+                axisY: xAxisChart.axisY
 
-                axisX: residChart.axisX
-                axisY: residChart.axisY
+                Component.onCompleted: initialChartsSetupTimer.start()
 
-                useOpenGL: residChart.useOpenGL
-
-                color: EaStyle.Colors.chartForegroundsExtra[2]
+                Timer {
+                    id: initialChartsSetupTimer
+                    interval: 50
+                    onTriggered: {
+                        alignAllCharts()
+                        adjustResidualChartRangeY()
+                    }
+                }
             }
         }
     }
@@ -156,6 +220,36 @@ Column {
         const value = Globals.Proxies.main.experiment.chartRanges[currentExperimentIndex][name].value
         const formattedValue = value.toFixed(4)
         return formattedValue
+    }
+
+    function residualChartMeanY() {
+        return 0
+    }
+
+    function residualChartHalfRangeY() {
+        if (mainChart.plotArea.height === 0) {
+            return 0.5
+        }
+
+        const mainChartRangeY = mainChart.axisY.max - mainChart.axisY.min
+        const residualToMainChartHeightRatio = residualChart.plotArea.height / mainChart.plotArea.height
+        const residualChartRangeY = mainChartRangeY * residualToMainChartHeightRatio
+        return 0.5 * residualChartRangeY
+    }
+
+    function adjustResidualChartRangeY() {
+        residualChart.axisY.min = residualChartMeanY() - residualChartHalfRangeY()
+        residualChart.axisY.max = residualChartMeanY() + residualChartHalfRangeY()
+        console.debug('Residual chart Y-range has been adjusted')
+    }
+
+    function alignAllCharts() {
+        xAxisChart.plotArea.width -= mainChart.plotArea.x - xAxisChart.plotArea.x
+        xAxisChart.plotArea.x = mainChart.plotArea.x
+        residualChart.plotArea.width = xAxisChart.plotArea.width
+        residualChart.plotArea.x = mainChart.plotArea.x
+        mainChart.plotArea.width = xAxisChart.plotArea.width
+        console.debug('All charts have been aligned')
     }
 
 }
