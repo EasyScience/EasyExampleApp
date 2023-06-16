@@ -6,6 +6,7 @@ from PySide6.QtCore import QObject, Signal, Property
 
 
 class Status(QObject):
+    projectChanged = Signal()
     dataPointsChanged = Signal()
     calculatorChanged = Signal()
     minimizerChanged = Signal()
@@ -16,6 +17,7 @@ class Status(QObject):
     def __init__(self, parent):
         super().__init__(parent)
         self._proxy = parent
+        self._project = 'Undefined'
         self._dataPoints = ''
         self._calculator = ''
         self._minimizer = ''
@@ -31,6 +33,17 @@ class Status(QObject):
             {'label': 'a', 'value': 'b'},
             {'label': 'a', 'value': 'b'}
         ]
+
+    @Property(str, notify=projectChanged)
+    def project(self):
+        return self._project
+
+    @project.setter
+    def project(self, newValue):
+        if self._project == newValue:
+            return
+        self._project = newValue
+        self.projectChanged.emit()
 
     @Property(str, notify=dataPointsChanged)
     def dataPoints(self):

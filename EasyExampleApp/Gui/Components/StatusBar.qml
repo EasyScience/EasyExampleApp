@@ -15,6 +15,11 @@ EaElements.StatusBar {
     visible: EaGlobals.Vars.appBarCurrentIndex !== 0
 
     EaElements.StatusBarItem {
+        key: qsTr('Project')
+        value: Globals.Proxies.main.status.project
+    }
+
+    EaElements.StatusBarItem {
         key: qsTr('Data points')
         value: Globals.Proxies.main.status.dataPoints
     }

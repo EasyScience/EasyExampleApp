@@ -12,7 +12,7 @@ class Connections(QObject):
         self._proxy = parent
 
         # Project
-        self._proxy.project.dataChanged.connect(self._proxy.project.setNeedSaveToTrue)
+        self._proxy.project.dataChanged.connect(self.onProjectDataChanged)
         self._proxy.project.createdChanged.connect(self._proxy.project.save)
 
         # Experiment
@@ -40,6 +40,11 @@ class Connections(QObject):
         self._proxy.fitting.fitFinished.connect(self.onFittingFitFinished)
         self._proxy.fitting.chiSqSignificantlyChanged.connect(self.onFittingChiSqSignificantlyChanged)
 
+    # Project
+
+    def onProjectDataChanged(self):
+        self._proxy.status.project = self._proxy.project.data['name']
+        self._proxy.project.setNeedSaveToTrue
 
     # Experiment
 
