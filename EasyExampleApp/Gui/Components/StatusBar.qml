@@ -12,15 +12,36 @@ import Gui.Globals as Globals
 
 
 EaElements.StatusBar {
-
     visible: EaGlobals.Vars.appBarCurrentIndex !== 0
-    fittingInProgress: Globals.Proxies.main.fitting.isFittingNow
 
-    model: EaComponents.JsonListModel {
-        json: JSON.stringify(Globals.Proxies.main.status.asJson)
-        query: "$[*]"
+    EaElements.StatusBarItem {
+        key: qsTr('Data points')
+        value: Globals.Proxies.main.status.dataPoints
+    }
+
+    EaElements.StatusBarItem {
+        key: qsTr('Calculator')
+        value: Globals.Proxies.main.status.calculator
+    }
+
+    EaElements.StatusBarItem {
+        key: qsTr('Minimizer')
+        value: Globals.Proxies.main.status.minimizer
+    }
+
+    EaElements.StatusBarItem {
+        key: qsTr('Variables')
+        value: Globals.Proxies.main.status.variables
+    }
+
+    EaElements.StatusBarItem {
+        key: qsTr('Fit iteration')
+        value: Globals.Proxies.main.status.fitIteration
+    }
+
+    EaElements.StatusBarItem {
+        key: qsTr('Goodness-of-fit')
+        value: Globals.Proxies.main.status.goodnessOfFit
     }
 
 }
-
-

@@ -23,6 +23,7 @@ class Connections(QObject):
         self._proxy.experiment.currentIndexChanged.connect(self.onExperimentCurrentIndexChanged)
 
         # Model
+        self._proxy.model.definedChanged.connect(self.onModelDefinedChanged)
         self._proxy.model.dataBlocksChanged.connect(self.onModelDataBlocksChanged)
         self._proxy.model.yCalcArraysChanged.connect(self.onModelYCalcArraysChanged)
         self._proxy.model.parameterEdited.connect(self.onModelParameterEdited)
@@ -36,10 +37,8 @@ class Connections(QObject):
         self._proxy.fittables.dataChanged.connect(self.onFittablesDataChanged)
 
         # Fitting
-        #self._proxy.fitting.isFittingNowChanged.connect(self.onIsFittingNowChanged)
         self._proxy.fitting.fitFinished.connect(self.onFittingFitFinished)
-        self._proxy.fitting.chiSqChanged.connect(self.onFittingChiSqChanged)
-        self._proxy.fitting.chiSqNoticeablyChanged.connect(self.onFittingChiSqNoticeablyChanged)
+        self._proxy.fitting.chiSqSignificantlyChanged.connect(self.onFittingChiSqSignificantlyChanged)
 
 
     # Experiment
@@ -50,7 +49,8 @@ class Connections(QObject):
         self._proxy.project.setNeedSaveToTrue()
 
     def onExperimentYMeasArraysChanged(self):
-        self._proxy.status.refresh()
+        #####self._proxy.status.refresh()
+        self._proxy.status.dataPoints = f'{self._proxy.experiment._xArrays[self._proxy.experiment.currentIndex].size}'
         self._proxy.plotting.drawMeasuredOnExperimentChart()
 
     def onExperimentYBkgArraysChanged(self):
@@ -71,6 +71,9 @@ class Connections(QObject):
         self._proxy.plotting.drawBackgroundOnExperimentChart()
 
     # Model
+
+    def onModelDefinedChanged(self):
+        self._proxy.status.calculator = 'CrysPy'
 
     def onModelDataBlocksChanged(self):
         self._proxy.model.defined = bool(len(self._proxy.model.dataBlocks))
@@ -96,6 +99,7 @@ class Connections(QObject):
     # Analysis
 
     def onAnalysisDefined(self):
+        self._proxy.status.minimizer = 'Lmfit (BFGS)'
         self._proxy.fittables.set()
         self._proxy.plotting.drawAllOnAnalysisChart()
 
@@ -111,18 +115,9 @@ class Connections(QObject):
 
     # Fitting
 
-    def onIsFittingNowChanged(self):
-        pass
-        #print(f'Fit finished: {self._proxy.fitting.fitFinished}')
-        #needSetFittables = True
-        #self._proxy.model.parametersEdited.emit(needSetFittables)
-
     def onFittingFitFinished(self):
         self._proxy.model.setDataBlocksJson()
         self._proxy.model.updateYCalcArrayByIndex(0)  # NED FIX
 
-    def onFittingChiSqChanged(self):
-        self._proxy.status.refresh()
-
-    def onFittingChiSqNoticeablyChanged(self):
+    def onFittingChiSqSignificantlyChanged(self):
         self._proxy.model.updateYCalcArrayByIndex(0)

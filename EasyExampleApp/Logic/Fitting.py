@@ -56,6 +56,8 @@ class Worker(QObject):
                 console.error('Terminating the execution of the minimization thread')
                 ###QThread.terminate()  # Not needed for Lmfit
                 return True
+            # ...
+            self._proxy.status.fitIteration = f'{iter}'
             # Calc goodnes-of-fit (GOF) value shift between iterations
             if iter == 1:
                 self._gofPrevIter = self._proxy.fitting._chiSqStart
@@ -66,8 +68,10 @@ class Worker(QObject):
             if iter == 1 or gofShift > 0.01:
                 reducedGofStart = self._proxy.fitting._chiSqStart / self._proxy.fitting._pointsCount
                 reducedGofLastIter = self._gofLastIter / self._proxy.fitting._pointsCount
-                self._proxy.fitting._chiSqStatus = f'{reducedGofStart:0.2f} → {reducedGofLastIter:0.2f}'
-                self._proxy.fitting.chiSqNoticeablyChanged.emit()
+                ##self._proxy.fitting._chiSqStatus = f'{reducedGofStart:0.2f} → {reducedGofLastIter:0.2f}'
+                self._proxy.status.goodnessOfFit = f'{reducedGofStart:0.2f} → {reducedGofLastIter:0.2f}'  # NEED move to connection
+                self._proxy.fitting.chiSqSignificantlyChanged.emit()
+                #self._proxy.status.goodnessOfFit = f'{reducedGofStart:0.2f} → {reducedGofLastIter:0.2f}'
             return False
 
         def chiSqFunc(params):
@@ -88,7 +92,7 @@ class Worker(QObject):
             #chiSqShift = abs(chiSqBefore - chiSqAfter) / self._proxy.fitting._pointsCount
             #if chiSqShift > 0.01:
             #    self._proxy.fitting._chiSqStatus = f'{self._chiSqStart/self._pointsCount:0.2f} ➔ {self._chiSq/self._pointsCount:0.2f}'
-            #    self._proxy.fitting.chiSqNoticeablyChanged.emit()
+            #    self._proxy.fitting.chiSqSignificantlyChanged.emit()
             return self._proxy.fitting.chiSq
 
         # Save initial state of cryspyDict if cancel fit is requested
@@ -121,6 +125,7 @@ class Worker(QObject):
         ###for name, val in zip(parameter_names_free, param_0):
         ###    print(f" - {name:}  {val:.5f}")
         self._proxy.fitting._fittablesCount = len(param_0)
+        self._proxy.status.variables = f'{self._proxy.fitting._fittablesCount}'  # NEED move to connection
 
         #self._paramsInit.pretty_print()
         #paramsLmfit.pretty_print()
@@ -180,7 +185,7 @@ class Fitting(QObject):
     isFittingNowChanged = Signal()
     fitFinished = Signal()
     chiSqChanged = Signal()
-    chiSqNoticeablyChanged = Signal()
+    chiSqSignificantlyChanged = Signal()
 
     def __init__(self, parent):
         super().__init__(parent)
