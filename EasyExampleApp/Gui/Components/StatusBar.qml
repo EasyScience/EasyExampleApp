@@ -49,4 +49,9 @@ EaElements.StatusBar {
         value: Globals.Proxies.main.status.goodnessOfFit
     }
 
+    EaElements.StatusBarItem {
+        key: qsTr('Fit status')
+        value: Globals.Proxies.main.status.fitStatus
+    }
+
 }

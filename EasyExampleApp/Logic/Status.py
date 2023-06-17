@@ -13,6 +13,7 @@ class Status(QObject):
     variablesChanged = Signal()
     fitIterationChanged = Signal()
     goodnessOfFitChanged = Signal()
+    fitStatusChanged = Signal()
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -24,6 +25,7 @@ class Status(QObject):
         self._variables = ''
         self._fitIteration = ''
         self._goodnessOfFit = ''
+        self._fitStatus = ''
 
         self._as_json = [
             {'label': 'a', 'value': 'b'},
@@ -110,3 +112,14 @@ class Status(QObject):
             return
         self._goodnessOfFit = newValue
         self.goodnessOfFitChanged.emit()
+
+    @Property(str, notify=fitStatusChanged)
+    def fitStatus(self):
+        return self._fitStatus
+
+    @fitStatus.setter
+    def fitStatus(self, newValue):
+        if self._fitStatus == newValue:
+            return
+        self._fitStatus = newValue
+        self.fitStatusChanged.emit()
