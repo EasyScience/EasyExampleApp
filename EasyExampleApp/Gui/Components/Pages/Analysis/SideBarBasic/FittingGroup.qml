@@ -28,9 +28,9 @@ Column {
             Globals.Proxies.main.fitting.startStop()
         }
 
-        Loader { source: "ResultsDialog.qml" }
-
         Component.onCompleted: Globals.Refs.app.analysisPage.startFittingButton = this
+
+        Loader { source: "FitStatusDialog.qml" }
     }
 
 }

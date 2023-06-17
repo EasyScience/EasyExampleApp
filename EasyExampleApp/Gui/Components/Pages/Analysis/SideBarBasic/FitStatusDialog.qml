@@ -16,7 +16,7 @@ EaElements.Dialog {
     id: dialog
 
     visible: !Globals.Proxies.main.fitting.isFittingNow && Globals.Proxies.main.status.fitStatus
-    title: qsTr("Status")
+    title: qsTr("Fit status")
     standardButtons: Dialog.Ok
 
     EaElements.Label {
