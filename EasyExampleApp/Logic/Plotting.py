@@ -36,13 +36,15 @@ class Plotting(QObject):
                     'bkgSerie': QtCharts.QXYSeries
                 },
                 'modelPage': {
-                    'calcSerie': QtCharts.QXYSeries
+                    'calcSerie': QtCharts.QXYSeries,
+                    'braggSerie': QtCharts.QXYSeries
                 },
                 'analysisPage': {
                     'measSerie': QtCharts.QXYSeries,
                     'bkgSerie': QtCharts.QXYSeries,
                     'totalCalcSerie': QtCharts.QXYSeries,
-                    'residSerie': QtCharts.QXYSeries
+                    'residSerie': QtCharts.QXYSeries,
+                    'braggSerie': QtCharts.QXYSeries
                 }
             }
         }

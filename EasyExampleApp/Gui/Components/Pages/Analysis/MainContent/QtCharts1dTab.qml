@@ -38,13 +38,19 @@ Column {
         width: parent.width
         height: parent.height - 3 * EaStyle.Sizes.fontPixelSize + 2
 
-        // Main chart container
+        ///////////////////////////////////////////
+        // Main chart container: Imeas, Icalc, Ibkg
+        ///////////////////////////////////////////
+
         Item {
             width: parent.width
-            height: parent.height * mainChartHeightCoeff
+            height: parent.height * mainChartHeightCoeff -
+                    braggPeaksChart.parent.height * 0.5
 
             EaCharts.QtCharts1dBase {
                 id: mainChart
+
+                anchors.bottomMargin: -12 - EaStyle.Sizes.fontPixelSize
 
                 useOpenGL: container.useOpenGL
 
@@ -119,27 +125,79 @@ Column {
             }
         }
 
-        // Residual chart container
+        //////////////////////////////////////
+        // Bragg peaks chart container: Ibragg
+        //////////////////////////////////////
+
         Item {
+            z: -1
             width: parent.width
-            height: parent.height * residualToMainChartHeightRatio
+            height: 30
+            //visible: false
 
             EaCharts.QtCharts1dBase {
-                id: residualChart
+                id: braggPeaksChart
+
+                anchors.topMargin: -12 - EaStyle.Sizes.fontPixelSize * 1.5
+                anchors.bottomMargin: -12 - EaStyle.Sizes.fontPixelSize * 1.5
 
                 useOpenGL: container.useOpenGL
 
                 axisX.min: mainChart.axisX.min
                 axisX.max: mainChart.axisX.max
-                axisY.min: Globals.Proxies.main.plotting.chartRanges.yMin
-                axisY.max: Globals.Proxies.main.plotting.chartRanges.yMax
-
                 axisX.titleVisible: false
                 axisX.labelsVisible: false
-                axisY.title: 'Imeas - Icalc'
 
+                axisY.min: -1
+                axisY.max: 1
+                axisY.titleVisible: false
+                axisY.labelsVisible: false
+                axisY.tickCount: 2
+
+                backgroundColor: "transparent"
+                plotAreaColor: "transparent"
+
+                ScatterSeries {
+                    id: braggPeaksSerie
+
+                    axisX: braggPeaksChart.axisX
+                    axisY: braggPeaksChart.axisY
+
+                    useOpenGL: braggPeaksChart.useOpenGL
+
+                    color: EaStyle.Colors.chartForegroundsExtra[0]
+
+                    XYPoint {x: 0.6; y: 0}
+                }
+            }
+        }
+
+        //////////////////////////////////////////
+        // Residual chart container: Imeas - Icalc
+        //////////////////////////////////////////
+
+        Item {
+            width: parent.width
+            height: parent.height * residualToMainChartHeightRatio -
+                    braggPeaksChart.parent.height * 0.5
+
+            EaCharts.QtCharts1dBase {
+                id: residualChart
+
+                anchors.topMargin: -12 - EaStyle.Sizes.fontPixelSize
+
+                useOpenGL: container.useOpenGL
+
+                axisX.min: mainChart.axisX.min
+                axisX.max: mainChart.axisX.max
+                axisX.titleVisible: false
+                axisX.labelsVisible: false
+
+                axisY.min: Globals.Proxies.main.plotting.chartRanges.yMin
+                axisY.max: Globals.Proxies.main.plotting.chartRanges.yMax
                 axisY.tickType: ValueAxis.TicksFixed
                 axisY.tickCount: 3
+                axisY.title: 'Imeas - Icalc'
 
                 backgroundColor: "transparent"
                 plotAreaColor: "transparent"
@@ -158,7 +216,10 @@ Column {
         }
     }
 
+    /////////////////////////
     // X-axis chart container
+    /////////////////////////
+
     Item {
         z: -1
         width: parent.width
@@ -196,7 +257,10 @@ Column {
         }
     }
 
+    /////////
     // Legend
+    /////////
+
     Rectangle {
         parent: container.parent
 
@@ -215,26 +279,29 @@ Column {
             bottomPadding: EaStyle.Sizes.fontPixelSize * 0.5
 
             EaElements.Label {
-                text: '▬ Imeas (measured)'
+                text: '━  Imeas (measured)'
                 color: measSerie.color
             }
             EaElements.Label {
-                text: '▬ Icalc (calculated)'
+                text: '━  Icalc (total calculated)'
                 color: calcSerie.color
             }
             EaElements.Label {
-                text: '▬ Ibkg (background)'
+                text: '─  Ibkg (background)'
                 color: bkgSerie.color
             }
             EaElements.Label {
-                text: '▬ Imeas - Icalc (residual)'
+                text: '━  Imeas - Icalc (residual)'
                 color: residSerie.color
+            }
+            EaElements.Label {
+                text: '│  Ibragg (Bragg peaks)'
+                color: braggPeaksSerie.color
             }
         }
     }
 
-    // Data is set in python backend
-
+    // Save references to chart series to be accessible from Python for updating data
     Component.onCompleted: {
         Globals.Refs.app.analysisPage.plotView = this
         Globals.Proxies.main.plotting.setQtChartsSerieRef('analysisPage',
@@ -249,6 +316,9 @@ Column {
         Globals.Proxies.main.plotting.setQtChartsSerieRef('analysisPage',
                                                           'residSerie',
                                                           this.residSerie)
+        Globals.Proxies.main.plotting.setQtChartsSerieRef('analysisPage',
+                                                          'braggSerie',
+                                                          this.braggSerie)
         Globals.Proxies.main.analysis.defined = true
     }
 
@@ -290,6 +360,8 @@ Column {
         xAxisChart.plotArea.x = mainChart.plotArea.x
         residualChart.plotArea.width = xAxisChart.plotArea.width
         residualChart.plotArea.x = mainChart.plotArea.x
+        braggPeaksChart.plotArea.width = xAxisChart.plotArea.width
+        braggPeaksChart.plotArea.x = mainChart.plotArea.x
         mainChart.plotArea.width = xAxisChart.plotArea.width
         console.debug('All charts have been aligned')
     }
