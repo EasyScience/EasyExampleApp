@@ -45,7 +45,7 @@ EaElements.GroupColumn {
                 width: EaStyle.Sizes.fontPixelSize * 11.0
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("Intensity")
+                text: qsTr("intensity")
             }
 
             EaComponents.TableViewLabel {

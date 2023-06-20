@@ -46,7 +46,7 @@ class Worker(QObject):
 
     def run(self):
         def callbackFunc(params, iter, resid, *args, **kws):
-            console.debug(f"Iteration: {iter:5d},   Reduced chi2 per {self._proxy.fitting._pointsCount} points: {self._proxy.fitting._chiSq/self._proxy.fitting._pointsCount:16.6f}")
+            console.info(f"Iteration: {iter:5d},   Reduced chi2 per {self._proxy.fitting._pointsCount} points: {self._proxy.fitting._chiSq/self._proxy.fitting._pointsCount:16.6f}")
             self._proxy.fitting._fitIteration = iter
             # Check if fitting termination is requested
             if self._needCancel:
