@@ -14,7 +14,7 @@ EaComponents.SideBarColumn {
         title: qsTr("Parameters")
         collapsible: false
 
-        Loader { source: 'SideBarBasic/FittablesGroup.qml' }
+        Loader { source: 'SideBarBasic/Fittables.qml' }
     }
 
     EaElements.GroupBox {
@@ -22,7 +22,7 @@ EaComponents.SideBarColumn {
         collapsible: false
         last: true
 
-        Loader { source: 'SideBarBasic/FittingGroup.qml' }
+        Loader { source: 'SideBarBasic/Fitting.qml' }
     }
 
 }

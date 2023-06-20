@@ -17,35 +17,35 @@ EaComponents.SideBarColumn {
         collapsible: false
         last: !Globals.Proxies.main.experiment.defined
 
-        Loader { source: 'SideBarBasic/ExperimentDataExplorerGroup.qml' }
+        Loader { source: 'SideBarBasic/ExperimentDataExplorer.qml' }
     }
 
     EaElements.GroupBox {
         title: qsTr("Diffrn radiation")
         visible: Globals.Proxies.main.experiment.defined
 
-        Loader { source: 'SideBarBasic/DiffrnRadiationGroup.qml' }
+        Loader { source: 'SideBarBasic/DiffrnRadiation.qml' }
     }
 
     EaElements.GroupBox {
         title: qsTr("Pd meas 2θ range")
         visible: Globals.Proxies.main.experiment.defined
 
-        Loader { source: 'SideBarBasic/PdMeas2ThetaRangeGroup.qml' }
+        Loader { source: 'SideBarBasic/PdMeas2ThetaRange.qml' }
     }
 
     EaElements.GroupBox {
         title: qsTr("Pd instr resolution")
         visible: Globals.Proxies.main.experiment.defined
 
-        Loader { source: 'SideBarBasic/PdInstrResolutionGroup.qml' }
+        Loader { source: 'SideBarBasic/PdInstrResolution.qml' }
     }
 
     EaElements.GroupBox {
         title: qsTr("Pd instr reflex asymmetry")
         visible: Globals.Proxies.main.experiment.defined
 
-        Loader { source: 'SideBarBasic/PdInstrReflexAsymmetryGroup.qml' }
+        Loader { source: 'SideBarBasic/PdInstrReflexAsymmetry.qml' }
     }
 
     EaElements.GroupBox {
@@ -60,7 +60,7 @@ EaComponents.SideBarColumn {
         visible: Globals.Proxies.main.experiment.defined
         last: true
 
-        Loader { source: 'SideBarBasic/PhaseGroup.qml' }
+        Loader { source: 'SideBarBasic/Phase.qml' }
     }
 
 }

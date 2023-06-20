@@ -41,7 +41,6 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewLabel {
-                id: atomSiteLabel
                 width: EaStyle.Sizes.fontPixelSize * 4.3
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
@@ -49,55 +48,60 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 2.0
+                flexibleWidth: true
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("type")
             }
 
             EaComponents.TableViewLabel {
-                width: atomSiteLabel.width
+                id: atomSiteIso
+                width: EaStyle.Sizes.fontPixelSize * 3.7
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("fract x")
+                text: qsTr("iso")
             }
 
             EaComponents.TableViewLabel {
-                width: atomSiteLabel.width
+                width: atomSiteIso.width
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("fract y")
+                text: qsTr("aniso11")
             }
 
             EaComponents.TableViewLabel {
-                width: atomSiteLabel.width
+                width: atomSiteIso.width
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("fract z")
+                text: qsTr("aniso22")
             }
 
             EaComponents.TableViewLabel {
-                width: atomSiteLabel.width
+                width: atomSiteIso.width
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("occ.")
+                text: qsTr("aniso33")
             }
 
             EaComponents.TableViewLabel {
-                flexibleWidth: true
-                horizontalAlignment: Text.AlignHCenter
+                width: atomSiteIso.width
+                horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("WP")
+                text: qsTr("aniso12")
             }
 
             EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 3.0
-                //text: qsTr("Color")
+                width: atomSiteIso.width
+                horizontalAlignment: Text.AlignRight
+                color: EaStyle.Colors.themeForegroundMinor
+                text: qsTr("aniso13")
             }
 
             EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 3.0
-                //text: qsTr("Del.")
+                width: atomSiteIso.width
+                horizontalAlignment: Text.AlignRight
+                color: EaStyle.Colors.themeForegroundMinor
+                text: qsTr("aniso23")
             }
 
         }
@@ -116,45 +120,36 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewTextInput {
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_type_symbol', index)
+                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_adp_type', index)
             }
 
             EaComponents.TableViewTextInput {
-                enabled: Globals.Proxies.modelLoopParameterEnabled('_atom_site', '_fract_x', index)
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_fract_x', index)
-                onEditingFinished: Globals.Proxies.setModelLoopParameterValue('_atom_site', '_fract_x', index, text)
+                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_B_iso_or_equiv', index)
+                onEditingFinished: Globals.Proxies.setModelLoopParameterValue('_atom_site', '_B_iso_or_equiv', index, text)
             }
 
             EaComponents.TableViewTextInput {
-                enabled: Globals.Proxies.modelLoopParameterEnabled('_atom_site', '_fract_y', index)
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_fract_y', index)
-                onEditingFinished: Globals.Proxies.setModelLoopParameterValue('_atom_site', '_fract_y', index, text)
+                text: ''
             }
 
             EaComponents.TableViewTextInput {
-                enabled: Globals.Proxies.modelLoopParameterEnabled('_atom_site', '_fract_z', index)
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_fract_z', index)
-                onEditingFinished: Globals.Proxies.setModelLoopParameterValue('_atom_site', '_fract_z', index, text)
+                text: ''
             }
 
             EaComponents.TableViewTextInput {
-                enabled: Globals.Proxies.modelLoopParameterEnabled('_atom_site', '_occupancy', index)
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_occupancy', index)
-                onEditingFinished: Globals.Proxies.setModelLoopParameterValue('_atom_site', '_occupancy', index, text)
+                text: ''
             }
 
             EaComponents.TableViewTextInput {
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_multiplicity', index, false) +
-                      Globals.Proxies.modelLoopParameterValue('_atom_site', '_Wyckoff_symbol', index)
+                text: ''
             }
 
-            EaComponents.TableViewLabel {
-                backgroundColor: Globals.Proxies.atomColor(Globals.Proxies.modelLoopParameterValue('_atom_site', '_type_symbol', index))
+            EaComponents.TableViewTextInput {
+                text: ''
             }
 
-            EaComponents.TableViewButton {
-                fontIcon: "minus-circle"
-                ToolTip.text: qsTr("Remove this atom")
+            EaComponents.TableViewTextInput {
+                text: ''
             }
 
         }

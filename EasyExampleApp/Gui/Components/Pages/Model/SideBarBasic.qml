@@ -37,9 +37,16 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Atom site")
         visible: Globals.Proxies.main.model.defined
-        last: true
 
         Loader { source: 'SideBarBasic/AtomSite.qml' }
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Atom site (atomic displacement parameters)")
+        visible: Globals.Proxies.main.model.defined
+        last: true
+
+        Loader { source: 'SideBarBasic/AtomSiteAdp.qml' }
     }
 
 }

@@ -598,14 +598,17 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         return value
     }
 
-    function modelLoopParameterValue(loopName, parameterName, parameterIndex) {
+    function modelLoopParameterValue(loopName, parameterName, parameterIndex, formatted=true) {
         if (!main.model.defined) {
             return ''
         }
         const currentModelIndex = main.model.currentIndex
         const value = main.model.dataBlocks[currentModelIndex].loops[loopName][parameterIndex][parameterName]['value']
-        const formattedValue = typeof value === "number" ? value.toFixed(4) : value
-        return formattedValue
+        if (formatted) {
+            const formattedValue = typeof value === "number" ? value.toFixed(4) : value
+            return formattedValue
+        }
+        return value
     }
 
     function setModelLoopParameterValue(loopName, parameterName, parameterIndex, value) {
