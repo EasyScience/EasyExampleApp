@@ -44,10 +44,11 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         'analysisPage': {
             'continueButton': null,
             'startFittingButton': null,
-            'plotView': null
+            'plotView': null,
+            'fitStatusDialogOkButton': null,
         },
         'summaryPage': {
-        },
+        }
     }
 
     // Misc

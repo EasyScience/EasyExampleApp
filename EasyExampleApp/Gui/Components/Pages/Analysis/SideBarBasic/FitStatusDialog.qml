@@ -19,6 +19,9 @@ EaElements.Dialog {
     title: qsTr("Fit status")
     standardButtons: Dialog.Ok
 
+    Component.onCompleted: Globals.Refs.app.analysisPage.fitStatusDialogOkButton = okButtonRef()
+
+
     EaElements.Label {
         text: {
             if (Globals.Proxies.main.status.fitStatus === 'Success') {
@@ -31,5 +34,18 @@ EaElements.Dialog {
                 return ''
             }
         }
+    }
+
+    // Logic
+
+    function okButtonRef() {
+        const buttons = dialog.footer.contentModel.children
+        for (let i in buttons) {
+            const button = buttons[i]
+            if (button.text === 'OK') {
+                return button
+            }
+        }
+        return null
     }
 }
