@@ -19,7 +19,6 @@ class Connections(QObject):
         self._proxy.experiment.dataBlocksChanged.connect(self.onExperimentDataBlocksChanged)
         self._proxy.experiment.yMeasArraysChanged.connect(self.onExperimentYMeasArraysChanged)
         self._proxy.experiment.yBkgArraysChanged.connect(self.onExperimentYBkgArraysChanged)
-        self._proxy.experiment.parameterEdited.connect(self.onExperimentParameterEdited)
         self._proxy.experiment.currentIndexChanged.connect(self.onExperimentCurrentIndexChanged)
 
         self._proxy.experiment.paramChanged.connect(self.onExperimentParamChanged)
@@ -28,7 +27,6 @@ class Connections(QObject):
         self._proxy.model.definedChanged.connect(self.onModelDefinedChanged)
         self._proxy.model.dataBlocksChanged.connect(self.onModelDataBlocksChanged)
         self._proxy.model.yCalcArraysChanged.connect(self.onModelYCalcArraysChanged)
-        self._proxy.model.parameterEdited.connect(self.onModelParameterEdited)
         self._proxy.model.currentIndexChanged.connect(self.onModelCurrentIndexChanged)
 
         self._proxy.model.paramChanged.connect(self.onModelParamChanged)
@@ -67,20 +65,13 @@ class Connections(QObject):
         self._proxy.plotting.drawBackgroundOnExperimentChart()
         self._proxy.plotting.redrawBackgroundOnAnalysisChart()
 
-    def onExperimentParameterEdited(self, page, name):
-        self._proxy.experiment.setDataBlocksJson()
-        if name.startswith('background'):
-            self._proxy.experiment.updateCurrentExperimentYBkgArray()
-        if page != 'analysis':
-            self._proxy.fittables.set()
-        self._proxy.project.setNeedSaveToTrue()
-
-    def onExperimentCurrentIndexChanged(self):
-        self._proxy.plotting.drawMeasuredOnExperimentChart()
-        self._proxy.plotting.drawBackgroundOnExperimentChart()
-
-
-    #
+    #def onExperimentParameterEdited(self, page, name):
+    #    self._proxy.experiment.setDataBlocksJson()
+    #    if name.startswith('background'):
+    #        self._proxy.experiment.updateCurrentExperimentYBkgArray()
+    #    if page != 'analysis':
+    #        self._proxy.fittables.set()
+    #    self._proxy.project.setNeedSaveToTrue()
     def onExperimentParamChanged(self):
         self._proxy.experiment.defined = bool(len(self._proxy.experiment.dataBlocks))
         if self._proxy.model.defined:
@@ -89,6 +80,9 @@ class Connections(QObject):
             self._proxy.fittables.set()
             self._proxy.analysis.calculateYCalcTotal()
 
+    def onExperimentCurrentIndexChanged(self):
+        self._proxy.plotting.drawMeasuredOnExperimentChart()
+        self._proxy.plotting.drawBackgroundOnExperimentChart()
 
     # Model
 
@@ -106,21 +100,14 @@ class Connections(QObject):
         self._proxy.analysis.calculateYCalcTotal()
         self._proxy.plotting.drawCalculatedOnModelChart()
 
-    def onModelParameterEdited(self, page, blockIndex, name):
-        self._proxy.model.setDataBlocksJson()
-        if page != 'analysis':
-            self._proxy.fittables.set()
-            self._proxy.model.updateCurrentModelYCalcArray()
-        else:
-            self._proxy.model.updateYCalcArrayByIndex(blockIndex)
-        self._proxy.project.setNeedSaveToTrue()
-
-    def onModelCurrentIndexChanged(self):
-        self._proxy.plotting.drawCalculatedOnModelChart()
-
-
-
-    #
+    #def onModelParameterEdited(self, page, blockIndex, name):
+    #    self._proxy.model.setDataBlocksJson()
+    #    if page != 'analysis':
+    #        self._proxy.fittables.set()
+    #        self._proxy.model.updateCurrentModelYCalcArray()
+    #    else:
+    #        self._proxy.model.updateYCalcArrayByIndex(blockIndex)
+    #    self._proxy.project.setNeedSaveToTrue()
     def onModelParamChanged(self):
         self._proxy.model.defined = bool(len(self._proxy.model.dataBlocks))
         self._proxy.model.updateCurrentModelYCalcArray()
@@ -128,6 +115,8 @@ class Connections(QObject):
             self._proxy.fittables.set()
             self._proxy.analysis.calculateYCalcTotal()
 
+    def onModelCurrentIndexChanged(self):
+        self._proxy.plotting.drawCalculatedOnModelChart()
 
     # Analysis
 

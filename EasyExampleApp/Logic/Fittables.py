@@ -65,17 +65,6 @@ class Fittables(QObject):
     def dataJson(self):
         return self._dataJson
 
-    #
-    @Slot(str, int, str, str, str)
-    def edit_OLD(self, block, blockIndex, name, item, value):
-        console.debug(f"Editing fittable '{block}[{blockIndex}].{name}.{item}' to '{value}'")
-        page = 'analysis'
-        if block == 'experiment':
-            self._proxy.experiment.editParameter(page, blockIndex, name, item, value)
-        elif block == 'model':
-            self._proxy.model.editParameter(page, blockIndex, name, item, value)
-
-
     @Slot(str, int, str, int, str, float)
     def edit(self, blockType, blockIndex, loopName, paramIndex, paramName, value):
         if loopName == '':
@@ -90,12 +79,6 @@ class Fittables(QObject):
                 self._proxy.experiment.setLoopParamValue(loopName, paramName, paramIndex, value)
             elif blockType == 'model':
                 self._proxy.model.setLoopParamValue(loopName, paramName, paramIndex, value)
-
-        #page = 'analysis'
-        #if block == 'experiment':
-        #    self._proxy.experiment.editParameter(page, blockIndex, name, item, value)
-        #elif block == 'model':
-        #    self._proxy.model.editParameter(page, blockIndex, name, item, value)
 
     def set(self):
         console.debug('Fittables have been changed')

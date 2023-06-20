@@ -54,16 +54,13 @@ _DEFAULT_DATA_BLOCK = {
     }
 }
 
+
 class Model(QObject):
     definedChanged = Signal()
     currentIndexChanged = Signal()
     dataBlocksChanged = Signal()
     dataBlocksJsonChanged = Signal()
     yCalcArraysChanged = Signal()
-    parameterEdited = Signal(str, int, str)
-
-    parameterValueEdited = Signal(str, float)
-    cryspyDictChanged = Signal()
 
     paramChanged = Signal()
 
@@ -158,11 +155,6 @@ class Model(QObject):
         self.dataBlocksChanged.emit()
         self.yCalcArraysChanged.emit()
         console.debug("All models have been removed")
-
-
-
-
-
 
     @Slot(str, float)
     def setMainParameterValue(self, paramName, value):
@@ -337,88 +329,6 @@ class Model(QObject):
                 else:
                     self.editDataBlockLoopParam(loopName, paramName, paramIndex, value, blockIndex)
 
-
-
-
-
-
-
-    @Slot(str, result=str)
-    def parameter(self, name):
-        return name
-        console.error(f'self.defined {self.defined}')
-        if not self.defined:
-            return ''
-        value = self.dataBlocks[self.currentIndex].params[name]['value']
-        formattedValue = "{:.4f}".format(value)
-        console.error(f'formattedValue {formattedValue}')
-        return formattedValue
-
-    @Slot(str, str, str)
-    def editParameter(self, name, item, value):
-        block = 'model'
-        blockIndex = self._currentIndex
-        console.debug(f"Editing '{block}' block parameter '{block}[{blockIndex}].{name}.{item}' to '{value}'")
-        # Convert input value
-        if item == 'value':
-            value = float(value)
-        elif item == 'fit':
-            if value == 'true':
-                value = True
-            elif value == 'false':
-                value = False
-            #####self._dataBlocks[blockIndex]['params'][name]['error'] = 0
-        # Update value
-        if self._dataBlocks[blockIndex]['params'][name][item] == value:
-            return
-        self._dataBlocks[blockIndex]['params'][name][item] = value
-        console.debug(f"Parameter '{block}[{blockIndex}].{name}.{item}' has been changed to '{value}'")
-
-        # Updating cryspy_dict: NEED FIX
-        blockName = self._dataBlocks[blockIndex]['name']
-        cryspyBlockName = f'crystal_{blockName}'
-        cryspyBlock = self._proxy.data._cryspyDict[cryspyBlockName]
-        if name == '_cell_length_a': cryspyBlock['unit_cell_parameters'][0] = value
-        if name == '_cell_length_b': cryspyBlock['unit_cell_parameters'][1] = value
-        if name == '_cell_length_c': cryspyBlock['unit_cell_parameters'][2] = value
-        if name == '_cell_angle_alpha': cryspyBlock['unit_cell_parameters'][3] = np.deg2rad(value)
-        if name == '_cell_angle_beta': cryspyBlock['unit_cell_parameters'][4] = np.deg2rad(value)
-        if name == '_cell_angle_gamma': cryspyBlock['unit_cell_parameters'][5] = np.deg2rad(value)
-
-        # Signalling value has been changed
-        page = 'model'  # ???????
-        self.parameterEdited.emit(page, blockIndex, name)
-        console.debug(f"Data blocks for '{block}' has been changed")
-        self.dataBlocksChanged.emit()
-
-    #
-    @Slot(str, str, int, float)
-    def editLoopParamValue(self, loopName, paramName, paramIndex, value):
-        block = 'model'
-        blockIndex = self._currentIndex
-
-        oldValue = self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName]['value']
-        if oldValue == value:
-            return
-        self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName]['value'] = value
-        console.debug(f"Parameter {block}[{blockIndex}].loops['{loopName}'][{paramIndex}]['{paramName}']['value'] changed: '{oldValue}' -> '{value}'")
-
-        # Updating cryspy_dict: NEED FIX
-        blockName = self._dataBlocks[blockIndex]['name']
-        cryspyBlockName = f'crystal_{blockName}'
-        cryspyBlock = self._proxy.data._cryspyDict[cryspyBlockName]
-        if loopName == '_atom_site':
-            if paramName == '_fract_x': cryspyBlock['atom_fract_xyz'][0][paramIndex] = value
-            if paramName == '_fract_y': cryspyBlock['atom_fract_xyz'][1][paramIndex] = value
-            if paramName == '_fract_z': cryspyBlock['atom_fract_xyz'][2][paramIndex] = value
-            if paramName == '_occupancy': cryspyBlock['atom_occupancy'][paramIndex] = value
-
-        # Signalling value has been changed
-        page = 'model'  # ???????
-        self.parameterEdited.emit(page, blockIndex, paramName)  # paramName not needed???
-        console.debug(f"Data blocks for '{block}' has been changed")
-        self.dataBlocksChanged.emit()
-
     # Private methods
 
     def defaultYCalcArray(self):
@@ -493,9 +403,9 @@ class Model(QObject):
                         ed_phase['params']['_space_group_IT_coordinate_system_code'] = dict(Parameter(item.it_coordinate_system_code))
                     # Cell section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_cell.Cell:
-                        ed_phase['params']['_cell_length_a'] = dict(Parameter(item.length_a, enabled=not item.length_a_constraint, min=1, max=10, fittable=True, fit=item.length_a_refinement))
-                        ed_phase['params']['_cell_length_b'] = dict(Parameter(item.length_b, enabled=not item.length_b_constraint, min=1, max=10, fittable=True, fit=item.length_b_refinement))
-                        ed_phase['params']['_cell_length_c'] = dict(Parameter(item.length_c, enabled=not item.length_c_constraint, min=1, max=10, fittable=True, fit=item.length_c_refinement))
+                        ed_phase['params']['_cell_length_a'] = dict(Parameter(item.length_a, enabled=not item.length_a_constraint, min=1, max=30, fittable=True, fit=item.length_a_refinement))
+                        ed_phase['params']['_cell_length_b'] = dict(Parameter(item.length_b, enabled=not item.length_b_constraint, min=1, max=30, fittable=True, fit=item.length_b_refinement))
+                        ed_phase['params']['_cell_length_c'] = dict(Parameter(item.length_c, enabled=not item.length_c_constraint, min=1, max=30, fittable=True, fit=item.length_c_refinement))
                         ed_phase['params']['_cell_angle_alpha'] = dict(Parameter(item.angle_alpha, enabled=not item.angle_alpha_constraint, min=0, max=180, fittable=True, fit=item.angle_alpha_refinement))
                         ed_phase['params']['_cell_angle_beta'] = dict(Parameter(item.angle_beta, enabled=not item.angle_alpha_constraint, min=0, max=180, fittable=True, fit=item.angle_beta_refinement))
                         ed_phase['params']['_cell_angle_gamma'] = dict(Parameter(item.angle_gamma, enabled=not item.angle_alpha_constraint, min=0, max=180, fittable=True, fit=item.angle_gamma_refinement))

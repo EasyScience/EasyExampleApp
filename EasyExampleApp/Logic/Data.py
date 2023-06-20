@@ -18,7 +18,6 @@ except ImportError:
 
 class Data(QObject):
     edDictChanged = Signal()
-    cryspyDictChanged = Signal()
 
     def __init__(self, parent):
         super().__init__(parent)

@@ -23,7 +23,12 @@ EaElements.GroupColumn {
         // We only use the length of the model object defined in backend logic and
         // directly access that model in every row using the TableView index property.
 
-        model: Globals.Proxies.main.experiment.dataBlocks[Globals.Proxies.main.model.currentIndex].loops._pd_background.length
+        model: {
+            if (typeof Globals.Proxies.main.experiment.dataBlocks[Globals.Proxies.main.model.currentIndex] === 'undefined') {
+                return 0
+            }
+            return Globals.Proxies.main.experiment.dataBlocks[Globals.Proxies.main.model.currentIndex].loops._pd_background.length
+        }
 
         // Header row
 

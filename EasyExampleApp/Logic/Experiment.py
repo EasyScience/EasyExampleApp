@@ -64,7 +64,6 @@ class Experiment(QObject):
     yMeasArraysChanged = Signal()
     yBkgArraysChanged = Signal()
     chartRangesChanged = Signal()
-    parameterEdited = Signal(str, str)
 
     paramChanged = Signal()
 
@@ -188,10 +187,6 @@ class Experiment(QObject):
         self.yMeasArraysChanged.emit()
         self.yBkgArraysChanged.emit()
         console.debug("All experiments have been removed")
-
-
-
-
 
     @Slot(str, float)
     def setMainParameterValue(self, paramName, value):
@@ -404,37 +399,6 @@ class Experiment(QObject):
                 else:
                     self.editDataBlockLoopParam(loopName, paramName, paramIndex, value, blockIndex)
 
-
-
-
-
-
-
-    @Slot(str, int, str, str, str)
-    def editParameter(self, page, blockIndex, name, item, value):
-        block = 'experiment'
-        if blockIndex is None:
-            blockIndex = self._currentIndex
-        console.debug(f"Editing parameter '{block}[{blockIndex}].{name}.{item}' to '{value}' requested from '{page}' page")
-        # Convert input value
-        if item == 'value':
-            value = float(value)
-        elif item == 'fit':
-            if value == 'true':
-                value = True
-            elif value == 'false':
-                value = False
-            self._dataBlocks[blockIndex]['params'][name]['error'] = 0
-        # Update value
-        if self._dataBlocks[blockIndex]['params'][name][item] == value:
-            return
-        self._dataBlocks[blockIndex]['params'][name][item] = value
-        console.debug(f"Parameter '{block}[{blockIndex}].{name}.{item}' has been changed to '{value}'")
-        # Signalling value has been changed
-        self.parameterEdited.emit(page, name)
-        console.debug(f"Data blocks for '{block}' has been changed")
-        self.dataBlocksChanged.emit()
-
     # Private methods
 
     def defaultXArray(self):
@@ -533,8 +497,8 @@ class Experiment(QObject):
                     # Setup section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_setup.Setup:
                         ed_experiment['params']['_diffrn_radiation_probe'] = dict(Parameter(item.radiation.replace('neutrons', 'neutron').replace('X-rays', 'x-ray')))
-                        ed_experiment['params']['_diffrn_radiation_wavelength'] = dict(Parameter(item.wavelength, fittable=True, fit=item.wavelength_refinement))
-                        ed_experiment['params']['_pd_meas_2theta_offset'] = dict(Parameter(item.offset_ttheta, fittable=True, fit=item.offset_ttheta_refinement))
+                        ed_experiment['params']['_diffrn_radiation_wavelength'] = dict(Parameter(item.wavelength, min=0.5, max=2.5, fittable=True, fit=item.wavelength_refinement))
+                        ed_experiment['params']['_pd_meas_2theta_offset'] = dict(Parameter(item.offset_ttheta, min=-0.5, max=0.5, fittable=True, fit=item.offset_ttheta_refinement))
                     # Instrument resolution section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_instr_resolution.PdInstrResolution:
                         ed_experiment['params']['_pd_instr_resolution_u'] = dict(Parameter(item.u, fittable=True, fit=item.u_refinement))
@@ -555,7 +519,7 @@ class Experiment(QObject):
                         for cryspy_phase in cryspy_phases:
                             ed_phase = {}
                             ed_phase['_label'] = dict(Parameter(cryspy_phase.label))
-                            ed_phase['_scale'] = dict(Parameter(cryspy_phase.scale, fittable=True, fit=cryspy_phase.scale_refinement))
+                            ed_phase['_scale'] = dict(Parameter(cryspy_phase.scale, min=0.1, max=10, fittable=True, fit=cryspy_phase.scale_refinement))
                             ed_phases.append(ed_phase)
                         ed_experiment['loops']['_phase'] = ed_phases
                     # Background section
@@ -565,7 +529,7 @@ class Experiment(QObject):
                         for cryspy_bkg_point in cryspy_bkg_points:
                             ed_bkg_point = {}
                             ed_bkg_point['_2theta'] = dict(Parameter(cryspy_bkg_point.ttheta))
-                            ed_bkg_point['_intensity'] = dict(Parameter(cryspy_bkg_point.intensity, fittable=True, fit=cryspy_bkg_point.intensity_refinement))
+                            ed_bkg_point['_intensity'] = dict(Parameter(cryspy_bkg_point.intensity, min=0, max=3000, fittable=True, fit=cryspy_bkg_point.intensity_refinement))
                             ed_bkg_points.append(ed_bkg_point)
                         ed_experiment['loops']['_pd_background'] = ed_bkg_points
                     # Measured data section
