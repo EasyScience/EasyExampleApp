@@ -108,21 +108,25 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewTextInput {
+                enabled: Globals.Proxies.modelLoopParameterEnabled('_atom_site', '_fract_x', index)
                 text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_fract_x', index)
                 onEditingFinished: Globals.Proxies.setModelLoopParameterValue('_atom_site', '_fract_x', index, text)
             }
 
             EaComponents.TableViewTextInput {
+                enabled: Globals.Proxies.modelLoopParameterEnabled('_atom_site', '_fract_y', index)
                 text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_fract_y', index)
                 onEditingFinished: Globals.Proxies.setModelLoopParameterValue('_atom_site', '_fract_y', index, text)
             }
 
             EaComponents.TableViewTextInput {
+                enabled: Globals.Proxies.modelLoopParameterEnabled('_atom_site', '_fract_z', index)
                 text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_fract_z', index)
                 onEditingFinished: Globals.Proxies.setModelLoopParameterValue('_atom_site', '_fract_z', index, text)
             }
 
             EaComponents.TableViewTextInput {
+                enabled: Globals.Proxies.modelLoopParameterEnabled('_atom_site', '_occupancy', index)
                 text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_occupancy', index)
                 onEditingFinished: Globals.Proxies.setModelLoopParameterValue('_atom_site', '_occupancy', index, text)
             }

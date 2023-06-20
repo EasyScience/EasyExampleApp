@@ -18,6 +18,8 @@
 
     "resources.qrc",
 
-    "EasyExampleApp/Gui/main.qml"
+    "EasyExampleApp/Gui/main.qml",
+
+    "../EasyApp/EasyApp/Logic/Logging.py"
     ]
 }

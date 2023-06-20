@@ -22,12 +22,16 @@ class Connections(QObject):
         self._proxy.experiment.parameterEdited.connect(self.onExperimentParameterEdited)
         self._proxy.experiment.currentIndexChanged.connect(self.onExperimentCurrentIndexChanged)
 
+        self._proxy.experiment.paramChanged.connect(self.onExperimentParamChanged)
+
         # Model
         self._proxy.model.definedChanged.connect(self.onModelDefinedChanged)
         self._proxy.model.dataBlocksChanged.connect(self.onModelDataBlocksChanged)
         self._proxy.model.yCalcArraysChanged.connect(self.onModelYCalcArraysChanged)
         self._proxy.model.parameterEdited.connect(self.onModelParameterEdited)
         self._proxy.model.currentIndexChanged.connect(self.onModelCurrentIndexChanged)
+
+        self._proxy.model.paramChanged.connect(self.onModelParamChanged)
 
         # Analysis
         self._proxy.analysis.definedChanged.connect(self.onAnalysisDefined)
@@ -75,6 +79,17 @@ class Connections(QObject):
         self._proxy.plotting.drawMeasuredOnExperimentChart()
         self._proxy.plotting.drawBackgroundOnExperimentChart()
 
+
+    #
+    def onExperimentParamChanged(self):
+        self._proxy.experiment.defined = bool(len(self._proxy.experiment.dataBlocks))
+        if self._proxy.model.defined:
+            self._proxy.model.updateCurrentModelYCalcArray()
+        if self._proxy.analysis.defined:
+            self._proxy.fittables.set()
+            self._proxy.analysis.calculateYCalcTotal()
+
+
     # Model
 
     def onModelDefinedChanged(self):
@@ -82,8 +97,10 @@ class Connections(QObject):
 
     def onModelDataBlocksChanged(self):
         self._proxy.model.defined = bool(len(self._proxy.model.dataBlocks))
-        self._proxy.model.setDataBlocksJson()
-        self._proxy.project.setNeedSaveToTrue()
+        #self._proxy.model.setDataBlocksJson()
+        #self._proxy.project.setNeedSaveToTrue()
+        if self._proxy.analysis.defined:
+            self._proxy.fittables.set()
 
     def onModelYCalcArraysChanged(self):
         self._proxy.analysis.calculateYCalcTotal()
@@ -100,6 +117,17 @@ class Connections(QObject):
 
     def onModelCurrentIndexChanged(self):
         self._proxy.plotting.drawCalculatedOnModelChart()
+
+
+
+    #
+    def onModelParamChanged(self):
+        self._proxy.model.defined = bool(len(self._proxy.model.dataBlocks))
+        self._proxy.model.updateCurrentModelYCalcArray()
+        if self._proxy.analysis.defined:
+            self._proxy.fittables.set()
+            self._proxy.analysis.calculateYCalcTotal()
+
 
     # Analysis
 
@@ -121,8 +149,10 @@ class Connections(QObject):
     # Fitting
 
     def onFittingFitFinished(self):
+        self._proxy.experiment.setDataBlocksJson()
         self._proxy.model.setDataBlocksJson()
         self._proxy.model.updateYCalcArrayByIndex(0)  # NED FIX
+        self._proxy.fittables.set()
 
     def onFittingChiSqSignificantlyChanged(self):
         self._proxy.model.updateYCalcArrayByIndex(0)

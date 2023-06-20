@@ -565,6 +565,15 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
     // Common functions
 
+    function modelMainParameterEnabled(name) {
+        if (!main.model.defined) {
+            return ''
+        }
+        const currentModelIndex = main.model.currentIndex
+        const value = main.model.dataBlocks[currentModelIndex].params[name]['enabled']
+        return value
+    }
+
     function modelMainParameterValue(name) {
         if (!main.model.defined) {
             return ''
@@ -576,7 +585,17 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     }
 
     function setModelMainParameterValue(name, value) {
-        main.model.editParameter(name, 'value', value)
+        //main.model.editParameter(name, 'value', value)
+        main.model.setMainParameterValue(name, value)
+    }
+
+    function modelLoopParameterEnabled(loopName, parameterName, parameterIndex) {
+        if (!main.model.defined) {
+            return ''
+        }
+        const currentModelIndex = main.model.currentIndex
+        const value = main.model.dataBlocks[currentModelIndex].loops[loopName][parameterIndex][parameterName]['enabled']
+        return value
     }
 
     function modelLoopParameterValue(loopName, parameterName, parameterIndex) {
@@ -590,7 +609,8 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     }
 
     function setModelLoopParameterValue(loopName, parameterName, parameterIndex, value) {
-        main.model.editLoopParameterValue(loopName, parameterName, parameterIndex, value)
+        //main.model.editLoopParameterValue(loopName, parameterName, parameterIndex, value)
+        main.model.setLoopParameterValue(loopName, parameterName, parameterIndex, value)
     }
 
     function experimentMainParameterValue(name) {
@@ -603,6 +623,10 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         return formattedValue
     }
 
+    function setExperimentMainParameterValue(name, value) {
+        main.experiment.setMainParameterValue(name, value)
+    }
+
     function experimentLoopParameterValue(loopName, parameterName, parameterIndex) {
         if (!main.experiment.defined) {
             return ''
@@ -612,6 +636,11 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         const formattedValue = typeof value === "number" ? value.toFixed(4) : value
         return formattedValue
     }
+
+    function setExperimentLoopParameterValue(loopName, parameterName, parameterIndex, value) {
+        main.experiment.setLoopParameterValue(loopName, parameterName, parameterIndex, value)
+    }
+
 
     function atomColor(symbol) {
         const jmolColors = {

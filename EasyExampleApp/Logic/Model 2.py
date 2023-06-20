@@ -172,9 +172,9 @@ class Model(QObject):
         self.paramChanged.emit()
 
     @Slot(str, str, int, float)
-    def setLoopParamValue(self, loopName, paramName, paramIndex, value):
-        self.editDataBlockLoopParam(loopName, paramName, paramIndex, value)
-        self.editCryspyDictByLoopParam(loopName, paramName, paramIndex, value)
+    def setLoopParameterValue(self, loopName, paramName, parameterIndex, value):
+        self.editDataBlockLoopParameter(loopName, paramName, parameterIndex, value)
+        self.editCryspyDictByLoopParam(loopName, paramName, parameterIndex, value)
 
         self.paramChanged.emit()
 
@@ -188,19 +188,19 @@ class Model(QObject):
             return
         self._dataBlocks[blockIndex]['params'][paramName]['value'] = value
 
-        console.debug(f"Parameter {block}[{blockIndex}].{paramName}.value changed: '{oldValue}' -> '{value}'")
+        console.debug(f"Parameter '{block}[{blockIndex}].{paramName}.value' has been changed: '{oldValue}' -> '{value}'")
 
-    def editDataBlockLoopParam(self, loopName, paramName, paramIndex, value, blockIndex=None):
+    def editDataBlockLoopParameter(self, loopName, paramName, parameterIndex, value, blockIndex=None):
         block = 'model'
         if blockIndex is None:
             blockIndex = self._currentIndex
 
-        oldValue = self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName]['value']
+        oldValue = self._dataBlocks[blockIndex]['loops'][loopName][parameterIndex][paramName]['value']
         if oldValue == value:
             return
-        self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName]['value'] = value
+        self._dataBlocks[blockIndex]['loops'][loopName][parameterIndex][paramName]['value'] = value
 
-        console.debug(f"Parameter {block}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.value changed: '{oldValue}' -> '{value}'")
+        console.debug(f"Parameter {block}[{blockIndex}].loops['{loopName}'][{parameterIndex}]['{paramName}']['value'] changed: '{oldValue}' -> '{value}'")
 
     def editCryspyDictByMainParam(self, paramName, value):
         path, value = self.cryspyDictPathByMainParam(paramName, value)
@@ -212,8 +212,8 @@ class Model(QObject):
 
         console.debug(f"Cryspy dict parameter {path} changed: '{oldValue}' -> '{value}'")
 
-    def editCryspyDictByLoopParam(self, loopName, paramName, paramIndex, value):
-        path, value = self.cryspyDictPathByLoopParam(loopName, paramName, paramIndex, value)
+    def editCryspyDictByLoopParam(self, loopName, paramName, parameterIndex, value):
+        path, value = self.cryspyDictPathByLoopParam(loopName, paramName, parameterIndex, value)
 
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
@@ -253,7 +253,7 @@ class Model(QObject):
 
         return path, value
 
-    def cryspyDictPathByLoopParam(self, loopName, paramName, paramIndex, value):
+    def cryspyDictPathByLoopParam(self, loopName, paramName, parameterIndex, value):
         blockIndex = self._currentIndex
         blockName = self._dataBlocks[blockIndex]['name']
         path = ['','','']
@@ -263,16 +263,16 @@ class Model(QObject):
         if loopName == '_atom_site':
             if paramName == '_fract_x':
                 path[1] = 'atom_fract_xyz'
-                path[2] = (0, paramIndex)
+                path[2] = (0, parameterIndex)
             if paramName == '_fract_y':
                 path[1] = 'atom_fract_xyz'
-                path[2] = (1, paramIndex)
+                path[2] = (1, parameterIndex)
             if paramName == '_fract_z':
                 path[1] = 'atom_fract_xyz'
-                path[2] = (2, paramIndex)
+                path[2] = (2, parameterIndex)
             if paramName == '_occupancy':
                 path[1] = 'atom_occupancy'
-                path[2] = paramIndex
+                path[2] = parameterIndex
 
         return path, value
 
@@ -282,10 +282,13 @@ class Model(QObject):
 
             # crystal block
             if block.startswith('crystal_'):
+                blockType = 'model'
                 blockName = block[8:]
+
+                blockName = None
                 loopName = None
                 paramName = None
-                paramIndex = None
+                parameterIndex = None
                 value = self._proxy.data._cryspyDict[block][group][idx]
 
                 # unit_cell_parameters
@@ -309,7 +312,7 @@ class Model(QObject):
                 # atom_fract_xyz
                 elif group == 'atom_fract_xyz':
                     loopName = '_atom_site'
-                    paramIndex = idx[1]
+                    parameterIndex = idx[1]
                     if idx[0] == 0:
                         paramName = '_fract_x'
                     elif idx[0] == 1:
@@ -320,22 +323,17 @@ class Model(QObject):
                 # atom_occupancy
                 elif group == 'atom_occupancy':
                     loopName = '_atom_site'
-                    paramIndex = idx[0]
+                    parameterIndex = idx[0]
                     paramName = '_occupancy'
-
-                # b_iso_or_equiv
-                elif group == 'atom_b_iso':
-                    loopName = '_atom_site'
-                    paramIndex = idx[0]
-                    paramName = '_B_iso_or_equiv'
 
                 value = float(value)  # convert float64 to float (needed for QML access)
                 blockIndex = [block['name'] for block in self._dataBlocks].index(blockName)
 
+                ###
                 if loopName is None:
                     self.editDataBlockMainParam(paramName, value, blockIndex)
                 else:
-                    self.editDataBlockLoopParam(loopName, paramName, paramIndex, value, blockIndex)
+                    self.editDataBlockLoopParameter(loopName, paramName, parameterIndex, value, blockIndex)
 
 
 
@@ -393,25 +391,25 @@ class Model(QObject):
 
     #
     @Slot(str, str, int, float)
-    def editLoopParamValue(self, loopName, paramName, paramIndex, value):
+    def editLoopParameterValue(self, loopName, paramName, parameterIndex, value):
         block = 'model'
         blockIndex = self._currentIndex
 
-        oldValue = self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName]['value']
+        oldValue = self._dataBlocks[blockIndex]['loops'][loopName][parameterIndex][paramName]['value']
         if oldValue == value:
             return
-        self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName]['value'] = value
-        console.debug(f"Parameter {block}[{blockIndex}].loops['{loopName}'][{paramIndex}]['{paramName}']['value'] changed: '{oldValue}' -> '{value}'")
+        self._dataBlocks[blockIndex]['loops'][loopName][parameterIndex][paramName]['value'] = value
+        console.debug(f"Parameter {block}[{blockIndex}].loops['{loopName}'][{parameterIndex}]['{paramName}']['value'] changed: '{oldValue}' -> '{value}'")
 
         # Updating cryspy_dict: NEED FIX
         blockName = self._dataBlocks[blockIndex]['name']
         cryspyBlockName = f'crystal_{blockName}'
         cryspyBlock = self._proxy.data._cryspyDict[cryspyBlockName]
         if loopName == '_atom_site':
-            if paramName == '_fract_x': cryspyBlock['atom_fract_xyz'][0][paramIndex] = value
-            if paramName == '_fract_y': cryspyBlock['atom_fract_xyz'][1][paramIndex] = value
-            if paramName == '_fract_z': cryspyBlock['atom_fract_xyz'][2][paramIndex] = value
-            if paramName == '_occupancy': cryspyBlock['atom_occupancy'][paramIndex] = value
+            if paramName == '_fract_x': cryspyBlock['atom_fract_xyz'][0][parameterIndex] = value
+            if paramName == '_fract_y': cryspyBlock['atom_fract_xyz'][1][parameterIndex] = value
+            if paramName == '_fract_z': cryspyBlock['atom_fract_xyz'][2][parameterIndex] = value
+            if paramName == '_occupancy': cryspyBlock['atom_occupancy'][parameterIndex] = value
 
         # Signalling value has been changed
         page = 'model'  # ???????
@@ -493,12 +491,12 @@ class Model(QObject):
                         ed_phase['params']['_space_group_IT_coordinate_system_code'] = dict(Parameter(item.it_coordinate_system_code))
                     # Cell section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_cell.Cell:
-                        ed_phase['params']['_cell_length_a'] = dict(Parameter(item.length_a, enabled=not item.length_a_constraint, min=1, max=10, fittable=True, fit=item.length_a_refinement))
-                        ed_phase['params']['_cell_length_b'] = dict(Parameter(item.length_b, enabled=not item.length_b_constraint, min=1, max=10, fittable=True, fit=item.length_b_refinement))
-                        ed_phase['params']['_cell_length_c'] = dict(Parameter(item.length_c, enabled=not item.length_c_constraint, min=1, max=10, fittable=True, fit=item.length_c_refinement))
-                        ed_phase['params']['_cell_angle_alpha'] = dict(Parameter(item.angle_alpha, enabled=not item.angle_alpha_constraint, min=0, max=180, fittable=True, fit=item.angle_alpha_refinement))
-                        ed_phase['params']['_cell_angle_beta'] = dict(Parameter(item.angle_beta, enabled=not item.angle_alpha_constraint, min=0, max=180, fittable=True, fit=item.angle_beta_refinement))
-                        ed_phase['params']['_cell_angle_gamma'] = dict(Parameter(item.angle_gamma, enabled=not item.angle_alpha_constraint, min=0, max=180, fittable=True, fit=item.angle_gamma_refinement))
+                        ed_phase['params']['_cell_length_a'] = dict(Parameter(item.length_a, min=1, max=10, fittable=True, fit=item.length_a_refinement))
+                        ed_phase['params']['_cell_length_b'] = dict(Parameter(item.length_b, min=1, max=10, fittable=True, fit=item.length_b_refinement))
+                        ed_phase['params']['_cell_length_c'] = dict(Parameter(item.length_c, min=1, max=10, fittable=True, fit=item.length_c_refinement))
+                        ed_phase['params']['_cell_angle_alpha'] = dict(Parameter(item.angle_alpha, min=0, max=180, fittable=True, fit=item.angle_alpha_refinement))
+                        ed_phase['params']['_cell_angle_beta'] = dict(Parameter(item.angle_beta, min=0, max=180, fittable=True, fit=item.angle_beta_refinement))
+                        ed_phase['params']['_cell_angle_gamma'] = dict(Parameter(item.angle_gamma, min=0, max=180, fittable=True, fit=item.angle_gamma_refinement))
                     # Atoms section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_atom_site.AtomSiteL:
                         ed_atoms = []
@@ -507,12 +505,12 @@ class Model(QObject):
                             ed_atom = {}
                             ed_atom['_label'] = dict(Parameter(cryspy_atom.label))
                             ed_atom['_type_symbol'] = dict(Parameter(cryspy_atom.type_symbol))
-                            ed_atom['_fract_x'] = dict(Parameter(cryspy_atom.fract_x, enabled=not cryspy_atom.fract_x_constraint, min=-1, max=1, fittable=True, fit=cryspy_atom.fract_x_refinement))
-                            ed_atom['_fract_y'] = dict(Parameter(cryspy_atom.fract_y, enabled=not cryspy_atom.fract_y_constraint, min=-1, max=1, fittable=True, fit=cryspy_atom.fract_y_refinement))
-                            ed_atom['_fract_z'] = dict(Parameter(cryspy_atom.fract_z, enabled=not cryspy_atom.fract_z_constraint, min=-1, max=1, fittable=True, fit=cryspy_atom.fract_z_refinement))
-                            ed_atom['_occupancy'] = dict(Parameter(cryspy_atom.occupancy, enabled=not cryspy_atom.occupancy_constraint, min=0, max=1, fittable=True, fit=cryspy_atom.occupancy_refinement))
+                            ed_atom['_fract_x'] = dict(Parameter(cryspy_atom.fract_x, min=-1, max=1, fittable=True, fit=cryspy_atom.fract_x_refinement))
+                            ed_atom['_fract_y'] = dict(Parameter(cryspy_atom.fract_y, min=-1, max=1, fittable=True, fit=cryspy_atom.fract_y_refinement))
+                            ed_atom['_fract_z'] = dict(Parameter(cryspy_atom.fract_z, min=-1, max=1, fittable=True, fit=cryspy_atom.fract_z_refinement))
+                            ed_atom['_occupancy'] = dict(Parameter(cryspy_atom.occupancy, min=0, max=1, fittable=True, fit=cryspy_atom.occupancy_refinement))
                             ed_atom['_adp_type'] = dict(Parameter(cryspy_atom.adp_type))
-                            ed_atom['_B_iso_or_equiv'] = dict(Parameter(cryspy_atom.b_iso_or_equiv, enabled=not cryspy_atom.b_iso_or_equiv_constraint, min=0, max=1, fittable=True, fit=cryspy_atom.b_iso_or_equiv_refinement))
+                            ed_atom['_B_iso_or_equiv'] = dict(Parameter(cryspy_atom.b_iso_or_equiv, min=0, max=1, fittable=True, fit=cryspy_atom.b_iso_or_equiv_refinement))
                             ed_atom['_multiplicity'] = dict(Parameter(cryspy_atom.multiplicity))
                             ed_atom['_Wyckoff_symbol'] = dict(Parameter(cryspy_atom.wyckoff_symbol))
                             ed_atoms.append(ed_atom)

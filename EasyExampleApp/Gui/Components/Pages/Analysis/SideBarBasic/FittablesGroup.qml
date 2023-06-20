@@ -93,21 +93,23 @@ Column {
             }
 
             EaComponents.TableViewLabel {
-                text: `${item.group}.${item.parentName}.${item.name}`
+                text: parameterName(item)
                 textFormat: Text.PlainText
                 elide: Text.ElideMiddle
             }
 
             EaComponents.TableViewTextInput {
                 id: valueColumn
+                enabled: item.enabled
                 text: item.value.toFixed(4)
                 onEditingFinished: {
                     focus = false
                     console.debug('-------------------- Fittable editing on Analysis page finished --------------------')
-                    Globals.Proxies.main.fittables.edit(item.group,
-                                                        item.parentIndex,
-                                                        item.name,
-                                                        'value',
+                    Globals.Proxies.main.fittables.edit(item.blockType,
+                                                        item.blockIndex,
+                                                        item.loopName,
+                                                        item.paramIndex,
+                                                        item.paramName,
                                                         text)
                 }
             }
@@ -181,6 +183,17 @@ Column {
     }
 
     // Logic
+
+    function parameterName(item) {
+        let name
+        if (typeof item.loopName === 'undefined') {
+            name = `${item.blockType}[${item.blockIndex}].${item.paramName}`
+        } else {
+            name = `${item.blockType}[${item.blockIndex}].${item.loopName}[${item.paramIndex}].${item.paramName}`
+        }
+        name = name.replace(/\._/g, ".")  // replace all '._' to '.' for prettier name
+        return name
+    }
 
     function enableOpenGL() {
         if (Globals.Proxies.main.plotting.currentLib1d === 'QtCharts') {

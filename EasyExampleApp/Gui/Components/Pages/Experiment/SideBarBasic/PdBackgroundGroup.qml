@@ -70,10 +70,12 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewTextInput {
                 text: Globals.Proxies.experimentLoopParameterValue('_pd_background', '_2theta', index)
+                onEditingFinished: Globals.Proxies.setExperimentLoopParameterValue('_pd_background', '_2theta', index, text)
             }
 
             EaComponents.TableViewTextInput {
                 text: Globals.Proxies.experimentLoopParameterValue('_pd_background', '_intensity', index)
+                onEditingFinished: Globals.Proxies.setExperimentLoopParameterValue('_pd_background', '_intensity', index, text)
             }
 
             EaComponents.TableViewLabel {
@@ -87,7 +89,6 @@ EaElements.GroupColumn {
 
         }
 
-        onCurrentIndexChanged: Globals.Proxies.main.model.currentIndex = currentIndex
     }
 
 }

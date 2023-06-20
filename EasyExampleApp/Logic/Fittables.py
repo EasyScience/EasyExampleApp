@@ -30,9 +30,11 @@ class Parameter(dict):
                 min=-1.0,
                 max=1.0,
                 unit='',
+                enabled=True,
                 fittable=False,
                 fit=False):
         self['value'] = value
+        self['enabled'] = enabled
         self['fittable'] = fittable
         self['fit'] = fit
         self['error'] = error
@@ -63,8 +65,9 @@ class Fittables(QObject):
     def dataJson(self):
         return self._dataJson
 
+    #
     @Slot(str, int, str, str, str)
-    def edit(self, block, blockIndex, name, item, value):
+    def edit_OLD(self, block, blockIndex, name, item, value):
         console.debug(f"Editing fittable '{block}[{blockIndex}].{name}.{item}' to '{value}'")
         page = 'analysis'
         if block == 'experiment':
@@ -72,41 +75,110 @@ class Fittables(QObject):
         elif block == 'model':
             self._proxy.model.editParameter(page, blockIndex, name, item, value)
 
+
+    @Slot(str, int, str, int, str, float)
+    def edit(self, blockType, blockIndex, loopName, paramIndex, paramName, value):
+        if loopName == '':
+            console.debug(f"Editing fittable {blockType}[{blockIndex}].{paramName}.value to '{value}'")
+            if blockType == 'experiment':
+                self._proxy.experiment.setMainParameterValue(paramName, value)
+            elif blockType == 'model':
+                self._proxy.model.setMainParameterValue(paramName, value)
+        else:
+            console.debug(f"Editing fittable {blockType}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.value to '{value}'")
+            if blockType == 'experiment':
+                self._proxy.experiment.setLoopParamValue(loopName, paramName, paramIndex, value)
+            elif blockType == 'model':
+                self._proxy.model.setLoopParamValue(loopName, paramName, paramIndex, value)
+
+        #page = 'analysis'
+        #if block == 'experiment':
+        #    self._proxy.experiment.editParameter(page, blockIndex, name, item, value)
+        #elif block == 'model':
+        #    self._proxy.model.editParameter(page, blockIndex, name, item, value)
+
     def set(self):
         console.debug('Fittables have been changed')
         _data = []
+
         for i in range(len(self._proxy.experiment.dataBlocks)):
             block = self._proxy.experiment.dataBlocks[i]
-            for name, param in block['params'].items():
-                if param['fittable']:
+
+            for paramName, paramContent in block['params'].items():
+                if paramContent['fittable']:
                     fittable = {}
-                    fittable['group'] = 'experiment'
-                    fittable['name'] = name
-                    fittable['parentIndex'] = i
-                    fittable['parentName'] = block['name']
-                    fittable['value'] = param['value']
-                    fittable['error'] = param['error']
-                    fittable['min'] = param['min']
-                    fittable['max'] = param['max']
-                    fittable['unit'] = param['unit']
-                    fittable['fit'] = param['fit']
+                    fittable['blockType'] = 'experiment'
+                    fittable['blockIndex'] = i
+                    fittable['blockName'] = block['name']
+                    fittable['paramName'] = paramName
+                    fittable['enabled'] = paramContent['enabled']
+                    fittable['value'] = paramContent['value']
+                    fittable['error'] = paramContent['error']
+                    fittable['min'] = paramContent['min']
+                    fittable['max'] = paramContent['max']
+                    fittable['unit'] = paramContent['unit']
+                    fittable['fit'] = paramContent['fit']
                     _data.append(fittable)
+
+            for loopName, loopContent in block['loops'].items():
+                for paramIndex, param in enumerate(loopContent):
+                    for paramName, paramContent in param.items():
+                        if paramContent['fittable']:
+                            fittable = {}
+                            fittable['blockType'] = 'experiment'
+                            fittable['blockIndex'] = i
+                            fittable['blockName'] = block['name']
+                            fittable['loopName'] = loopName
+                            fittable['paramIndex'] = paramIndex
+                            fittable['paramName'] = paramName
+                            fittable['enabled'] = paramContent['enabled']
+                            fittable['value'] = paramContent['value']
+                            fittable['error'] = paramContent['error']
+                            fittable['min'] = paramContent['min']
+                            fittable['max'] = paramContent['max']
+                            fittable['unit'] = paramContent['unit']
+                            fittable['fit'] = paramContent['fit']
+                            _data.append(fittable)
+
         for i in range(len(self._proxy.model.dataBlocks)):
             block = self._proxy.model.dataBlocks[i]
-            for name, param in block['params'].items():
-                if param['fittable']:
+
+            for paramName, paramContent in block['params'].items():
+                if paramContent['fittable']:
                     fittable = {}
-                    fittable['group'] = 'model'
-                    fittable['name'] = name
-                    fittable['parentIndex'] = i
-                    fittable['parentName'] = block['name']
-                    fittable['value'] = param['value']
-                    fittable['error'] = param['error']
-                    fittable['min'] = param['min']
-                    fittable['max'] = param['max']
-                    fittable['unit'] = param['unit']
-                    fittable['fit'] = param['fit']
+                    fittable['blockType'] = 'model'
+                    fittable['blockIndex'] = i
+                    fittable['blockName'] = block['name']
+                    fittable['paramName'] = paramName
+                    fittable['enabled'] = paramContent['enabled']
+                    fittable['value'] = paramContent['value']
+                    fittable['error'] = paramContent['error']
+                    fittable['min'] = paramContent['min']
+                    fittable['max'] = paramContent['max']
+                    fittable['unit'] = paramContent['unit']
+                    fittable['fit'] = paramContent['fit']
                     _data.append(fittable)
+
+            for loopName, loopContent in block['loops'].items():
+                for paramIndex, param in enumerate(loopContent):
+                    for paramName, paramContent in param.items():
+                        if paramContent['fittable']:
+                            fittable = {}
+                            fittable['blockType'] = 'model'
+                            fittable['blockIndex'] = i
+                            fittable['blockName'] = block['name']
+                            fittable['loopName'] = loopName
+                            fittable['paramIndex'] = paramIndex
+                            fittable['paramName'] = paramName
+                            fittable['enabled'] = paramContent['enabled']
+                            fittable['value'] = paramContent['value']
+                            fittable['error'] = paramContent['error']
+                            fittable['min'] = paramContent['min']
+                            fittable['max'] = paramContent['max']
+                            fittable['unit'] = paramContent['unit']
+                            fittable['fit'] = paramContent['fit']
+                            _data.append(fittable)
+
         if len(_data):
             self._data = _data
             self.dataChanged.emit()

@@ -9,6 +9,7 @@ import lmfit
 from PySide6.QtCore import QObject, Signal, Slot, Property, QThreadPool
 
 from EasyApp.Logic.Logging import console
+from Logic.Data import Data
 
 try:
     from cryspy.procedure_rhochi.rhochi_by_dictionary import \
@@ -44,7 +45,6 @@ class Worker(QObject):
         ###QThread.setTerminationEnabled()
 
     def run(self):
-
         def callbackFunc(params, iter, resid, *args, **kws):
             console.debug(f"Iteration: {iter:5d},   Reduced chi2 per {self._proxy.fitting._pointsCount} points: {self._proxy.fitting._chiSq/self._proxy.fitting._pointsCount:16.6f}")
             self._proxy.fitting._fitIteration = iter
@@ -75,9 +75,8 @@ class Worker(QObject):
 
         def chiSqFunc(params):
             for param in params:
-                name = param.split('__')
-                way = (name[0], name[1], tuple([np.int_(name[2])]))
-                self._cryspyDict[way[0]][way[1]][way[2]] = params[param].value
+                block, group, idx = Data.strToCryspyDictParamPath(param)
+                self._cryspyDict[block][group][idx] = params[param].value
             self._proxy.fitting.chiSq, _, _, _, _ = rhochi_calc_chi_sq_by_dictionary(
                 self._cryspyDict,
                 dict_in_out=self._cryspyDictInOut,
@@ -103,7 +102,7 @@ class Worker(QObject):
         param_0 = [self._cryspyDict[way[0]][way[1]][way[2]] for way in parameter_names_free]
         paramsLmfit = lmfit.Parameters()
         for name, val in zip(parameter_names_free, param_0):
-            nameStr = f'{name[0]}__{name[1]}__{name[2][0]}'
+            nameStr = Data.cryspyDictParamPathToStr(name)
             #self._paramsInit.add(nameStr, value=val)
             paramsLmfit.add(nameStr, value=val)
 
@@ -137,6 +136,10 @@ class Worker(QObject):
 
             self._proxy.fitting._chiSqStart = self._proxy.fitting.chiSq
             self._proxy.status.fitStatus = 'Success'
+
+            names = [Data.cryspyDictParamPathToStr(name) for name in parameter_names_free]
+            self._proxy.experiment.editDataBlockByCryspyDictParams(names)
+            self._proxy.model.editDataBlockByCryspyDictParams(names)
 
             #self._paramsInit.pretty_print()
             #result.params.pretty_print()

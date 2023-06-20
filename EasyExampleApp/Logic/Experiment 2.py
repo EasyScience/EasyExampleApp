@@ -201,9 +201,9 @@ class Experiment(QObject):
         self.paramChanged.emit()
 
     @Slot(str, str, int, float)
-    def setLoopParamValue(self, loopName, paramName, paramIndex, value):
-        self.editDataBlockLoopParam(loopName, paramName, paramIndex, value)
-        self.editCryspyDictByLoopParam(loopName, paramName, paramIndex, value)
+    def setLoopParameterValue(self, loopName, paramName, parameterIndex, value):
+        self.editDataBlockLoopParameter(loopName, paramName, parameterIndex, value)
+        self.editCryspyDictByLoopParam(loopName, paramName, parameterIndex, value)
 
         self.paramChanged.emit()
 
@@ -217,19 +217,19 @@ class Experiment(QObject):
             return
         self._dataBlocks[blockIndex]['params'][paramName]['value'] = value
 
-        console.debug(f"Parameter {block}[{blockIndex}].{paramName}.value changed: '{oldValue}' -> '{value}'")
+        console.debug(f"Parameter '{block}[{blockIndex}].{paramName}.value' has been changed: '{oldValue}' -> '{value}'")
 
-    def editDataBlockLoopParam(self, loopName, paramName, paramIndex, value, blockIndex=None):
+    def editDataBlockLoopParameter(self, loopName, paramName, parameterIndex, value, blockIndex=None):
         block = 'experiment'
         if blockIndex is None:
             blockIndex = self._currentIndex
 
-        oldValue = self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName]['value']
+        oldValue = self._dataBlocks[blockIndex]['loops'][loopName][parameterIndex][paramName]['value']
         if oldValue == value:
             return
-        self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName]['value'] = value
+        self._dataBlocks[blockIndex]['loops'][loopName][parameterIndex][paramName]['value'] = value
 
-        console.debug(f"Parameter {block}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.value changed: '{oldValue}' -> '{value}'")
+        console.debug(f"Parameter {block}[{blockIndex}].loops['{loopName}'][{parameterIndex}]['{paramName}']['value'] changed: '{oldValue}' -> '{value}'")
 
     def editCryspyDictByMainParam(self, paramName, value):
         path, value = self.cryspyDictPathByMainParam(paramName, value)
@@ -241,8 +241,8 @@ class Experiment(QObject):
 
         console.debug(f"Cryspy dict parameter {path} changed: '{oldValue}' -> '{value}'")
 
-    def editCryspyDictByLoopParam(self, loopName, paramName, paramIndex, value):
-        path, value = self.cryspyDictPathByLoopParam(loopName, paramName, paramIndex, value)
+    def editCryspyDictByLoopParam(self, loopName, paramName, parameterIndex, value):
+        path, value = self.cryspyDictPathByLoopParam(loopName, paramName, parameterIndex, value)
 
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
@@ -307,7 +307,7 @@ class Experiment(QObject):
 
         return path, value
 
-    def cryspyDictPathByLoopParam(self, loopName, paramName, paramIndex, value):
+    def cryspyDictPathByLoopParam(self, loopName, paramName, parameterIndex, value):
         blockIndex = self._currentIndex
         blockName = self._dataBlocks[blockIndex]['name']
         path = ['','','']
@@ -317,17 +317,17 @@ class Experiment(QObject):
         if loopName == '_pd_background':
             if paramName == '_2theta':
                 path[1] = 'background_ttheta'
-                path[2] = paramIndex
+                path[2] = parameterIndex
                 value = np.deg2rad(value)
             if paramName == '_intensity':
                 path[1] = 'background_intensity'
-                path[2] = paramIndex
+                path[2] = parameterIndex
 
         # _phase
         if loopName == '_phase':
             if paramName == '_scale':
                 path[1] = 'phase_scale'
-                path[2] = paramIndex
+                path[2] = parameterIndex
 
         return path, value
 
@@ -337,10 +337,13 @@ class Experiment(QObject):
 
             # pd (powder diffraction) block
             if block.startswith('pd_'):
+                blockType = 'experiment'
                 blockName = block[3:]
+
+                blockName = None
                 loopName = None
                 paramName = None
-                paramIndex = None
+                parameterIndex = None
                 value = self._proxy.data._cryspyDict[block][group][idx]
 
                 # wavelength
@@ -381,28 +384,29 @@ class Experiment(QObject):
                 elif group == 'background_ttheta':
                     loopName = '_pd_background'
                     paramName = '_2theta'
-                    paramIndex = idx[0]
+                    parameterIndex = idx[0]
                     value = np.rad2deg(value)
 
                 # background_intensity
                 elif group == 'background_intensity':
                     loopName = '_pd_background'
                     paramName = '_intensity'
-                    paramIndex = idx[0]
+                    parameterIndex = idx[0]
 
                 # phase_scale
                 elif group == 'phase_scale':
                     loopName = '_phase'
                     paramName = '_scale'
-                    paramIndex = idx[0]
+                    parameterIndex = idx[0]
 
                 value = float(value)  # convert float64 to float (needed for QML access)
                 blockIndex = [block['name'] for block in self._dataBlocks].index(blockName)
 
+                ##
                 if loopName is None:
                     self.editDataBlockMainParam(paramName, value, blockIndex)
                 else:
-                    self.editDataBlockLoopParam(loopName, paramName, paramIndex, value, blockIndex)
+                    self.editDataBlockLoopParameter(loopName, paramName, parameterIndex, value, blockIndex)
 
 
 

@@ -30,7 +30,7 @@ Column {
 
         Component.onCompleted: Globals.Refs.app.analysisPage.startFittingButton = this
 
-        Loader { source: "FitStatusDialog.qml" }
+        /////////////////////Loader { source: "FitStatusDialog.qml" }
     }
 
 }

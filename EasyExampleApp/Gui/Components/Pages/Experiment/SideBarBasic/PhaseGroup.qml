@@ -70,6 +70,7 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewTextInput {
                 text: Globals.Proxies.experimentLoopParameterValue('_phase', '_scale', index)
+                onEditingFinished: Globals.Proxies.setExperimentLoopParameterValue('_phase', '_scale', index, text)
             }
 
             EaComponents.TableViewButton {
