@@ -261,6 +261,7 @@ class Experiment(QObject):
         if paramName == '_pd_meas_2theta_offset':
             path[1] = 'offset_ttheta'
             path[2] = 0
+            value = np.deg2rad(value)
 
         # _pd_instr_resolution
         elif paramName == '_pd_instr_resolution_u':
@@ -345,6 +346,7 @@ class Experiment(QObject):
                 # offset_ttheta
                 elif group == 'offset_ttheta':
                     paramName = '_pd_meas_2theta_offset'
+                    value = np.rad2deg(value)
 
                 # resolution_parameters
                 elif group == 'resolution_parameters':
