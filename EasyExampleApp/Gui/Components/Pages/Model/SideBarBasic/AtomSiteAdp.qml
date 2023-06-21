@@ -57,7 +57,7 @@ EaElements.GroupColumn {
             EaComponents.TableViewLabel {
                 id: atomSiteIso
                 width: EaStyle.Sizes.fontPixelSize * 3.7
-                horizontalAlignment: Text.AlignRight
+                horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("iso")
             }
