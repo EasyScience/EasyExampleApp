@@ -93,8 +93,8 @@ EaElements.RemoteController {
 
         res.push( rc.compare(Globals.Refs.app.appbar.homeButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.projectButton.enabled, false) )
-        res.push( rc.compare(Globals.Refs.app.appbar.experimentButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.modelButton.enabled, false) )
+        res.push( rc.compare(Globals.Refs.app.appbar.experimentButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
 
@@ -112,8 +112,8 @@ EaElements.RemoteController {
 
         res.push( rc.compare(Globals.Refs.app.appbar.homeButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.projectButton.enabled, true) )
-        res.push( rc.compare(Globals.Refs.app.appbar.experimentButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.modelButton.enabled, false) )
+        res.push( rc.compare(Globals.Refs.app.appbar.experimentButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
 
@@ -134,8 +134,8 @@ EaElements.RemoteController {
 
         res.push( rc.compare(Globals.Refs.app.appbar.homeButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.projectButton.enabled, true) )
-        res.push( rc.compare(Globals.Refs.app.appbar.experimentButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.modelButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.appbar.experimentButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
 
@@ -161,7 +161,7 @@ EaElements.RemoteController {
 //        res.push( rc.compare(Globals.Refs.app.modelPage.plotView.xData, Globals.Tests.expected.created.experiment.xData) )
 //        res.push( rc.compare(Globals.Refs.app.modelPage.plotView.calculatedYData, Globals.Tests.expected.created.model.yData) )
 
-        res.push( rc.compare(Globals.Proxies.main.status.calculator, 'CrysPy') )
+        res.push( rc.compare(Globals.Proxies.main.status.phaseCount, '1') )
 
         rc.mouseClick(Globals.Refs.app.modelPage.continueButton)
         //rc.wait(2000)
@@ -173,8 +173,8 @@ EaElements.RemoteController {
 
         res.push( rc.compare(Globals.Refs.app.appbar.homeButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.projectButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.appbar.modelButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.experimentButton.enabled, true) )
-        res.push( rc.compare(Globals.Refs.app.appbar.modelButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
 
@@ -209,8 +209,8 @@ EaElements.RemoteController {
 
         res.push( rc.compare(Globals.Refs.app.appbar.homeButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.projectButton.enabled, true) )
-        res.push( rc.compare(Globals.Refs.app.appbar.experimentButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.modelButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.appbar.experimentButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
 
@@ -219,6 +219,7 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.analysisPage.continueButton.text, 'Continue') )
         res.push( rc.compare(Globals.Refs.app.analysisPage.continueButton.enabled, true) )
 
+        res.push( rc.compare(Globals.Proxies.main.status.calculator, 'CrysPy') )
         res.push( rc.compare(Globals.Proxies.main.status.minimizer, 'Lmfit (BFGS)') )
 
         rc.wait(2000)
