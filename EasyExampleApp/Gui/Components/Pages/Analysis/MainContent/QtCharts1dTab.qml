@@ -50,6 +50,7 @@ Column {
             EaCharts.QtCharts1dBase {
                 id: mainChart
 
+                anchors.topMargin: EaStyle.Sizes.toolButtonHeight - EaStyle.Sizes.fontPixelSize - 1
                 anchors.bottomMargin: -12 - EaStyle.Sizes.fontPixelSize
 
                 useOpenGL: container.useOpenGL
@@ -95,6 +96,8 @@ Column {
 
                     color: EaStyle.Colors.chartForegroundsExtra[2]
                     width: 2
+
+                    onHovered: (point, state) => showMainTooltip(mainChart, point, state)
                 }
 
                 // Background curve
@@ -108,6 +111,8 @@ Column {
 
                     color: EaStyle.Colors.chartForegrounds[1]
                     width: 1
+
+                    onHovered: (point, state) => showMainTooltip(mainChart, point, state)
                 }
 
                 // Calculated curve
@@ -121,6 +126,56 @@ Column {
 
                     color: calcSerieColor
                     width: 2
+
+                    onHovered: (point, state) => showMainTooltip(mainChart, point, state)
+                }
+
+                // Tool buttons
+                Row {
+                    id: toolButtons
+
+                    x: mainChart.plotArea.x + mainChart.plotArea.width - width
+                    y: mainChart.plotArea.y - height - EaStyle.Sizes.fontPixelSize
+
+                    spacing: 0.25 * EaStyle.Sizes.fontPixelSize
+
+                    EaElements.TabButton {
+                        checked: mainChart.allowHover
+                        autoExclusive: false
+                        height: EaStyle.Sizes.toolButtonHeight
+                        width: EaStyle.Sizes.toolButtonHeight
+                        borderColor: EaStyle.Colors.chartAxis
+                        fontIcon: "comment-alt"
+                        ToolTip.text: qsTr("Show tooltip by hovering")
+                        onClicked: mainChart.allowHover = !mainChart.allowHover
+                    }
+
+                    Item {
+                        height: 1
+                        width: parent.spacing
+                    }
+
+                    EaElements.TabButton {
+                        checked: mainChart.allowZoom
+                        autoExclusive: false
+                        height: EaStyle.Sizes.toolButtonHeight
+                        width: EaStyle.Sizes.toolButtonHeight
+                        borderColor: EaStyle.Colors.chartAxis
+                        fontIcon: "expand"
+                        ToolTip.text: qsTr("Enable box zoom")
+                        onClicked: mainChart.allowZoom = !mainChart.allowZoom
+                    }
+
+                    EaElements.TabButton {
+                        checkable: false
+                        height: EaStyle.Sizes.toolButtonHeight
+                        width: EaStyle.Sizes.toolButtonHeight
+                        borderColor: EaStyle.Colors.chartAxis
+                        fontIcon: "home"
+                        ToolTip.text: qsTr("Reset to default view")
+                        onClicked: mainChart.zoomReset()
+                    }
+
                 }
             }
         }
@@ -211,6 +266,8 @@ Column {
                     useOpenGL: residualChart.useOpenGL
 
                     color: EaStyle.Colors.chartForegrounds[2]
+
+                    onHovered: (point, state) => showMainTooltip(residualChart, point, state)
                 }
             }
         }
@@ -229,7 +286,7 @@ Column {
         EaCharts.QtCharts1dBase {
             id: xAxisChart
 
-            axisX.title: mainChart.xAxisTitle
+            axisX.title: mainChart.axisX.title
             axisX.min: mainChart.axisX.min
             axisX.max: mainChart.axisX.max
             axisX.lineVisible: false
@@ -265,7 +322,7 @@ Column {
         parent: container.parent
 
         x: mainChart.plotArea.x + mainChart.plotArea.width - width - 12 - EaStyle.Sizes.fontPixelSize
-        y: mainChart.plotArea.y - 12 + EaStyle.Sizes.fontPixelSize
+        y: mainChart.plotArea.y - 12 + EaStyle.Sizes.fontPixelSize + mainChart.anchors.topMargin + EaStyle.Sizes.fontPixelSize - 1
         width: childrenRect.width
         height: childrenRect.height
 
@@ -299,6 +356,17 @@ Column {
                 color: braggPeaksSerie.color
             }
         }
+    }
+
+    ///////////
+    // ToolTips
+    ///////////
+
+    EaElements.ToolTip {
+        id: dataToolTip
+
+        arrowLength: 0
+        textFormat: Text.RichText
     }
 
     // Save references to chart series to be accessible from Python for updating data
@@ -364,6 +432,18 @@ Column {
         braggPeaksChart.plotArea.x = mainChart.plotArea.x
         mainChart.plotArea.width = xAxisChart.plotArea.width
         console.debug('All charts have been aligned')
+    }
+
+    function showMainTooltip(chart, point, state) {
+        if (!mainChart.allowHover) {
+            return
+        }
+        const pos = chart.mapToPosition(Qt.point(point.x, point.y))
+        dataToolTip.x = pos.x
+        dataToolTip.y = pos.y
+        dataToolTip.text = `<p align="left">x: ${point.x.toFixed(2)}<br\>y: ${point.y.toFixed(2)}</p>`
+        dataToolTip.parent = chart
+        dataToolTip.visible = state
     }
 
 }

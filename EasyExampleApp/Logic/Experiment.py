@@ -568,3 +568,8 @@ class Experiment(QObject):
                 self.addXArray(x_array)
                 self.addYMeasArray(y_meas_array)
                 self.addYBkgArray(y_bkg_array_interp)
+
+#
+#                # Calculate data based on...
+                y_calc_array = self._proxy.model.calculateDiffractionPattern()
+                self._proxy.model.addYCalcArray(y_calc_array)

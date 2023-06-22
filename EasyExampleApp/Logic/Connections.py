@@ -98,7 +98,7 @@ class Connections(QObject):
 
     def onModelYCalcArraysChanged(self):
         self._proxy.analysis.calculateYCalcTotal()
-        self._proxy.plotting.drawCalculatedOnModelChart()
+        ############self._proxy.plotting.drawCalculatedOnModelChart()
 
     #def onModelParameterEdited(self, page, blockIndex, name):
     #    self._proxy.model.setDataBlocksJson()
@@ -108,15 +108,23 @@ class Connections(QObject):
     #    else:
     #        self._proxy.model.updateYCalcArrayByIndex(blockIndex)
     #    self._proxy.project.setNeedSaveToTrue()
-    def onModelParamChanged(self):
+    def onModelParamChanged_OLD(self):
         self._proxy.model.defined = bool(len(self._proxy.model.dataBlocks))
-        self._proxy.model.updateCurrentModelYCalcArray()
         if self._proxy.analysis.defined:
             self._proxy.fittables.set()
             self._proxy.analysis.calculateYCalcTotal()
 
+    #
+    def onModelParamChanged(self):
+        self._proxy.model.defined = bool(len(self._proxy.model.dataBlocks))
+        self._proxy.model.setStructViewAtomsModel()
+        self._proxy.model.setStructureViewCellModel()
+        self._proxy.model.setStructureViewAxesModel()
+
+
     def onModelCurrentIndexChanged(self):
-        self._proxy.plotting.drawCalculatedOnModelChart()
+        #########self._proxy.plotting.drawCalculatedOnModelChart()
+        pass
 
     # Analysis
 

@@ -42,7 +42,7 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
-        title: qsTr("Atom site (atomic displacement parameters)")
+        title: qsTr("Atomic displacement")
         visible: Globals.Proxies.main.model.defined
         last: true
 

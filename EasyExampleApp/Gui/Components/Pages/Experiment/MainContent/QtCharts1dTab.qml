@@ -13,56 +13,125 @@ import EasyApp.Gui.Charts as EaCharts
 import Gui.Globals as Globals
 
 
-EaCharts.QtCharts1dMeasVsCalc {
-    id: chart
+Rectangle {
+    color: EaStyle.Colors.chartBackground
 
-    useOpenGL: EaGlobals.Vars.useOpenGL //Globals.Proxies.main.plotting.useWebGL1d
+    EaCharts.QtCharts1dMeasVsCalc {
+        id: chartView
 
-    axisX.title: "2θ (degree)"
-    axisX.min: parameterValue('xMin')
-    axisX.max: parameterValue('xMax')
+        anchors.topMargin: EaStyle.Sizes.toolButtonHeight - EaStyle.Sizes.fontPixelSize - 1
 
-    axisY.title: "Icalc"
-    axisY.min: parameterValue('yMin')
-    axisY.max: parameterValue('yMax')
+        useOpenGL: EaGlobals.Vars.useOpenGL //Globals.Proxies.main.plotting.useWebGL1d
 
-    // Legend
-    Rectangle {
-        x: chart.plotArea.x + chart.plotArea.width - width - EaStyle.Sizes.fontPixelSize
-        y: chart.plotArea.y + EaStyle.Sizes.fontPixelSize
-        width: childrenRect.width
-        height: childrenRect.height
+        axisX.title: "2θ (degree)"
+        axisX.min: parameterValue('xMin')
+        axisX.max: parameterValue('xMax')
 
-        color: EaStyle.Colors.mainContentBackgroundHalfTransparent
-        border.color: EaStyle.Colors.chartGridLine
+        axisY.title: "Imeas, Ibkg"
+        axisY.min: parameterValue('yMin')
+        axisY.max: parameterValue('yMax')
 
-        Column {
-            leftPadding: EaStyle.Sizes.fontPixelSize
-            rightPadding: EaStyle.Sizes.fontPixelSize
-            topPadding: EaStyle.Sizes.fontPixelSize * 0.5
-            bottomPadding: EaStyle.Sizes.fontPixelSize * 0.5
+        measSerie.onHovered: (point, state) => showMainTooltip(chartView, point, state)
+        bkgSerie.onHovered: (point, state) => showMainTooltip(chartView, point, state)
 
-            EaElements.Label {
-                text: '▬ Imeas (measured)'
-                color: measSerie.color
+        // Tool buttons
+        Row {
+            id: toolButtons
+
+            x: chartView.plotArea.x + chartView.plotArea.width - width
+            y: chartView.plotArea.y - height - EaStyle.Sizes.fontPixelSize
+
+            spacing: 0.25 * EaStyle.Sizes.fontPixelSize
+
+            EaElements.TabButton {
+                checked: chartView.allowHover
+                autoExclusive: false
+                height: EaStyle.Sizes.toolButtonHeight
+                width: EaStyle.Sizes.toolButtonHeight
+                borderColor: EaStyle.Colors.chartAxis
+                fontIcon: "comment-alt"
+                ToolTip.text: qsTr("Show tooltip by hovering")
+                onClicked: chartView.allowHover = !chartView.allowHover
             }
-            EaElements.Label {
-                text: '▬ Ibkg (background)'
-                color: bkgSerie.color
+
+            Item {
+                height: 1
+                width: parent.spacing
+            }
+
+            EaElements.TabButton {
+                checked: chartView.allowZoom
+                autoExclusive: false
+                height: EaStyle.Sizes.toolButtonHeight
+                width: EaStyle.Sizes.toolButtonHeight
+                borderColor: EaStyle.Colors.chartAxis
+                fontIcon: "expand"
+                ToolTip.text: qsTr("Enable box zoom")
+                onClicked: chartView.allowZoom = !chartView.allowZoom
+            }
+
+            EaElements.TabButton {
+                checkable: false
+                height: EaStyle.Sizes.toolButtonHeight
+                width: EaStyle.Sizes.toolButtonHeight
+                borderColor: EaStyle.Colors.chartAxis
+                fontIcon: "home"
+                ToolTip.text: qsTr("Reset to default view")
+                onClicked: chartView.zoomReset()
+            }
+
+        }
+        // Tool buttons
+
+        // Legend
+        Rectangle {
+            x: chartView.plotArea.x + chartView.plotArea.width - width - EaStyle.Sizes.fontPixelSize
+            y: chartView.plotArea.y + EaStyle.Sizes.fontPixelSize
+            width: childrenRect.width
+            height: childrenRect.height
+
+            color: EaStyle.Colors.mainContentBackgroundHalfTransparent
+            border.color: EaStyle.Colors.chartGridLine
+
+            Column {
+                leftPadding: EaStyle.Sizes.fontPixelSize
+                rightPadding: EaStyle.Sizes.fontPixelSize
+                topPadding: EaStyle.Sizes.fontPixelSize * 0.5
+                bottomPadding: EaStyle.Sizes.fontPixelSize * 0.5
+
+                EaElements.Label {
+                    text: '━  Imeas (measured)'
+                    color: chartView.measSerie.color
+                }
+                EaElements.Label {
+                    text: '─  Ibkg (background)'
+                    color: chartView.bkgSerie.color
+                }
             }
         }
-    }
+        // Legend
 
-    // Data is set in python backend
+        // ToolTips
+        EaElements.ToolTip {
+            id: dataToolTip
 
-    Component.onCompleted: {
-        Globals.Refs.app.experimentPage.plotView = this
-        Globals.Proxies.main.plotting.setQtChartsSerieRef('experimentPage',
-                                                          'measSerie',
-                                                          this.measSerie)
-        Globals.Proxies.main.plotting.setQtChartsSerieRef('experimentPage',
-                                                          'bkgSerie',
-                                                          this.bkgSerie)
+            arrowLength: 0
+            textFormat: Text.RichText
+        }
+        // ToolTips
+
+        // Data is set in python backend
+
+        Component.onCompleted: {
+            Globals.Refs.app.experimentPage.plotView = chartView
+            Globals.Proxies.main.plotting.setQtChartsSerieRef('experimentPage',
+                                                              'measSerie',
+                                                              chartView.measSerie)
+            Globals.Proxies.main.plotting.setQtChartsSerieRef('experimentPage',
+                                                              'bkgSerie',
+                                                              chartView.bkgSerie)
+        }
+
     }
 
     // Logic
@@ -76,4 +145,18 @@ EaCharts.QtCharts1dMeasVsCalc {
         const formattedValue = value.toFixed(4)
         return formattedValue
     }
+
+    function showMainTooltip(chart, point, state) {
+        if (!chartView.allowHover) {
+            return
+        }
+        const pos = chart.mapToPosition(Qt.point(point.x, point.y))
+        dataToolTip.x = pos.x
+        dataToolTip.y = pos.y
+        dataToolTip.text = `<p align="left">x: ${point.x.toFixed(2)}<br\>y: ${point.y.toFixed(2)}</p>`
+        dataToolTip.parent = chart
+        dataToolTip.visible = state
+    }
+
 }
+

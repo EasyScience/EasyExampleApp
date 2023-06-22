@@ -42,25 +42,25 @@ EaComponents.ApplicationWindow {
             enabled: Globals.Proxies.main.project.created &&
                     Globals.Proxies.main.project.needSave
             highlighted: true
-            fontIcon: "save"
-            ToolTip.text: qsTr("Save current state of the project")
+            fontIcon: 'save'
+            ToolTip.text: qsTr('Save current state of the project')
             onClicked: Globals.Proxies.main.project.save()
         },
 
         EaElements.ToolButton {
             enabled: false
-            fontIcon: "undo"
+            fontIcon: 'undo'
         },
 
         EaElements.ToolButton {
             enabled: false
-            fontIcon: "redo"
+            fontIcon: 'redo'
         },
 
         EaElements.ToolButton {
             enabled: Globals.Vars.homePageEnabled
-            fontIcon: "backspace"
-            ToolTip.text: qsTr("Reset to initial state without project, model and data")
+            fontIcon: 'backspace'
+            ToolTip.text: qsTr('Reset to initial state without project, model and data')
             onClicked: {
                 appBarCentralTabs.setCurrentIndex(0)
                 Globals.Vars.projectPageEnabled = false
@@ -80,20 +80,20 @@ EaComponents.ApplicationWindow {
     appBarRightButtons: [
 
         EaElements.ToolButton {
-            fontIcon: "cog"
-            ToolTip.text: qsTr("Application preferences")
+            fontIcon: 'cog'
+            ToolTip.text: qsTr('Application preferences')
             onClicked: EaGlobals.Vars.showAppPreferencesDialog = true
         },
 
         EaElements.ToolButton {
-            fontIcon: "question-circle"
-            ToolTip.text: qsTr("Get online help")
+            fontIcon: 'question-circle'
+            ToolTip.text: qsTr('Get online help')
             onClicked: Qt.openUrlExternally(Globals.Configs.appConfig.homePageUrl)
         },
 
         EaElements.ToolButton {
-            fontIcon: "bug"
-            ToolTip.text: qsTr("Report a bug or issue")
+            fontIcon: 'bug'
+            ToolTip.text: qsTr('Report a bug or issue')
             onClicked: Qt.openUrlExternally(Globals.Configs.appConfig.issuesUrl)
         }
 
@@ -106,9 +106,9 @@ EaComponents.ApplicationWindow {
         // Home tab
         EaElements.AppBarTabButton {
             enabled: Globals.Vars.homePageEnabled
-            fontIcon: "home"
-            text: qsTr("Home")
-            ToolTip.text: qsTr("Home page")
+            fontIcon: 'home'
+            text: qsTr('Home')
+            ToolTip.text: qsTr('Home page')
             Component.onCompleted: {
                 homePageLoader.source = 'Pages/Home/Page.qml'
                 Globals.Refs.app.appbar.homeButton = this
@@ -118,45 +118,45 @@ EaComponents.ApplicationWindow {
         // Project tab
         EaElements.AppBarTabButton {
             enabled: Globals.Vars.projectPageEnabled
-            fontIcon: "archive"
-            text: qsTr("Project")
-            ToolTip.text: qsTr("Project description page")
+            fontIcon: 'archive'
+            text: qsTr('Project')
+            ToolTip.text: qsTr('Project description page')
             onEnabledChanged: enabled ?
                                   projectPageLoader.source = 'Pages/Project/PageStructure.qml' :
                                   projectPageLoader.source = ''
             Component.onCompleted: Globals.Refs.app.appbar.projectButton = this
         },
 
-        // Experiment tab
-        EaElements.AppBarTabButton {
-            enabled: Globals.Vars.experimentPageEnabled
-            fontIcon: "microscope"
-            text: qsTr("Experiment")
-            ToolTip.text: qsTr("Experimental settings and measured data page")
-            onEnabledChanged: enabled ?
-                                  experimentPageLoader.source = 'Pages/Experiment/PageStructure.qml' :
-                                  experimentPageLoader.source = ''
-            Component.onCompleted: Globals.Refs.app.appbar.experimentButton = this
-        },
-
         // Model tab
         EaElements.AppBarTabButton {
             enabled: Globals.Vars.modelPageEnabled
-            fontIcon: "gem"
-            text: qsTr("Model")
-            ToolTip.text: qsTr("Model description page")
+            fontIcon: 'gem'
+            text: qsTr('Model')
+            ToolTip.text: qsTr('Model description page')
             onEnabledChanged: enabled ?
                                   modelPageLoader.source = 'Pages/Model/PageStructure.qml' :
                                   modelPageLoader.source = ''
             Component.onCompleted: Globals.Refs.app.appbar.modelButton = this
         },
 
+        // Experiment tab
+        EaElements.AppBarTabButton {
+            enabled: Globals.Vars.experimentPageEnabled
+            fontIcon: 'microscope'
+            text: qsTr('Experiment')
+            ToolTip.text: qsTr('Experimental settings and measured data page')
+            onEnabledChanged: enabled ?
+                                  experimentPageLoader.source = 'Pages/Experiment/PageStructure.qml' :
+                                  experimentPageLoader.source = ''
+            Component.onCompleted: Globals.Refs.app.appbar.experimentButton = this
+        },
+
         // Analysis tab
         EaElements.AppBarTabButton {
             enabled: Globals.Vars.analysisPageEnabled
-            fontIcon: "calculator"
-            text: qsTr("Analysis")
-            ToolTip.text: qsTr("Simulation and fitting page")
+            fontIcon: 'calculator'
+            text: qsTr('Analysis')
+            ToolTip.text: qsTr('Simulation and fitting page')
             onEnabledChanged: enabled ?
                                   analysisPageLoader.source = 'Pages/Analysis/PageStructure.qml' :
                                   analysisPageLoader.source = ''
@@ -166,9 +166,9 @@ EaComponents.ApplicationWindow {
         // Summary tab
         EaElements.AppBarTabButton {
             enabled: Globals.Vars.summaryPageEnabled
-            fontIcon: "clipboard-list"
-            text: qsTr("Summary")
-            ToolTip.text: qsTr("Summary of the work done")
+            fontIcon: 'clipboard-list'
+            text: qsTr('Summary')
+            ToolTip.text: qsTr('Summary of the work done')
             onEnabledChanged: enabled ?
                                   summaryPageLoader.source = 'Pages/Summary/PageStructure.qml' :
                                   summaryPageLoader.source = ''
@@ -188,8 +188,8 @@ EaComponents.ApplicationWindow {
     contentArea: [
         Loader { id: homePageLoader },
         Loader { id: projectPageLoader },
-        Loader { id: experimentPageLoader },
         Loader { id: modelPageLoader },
+        Loader { id: experimentPageLoader },
         Loader { id: analysisPageLoader },
         Loader { id: summaryPageLoader }
     ]
@@ -205,7 +205,7 @@ EaComponents.ApplicationWindow {
     ////////////
 
     Loader {
-        source: Globals.Vars.isTestMode ? 'GuiTestsController.qml' : ""
+        source: Globals.Vars.isTestMode ? 'GuiTestsController.qml' : ''
     }
 
 }

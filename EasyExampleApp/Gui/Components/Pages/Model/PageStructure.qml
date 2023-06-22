@@ -21,11 +21,12 @@ EaComponents.ContentPage {
 
     mainView: EaComponents.MainContent {
         tabs: [
-            EaElements.TabButton { text: qsTr("Chart view") }
+            EaElements.TabButton { text: qsTr("Structure view") }
         ]
 
         items: [
-            Loader { source: `MainContent/${EaGlobals.Vars.currentLib1d}1dTab.qml` }
+            //Loader { source: `MainContent/${EaGlobals.Vars.currentLib1d}1dTab.qml` }
+            Loader { source: `MainContent/StructureViewTab.qml` }
         ]
     }
 
@@ -46,8 +47,8 @@ EaComponents.ContentPage {
 
         continueButton.onClicked: {
             console.debug(`Clicking '${continueButton.text}' button: ${this}`)
-            Globals.Vars.analysisPageEnabled = true
-            Globals.Refs.app.appbar.analysisButton.toggle()
+            Globals.Vars.experimentPageEnabled = true
+            Globals.Refs.app.appbar.experimentButton.toggle()
         }
 
         Component.onCompleted: Globals.Refs.app.modelPage.continueButton = continueButton
