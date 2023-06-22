@@ -20,6 +20,11 @@ EaElements.StatusBar {
     }
 
     EaElements.StatusBarItem {
+        key: qsTr('Phases')
+        value: Globals.Proxies.main.status.phaseCount
+    }
+
+    EaElements.StatusBarItem {
         key: qsTr('Data points')
         value: Globals.Proxies.main.status.dataPoints
     }

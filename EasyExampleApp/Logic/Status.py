@@ -7,6 +7,7 @@ from PySide6.QtCore import QObject, Signal, Property
 
 class Status(QObject):
     projectChanged = Signal()
+    phaseCountChanged = Signal()
     dataPointsChanged = Signal()
     calculatorChanged = Signal()
     minimizerChanged = Signal()
@@ -19,6 +20,7 @@ class Status(QObject):
         super().__init__(parent)
         self._proxy = parent
         self._project = 'Undefined'
+        self._phaseCount = ''
         self._dataPoints = ''
         self._calculator = ''
         self._minimizer = ''
@@ -26,15 +28,6 @@ class Status(QObject):
         self._fitIteration = ''
         self._goodnessOfFit = ''
         self._fitStatus = ''
-
-        self._as_json = [
-            {'label': 'a', 'value': 'b'},
-            {'label': 'a', 'value': 'b'},
-            {'label': 'a', 'value': 'b'},
-            {'label': 'a', 'value': 'b'},
-            {'label': 'a', 'value': 'b'},
-            {'label': 'a', 'value': 'b'}
-        ]
 
     @Property(str, notify=projectChanged)
     def project(self):
@@ -46,6 +39,17 @@ class Status(QObject):
             return
         self._project = newValue
         self.projectChanged.emit()
+
+    @Property(str, notify=phaseCountChanged)
+    def phaseCount(self):
+        return self._phaseCount
+
+    @phaseCount.setter
+    def phaseCount(self, newValue):
+        if self._phaseCount == newValue:
+            return
+        self._phaseCount = newValue
+        self.phaseCountChanged.emit()
 
     @Property(str, notify=dataPointsChanged)
     def dataPoints(self):

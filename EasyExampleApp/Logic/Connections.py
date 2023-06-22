@@ -87,10 +87,14 @@ class Connections(QObject):
     # Model
 
     def onModelDefinedChanged(self):
-        self._proxy.status.calculator = 'CrysPy'
+        pass
 
     def onModelDataBlocksChanged(self):
         self._proxy.model.defined = bool(len(self._proxy.model.dataBlocks))
+        if self._proxy.model.defined:
+            self._proxy.status.phaseCount = f'{len(self._proxy.model.dataBlocks)}'
+        else:
+            self._proxy.status.phaseCount = ''
         #self._proxy.model.setDataBlocksJson()
         #self._proxy.project.setNeedSaveToTrue()
         if self._proxy.analysis.defined:
@@ -129,6 +133,7 @@ class Connections(QObject):
     # Analysis
 
     def onAnalysisDefined(self):
+        self._proxy.status.calculator = 'CrysPy'
         self._proxy.status.minimizer = 'Lmfit (BFGS)'
         self._proxy.fittables.set()
         self._proxy.plotting.drawAllOnAnalysisChart()
