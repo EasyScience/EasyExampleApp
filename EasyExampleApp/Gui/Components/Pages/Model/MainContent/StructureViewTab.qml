@@ -7,6 +7,7 @@ import QtQuick.Controls
 import QtQuick3D
 import QtQuick3D.Helpers
 
+import EasyApp.Gui.Animations as EaAnimations
 import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Elements as EaElements
@@ -28,8 +29,9 @@ View3D {
     anchors.fill: parent
 
     environment: SceneEnvironment {
-        clearColor: "white"
         backgroundMode: SceneEnvironment.Color
+        clearColor: EaStyle.Colors.chartBackground
+        Behavior on clearColor { EaAnimations.ThemeChange {} }
     }
 
     camera: perspectiveCamera
@@ -166,8 +168,7 @@ View3D {
                 scale: Qt.vector3d(axesCilinderThickness,
                                    axes.model[index].len / mult2,
                                    axesCilinderThickness)
-                materials: [ DefaultMaterial { diffuseColor: axes.model[index].color } ]
-
+                materials: [ DefaultMaterial { diffuseColor: [EaStyle.Colors.red, EaStyle.Colors.green, EaStyle.Colors.blue][index] } ]
             }
             Model {
                 source: "#Cone"
@@ -178,7 +179,7 @@ View3D {
                                            axes.model[index].roty,
                                            axes.model[index].rotz)
                 scale: Qt.vector3d(axisConeScale, axisConeScale, axisConeScale)
-                materials: [ DefaultMaterial { diffuseColor: axes.model[index].color } ]
+                materials: [ DefaultMaterial { diffuseColor: [EaStyle.Colors.red, EaStyle.Colors.green, EaStyle.Colors.blue][index] } ]
             }
         }
     }
@@ -317,7 +318,12 @@ View3D {
         anchors.margins: EaStyle.Sizes.fontPixelSize
 
         color: EaStyle.Colors.mainContentBackgroundHalfTransparent
-        border.color: EaStyle.Colors.chartGridLine
+        Behavior on color { EaAnimations.ThemeChange {} }
+
+        border {
+            color: EaStyle.Colors.chartGridLine
+            Behavior on color { EaAnimations.ThemeChange {} }
+        }
 
         Column {
             leftPadding: EaStyle.Sizes.fontPixelSize
@@ -327,15 +333,15 @@ View3D {
 
             EaElements.Label {
                 text: 'x-axis'
-                color: 'red'
+                color: EaStyle.Colors.red
             }
             EaElements.Label {
                 text: 'y-axis'
-                color: 'green'
+                color: EaStyle.Colors.green
             }
             EaElements.Label {
                 text: 'z-axis'
-                color: 'blue'
+                color: EaStyle.Colors.blue
             }
             /*
             EaElements.Label { text: `eulerRotation ${cameraController.camera.eulerRotation}` }

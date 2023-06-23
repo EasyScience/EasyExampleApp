@@ -518,9 +518,9 @@ class Model(QObject):
         b = params['_cell_length_b']['value']
         c = params['_cell_length_c']['value']
         self._structViewAxesModel = [
-            {"x": 0.5, "y": 0,   "z": 0,   "rotx": 0, "roty":  0, "rotz": -90, "len": a, "color": "red"},
-            {"x": 0,   "y": 0.5, "z": 0,   "rotx": 0, "roty":  0, "rotz":   0, "len": b, "color": "green"},
-            {"x": 0,   "y": 0,   "z": 0.5, "rotx": 0, "roty": 90, "rotz":  90, "len": c, "color": "blue"}
+            {"x": 0.5, "y": 0,   "z": 0,   "rotx": 0, "roty":  0, "rotz": -90, "len": a},
+            {"x": 0,   "y": 0.5, "z": 0,   "rotx": 0, "roty":  0, "rotz":   0, "len": b},
+            {"x": 0,   "y": 0,   "z": 0.5, "rotx": 0, "roty": 90, "rotz":  90, "len": c}
         ]
         console.debug(f"Structure view axes model has been changed. New cell lengths: ({a}, {b}, {c})")
         self.structViewAxesModelChanged.emit()
