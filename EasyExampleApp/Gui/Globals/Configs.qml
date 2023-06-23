@@ -11,13 +11,13 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
     readonly property var projectConfig: QtObject {
         readonly property var release: QtObject {
-            readonly property string app_name: 'EasyExample'
-            readonly property string app_issues_url: 'https://github.com/EasyScience/EasyExampleApp/issues'
+            readonly property string appName: 'EasyDiffraction'
+            readonly property string appIssuesUrl: 'https://github.com/EasyScience/EasyExampleApp/issues'
         }
         readonly property var tool: QtObject {
             property var poetry: QtObject {
                 readonly property string homepage: 'https://github.com/EasyScience/EasyExampleApp'
-                readonly property string version: '0.0.1-alpha.1'
+                readonly property string version: '0.9.0-alpha.1'
             }
         }
         readonly property var ci: QtObject {
@@ -26,7 +26,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     }
 
     readonly property var appConfig: QtObject {
-        readonly property string name: projectConfig.release.app_name
+        readonly property string name: projectConfig.release.appName
         readonly property string namePrefix: "Easy"
         readonly property string nameSuffix: name.replace(namePrefix, "")
         readonly property string namePrefixForLogo: namePrefix.toLowerCase()
@@ -37,7 +37,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         readonly property string version: projectConfig.tool.poetry.version
 
         readonly property string homePageUrl: projectConfig.tool.poetry.homepage
-        readonly property string issuesUrl: projectConfig.release.app_issues_url
+        readonly property string issuesUrl: projectConfig.release.appIssuesUrl
 
         readonly property bool remote: typeof projectConfig.ci.app.info !== 'undefined'
 
@@ -62,14 +62,11 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         readonly property string dependenciesUrl: githubRawContentUrl(branch, 'DEPENDENCIES.md')
 
         readonly property string description:
-`${name} is a software for reduction of powder
-diffraction data from textured materials.
+`${name} is a scientific software for modelling and analysis of
+diffraction data.
 
-${name} is a collaborative project between
-the Geoscience Center of the University of Göttingen, Germany, and
-the European Spallation Source ERIC, Sweden.`
+${name} is developed by ESS DMSC`
         readonly property var developerIcons: [
-            { url: "http://www.uni-goettingen.de/de/dr-jens-m-walter/503416.html", icon: iconPath('GAU.png'), heightScale: 2.3 },
             { url: "https://ess.eu", icon: iconPath('ESS.png'), heightScale: 3.0 }
         ]
         readonly property string developerYearsFrom: "2019"
@@ -83,6 +80,6 @@ the European Spallation Source ERIC, Sweden.`
     }
 
     function githubRawContentUrl(branch, file) {
-        return `https://raw.githubusercontent.com/easyScience/EasyExampleApp/${branch}/${file}`
+        return `https://raw.githubusercontent.com/easyscience/EasyExampleApp/${branch}/${file}`
     }
 }
