@@ -100,6 +100,7 @@ Column {
             text: qsTr("Load new model from file")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
+                console.debug(`---------- Loading model ----------`)
                 Globals.Proxies.main.model.loadModelFromFile('examples/Gaussian.json')
             }
             Component.onCompleted: Globals.Refs.app.modelPage.loadNewModelFromFileButton = this

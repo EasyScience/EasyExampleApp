@@ -152,7 +152,7 @@ class Model(QObject):
     @Slot(str)
     def loadModelFromFile(self, fpath):
         fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'Co2SiO4_model.cif')
-        console.debug(f"Loading a model from {fpath}")
+        console.debug(f"File: {fpath}")
         # Load RCIF file by cryspy and extract phases into easydiffraction data block
         cryspyModelObj = cryspy.load_file(fpath)
         cryspyModelDict = cryspyModelObj.get_dictionary()
@@ -178,19 +178,21 @@ class Model(QObject):
 
     @Slot(str, float)
     def setMainParameterValue(self, paramName, value):
-        changedEd = self.editDataBlockMainParam(paramName, value)
+        changedIntern = self.editDataBlockMainParam(paramName, value)
         changedCryspy = self.editCryspyDictByMainParam(paramName, value)
 
-        if changedEd and changedCryspy:
+        if changedIntern and changedCryspy:
             self.paramChanged.emit()
 
     @Slot(str, str, int, float)
     def setLoopParamValue(self, loopName, paramName, paramIndex, value):
-        changedEd = self.editDataBlockLoopParam(loopName, paramName, paramIndex, value)
+        changedIntern = self.editDataBlockLoopParam(loopName, paramName, paramIndex, value)
         changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, paramIndex, value)
 
-        if changedEd and changedCryspy:
+        if changedIntern and changedCryspy:
             self.paramChanged.emit()
+
+    # Private methods
 
     def editDataBlockMainParam(self, paramName, value, blockIndex=None):
         block = 'model'
@@ -202,7 +204,7 @@ class Model(QObject):
             return False
         self._dataBlocks[blockIndex]['params'][paramName]['value'] = value
 
-        console.debug(f"Parameter {block}[{blockIndex}].{paramName}.value changed: '{oldValue}' -> '{value}'")
+        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{paramName}.value")
         return True
 
     def editDataBlockLoopParam(self, loopName, paramName, paramIndex, value, blockIndex=None):
@@ -215,7 +217,7 @@ class Model(QObject):
             return False
         self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName]['value'] = value
 
-        console.debug(f"Parameter {block}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.value changed: '{oldValue}' -> '{value}'")
+        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.value")
         return True
 
     def editCryspyDictByMainParam(self, paramName, value):
@@ -226,7 +228,7 @@ class Model(QObject):
             return False
         self._proxy.data._cryspyDict[path[0]][path[1]][path[2]] = value
 
-        console.debug(f"Cryspy dict parameter {path} changed: '{oldValue}' -> '{value}'")
+        console.debug(f"Cryspy dict ▌ {oldValue} → {value} ▌ {path}")
         return True
 
     def editCryspyDictByLoopParam(self, loopName, paramName, paramIndex, value):
@@ -237,7 +239,7 @@ class Model(QObject):
             return False
         self._proxy.data._cryspyDict[path[0]][path[1]][path[2]] = value
 
-        console.debug(f"Cryspy dict parameter {path} changed: '{oldValue}' -> '{value}'")
+        console.debug(f"Cryspy dict ▌ {oldValue} → {value} ▌ {path}")
         return True
 
     def cryspyDictPathByMainParam(self, paramName, value):
@@ -250,24 +252,28 @@ class Model(QObject):
         if paramName == '_cell_length_a':
             path[1] = 'unit_cell_parameters'
             path[2] = 0
-        if paramName == '_cell_length_b':
+        elif paramName == '_cell_length_b':
             path[1] = 'unit_cell_parameters'
             path[2] = 1
-        if paramName == '_cell_length_c':
+        elif paramName == '_cell_length_c':
             path[1] = 'unit_cell_parameters'
             path[2] = 2
-        if paramName == '_cell_angle_alpha':
+        elif paramName == '_cell_angle_alpha':
             path[1] = 'unit_cell_parameters'
             path[2] = 3
             value = np.deg2rad(value)
-        if paramName == '_cell_angle_beta':
+        elif paramName == '_cell_angle_beta':
             path[1] = 'unit_cell_parameters'
             path[2] = 4
             value = np.deg2rad(value)
-        if paramName == '_cell_angle_gamma':
+        elif paramName == '_cell_angle_gamma':
             path[1] = 'unit_cell_parameters'
             path[2] = 5
             value = np.deg2rad(value)
+
+        # undefined
+        else:
+            console.error(f"Undefined parameter name '{paramName}'")
 
         return path, value
 
@@ -355,7 +361,8 @@ class Model(QObject):
                 else:
                     self.editDataBlockLoopParam(loopName, paramName, paramIndex, value, blockIndex)
 
-    # Private methods
+
+
 
     def defaultYCalcArray(self):
         xArray = self._proxy.experiment._xArrays[0]  # NEED FIX
@@ -384,13 +391,13 @@ class Model(QObject):
         self.updateYCalcArrayByIndex(index)
 
     def addDataBlock(self, dataBlock):
-        console.debug(f"Adding data block (model parameters). Model no. {len(self._dataBlocks) + 1}")
         self._dataBlocks.append(dataBlock)
+        console.debug(f"Model data block no. {len(self._dataBlocks)} has been added to intern dataset")
         self.dataBlocksChanged.emit()
 
     def addYCalcArray(self, yCalcArray):
-        console.debug(f"Adding y-calculated data. Model no. {len(self._dataBlocks)}")
         self._yCalcArrays.append(yCalcArray)
+        console.debug(f"Y-calculated data for model data block no. {len(self._dataBlocks)} has been added to intern dataset")
         self.yCalcArraysChanged.emit()
 
     #def calculateAllYArrays(self):
@@ -470,9 +477,9 @@ class Model(QObject):
 #
 #                pass
 #
-                self.setStructureViewCellModel()
-                self.setStructureViewAxesModel()
-                self.setStructViewAtomsModel()
+#                self.setCurrentModelStructViewCellModel()
+#                self.setCurrentModelStructViewAxesModel()
+#                self.setCurrentModelStructViewAtomsModel()
 
     def calculateDiffractionPattern(self):        
         chiSq, pointsCount, _, _, paramNames = rhochi_calc_chi_sq_by_dictionary(self._proxy.data._cryspyDict,
@@ -487,7 +494,12 @@ class Model(QObject):
 
         return y_calc_array
 
-    def setStructureViewCellModel(self):
+    def updateCurrentModelStructView(self):
+        self.setCurrentModelStructViewAtomsModel()
+        self.setCurrentModelStructViewCellModel()
+        self.setCurrentModelStructViewAxesModel()
+
+    def setCurrentModelStructViewCellModel(self):
         params = self._dataBlocks[self._currentIndex]['params']
         a = params['_cell_length_a']['value']
         b = params['_cell_length_b']['value']
@@ -509,10 +521,10 @@ class Model(QObject):
             {"x": 0,     "y": b,     "z": 0.5*c, "rotx": 0, "roty": 90, "rotz": 90,  "len": c},
             {"x": a,     "y": b,     "z": 0.5*c, "rotx": 0, "roty": 90, "rotz": 90,  "len": c}
         ]
-        console.debug(f"Structure view cell model has been changed. New cell lengths: ({a}, {b}, {c})")
+        console.debug(f"Structure view cell  for model no. {self._currentIndex + 1} has been set. Cell lengths: ({a}, {b}, {c})")
         self.structViewCellModelChanged.emit()
 
-    def setStructureViewAxesModel(self):
+    def setCurrentModelStructViewAxesModel(self):
         params = self._dataBlocks[self._currentIndex]['params']
         a = params['_cell_length_a']['value']
         b = params['_cell_length_b']['value']
@@ -522,10 +534,10 @@ class Model(QObject):
             {"x": 0,   "y": 0.5, "z": 0,   "rotx": 0, "roty":  0, "rotz":   0, "len": b},
             {"x": 0,   "y": 0,   "z": 0.5, "rotx": 0, "roty": 90, "rotz":  90, "len": c}
         ]
-        console.debug(f"Structure view axes model has been changed. New cell lengths: ({a}, {b}, {c})")
+        console.debug(f"Structure view axes  for model no. {self._currentIndex + 1} has been set. Cell lengths: ({a}, {b}, {c})")
         self.structViewAxesModelChanged.emit()
 
-    def setStructViewAtomsModel(self):
+    def setCurrentModelStructViewAtomsModel(self):
         params = self._dataBlocks[self._currentIndex]['params']
         atoms = self._dataBlocks[self._currentIndex]['loops']['_atom_site']
         self._structViewAtomsModel = [{
@@ -535,7 +547,7 @@ class Model(QObject):
             'diameter': 0.3 * self.atomData(atom['_type_symbol']['value'], 'covalentRadius'),
             'color': self.atomData(atom['_type_symbol']['value'], 'color')
         } for atom in atoms]
-        console.debug(f"Structure view atoms model has been changed. Atoms count: {len(atoms)}")
+        console.debug(f"Structure view atoms for model no. {self._currentIndex + 1} has been set. Atoms count: {len(atoms)}")
         self.structViewAtomsModelChanged.emit()
 
 

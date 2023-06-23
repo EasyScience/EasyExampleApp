@@ -299,7 +299,7 @@ View3D {
             height: EaStyle.Sizes.toolButtonHeight
             width: EaStyle.Sizes.toolButtonHeight
             borderColor: EaStyle.Colors.chartAxis
-            fontIcon: "home"
+            fontIcon: "backspace"
             ToolTip.text: qsTr("Reset to default view")
 //            onClicked: view.camera.rotation = Qt.quaternion(0.9, -0.1, -0.4, 0.0)
         }
@@ -308,8 +308,6 @@ View3D {
 
     // Legend
     Rectangle {
-        parent: container.parent
-
         width: childrenRect.width
         height: childrenRect.height
 

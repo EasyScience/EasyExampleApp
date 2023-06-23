@@ -588,7 +588,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     }
 
     function setModelMainParameterValue(name, value) {
-        //main.model.editParameter(name, 'value', value)
+        console.debug(`---------- Editing model main param ${name} value to ${value} ----------`)
         main.model.setMainParameterValue(name, value)
     }
 
@@ -615,7 +615,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     }
 
     function setModelLoopParameterValue(loopName, parameterName, parameterIndex, value) {
-        //main.model.editLoopParameterValue(loopName, parameterName, parameterIndex, value)
+        console.debug(`---------- Editing model loop param ${parameterName} value to ${value} ----------`)
         main.model.setLoopParamValue(loopName, parameterName, parameterIndex, value)
     }
 
@@ -630,6 +630,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     }
 
     function setExperimentMainParameterValue(name, value) {
+        console.debug(`---------- Editing experiment main param ${name} value to ${value} ----------`)
         main.experiment.setMainParameterValue(name, value)
     }
 
@@ -644,6 +645,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     }
 
     function setExperimentLoopParameterValue(loopName, parameterName, parameterIndex, value) {
+        console.debug(`---------- Editing experiment loop param ${parameterName} value to ${value} ----------`)
         main.experiment.setLoopParamValue(loopName, parameterName, parameterIndex, value)
     }
 

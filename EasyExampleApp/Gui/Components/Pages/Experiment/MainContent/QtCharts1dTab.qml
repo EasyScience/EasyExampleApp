@@ -75,7 +75,7 @@ Rectangle {
                 height: EaStyle.Sizes.toolButtonHeight
                 width: EaStyle.Sizes.toolButtonHeight
                 borderColor: EaStyle.Colors.chartAxis
-                fontIcon: "home"
+                fontIcon: "backspace"
                 ToolTip.text: qsTr("Reset to default view")
                 onClicked: chartView.zoomReset()
             }

@@ -152,13 +152,13 @@ class Experiment(QObject):
         yBkgArray = self.defaultYBkgArray()  # NEED FIX
         if 'background_min' and 'background_max' in dataBlock['params'].keys():
             index = len(self._dataBlocks) - 1
-            yBkgArray = self.calculateYBkgArray(index)
+            yBkgArray = self.calculatedYBkgArray(index)
         self.addYBkgArray(yBkgArray)
 
     @Slot(str)
     def loadExperimentFromFile(self, fpath):
         fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'Co2SiO4_experiment.cif')
-        console.debug(f"Loading an experiment from {fpath}")
+        console.debug(f"File: {fpath}")
         # Load RCIF file by cryspy and extract experiments into easydiffraction data block
         cryspyExperimentObj = cryspy.load_file(fpath)
         cryspyExperimentDict = cryspyExperimentObj.get_dictionary()
@@ -190,17 +190,21 @@ class Experiment(QObject):
 
     @Slot(str, float)
     def setMainParameterValue(self, paramName, value):
-        self.editDataBlockMainParam(paramName, value)
-        self.editCryspyDictByMainParam(paramName, value)
+        changedIntern = self.editDataBlockMainParam(paramName, value)
+        changedCryspy = self.editCryspyDictByMainParam(paramName, value)
 
-        self.paramChanged.emit()
+        if changedIntern and changedCryspy:
+            self.paramChanged.emit()
 
     @Slot(str, str, int, float)
     def setLoopParamValue(self, loopName, paramName, paramIndex, value):
-        self.editDataBlockLoopParam(loopName, paramName, paramIndex, value)
-        self.editCryspyDictByLoopParam(loopName, paramName, paramIndex, value)
+        changedIntern = self.editDataBlockLoopParam(loopName, paramName, paramIndex, value)
+        changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, paramIndex, value)
 
-        self.paramChanged.emit()
+        if changedIntern and changedCryspy:
+            self.paramChanged.emit()
+
+    # Private methods
 
     def editDataBlockMainParam(self, paramName, value, blockIndex=None):
         block = 'experiment'
@@ -209,10 +213,11 @@ class Experiment(QObject):
 
         oldValue = self._dataBlocks[blockIndex]['params'][paramName]['value']
         if oldValue == value:
-            return
+            return False
         self._dataBlocks[blockIndex]['params'][paramName]['value'] = value
 
-        console.debug(f"Parameter {block}[{blockIndex}].{paramName}.value changed: '{oldValue}' -> '{value}'")
+        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{paramName}.value")
+        return True
 
     def editDataBlockLoopParam(self, loopName, paramName, paramIndex, value, blockIndex=None):
         block = 'experiment'
@@ -221,30 +226,33 @@ class Experiment(QObject):
 
         oldValue = self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName]['value']
         if oldValue == value:
-            return
+            return False
         self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName]['value'] = value
 
-        console.debug(f"Parameter {block}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.value changed: '{oldValue}' -> '{value}'")
+        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.value")
+        return True
 
     def editCryspyDictByMainParam(self, paramName, value):
         path, value = self.cryspyDictPathByMainParam(paramName, value)
 
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
-            return
+            return False
         self._proxy.data._cryspyDict[path[0]][path[1]][path[2]] = value
 
-        console.debug(f"Cryspy dict parameter {path} changed: '{oldValue}' -> '{value}'")
+        console.debug(f"Cryspy dict ▌ {oldValue} → {value} ▌ {path}")
+        return True
 
     def editCryspyDictByLoopParam(self, loopName, paramName, paramIndex, value):
         path, value = self.cryspyDictPathByLoopParam(loopName, paramName, paramIndex, value)
 
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
-            return
+            return False
         self._proxy.data._cryspyDict[path[0]][path[1]][path[2]] = value
 
-        console.debug(f"Cryspy dict parameter {path} changed: '{oldValue}' -> '{value}'")
+        console.debug(f"Cryspy dict ▌ {oldValue} → {value} ▌ {path}")
+        return True
 
     def cryspyDictPathByMainParam(self, paramName, value):
         blockIndex = self._currentIndex
@@ -258,7 +266,7 @@ class Experiment(QObject):
             path[2] = 0
 
         # _pd_meas_2theta_offset
-        if paramName == '_pd_meas_2theta_offset':
+        elif paramName == '_pd_meas_2theta_offset':
             path[1] = 'offset_ttheta'
             path[2] = 0
             value = np.deg2rad(value)
@@ -401,7 +409,6 @@ class Experiment(QObject):
                 else:
                     self.editDataBlockLoopParam(loopName, paramName, paramIndex, value, blockIndex)
 
-    # Private methods
 
     def defaultXArray(self):
         xMin = _DEFAULT_DATA_BLOCK['params']['xMin']['value']
@@ -431,44 +438,47 @@ class Experiment(QObject):
         yBkgArray = np.interp(xArray, xBkgPoints, yBkgPoints)
         return yBkgArray
 
-    def calculateYBkgArray(self, index):
+    def calculatedYBkgArray(self, index):
+        dataBlock = self._dataBlocks[index]
         xArray = self._xArrays[index]
-        xMin = self._dataBlocks[index]['params']['xMin']['value']
-        xMax = self._dataBlocks[index]['params']['xMax']['value']
-        yBkgMin = self._dataBlocks[index]['params']['background_min']['value']
-        yBkgMax = self._dataBlocks[index]['params']['background_max']['value']
-        xBkgPoints = np.array([xMin, xMax])
-        yBkgPoints = np.array([yBkgMin, yBkgMax])
-        yBkgArray = np.interp(xArray, xBkgPoints, yBkgPoints)
-        return yBkgArray
+        yBkgArrayInterp = np.zeros_like(xArray)
+
+        if '_pd_background' in dataBlock['loops'].keys():
+            bkg = dataBlock['loops']['_pd_background']
+            xBkgArray = [point['_2theta']['value'] for point in bkg]
+            yBkgArray = [point['_intensity']['value'] for point in bkg]
+            yBkgArrayInterp = np.interp(xArray, xBkgArray, yBkgArray)
+
+        console.debug(f"Interpolation of background for experiment data block no. {index + 1} has been done")
+        return yBkgArrayInterp
 
     def updateCurrentExperimentYBkgArray(self):
         index = self._currentIndex
-        self._yBkgArrays[index] = self.calculateYBkgArray(index)
-        console.debug(f"Background for experiment no. {index + 1} has been calculated")
+        self._yBkgArrays[index] = self.calculatedYBkgArray(index)
+        console.debug(f"Background for experiment data block no. {index + 1} has been calculated and saved to intern dataset")
         self.yBkgArraysChanged.emit()
 
     def addDataBlock(self, dataBlock):
-        console.debug(f"Adding data block (instrument parameters). Experiment no. {len(self._dataBlocks) + 1}")
         self._dataBlocks.append(dataBlock)
+        console.debug(f"Experiment data block no. {len(self._dataBlocks)} has been added to intern dataset")
         self.dataBlocksChanged.emit()
 
     def addXArray(self, xArray):
-        console.debug(f"Adding x data. Experiment no. {len(self._dataBlocks)}")
         self._xArrays.append(xArray)
+        console.debug(f"X data for experiment data block no. {len(self._dataBlocks)} has been added to intern dataset")
 
     def addYMeasArray(self, yMeasArray):
-        console.debug(f"Adding y-measured data. Experiment no. {len(self._dataBlocks)}")
         self._yMeasArrays.append(yMeasArray)
+        console.debug(f"Y-measured data for experiment data block no. {len(self._dataBlocks)} has been added to intern dataset")
         self.yMeasArraysChanged.emit()
 
     def addYBkgArray(self, yBkgArray):
-        console.debug(f"Adding y-background data. Experiment no. {len(self._dataBlocks)}")
         self._yBkgArrays.append(yBkgArray)
+        console.debug(f"Y-background data for experiment data block no. {len(self._dataBlocks)} has been added to intern dataset")
         self.yBkgArraysChanged.emit()
 
     def setDataBlocksJson(self):
-        console.debug("Converting experiment dataBlocks to JSON string")
+        #console.debug("Converting experiment dataBlocks to JSON string")
         self._dataBlocksJson = Converter.dictToJson(self._dataBlocks)
         console.debug("Experiment dataBlocks have been converted to JSON string")
         self.dataBlocksJsonChanged.emit()
@@ -478,8 +488,10 @@ class Experiment(QObject):
         ed_dict = self._proxy.data.edDict
         cryspy_dict = self._proxy.data._cryspyDict
         experiment_names = [name.replace('pd_', '') for name in cryspy_dict.keys() if name.startswith('pd_')]
+
         for data_block in cryspy_obj.items:
             data_block_name = data_block.data_name
+
             # Experiment datablock
             if data_block_name in experiment_names:
                 ed_dict['experiments'] = []
@@ -487,20 +499,24 @@ class Experiment(QObject):
                                  'params': {},
                                  'loops': {}}
                 cryspy_experiment = data_block.items
+
                 x_array = self.defaultXArray()  # NEED FIX
                 y_meas_array = self.defaultYMeasArray()  # NEED FIX
                 y_bkg_array = self.defaultYBkgArray()  # NEED FIX
+
                 for item in cryspy_experiment:
                     # Ranges section
                     if type(item) == cryspy.C_item_loop_classes.cl_1_range.Range:
                         ed_experiment['params']['_pd_meas_2theta_range_min'] = dict(Parameter(item.ttheta_min))
                         ed_experiment['params']['_pd_meas_2theta_range_max'] = dict(Parameter(item.ttheta_max))
                         ed_experiment['params']['_pd_meas_2theta_range_inc'] = dict(Parameter(0.05))  # NEED FIX
+
                     # Setup section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_setup.Setup:
                         ed_experiment['params']['_diffrn_radiation_probe'] = dict(Parameter(item.radiation.replace('neutrons', 'neutron').replace('X-rays', 'x-ray')))
                         ed_experiment['params']['_diffrn_radiation_wavelength'] = dict(Parameter(item.wavelength, min=0.5, max=2.5, fittable=True, fit=item.wavelength_refinement))
                         ed_experiment['params']['_pd_meas_2theta_offset'] = dict(Parameter(item.offset_ttheta, min=-0.5, max=0.5, fittable=True, fit=item.offset_ttheta_refinement))
+
                     # Instrument resolution section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_instr_resolution.PdInstrResolution:
                         ed_experiment['params']['_pd_instr_resolution_u'] = dict(Parameter(item.u, fittable=True, fit=item.u_refinement))
@@ -508,32 +524,40 @@ class Experiment(QObject):
                         ed_experiment['params']['_pd_instr_resolution_w'] = dict(Parameter(item.w, fittable=True, fit=item.w_refinement))
                         ed_experiment['params']['_pd_instr_resolution_x'] = dict(Parameter(item.x, fittable=True, fit=item.x_refinement))
                         ed_experiment['params']['_pd_instr_resolution_y'] = dict(Parameter(item.y, fittable=True, fit=item.y_refinement))
+
                     # Peak assymetries section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_instr_reflex_asymmetry.PdInstrReflexAsymmetry:
                         ed_experiment['params']['_pd_instr_reflex_asymmetry_p1'] = dict(Parameter(item.p1, fittable=True, fit=item.p1_refinement))
                         ed_experiment['params']['_pd_instr_reflex_asymmetry_p2'] = dict(Parameter(item.p2, fittable=True, fit=item.p2_refinement))
                         ed_experiment['params']['_pd_instr_reflex_asymmetry_p3'] = dict(Parameter(item.p3, fittable=True, fit=item.p3_refinement))
                         ed_experiment['params']['_pd_instr_reflex_asymmetry_p4'] = dict(Parameter(item.p4, fittable=True, fit=item.p4_refinement))
+
                     # Phases section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_phase.PhaseL:
                         ed_phases = []
                         cryspy_phases = item.items
+
                         for cryspy_phase in cryspy_phases:
                             ed_phase = {}
                             ed_phase['_label'] = dict(Parameter(cryspy_phase.label))
                             ed_phase['_scale'] = dict(Parameter(cryspy_phase.scale, min=0.1, max=10, fittable=True, fit=cryspy_phase.scale_refinement))
                             ed_phases.append(ed_phase)
+
                         ed_experiment['loops']['_phase'] = ed_phases
+
                     # Background section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_background.PdBackgroundL:
                         ed_bkg_points = []
                         cryspy_bkg_points = item.items
+
                         for cryspy_bkg_point in cryspy_bkg_points:
                             ed_bkg_point = {}
                             ed_bkg_point['_2theta'] = dict(Parameter(cryspy_bkg_point.ttheta))
                             ed_bkg_point['_intensity'] = dict(Parameter(cryspy_bkg_point.intensity, min=0, max=3000, fittable=True, fit=cryspy_bkg_point.intensity_refinement))
                             ed_bkg_points.append(ed_bkg_point)
+
                         ed_experiment['loops']['_pd_background'] = ed_bkg_points
+
                     # Measured data section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_meas.PdMeasL:
                         cryspy_meas_points = item.items
@@ -542,13 +566,15 @@ class Experiment(QObject):
                         #sy_meas_array = [point.intensity_sigma for point in cryspy_meas_points]
                         x_array = np.array(x_array)
                         y_meas_array = np.array(y_meas_array)
-                        # Background
+
+                        # Background  # NED FIX: use calculatedYBkgArray()
                         y_bkg_array_interp = np.zeros_like(x_array)
                         if '_pd_background' in ed_experiment['loops'].keys():
                             bkg = ed_experiment['loops']['_pd_background']
                             x_bkg_array = [point['_2theta']['value'] for point in bkg]
                             y_bkg_array = [point['_intensity']['value'] for point in bkg]
                             y_bkg_array_interp = np.interp(x_array, x_bkg_array, y_bkg_array)
+
                         # Ranges (for charts)
                         x_min = dict(Parameter(float(x_array.min())))
                         x_max = dict(Parameter(float(x_array.max())))
@@ -563,6 +589,7 @@ class Experiment(QObject):
                                                  'yMin': y_min,
                                                  'yMax': y_max})
                         self.chartRangesChanged.emit()
+
                 ed_dict['experiments'].append(ed_experiment)
                 self.addDataBlock(ed_experiment)
                 self.addXArray(x_array)
@@ -571,5 +598,5 @@ class Experiment(QObject):
 
 #
 #                # Calculate data based on...
-                y_calc_array = self._proxy.model.calculateDiffractionPattern()
-                self._proxy.model.addYCalcArray(y_calc_array)
+#                y_calc_array = self._proxy.model.calculateDiffractionPattern()
+#                self._proxy.model.addYCalcArray(y_calc_array)

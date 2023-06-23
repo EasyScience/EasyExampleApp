@@ -97,6 +97,7 @@ Column {
             text: qsTr("Import data from local drive")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
+                console.debug(`---------- Loading experiment ----------`)
                 Globals.Proxies.main.experiment.loadExperimentFromFile('examples/PicoScope.json')
             }
             Component.onCompleted: Globals.Refs.app.experimentPage.importDataFromLocalDriveButton = this
