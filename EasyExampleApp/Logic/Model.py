@@ -4,6 +4,7 @@
 
 import os
 import json
+import copy
 import numpy as np
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
@@ -155,6 +156,7 @@ class Model(QObject):
         console.debug(f"File: {fpath}")
         # Load RCIF file by cryspy and extract phases into easydiffraction data block
         cryspyModelObj = cryspy.load_file(fpath)
+        self._proxy.data._cryspyModelObj = cryspyModelObj  # NEED FIX!!!
         cryspyModelDict = cryspyModelObj.get_dictionary()
         self._proxy.data._cryspyDict.update(cryspyModelDict)
         self.parseModels(cryspyModelObj)
@@ -440,7 +442,7 @@ class Model(QObject):
                         ed_phase['params']['_space_group_name_H-M_alt'] = dict(Parameter(item.name_hm_alt))
                         ed_phase['params']['_space_group_IT_coordinate_system_code'] = dict(Parameter(item.it_coordinate_system_code))
 
-                        # Cell section
+                    # Cell section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_cell.Cell:
                         ed_phase['params']['_cell_length_a'] = dict(Parameter(item.length_a, enabled=not item.length_a_constraint, min=1, max=30, fittable=True, fit=item.length_a_refinement))
                         ed_phase['params']['_cell_length_b'] = dict(Parameter(item.length_b, enabled=not item.length_b_constraint, min=1, max=30, fittable=True, fit=item.length_b_refinement))
@@ -449,7 +451,7 @@ class Model(QObject):
                         ed_phase['params']['_cell_angle_beta'] = dict(Parameter(item.angle_beta, enabled=not item.angle_alpha_constraint, min=0, max=180, fittable=True, fit=item.angle_beta_refinement))
                         ed_phase['params']['_cell_angle_gamma'] = dict(Parameter(item.angle_gamma, enabled=not item.angle_alpha_constraint, min=0, max=180, fittable=True, fit=item.angle_gamma_refinement))
 
-                        # Atoms section
+                    # Atoms section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_atom_site.AtomSiteL:
                         ed_atoms = []
                         cryspy_atoms = item.items
@@ -538,15 +540,61 @@ class Model(QObject):
         self.structViewAxesModelChanged.emit()
 
     def setCurrentModelStructViewAtomsModel(self):
-        params = self._dataBlocks[self._currentIndex]['params']
+        structViewModel = set()
+        #self._structViewAtomsModel = []
+        spaceGroup = self._proxy.data._cryspyModelObj.items[0].items[1]  # NEED FIX. model index!!! [0], 'Space group' [1] cryspy.C_item_loop_classes.cl_2_space_group.SpaceGroup
         atoms = self._dataBlocks[self._currentIndex]['loops']['_atom_site']
-        self._structViewAtomsModel = [{
-            'x': atom['_fract_x']['value'] * params['_cell_length_a']['value'],
-            'y': atom['_fract_y']['value'] * params['_cell_length_b']['value'],
-            'z': atom['_fract_z']['value'] * params['_cell_length_c']['value'],
-            'diameter': 0.3 * self.atomData(atom['_type_symbol']['value'], 'covalentRadius'),
-            'color': self.atomData(atom['_type_symbol']['value'], 'color')
-        } for atom in atoms]
+        params = self._dataBlocks[self._currentIndex]['params']
+        a = params['_cell_length_a']['value']
+        b = params['_cell_length_b']['value']
+        c = params['_cell_length_c']['value']
+        # Add all atoms in the cell, including those in equivalent positions
+        for atom in atoms:
+            symbol = atom['_type_symbol']['value']
+            xUnique = atom['_fract_x']['value']
+            yUnique = atom['_fract_y']['value']
+            zUnique = atom['_fract_z']['value']
+            xArray, yArray, zArray, _ = spaceGroup.calc_xyz_mult(xUnique, yUnique, zUnique)
+            for x, y, z in zip(xArray, yArray, zArray):
+                structViewModel.add((
+                    float(x * a),
+                    float(y * b),
+                    float(z * c),
+                    0.333333 * self.atomData(symbol, 'covalentRadius'),
+                    self.atomData(symbol, 'color')
+                ))
+        # Add those atoms, which have 0 in xyz to be translated into 1
+        structViewModelCopy = copy.copy(structViewModel)
+        for item in structViewModelCopy:
+            if item[0] == 0 and item[1] == 0 and item[2] == 0:
+                structViewModel.add((a, 0, 0, item[3], item[4]))
+                structViewModel.add((0, b, 0, item[3], item[4]))
+                structViewModel.add((0, 0, c, item[3], item[4]))
+                structViewModel.add((a, b, 0, item[3], item[4]))
+                structViewModel.add((a, 0, c, item[3], item[4]))
+                structViewModel.add((0, b, c, item[3], item[4]))
+                structViewModel.add((a, b, c, item[3], item[4]))
+            elif item[0] == 0 and item[1] == 0:
+                structViewModel.add((a, 0, item[2], item[3], item[4]))
+                structViewModel.add((0, b, item[2], item[3], item[4]))
+                structViewModel.add((a, b, item[2], item[3], item[4]))
+            elif item[0] == 0 and item[2] == 0:
+                structViewModel.add((a, item[1], 0, item[3], item[4]))
+                structViewModel.add((0, item[1], c, item[3], item[4]))
+                structViewModel.add((a, item[1], c, item[3], item[4]))
+            elif item[1] == 0 and item[2] == 0:
+                structViewModel.add((item[0], b, 0, item[3], item[4]))
+                structViewModel.add((item[0], 0, c, item[3], item[4]))
+                structViewModel.add((item[0], b, c, item[3], item[4]))
+            elif item[0] == 0:
+                structViewModel.add((a, item[1], item[2], item[3], item[4]))
+            elif item[1] == 0:
+                structViewModel.add((item[0], b, item[2], item[3], item[4]))
+            elif item[2] == 0:
+                structViewModel.add((item[0], item[1], c, item[3], item[4]))
+        # Create dict from set for GUI
+        self._structViewAtomsModel = [{'x':x, 'y':y, 'z':z, 'diameter':diameter, 'color':color}
+                                      for x, y, z, diameter, color in structViewModel]
         console.debug(f"Structure view atoms for model no. {self._currentIndex + 1} has been set. Atoms count: {len(atoms)}")
         self.structViewAtomsModelChanged.emit()
 
