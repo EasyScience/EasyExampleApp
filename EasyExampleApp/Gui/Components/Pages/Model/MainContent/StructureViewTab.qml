@@ -19,7 +19,7 @@ import Gui.Globals as Globals
 View3D {
     id: view
 
-    property real mult: 30.0
+    property real mult: 35.0
     property real mult2: 100.0 / mult
     property real mult3: mult * mult2
     property real cellCilinderThickness: 0.01
@@ -157,6 +157,7 @@ View3D {
         id: axes
         model: Globals.Proxies.main.model.structViewAxesModel
         Node {
+            // Main line
             Model {
                 source: "#Cylinder"
                 position: Qt.vector3d(axes.model[index].x * axes.model[index].len * mult,
@@ -170,11 +171,26 @@ View3D {
                                    axesCilinderThickness)
                 materials: [ DefaultMaterial { diffuseColor: [EaStyle.Colors.red, EaStyle.Colors.green, EaStyle.Colors.blue][index] } ]
             }
+            // Extra piece after cell end
+            Model {
+                source: "#Cylinder"
+                position: Qt.vector3d(axes.model[index].x * 2 * (axes.model[index].len * mult + axisConeScale * mult3),
+                                      axes.model[index].y * 2 * (axes.model[index].len * mult + axisConeScale * mult3),
+                                      axes.model[index].z * 2 * (axes.model[index].len * mult + axisConeScale * mult3))
+                eulerRotation: Qt.vector3d(axes.model[index].rotx,
+                                           axes.model[index].roty,
+                                           axes.model[index].rotz)
+                scale: Qt.vector3d(axesCilinderThickness,
+                                   axisConeScale * 2,
+                                   axesCilinderThickness)
+                materials: [ DefaultMaterial { diffuseColor: [EaStyle.Colors.red, EaStyle.Colors.green, EaStyle.Colors.blue][index] } ]
+            }
+            // Cone to get arrow
             Model {
                 source: "#Cone"
-                position: Qt.vector3d(axes.model[index].x * (axes.model[index].len * mult - axisConeScale * mult3) * 2,
-                                      axes.model[index].y * (axes.model[index].len * mult - axisConeScale * mult3) * 2,
-                                      axes.model[index].z * (axes.model[index].len * mult - axisConeScale * mult3) * 2)
+                position: Qt.vector3d(axes.model[index].x * 2 * (axes.model[index].len * mult + axisConeScale * mult3 * 2),
+                                      axes.model[index].y * 2 * (axes.model[index].len * mult + axisConeScale * mult3 * 2),
+                                      axes.model[index].z * 2 * (axes.model[index].len * mult + axisConeScale * mult3 * 2))
                 eulerRotation: Qt.vector3d(axes.model[index].rotx,
                                            axes.model[index].roty,
                                            axes.model[index].rotz)
