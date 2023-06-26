@@ -146,7 +146,7 @@ Column {
                         width: EaStyle.Sizes.toolButtonHeight
                         borderColor: EaStyle.Colors.chartAxis
                         fontIcon: "comment-alt"
-                        ToolTip.text: qsTr("Show tooltip by hovering")
+                        ToolTip.text: qsTr("Show coordinates tooltip on hover")
                         onClicked: mainChart.allowHover = !mainChart.allowHover
                     }
 
