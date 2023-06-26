@@ -9,233 +9,241 @@ import QtQuick3D.Helpers
 
 import EasyApp.Gui.Animations as EaAnimations
 import EasyApp.Gui.Style as EaStyle
-import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Elements as EaElements
-import EasyApp.Gui.Charts as EaCharts
 
 import Gui.Globals as Globals
 
 
-View3D {
-    id: view
+Rectangle {
+    id: container
 
-    property real mult: 35.0
-    property real mult2: 100.0 / mult
-    property real mult3: mult * mult2
-    property real cellCilinderThickness: 0.01
-    property real axesCilinderThickness: 0.05
-    property real axisConeScale: 0.2
+    property real cellLengthA: Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex].params['_cell_length_a']['value']
+    property real cellLengthB: Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex].params['_cell_length_b']['value']
+    property real cellLengthC: Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex].params['_cell_length_c']['value']
 
-    anchors.fill: parent
+    property real scaleCoeff: defaultScaleCoeff
+    property real cellCylinderThickness: 1
+    property real axesCylinderThickness: 5
+    property real axisConeSize: 20
 
-    environment: SceneEnvironment {
-        backgroundMode: SceneEnvironment.Color
-        clearColor: EaStyle.Colors.chartBackground
-        Behavior on clearColor { EaAnimations.ThemeChange {} }
-    }
+    property real defaultScaleCoeff: Math.min(width, height) /
+                                     Math.max(cellLengthA, cellLengthB, cellLengthC) *
+                                     0.5
+    property var defaultEulerRotation: Qt.vector3d(12, -34, -8)
+    property var alongXEulerRotation: Qt.vector3d(-90, 90, -180)
+    property var alongYEulerRotation: Qt.vector3d(0, 90, 90)
+    property var alongZEulerRotation: Qt.vector3d(0, 0, 0)
 
-    camera: perspectiveCamera
+    color: EaStyle.Colors.chartBackground
+    Behavior on color { EaAnimations.ThemeChange {} }
 
-    // Node (Root scene?) (predefined cameras?)
+    // Root scene
     Node {
-        id: originNode
-        position: Qt.vector3d(Globals.Proxies.modelMainParameterValue('_cell_length_a', false) * mult / 2,
-                              Globals.Proxies.modelMainParameterValue('_cell_length_b', false) * mult / 2,
-                              Globals.Proxies.modelMainParameterValue('_cell_length_c', false) * mult / 2)  // NEED FIX: Not updated
+        id: standAloneRootScene
 
-        PerspectiveCamera {
-            id: perspectiveCamera
-            position: Qt.vector3d(0, 0, 600) // position translation in local coordinate
-            //scale: Qt.vector3d(0.333, 0.333, 0.333)
-        //    //eulerRotation.x: 90
+        // Light
+        DirectionalLight {
+            eulerRotation.x: -30
+            eulerRotation.y: 30
         }
-        OrthographicCamera {
-            id: orthographicCamera
-            //rotation: Qt.quaternion(0.7, 0, 0.7, 0)
-           // position: Qt.vector3d(0, 0, 600) // position translation in local coordinate
-           // scale: Qt.vector3d(0.333, 0.333, 0.333)
-            //eulerRotation: Qt.vector3d(90, 0, 0)
-        }
+        // Light
 
-        /*
-        // Stationary orthographic camera viewing from the top
-        OrthographicCamera {
-            id: cameraOrthographicTop
-            y: 600
-            eulerRotation.x: -90
-        }
-
-        // Stationary orthographic camera viewing from the front
+        // Camera
         OrthographicCamera {
             id: cameraOrthographicFront
-            z: 600
+            z: Math.max(container.width, container.height)
+            lookAtNode: structureViewScene
         }
-
-        // Stationary orthographic camera viewing from left
-        OrthographicCamera {
-            id: cameraOrthographicLeft
-            x: -600
-            eulerRotation.y: -90
-        }
-
-        // Stationary perspective camera viewing from the top
-        PerspectiveCamera {
-            id: cameraPerspectiveTop
-            y: 600
-            eulerRotation.x: -90
-        }
-
-        // Stationary perspective camera viewing from the front
         PerspectiveCamera {
             id: cameraPerspectiveFront
-            z: 600
+            z: Math.min(cameraOrthographicFront.z, 470)
+            lookAtNode: structureViewScene
         }
+        // Camera
 
-        // Stationary perspective camera viewing from left
-        PerspectiveCamera {
-            id: cameraPerspectiveLeft
-            x: -600
-            eulerRotation.y: -90
+        // Sub-scene
+        Node {
+            id: structureViewScene
+
+            eulerRotation: defaultEulerRotation
+            Behavior on eulerRotation { EaAnimations.ThemeChange {} }
+
+            // Unit cell
+            Repeater3D {
+                id: cell
+                model: [
+                    // x
+                    { "x": 0,   "y":-0.5, "z":-0.5, "rotx": 0, "roty": 0,  "rotz":-90, "len": cellLengthA },
+                    { "x": 0,   "y": 0.5, "z":-0.5, "rotx": 0, "roty": 0,  "rotz":-90, "len": cellLengthA },
+                    { "x": 0,   "y":-0.5, "z": 0.5, "rotx": 0, "roty": 0,  "rotz":-90, "len": cellLengthA },
+                    { "x": 0,   "y": 0.5, "z": 0.5, "rotx": 0, "roty": 0,  "rotz":-90, "len": cellLengthA },
+                    // y
+                    { "x":-0.5, "y": 0,   "z":-0.5, "rotx": 0, "roty": 0,  "rotz": 0,  "len": cellLengthB },
+                    { "x": 0.5, "y": 0,   "z":-0.5, "rotx": 0, "roty": 0,  "rotz": 0,  "len": cellLengthB },
+                    { "x":-0.5, "y": 0,   "z": 0.5, "rotx": 0, "roty": 0,  "rotz": 0,  "len": cellLengthB },
+                    { "x": 0.5, "y": 0,   "z": 0.5, "rotx": 0, "roty": 0,  "rotz": 0,  "len": cellLengthB },
+                    // z
+                    { "x":-0.5, "y":-0.5, "z": 0,   "rotx": 0, "roty": 90, "rotz": 90, "len": cellLengthC },
+                    { "x": 0.5, "y":-0.5, "z": 0,   "rotx": 0, "roty": 90, "rotz": 90, "len": cellLengthC },
+                    { "x":-0.5, "y": 0.5, "z": 0,   "rotx": 0, "roty": 90, "rotz": 90, "len": cellLengthC },
+                    { "x": 0.5, "y": 0.5, "z": 0,   "rotx": 0, "roty": 90, "rotz": 90, "len": cellLengthC },
+                ]
+                Model {
+                    source: "#Cylinder"
+                    position: Qt.vector3d(cell.model[index].x * cellLengthA * scaleCoeff,
+                                          cell.model[index].y * cellLengthB * scaleCoeff,
+                                          cell.model[index].z * cellLengthC * scaleCoeff)
+                    eulerRotation: Qt.vector3d(cell.model[index].rotx,
+                                               cell.model[index].roty,
+                                               cell.model[index].rotz)
+                    scale: Qt.vector3d(cellCylinderThickness / 100,
+                                       cell.model[index].len * scaleCoeff / 100,
+                                       cellCylinderThickness / 100)
+                    materials: [ DefaultMaterial { diffuseColor: EaStyle.Colors.grey } ]
+                }
+            }
+            // Unit cell
+
+            // Axes vectors
+            Node {
+                visible: Globals.Vars.displayCoordinateVectors
+
+                // X-axis vector
+                Node {
+                    Model {
+                        source: "#Cylinder"
+                        position: Qt.vector3d( axisConeSize,
+                                              -0.5 * cellLengthB * scaleCoeff,
+                                              -0.5 * cellLengthC * scaleCoeff)
+                        eulerRotation: Qt.vector3d(0, 0, -90)
+                        scale: Qt.vector3d(axesCylinderThickness / 100,
+                                           (scaleCoeff * cellLengthA + 2 * axisConeSize) / 100,
+                                           axesCylinderThickness / 100)
+                        materials: [ DefaultMaterial { diffuseColor: EaStyle.Colors.red } ]
+                    }
+                    Model {
+                        source: "#Cone"
+                        position: Qt.vector3d( 0.5 * cellLengthA * scaleCoeff + 2 * axisConeSize,
+                                              -0.5 * cellLengthB * scaleCoeff,
+                                              -0.5 * cellLengthC * scaleCoeff)
+                        eulerRotation: Qt.vector3d(0, 0, -90)
+                        scale: Qt.vector3d(axisConeSize / 100, axisConeSize / 100, axisConeSize / 100)
+                        materials: [ DefaultMaterial { diffuseColor: EaStyle.Colors.red } ]
+                    }
+                }
+                // X-axis vector
+
+                // Y-axis vector
+                Node {
+                    Model {
+                        source: "#Cylinder"
+                        position: Qt.vector3d(-0.5 * cellLengthA * scaleCoeff,
+                                               axisConeSize,
+                                              -0.5 * cellLengthC * scaleCoeff)
+                        eulerRotation: Qt.vector3d(0, 0, 0)
+                        scale: Qt.vector3d(axesCylinderThickness / 100,
+                                           (scaleCoeff * cellLengthB + 2 * axisConeSize) / 100,
+                                           axesCylinderThickness / 100)
+                        materials: [ DefaultMaterial { diffuseColor: EaStyle.Colors.green } ]
+                    }
+                    Model {
+                        source: "#Cone"
+                        position: Qt.vector3d(-0.5 * cellLengthA * scaleCoeff,
+                                               0.5 * cellLengthB * scaleCoeff + 2 * axisConeSize,
+                                              -0.5 * cellLengthC * scaleCoeff)
+                        eulerRotation: Qt.vector3d(0, 0, 0)
+                        scale: Qt.vector3d(axisConeSize / 100, axisConeSize / 100, axisConeSize / 100)
+                        materials: [ DefaultMaterial { diffuseColor: EaStyle.Colors.green } ]
+                    }
+                }
+                // Y-axis vector
+
+                // Z-axis vector
+                Node {
+                    Model {
+                        source: "#Cylinder"
+                        position: Qt.vector3d(-0.5 * cellLengthA * scaleCoeff,
+                                              -0.5 * cellLengthB * scaleCoeff,
+                                               axisConeSize)
+                        eulerRotation: Qt.vector3d(0, 90, 90)
+                        scale: Qt.vector3d(axesCylinderThickness / 100,
+                                           (scaleCoeff * cellLengthC + 2 * axisConeSize) / 100,
+                                           axesCylinderThickness / 100)
+                        materials: [ DefaultMaterial { diffuseColor: EaStyle.Colors.blue } ]
+                    }
+                    Model {
+                        source: "#Cone"
+                        position: Qt.vector3d(-0.5 * cellLengthA * scaleCoeff,
+                                              -0.5 * cellLengthB * scaleCoeff,
+                                               0.5 * cellLengthC * scaleCoeff + 2 * axisConeSize)
+                        eulerRotation: Qt.vector3d(0, 90, 90)
+                        scale: Qt.vector3d(axisConeSize / 100, axisConeSize / 100, axisConeSize / 100)
+                        materials: [ DefaultMaterial { diffuseColor: EaStyle.Colors.blue } ]
+                    }
+                }
+                // Z-axis vector
+
+            }
+            // Axes vectors
+
+            // Atoms
+            Repeater3D {
+                id: atoms
+
+                model: Globals.Proxies.main.model.structViewAtomsModel
+
+                Model {
+                    source: "#Sphere"
+                    position: Qt.vector3d((atoms.model[index].x - 0.5) * cellLengthA * scaleCoeff,
+                                          (atoms.model[index].y - 0.5) * cellLengthB * scaleCoeff,
+                                          (atoms.model[index].z - 0.5) * cellLengthC * scaleCoeff)
+                    scale: Qt.vector3d(atoms.model[index].diameter,
+                                       atoms.model[index].diameter,
+                                       atoms.model[index].diameter)
+                    materials: [ DefaultMaterial { diffuseColor: atoms.model[index].color } ]
+                }
+            }
+            // Atoms
         }
-        */
-
+        // Sub-scene
     }
-    // Node
+    // Root scene
+
+    // Renderer
+    View3D {
+        id: view
+        anchors.fill: parent
+        importScene: standAloneRootScene
+        camera: cameraOrthographicFront  //cameraPerspectiveFront
+    }
+    // Renderer
 
     // Rotation controller
     /*
     OrbitCameraController {
         id: cameraController
-
         anchors.fill: parent
-        origin: originNode
-        camera: orthographicCamera
+        origin: structureViewScene
+        camera: view.camera
     }
     */
-    OrbitCameraController {
-
-        id: cameraController
-
-        anchors.fill: parent
-        origin: originNode
-        camera: view.camera
-
-    }
-
-    // Rotation controller
-
-    // Light
-    DirectionalLight {
-        eulerRotation.x: -30
-        eulerRotation.y: 30
-        //ambientColor: Qt.rgba(1.0, 1.0, 1.0, 1.0)
-    }
-    // Light
-
-    // Unit cell
-    Repeater3D {
-        id: cell
-        model: Globals.Proxies.main.model.structViewCellModel
-        Model {
-            source: "#Cylinder"
-            position: Qt.vector3d(cell.model[index].x * mult,
-                                  cell.model[index].y * mult,
-                                  cell.model[index].z * mult)
-            eulerRotation: Qt.vector3d(cell.model[index].rotx,
-                                       cell.model[index].roty,
-                                       cell.model[index].rotz)
-            scale: Qt.vector3d(cellCilinderThickness,
-                               cell.model[index].len / mult2,
-                               cellCilinderThickness)
-            materials: [ DefaultMaterial { diffuseColor: "grey" } ]
-        }
-    }
-    // Unit cell
-
-    // Axes
-    Repeater3D {
-        id: axes
-        model: Globals.Proxies.main.model.structViewAxesModel
-        Node {
-            // Main line
-            Model {
-                source: "#Cylinder"
-                position: Qt.vector3d(axes.model[index].x * axes.model[index].len * mult,
-                                      axes.model[index].y * axes.model[index].len * mult,
-                                      axes.model[index].z * axes.model[index].len * mult)
-                eulerRotation: Qt.vector3d(axes.model[index].rotx,
-                                           axes.model[index].roty,
-                                           axes.model[index].rotz)
-                scale: Qt.vector3d(axesCilinderThickness,
-                                   axes.model[index].len / mult2,
-                                   axesCilinderThickness)
-                materials: [ DefaultMaterial { diffuseColor: [EaStyle.Colors.red, EaStyle.Colors.green, EaStyle.Colors.blue][index] } ]
-            }
-            // Extra piece after cell end
-            Model {
-                source: "#Cylinder"
-                position: Qt.vector3d(axes.model[index].x * 2 * (axes.model[index].len * mult + axisConeScale * mult3),
-                                      axes.model[index].y * 2 * (axes.model[index].len * mult + axisConeScale * mult3),
-                                      axes.model[index].z * 2 * (axes.model[index].len * mult + axisConeScale * mult3))
-                eulerRotation: Qt.vector3d(axes.model[index].rotx,
-                                           axes.model[index].roty,
-                                           axes.model[index].rotz)
-                scale: Qt.vector3d(axesCilinderThickness,
-                                   axisConeScale * 2,
-                                   axesCilinderThickness)
-                materials: [ DefaultMaterial { diffuseColor: [EaStyle.Colors.red, EaStyle.Colors.green, EaStyle.Colors.blue][index] } ]
-            }
-            // Cone to get arrow
-            Model {
-                source: "#Cone"
-                position: Qt.vector3d(axes.model[index].x * 2 * (axes.model[index].len * mult + axisConeScale * mult3 * 2),
-                                      axes.model[index].y * 2 * (axes.model[index].len * mult + axisConeScale * mult3 * 2),
-                                      axes.model[index].z * 2 * (axes.model[index].len * mult + axisConeScale * mult3 * 2))
-                eulerRotation: Qt.vector3d(axes.model[index].rotx,
-                                           axes.model[index].roty,
-                                           axes.model[index].rotz)
-                scale: Qt.vector3d(axisConeScale, axisConeScale, axisConeScale)
-                materials: [ DefaultMaterial { diffuseColor: [EaStyle.Colors.red, EaStyle.Colors.green, EaStyle.Colors.blue][index] } ]
-            }
-        }
-    }
-    // Axes
-
-    // Atoms
-    Repeater3D {
-        id: atoms
-
-        model: Globals.Proxies.main.model.structViewAtomsModel
-
-        Model {
-            source: "#Sphere"
-            position: Qt.vector3d(atoms.model[index].x * mult,
-                                  atoms.model[index].y * mult,
-                                  atoms.model[index].z * mult)
-            scale: Qt.vector3d(atoms.model[index].diameter,
-                               atoms.model[index].diameter,
-                               atoms.model[index].diameter)
-            materials: [ DefaultMaterial { diffuseColor: atoms.model[index].color } ]
-        }
-    }
-    // Atoms
-
-    // Mouse area
     MouseArea {
-        anchors.fill: view
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: (mouse) => {
-            if (mouse.button === Qt.LeftButton) {
-                console.debug('Left mouse button clicked')
-            }
-            else {
-                console.debug('Right mouse button clicked')
-            }
-            //console.error(cameraController.camera.position)
-            //console.info(cameraController.camera.eulerRotation)
+        anchors.fill:parent
+        property real pressedX
+        property real pressedY
+        onMouseXChanged: Qt.callLater(update)
+        onMouseYChanged: Qt.callLater(update)
+        onPressed: {
+            [pressedX,pressedY] = [mouseX,mouseY];
+        }
+        function update() {
+            let [dx,dy] = [mouseX - pressedX,mouseY - pressedY];
+            [pressedX,pressedY] = [mouseX,mouseY];
+            structureViewScene.rotate(dx, Qt.vector3d(0, 1, 0), Node.SceneSpace);
+            structureViewScene.rotate(dy, Qt.vector3d(1, 0, 0), Node.SceneSpace);
         }
     }
-    // Mouse area
+    // Rotation controller
 
     // Tool buttons
     Row {
@@ -254,23 +262,25 @@ View3D {
             width: EaStyle.Sizes.toolButtonHeight
             borderColor: EaStyle.Colors.chartAxis
             fontIcon: "cube"
-            ToolTip.text: qsTr("Set perspective/orthographic view")
-            onClicked: {
-                //console.error(view.camera)
-                //console.info(perspectiveCamera)
-                if (view.camera === perspectiveCamera) {
-                    //console.debug(true)
-                    view.camera = orthographicCamera
-                } else {
-                    //console.debug(false)
-                    view.camera = perspectiveCamera
-                }
-            }
+            ToolTip.text: view.camera === cameraPerspectiveFront ?
+                              qsTr("Set orthographic view") :
+                              qsTr("Set perspective view")
+            onClicked: view.camera === cameraPerspectiveFront ?
+                           view.camera = cameraOrthographicFront :
+                           view.camera = cameraPerspectiveFront
         }
 
-        Item {
-            height: 1
-            width: parent.spacing
+        Item { height: 1; width: parent.spacing }  // spacer
+
+        EaElements.TabButton {
+            checkable: false
+            autoExclusive: false
+            height: EaStyle.Sizes.toolButtonHeight
+            width: EaStyle.Sizes.toolButtonHeight
+            borderColor: EaStyle.Colors.chartAxis
+            fontIcon: "search-plus"
+            ToolTip.text: qsTr("Zoom in")
+            onClicked: scaleCoeff += 1
         }
 
         EaElements.TabButton {
@@ -279,34 +289,9 @@ View3D {
             height: EaStyle.Sizes.toolButtonHeight
             width: EaStyle.Sizes.toolButtonHeight
             borderColor: EaStyle.Colors.chartAxis
-            fontIcon: "x"
-            ToolTip.text: qsTr("View along the x axis")
-//            onClicked: view.camera = cameraOrthographicTop //view.camera.rotation = Qt.quaternion(1, 0, 0, 0)
-//            onClicked: view.camera.rotation = Qt.quaternion(1, 0, 0, 0)
-        }
-
-        EaElements.TabButton {
-            checkable: false
-            autoExclusive: false
-            height: EaStyle.Sizes.toolButtonHeight
-            width: EaStyle.Sizes.toolButtonHeight
-            borderColor: EaStyle.Colors.chartAxis
-            fontIcon: "y"
-            ToolTip.text: qsTr("View along the y axis")
-//            onClicked: view.camera = cameraOrthographicFront //view.camera.rotation = Qt.quaternion(-0.5, 0.5, 0.5, 0.5)
-//            onClicked: view.camera.rotation = Qt.quaternion(0.5, -0.5, -0.5, -0.5)
-        }
-
-        EaElements.TabButton {
-            checkable: false
-            autoExclusive: false
-            height: EaStyle.Sizes.toolButtonHeight
-            width: EaStyle.Sizes.toolButtonHeight
-            borderColor: EaStyle.Colors.chartAxis
-            fontIcon: "z"
-            ToolTip.text: qsTr("View along the z axis")
-//            onClicked: view.camera = cameraOrthographicLeft //view.camera.rotation = Qt.quaternion(1, 0, 0, 0)
-//            onClicked: view.camera.rotation = Qt.quaternion(1, 0, 0, 0)
+            fontIcon: "search-minus"
+            ToolTip.text: qsTr("Zoom out")
+            onClicked: scaleCoeff -= 1
         }
 
         EaElements.TabButton {
@@ -316,19 +301,68 @@ View3D {
             width: EaStyle.Sizes.toolButtonHeight
             borderColor: EaStyle.Colors.chartAxis
             fontIcon: "backspace"
-            ToolTip.text: qsTr("Reset to default view")
-//            onClicked: view.camera.rotation = Qt.quaternion(0.9, -0.1, -0.4, 0.0)
+            ToolTip.text: qsTr("Reset to default scale")
+            onClicked: scaleCoeff = defaultScaleCoeff
+        }
+
+
+        Item { height: 1; width: parent.spacing }  // spacer
+
+        EaElements.TabButton {
+            checkable: false
+            autoExclusive: false
+            height: EaStyle.Sizes.toolButtonHeight
+            width: EaStyle.Sizes.toolButtonHeight
+            borderColor: EaStyle.Colors.chartAxis
+            fontIcon: "a"
+            ToolTip.text: qsTr("View along the a axis")
+            onClicked: structureViewScene.eulerRotation = alongXEulerRotation
+        }
+
+        EaElements.TabButton {
+            checkable: false
+            autoExclusive: false
+            height: EaStyle.Sizes.toolButtonHeight
+            width: EaStyle.Sizes.toolButtonHeight
+            borderColor: EaStyle.Colors.chartAxis
+            fontIcon: "b"
+            ToolTip.text: qsTr("View along the b axis")
+            onClicked: structureViewScene.eulerRotation = alongYEulerRotation
+        }
+
+        EaElements.TabButton {
+            checkable: false
+            autoExclusive: false
+            height: EaStyle.Sizes.toolButtonHeight
+            width: EaStyle.Sizes.toolButtonHeight
+            borderColor: EaStyle.Colors.chartAxis
+            fontIcon: "c"
+            ToolTip.text: qsTr("View along the c axis")
+            onClicked: structureViewScene.eulerRotation = alongZEulerRotation
+        }
+
+        EaElements.TabButton {
+            checkable: false
+            autoExclusive: false
+            height: EaStyle.Sizes.toolButtonHeight
+            width: EaStyle.Sizes.toolButtonHeight
+            borderColor: EaStyle.Colors.chartAxis
+            fontIcon: "backspace"
+            ToolTip.text: qsTr("Reset to default rotation")
+            onClicked: structureViewScene.eulerRotation = defaultEulerRotation
         }
     }
     // Tool buttons
 
     // Legend
     Rectangle {
+        visible: Globals.Vars.displayCoordinateVectors
+
         width: childrenRect.width
         height: childrenRect.height
 
-        anchors.bottom: view.bottom
-        anchors.left: view.left
+        anchors.bottom: container.bottom
+        anchors.left: container.left
         anchors.margins: EaStyle.Sizes.fontPixelSize
 
         color: EaStyle.Colors.mainContentBackgroundHalfTransparent
@@ -346,32 +380,49 @@ View3D {
             bottomPadding: EaStyle.Sizes.fontPixelSize * 0.5
 
             EaElements.Label {
-                text: 'x-axis'
+                text: 'a axis'
                 color: EaStyle.Colors.red
             }
             EaElements.Label {
-                text: 'y-axis'
+                text: 'b axis'
                 color: EaStyle.Colors.green
             }
             EaElements.Label {
-                text: 'z-axis'
+                text: 'c axis'
                 color: EaStyle.Colors.blue
             }
             /*
-            EaElements.Label { text: `eulerRotation ${cameraController.camera.eulerRotation}` }
-            //EaElements.Label { text: `forward ${cameraController.camera.forward}` }
-            EaElements.Label { text: `pivot ${cameraController.camera.pivot}` }
-            EaElements.Label { text: `position ${cameraController.camera.position}` }
-            EaElements.Label { text: `rotation ${cameraController.camera.rotation}` }
-            EaElements.Label { text: `scale ${cameraController.camera.scale}` }
-            EaElements.Label { text: `scenePosition ${cameraController.camera.scenePosition}` }
-            EaElements.Label { text: `sceneRotation ${cameraController.camera.sceneRotation}` }
-            EaElements.Label { text: `sceneScale ${cameraController.camera.sceneScale}` }
-            //EaElements.Label { text: `sceneTransform ${cameraController.camera.sceneTransform}` }
+            EaElements.Label { text: `eulerRotation ${view.camera.eulerRotation}` }
+            EaElements.Label { text: `pivot ${view.camera.pivot}` }
+            EaElements.Label { text: `position ${view.camera.position}` }
+            EaElements.Label { text: `rotation ${view.camera.rotation}` }
+            EaElements.Label { text: `scale ${view.camera.scale}` }
+            EaElements.Label { text: `scenePosition ${view.camera.scenePosition}` }
+            EaElements.Label { text: `sceneRotation ${view.camera.sceneRotation}` }
+            EaElements.Label { text: `sceneScale ${view.camera.sceneScale}` }
+            EaElements.Label { text: `forward ${view.camera.forward}` }
+            EaElements.Label { text: `sceneTransform ${view.camera.sceneTransform}` }
+            EaElements.Label { text: `x y z ${view.camera.x} ${view.camera.y} ${view.camera.z}` }
             */
         }
     }
     // Legend
 
+    // Misc
+    Component.onDestruction: console.debug(`Structure view container destroyed: ${container}`)
+    Component.onCompleted: console.debug(`Structure view container created: ${container}`)
+
+    // NEED FIX
+    // For some reasons, when orthographic camera is selected for the first time,
+    // scale is incorrect. When camera is changed to perspective one and then back
+    // to orthographic, scale jumps to the expected one. The same occures when size
+    // of the container is changed. So, this timer is temporary fix to get the
+    // correct scale few moments after the structure view is created.
+    Timer {
+        running: true
+        interval: 100
+        onTriggered: container.width += 1
+    }
+    // Misc
+
 }
-// View3D

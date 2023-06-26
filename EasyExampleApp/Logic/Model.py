@@ -508,20 +508,20 @@ class Model(QObject):
         c = params['_cell_length_c']['value']
         self._structViewCellModel = [
             # x
-            {"x": 0.5*a, "y": 0,     "z": 0,     "rotx": 0, "roty": 0,  "rotz": -90, "len": a},
-            {"x": 0.5*a, "y": b,     "z": 0,     "rotx": 0, "roty": 0,  "rotz": -90, "len": a},
-            {"x": 0.5*a, "y": 0,     "z": c,     "rotx": 0, "roty": 0,  "rotz": -90, "len": a},
-            {"x": 0.5*a, "y": b,     "z": c,     "rotx": 0, "roty": 0,  "rotz": -90, "len": a},
+            { "x": 0,     "y":-0.5*b, "z":-0.5*c, "rotx": 0, "roty": 0,  "rotz":-90, "len": a },
+            { "x": 0,     "y": 0.5*b, "z":-0.5*c, "rotx": 0, "roty": 0,  "rotz":-90, "len": a },
+            { "x": 0,     "y":-0.5*b, "z": 0.5*c, "rotx": 0, "roty": 0,  "rotz":-90, "len": a },
+            { "x": 0,     "y": 0.5*b, "z": 0.5*c, "rotx": 0, "roty": 0,  "rotz":-90, "len": a },
             # y
-            {"x": 0,     "y": 0.5*b, "z": 0,     "rotx": 0, "roty": 0,  "rotz": 0,   "len": b},
-            {"x": a,     "y": 0.5*b, "z": 0,     "rotx": 0, "roty": 0,  "rotz": 0,   "len": b},
-            {"x": 0,     "y": 0.5*b, "z": c,     "rotx": 0, "roty": 0,  "rotz": 0,   "len": b},
-            {"x": a,     "y": 0.5*b, "z": c,     "rotx": 0, "roty": 0,  "rotz": 0,   "len": b},
+            { "x":-0.5*a, "y": 0,     "z":-0.5*c, "rotx": 0, "roty": 0,  "rotz": 0,  "len": b },
+            { "x": 0.5*a, "y": 0,     "z":-0.5*c, "rotx": 0, "roty": 0,  "rotz": 0,  "len": b },
+            { "x":-0.5*a, "y": 0,     "z": 0.5*c, "rotx": 0, "roty": 0,  "rotz": 0,  "len": b },
+            { "x": 0.5*a, "y": 0,     "z": 0.5*c, "rotx": 0, "roty": 0,  "rotz": 0,  "len": b },
             # z
-            {"x": 0,     "y": 0,     "z": 0.5*c, "rotx": 0, "roty": 90, "rotz": 90,  "len": c},
-            {"x": a,     "y": 0,     "z": 0.5*c, "rotx": 0, "roty": 90, "rotz": 90,  "len": c},
-            {"x": 0,     "y": b,     "z": 0.5*c, "rotx": 0, "roty": 90, "rotz": 90,  "len": c},
-            {"x": a,     "y": b,     "z": 0.5*c, "rotx": 0, "roty": 90, "rotz": 90,  "len": c}
+            { "x":-0.5*a, "y":-0.5*b, "z": 0,     "rotx": 0, "roty": 90, "rotz": 90, "len": c },
+            { "x": 0.5*a, "y":-0.5*b, "z": 0,     "rotx": 0, "roty": 90, "rotz": 90, "len": c },
+            { "x":-0.5*a, "y": 0.5*b, "z": 0,     "rotx": 0, "roty": 90, "rotz": 90, "len": c },
+            { "x": 0.5*a, "y": 0.5*b, "z": 0,     "rotx": 0, "roty": 90, "rotz": 90, "len": c },
         ]
         console.debug(f"Structure view cell  for model no. {self._currentIndex + 1} has been set. Cell lengths: ({a}, {b}, {c})")
         self.structViewCellModelChanged.emit()
@@ -544,10 +544,10 @@ class Model(QObject):
         #self._structViewAtomsModel = []
         spaceGroup = self._proxy.data._cryspyModelObj.items[0].items[1]  # NEED FIX. model index!!! [0], 'Space group' [1] cryspy.C_item_loop_classes.cl_2_space_group.SpaceGroup
         atoms = self._dataBlocks[self._currentIndex]['loops']['_atom_site']
-        params = self._dataBlocks[self._currentIndex]['params']
-        a = params['_cell_length_a']['value']
-        b = params['_cell_length_b']['value']
-        c = params['_cell_length_c']['value']
+        #params = self._dataBlocks[self._currentIndex]['params']
+        #a = params['_cell_length_a']['value']
+        #b = params['_cell_length_b']['value']
+        #c = params['_cell_length_c']['value']
         # Add all atoms in the cell, including those in equivalent positions
         for atom in atoms:
             symbol = atom['_type_symbol']['value']
@@ -557,9 +557,9 @@ class Model(QObject):
             xArray, yArray, zArray, _ = spaceGroup.calc_xyz_mult(xUnique, yUnique, zUnique)
             for x, y, z in zip(xArray, yArray, zArray):
                 structViewModel.add((
-                    float(x * a),
-                    float(y * b),
-                    float(z * c),
+                    float(x),
+                    float(y),
+                    float(z),
                     0.333333 * self.atomData(symbol, 'covalentRadius'),
                     self.atomData(symbol, 'color')
                 ))
@@ -567,31 +567,31 @@ class Model(QObject):
         structViewModelCopy = copy.copy(structViewModel)
         for item in structViewModelCopy:
             if item[0] == 0 and item[1] == 0 and item[2] == 0:
-                structViewModel.add((a, 0, 0, item[3], item[4]))
-                structViewModel.add((0, b, 0, item[3], item[4]))
-                structViewModel.add((0, 0, c, item[3], item[4]))
-                structViewModel.add((a, b, 0, item[3], item[4]))
-                structViewModel.add((a, 0, c, item[3], item[4]))
-                structViewModel.add((0, b, c, item[3], item[4]))
-                structViewModel.add((a, b, c, item[3], item[4]))
+                structViewModel.add((1, 0, 0, item[3], item[4]))
+                structViewModel.add((0, 1, 0, item[3], item[4]))
+                structViewModel.add((0, 0, 1, item[3], item[4]))
+                structViewModel.add((1, 1, 0, item[3], item[4]))
+                structViewModel.add((1, 0, 1, item[3], item[4]))
+                structViewModel.add((0, 1, 1, item[3], item[4]))
+                structViewModel.add((1, 1, 1, item[3], item[4]))
             elif item[0] == 0 and item[1] == 0:
-                structViewModel.add((a, 0, item[2], item[3], item[4]))
-                structViewModel.add((0, b, item[2], item[3], item[4]))
-                structViewModel.add((a, b, item[2], item[3], item[4]))
+                structViewModel.add((1, 0, item[2], item[3], item[4]))
+                structViewModel.add((0, 1, item[2], item[3], item[4]))
+                structViewModel.add((1, 1, item[2], item[3], item[4]))
             elif item[0] == 0 and item[2] == 0:
-                structViewModel.add((a, item[1], 0, item[3], item[4]))
-                structViewModel.add((0, item[1], c, item[3], item[4]))
-                structViewModel.add((a, item[1], c, item[3], item[4]))
+                structViewModel.add((1, item[1], 0, item[3], item[4]))
+                structViewModel.add((0, item[1], 1, item[3], item[4]))
+                structViewModel.add((1, item[1], 1, item[3], item[4]))
             elif item[1] == 0 and item[2] == 0:
-                structViewModel.add((item[0], b, 0, item[3], item[4]))
-                structViewModel.add((item[0], 0, c, item[3], item[4]))
-                structViewModel.add((item[0], b, c, item[3], item[4]))
+                structViewModel.add((item[0], 1, 0, item[3], item[4]))
+                structViewModel.add((item[0], 0, 1, item[3], item[4]))
+                structViewModel.add((item[0], 1, 1, item[3], item[4]))
             elif item[0] == 0:
-                structViewModel.add((a, item[1], item[2], item[3], item[4]))
+                structViewModel.add((1, item[1], item[2], item[3], item[4]))
             elif item[1] == 0:
-                structViewModel.add((item[0], b, item[2], item[3], item[4]))
+                structViewModel.add((item[0], 1, item[2], item[3], item[4]))
             elif item[2] == 0:
-                structViewModel.add((item[0], item[1], c, item[3], item[4]))
+                structViewModel.add((item[0], item[1], 1, item[3], item[4]))
         # Create dict from set for GUI
         self._structViewAtomsModel = [{'x':x, 'y':y, 'z':z, 'diameter':diameter, 'color':color}
                                       for x, y, z, diameter, color in structViewModel]
