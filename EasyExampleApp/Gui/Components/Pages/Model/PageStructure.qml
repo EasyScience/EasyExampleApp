@@ -26,7 +26,11 @@ EaComponents.ContentPage {
 
         items: [
             //Loader { source: `MainContent/${EaGlobals.Vars.currentLib1d}1dTab.qml` }
-            Loader { source: `MainContent/StructureViewTab.qml` }
+            Loader {
+                source: `MainContent/StructureViewTab.qml`
+                asynchronous: true
+                visible: status === Loader.Ready
+            }
         ]
     }
 
