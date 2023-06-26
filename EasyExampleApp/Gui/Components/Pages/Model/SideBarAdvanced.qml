@@ -11,8 +11,11 @@ import EasyApp.Gui.Components as EaComponents
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
-        title: qsTr("Empty group")
+        title: qsTr("Appearance")
+        collapsed: false
         last: true
+
+        Loader { source: 'SideBarAdvanced/Appearance.qml' }
     }
 
 }
