@@ -130,7 +130,7 @@ EaComponents.ApplicationWindow {
         // Model tab
         EaElements.AppBarTabButton {
             enabled: Globals.Vars.modelPageEnabled
-            fontIcon: 'gem'
+            fontIcon: 'layer-group'  //'gem'
             text: qsTr('Model')
             ToolTip.text: qsTr('Model description page')
             onEnabledChanged: enabled ?
