@@ -4,6 +4,8 @@
 
 from PySide6.QtCore import QObject
 
+from EasyApp.Logic.Logging import console
+
 
 class Connections(QObject):
 
@@ -16,14 +18,12 @@ class Connections(QObject):
         self._proxy.project.createdChanged.connect(self._proxy.project.save)
 
         # Model
-        self._proxy.model.paramChanged.connect(self.onModelParamChanged)
         self._proxy.model.dataBlocksChanged.connect(self.onModelDataBlocksChanged)
         self._proxy.model.currentIndexChanged.connect(self.onModelCurrentIndexChanged)
 
         self._proxy.model.yCalcArraysChanged.connect(self.onModelYCalcArraysChanged)
 
         # Experiment
-        self._proxy.experiment.paramChanged.connect(self.onExperimentParamChanged)
         self._proxy.experiment.dataBlocksChanged.connect(self.onExperimentDataBlocksChanged)
         #self._proxy.experiment.currentIndexChanged.connect(self.onExperimentCurrentIndexChanged)
 
@@ -51,18 +51,7 @@ class Connections(QObject):
         self._proxy.project.setNeedSaveToTrue
 
 
-
-
-
     # Model
-
-    def onModelParamChanged(self):
-        self._proxy.model.updateCurrentModelStructView()
-        #self._proxy.model.setDataBlocksJson()
-        #self._proxy.project.setNeedSaveToTrue()
-        if self._proxy.analysis.defined:
-            self._proxy.fittables.set()
-            #self._proxy.analysis.calculateYCalcTotal()
 
     def onModelDataBlocksChanged(self):
         self._proxy.model.defined = bool(len(self._proxy.model.dataBlocks))
@@ -72,7 +61,14 @@ class Connections(QObject):
         else:
             self._proxy.status.phaseCount = ''
 
-        self.onModelParamChanged()
+        self._proxy.model.updateCurrentModelStructView()
+        #self._proxy.model.setDataBlocksJson()
+        #self._proxy.project.setNeedSaveToTrue()
+        if self._proxy.analysis.defined:
+            self._proxy.fittables.set()
+            #self._proxy.analysis.calculateYCalcTotal()
+
+        console.debug('')
 
     def onModelCurrentIndexChanged(self):
         self._proxy.model.updateCurrentModelStructView()
@@ -102,26 +98,18 @@ class Connections(QObject):
 
     # Experiment
 
-    def onExperimentParamChanged(self):
-        self._proxy.experiment.updateCurrentExperimentYBkgArray()  # NEED FIX: Check if bkg param changed
-        #self._proxy.plotting.drawBackgroundOnExperimentChart()
-
-        #self._proxy.experiment.setDataBlocksJson()
-        #self._proxy.project.setNeedSaveToTrue()
-
-        if self._proxy.analysis.defined:
-            self._proxy.fittables.set()
-            #self._proxy.analysis.calculateYCalcTotal()
-
     def onExperimentDataBlocksChanged(self):
         self._proxy.experiment.defined = bool(len(self._proxy.experiment.dataBlocks))
 
+        self._proxy.experiment.updateCurrentExperimentYBkgArray()  # NEED FIX: Check if bkg param changed
+        #self._proxy.plotting.drawBackgroundOnExperimentChart()
         #self._proxy.experiment.setDataBlocksJson()
         #self._proxy.project.setNeedSaveToTrue()
-
         if self._proxy.analysis.defined:
             self._proxy.fittables.set()
             #self._proxy.analysis.calculateYCalcTotal()
+
+        console.debug('')
 
     #def onExperimentCurrentIndexChanged(self):
     #    self._proxy.plotting.drawMeasuredOnExperimentChart()

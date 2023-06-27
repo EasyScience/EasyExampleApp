@@ -63,8 +63,6 @@ class Model(QObject):
     dataBlocksJsonChanged = Signal()
     yCalcArraysChanged = Signal()
 
-    paramChanged = Signal()
-
     structViewAtomsModelChanged = Signal()
     structViewCellModelChanged = Signal()
     structViewAxesModelChanged = Signal()
@@ -184,7 +182,7 @@ class Model(QObject):
         changedCryspy = self.editCryspyDictByMainParam(paramName, value)
 
         if changedIntern and changedCryspy:
-            self.paramChanged.emit()
+            self.dataBlocksChanged.emit()
 
     @Slot(str, str, int, float)
     def setLoopParamValue(self, loopName, paramName, paramIndex, value):
@@ -192,7 +190,7 @@ class Model(QObject):
         changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, paramIndex, value)
 
         if changedIntern and changedCryspy:
-            self.paramChanged.emit()
+            self.dataBlocksChanged.emit()
 
     # Private methods
 
@@ -498,8 +496,8 @@ class Model(QObject):
 
     def updateCurrentModelStructView(self):
         self.setCurrentModelStructViewAtomsModel()
-        self.setCurrentModelStructViewCellModel()
-        self.setCurrentModelStructViewAxesModel()
+        #self.setCurrentModelStructViewCellModel()
+        #self.setCurrentModelStructViewAxesModel()
 
     def setCurrentModelStructViewCellModel(self):
         params = self._dataBlocks[self._currentIndex]['params']

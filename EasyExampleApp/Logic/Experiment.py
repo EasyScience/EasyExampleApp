@@ -65,8 +65,6 @@ class Experiment(QObject):
     yBkgArraysChanged = Signal()
     chartRangesChanged = Signal()
 
-    paramChanged = Signal()
-
     def __init__(self, parent):
         super().__init__(parent)
         self._proxy = parent
@@ -194,7 +192,7 @@ class Experiment(QObject):
         changedCryspy = self.editCryspyDictByMainParam(paramName, value)
 
         if changedIntern and changedCryspy:
-            self.paramChanged.emit()
+            self.dataBlocksChanged.emit()
 
     @Slot(str, str, int, float)
     def setLoopParamValue(self, loopName, paramName, paramIndex, value):
@@ -202,7 +200,7 @@ class Experiment(QObject):
         changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, paramIndex, value)
 
         if changedIntern and changedCryspy:
-            self.paramChanged.emit()
+            self.dataBlocksChanged.emit()
 
     # Private methods
 
