@@ -26,10 +26,14 @@ Rectangle {
         axisX.title: "2θ (degree)"
         axisX.min: parameterValue('xMin')
         axisX.max: parameterValue('xMax')
+        axisX.minAfterReset: parameterValue('xMin')
+        axisX.maxAfterReset: parameterValue('xMax')
 
         axisY.title: "Imeas, Ibkg"
         axisY.min: parameterValue('yMin')
         axisY.max: parameterValue('yMax')
+        axisY.minAfterReset: parameterValue('yMin')
+        axisY.maxAfterReset: parameterValue('yMax')
 
         measSerie.onHovered: (point, state) => showMainTooltip(chartView, point, state)
         bkgSerie.onHovered: (point, state) => showMainTooltip(chartView, point, state)
@@ -97,12 +101,8 @@ Rectangle {
                 width: EaStyle.Sizes.toolButtonHeight
                 borderColor: EaStyle.Colors.chartAxis
                 fontIcon: "backspace"
-                ToolTip.text: chartView.allowZoom ?
-                                  qsTr("Reset axes after zoom") :
-                                  qsTr("Reset axes after move")
-                onClicked: chartView.allowZoom ?
-                               chartView.resetZoom() :
-                               chartView.resetMove()
+                ToolTip.text: qsTr("Reset axes")
+                onClicked: chartView.resetAxes()
             }
 
         }

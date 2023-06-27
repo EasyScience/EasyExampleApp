@@ -60,11 +60,15 @@ Column {
                 axisX.labelsVisible: false
                 axisX.min: parameterValue('xMin')
                 axisX.max: parameterValue('xMax')
+                axisX.minAfterReset: parameterValue('xMin')
+                axisX.maxAfterReset: parameterValue('xMax')
                 axisX.onRangeChanged: alignAllCharts()
 
                 axisY.title: "Imeas, Icalc, Ibkg"
                 axisY.min: parameterValue('yMin')
                 axisY.max: parameterValue('yMax')
+                axisY.minAfterReset: parameterValue('yMin')
+                axisY.maxAfterReset: parameterValue('yMax')
                 axisY.onRangeChanged: adjustResidualChartRangeY()
 
                 backgroundColor: "transparent"
@@ -193,12 +197,8 @@ Column {
                         width: EaStyle.Sizes.toolButtonHeight
                         borderColor: EaStyle.Colors.chartAxis
                         fontIcon: "backspace"
-                        ToolTip.text: mainChart.allowZoom ?
-                                          qsTr("Reset axes after zoom") :
-                                          qsTr("Reset axes after move")
-                        onClicked: mainChart.allowZoom ?
-                                       mainChart.resetZoom() :
-                                       mainChart.resetMove()
+                        ToolTip.text: qsTr("Reset axes")
+                        onClicked: mainChart.resetAxes()
                     }
 
                 }

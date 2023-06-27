@@ -228,19 +228,23 @@ Rectangle {
     }
     */
     MouseArea {
-        anchors.fill:parent
         property real pressedX
         property real pressedY
+        anchors.fill: parent
+        onPressed: {
+            pressedX = mouseX
+            pressedY = mouseY
+        }
         onMouseXChanged: Qt.callLater(update)
         onMouseYChanged: Qt.callLater(update)
-        onPressed: {
-            [pressedX,pressedY] = [mouseX,mouseY];
-        }
         function update() {
-            let [dx,dy] = [mouseX - pressedX,mouseY - pressedY];
-            [pressedX,pressedY] = [mouseX,mouseY];
-            structureViewScene.rotate(dx, Qt.vector3d(0, 1, 0), Node.SceneSpace);
-            structureViewScene.rotate(dy, Qt.vector3d(1, 0, 0), Node.SceneSpace);
+            const dx = mouseX - pressedX
+            const dy = mouseY - pressedY
+            pressedX = mouseX
+            pressedY = mouseY
+
+            structureViewScene.rotate(dx, Qt.vector3d(0, 1, 0), Node.SceneSpace)
+            structureViewScene.rotate(dy, Qt.vector3d(1, 0, 0), Node.SceneSpace)
         }
     }
     // Rotation controller
