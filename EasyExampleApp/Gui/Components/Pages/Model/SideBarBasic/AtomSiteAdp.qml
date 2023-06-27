@@ -41,7 +41,7 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 4.3
+                width: EaStyle.Sizes.fontPixelSize * 4.0
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("label")
@@ -57,7 +57,7 @@ EaElements.GroupColumn {
             EaComponents.TableViewLabel {
                 id: atomSiteIso
                 width: EaStyle.Sizes.fontPixelSize * 3.7
-                horizontalAlignment: Text.AlignHCenter
+                horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("iso")
             }
@@ -66,42 +66,47 @@ EaElements.GroupColumn {
                 width: atomSiteIso.width
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("aniso11")
+                text: qsTr("ani11")
             }
 
             EaComponents.TableViewLabel {
                 width: atomSiteIso.width
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("aniso22")
+                text: qsTr("ani22")
             }
 
             EaComponents.TableViewLabel {
                 width: atomSiteIso.width
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("aniso33")
+                text: qsTr("ani33")
             }
 
             EaComponents.TableViewLabel {
                 width: atomSiteIso.width
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("aniso12")
+                text: qsTr("ani12")
             }
 
             EaComponents.TableViewLabel {
                 width: atomSiteIso.width
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("aniso13")
+                text: qsTr("ani13")
             }
 
             EaComponents.TableViewLabel {
                 width: atomSiteIso.width
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("aniso23")
+                text: qsTr("ani23")
+            }
+
+            // Temporary fix for right margin
+            EaComponents.TableViewLabel {
+                width: 1
             }
 
         }
@@ -157,6 +162,9 @@ EaElements.GroupColumn {
                 enabled: false
                 text: '0.0000'
             }
+
+            // Temporary fix for right margin
+            EaComponents.TableViewLabel {}
 
         }
 

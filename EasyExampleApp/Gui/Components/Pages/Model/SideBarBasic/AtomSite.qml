@@ -42,7 +42,7 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewLabel {
                 id: atomSiteLabel
-                width: EaStyle.Sizes.fontPixelSize * 4.3
+                width: EaStyle.Sizes.fontPixelSize * 4.0
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("label")
