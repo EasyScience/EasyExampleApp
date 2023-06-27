@@ -14,10 +14,10 @@ EaElements.GroupColumn {
 
     EaElements.CheckBox {
         text: qsTr('Display coordinate vectors')
-        checked: Globals.Vars.displayCoordinateVectors
+        checked: Globals.Vars.showCoordinateVectorsOnModelPage
         onCheckedChanged: checked ?
-                              Globals.Vars.displayCoordinateVectors = true :
-                              Globals.Vars.displayCoordinateVectors = false
+                              Globals.Vars.showCoordinateVectorsOnModelPage = true :
+                              Globals.Vars.showCoordinateVectorsOnModelPage = false
     }
 
 }

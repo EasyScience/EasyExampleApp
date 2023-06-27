@@ -129,27 +129,33 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewTextInput {
-                text: ''
+                enabled: false
+                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_B_iso_or_equiv', index)
             }
 
             EaComponents.TableViewTextInput {
-                text: ''
+                enabled: false
+                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_B_iso_or_equiv', index)
             }
 
             EaComponents.TableViewTextInput {
-                text: ''
+                enabled: false
+                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_B_iso_or_equiv', index)
             }
 
             EaComponents.TableViewTextInput {
-                text: ''
+                enabled: false
+                text: '0.0000'
             }
 
             EaComponents.TableViewTextInput {
-                text: ''
+                enabled: false
+                text: '0.0000'
             }
 
             EaComponents.TableViewTextInput {
-                text: ''
+                enabled: false
+                text: '0.0000'
             }
 
         }

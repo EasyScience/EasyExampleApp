@@ -27,6 +27,10 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     property bool splashScreenAnimoFinished: isDebugMode ? true : false
     property bool applicationWindowCreated: false
     property bool homePageCreated: false
-    property bool displayCoordinateVectors: true
+
+    // Charts
+    property bool showCoordinateVectorsOnModelPage: true
+    property bool showLegendOnExperimentPage: true
+    property bool showLegendOnAnalysisPage: true
 
 }

@@ -1,27 +1,16 @@
 import QmlProject 1.1
 
 Project {
-    mainFile: "EasyExampleApp/Gui/main.qml"
+    mainFile: "EasyExampleApp/Gui/Sandbox/Scrolling.qml"
 
     // List of module and plugin directories passed to QML runtime
-    importPaths: [
-        "EasyExampleApp",
-        "../EasyApp",
-    ]
+    importPaths: [ "../EasyApp" ]
 
     // Include .qml files from specified directory and its subdirectories
     QmlFiles {
-        directory: "EasyExampleApp"
+        directory: "EasyExampleApp/Gui/Sandbox"
     }
     QmlFiles {
-        directory: "../EasyApp"
-    }
-
-    // Include .js files from specified directory and its subdirectories
-    JavaScriptFiles {
-        directory: "EasyExampleApp"
-    }
-    JavaScriptFiles {
         directory: "../EasyApp"
     }
 
@@ -29,7 +18,7 @@ Project {
     // from specified directory and its subdirectories
     Files {
         filter: "qmldir;*.ts;*.qrc;*.html;*.png"
-        directory: "EasyExampleApp"
+        directory: "EasyExampleApp/Gui/Sandbox"
         recursive: true
     }
     Files {

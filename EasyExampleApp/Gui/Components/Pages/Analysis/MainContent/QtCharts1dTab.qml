@@ -140,6 +140,19 @@ Column {
                     spacing: 0.25 * EaStyle.Sizes.fontPixelSize
 
                     EaElements.TabButton {
+                        checked: Globals.Vars.showLegendOnAnalysisPage
+                        autoExclusive: false
+                        height: EaStyle.Sizes.toolButtonHeight
+                        width: EaStyle.Sizes.toolButtonHeight
+                        borderColor: EaStyle.Colors.chartAxis
+                        fontIcon: "align-left"
+                        ToolTip.text: Globals.Vars.showLegendOnAnalysisPage ?
+                                          qsTr("Hide legend") :
+                                          qsTr("Show legend")
+                        onClicked: Globals.Vars.showLegendOnAnalysisPage = checked
+                    }
+
+                    EaElements.TabButton {
                         checked: mainChart.allowHover
                         autoExclusive: false
                         height: EaStyle.Sizes.toolButtonHeight
@@ -150,9 +163,17 @@ Column {
                         onClicked: mainChart.allowHover = !mainChart.allowHover
                     }
 
-                    Item {
-                        height: 1
-                        width: parent.spacing
+                    Item { height: 1; width: 0.5 * EaStyle.Sizes.fontPixelSize }  // spacer
+
+                    EaElements.TabButton {
+                        checked: !mainChart.allowZoom
+                        autoExclusive: false
+                        height: EaStyle.Sizes.toolButtonHeight
+                        width: EaStyle.Sizes.toolButtonHeight
+                        borderColor: EaStyle.Colors.chartAxis
+                        fontIcon: "arrows-alt"
+                        ToolTip.text: qsTr("Enable pan")
+                        onClicked: mainChart.allowZoom = !mainChart.allowZoom
                     }
 
                     EaElements.TabButton {
@@ -172,11 +193,16 @@ Column {
                         width: EaStyle.Sizes.toolButtonHeight
                         borderColor: EaStyle.Colors.chartAxis
                         fontIcon: "backspace"
-                        ToolTip.text: qsTr("Reset to default view")
-                        onClicked: mainChart.zoomReset()
+                        ToolTip.text: mainChart.allowZoom ?
+                                          qsTr("Reset axes after zoom") :
+                                          qsTr("Reset axes after move")
+                        onClicked: mainChart.allowZoom ?
+                                       mainChart.resetZoom() :
+                                       mainChart.resetMove()
                     }
 
                 }
+                // Tool buttons
             }
         }
 
@@ -319,6 +345,7 @@ Column {
     /////////
 
     Rectangle {
+        visible: Globals.Vars.showLegendOnAnalysisPage
         parent: container.parent
 
         x: mainChart.plotArea.x + mainChart.plotArea.width - width - 12 - EaStyle.Sizes.fontPixelSize

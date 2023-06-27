@@ -44,6 +44,19 @@ Rectangle {
             spacing: 0.25 * EaStyle.Sizes.fontPixelSize
 
             EaElements.TabButton {
+                checked: Globals.Vars.showLegendOnExperimentPage
+                autoExclusive: false
+                height: EaStyle.Sizes.toolButtonHeight
+                width: EaStyle.Sizes.toolButtonHeight
+                borderColor: EaStyle.Colors.chartAxis
+                fontIcon: "align-left"
+                ToolTip.text: Globals.Vars.showLegendOnExperimentPage ?
+                                  qsTr("Hide legend") :
+                                  qsTr("Show legend")
+                onClicked: Globals.Vars.showLegendOnExperimentPage = checked
+            }
+
+            EaElements.TabButton {
                 checked: chartView.allowHover
                 autoExclusive: false
                 height: EaStyle.Sizes.toolButtonHeight
@@ -54,9 +67,17 @@ Rectangle {
                 onClicked: chartView.allowHover = !chartView.allowHover
             }
 
-            Item {
-                height: 1
-                width: parent.spacing
+            Item { height: 1; width: 0.5 * EaStyle.Sizes.fontPixelSize }  // spacer
+
+            EaElements.TabButton {
+                checked: !chartView.allowZoom
+                autoExclusive: false
+                height: EaStyle.Sizes.toolButtonHeight
+                width: EaStyle.Sizes.toolButtonHeight
+                borderColor: EaStyle.Colors.chartAxis
+                fontIcon: "arrows-alt"
+                ToolTip.text: qsTr("Enable pan")
+                onClicked: chartView.allowZoom = !chartView.allowZoom
             }
 
             EaElements.TabButton {
@@ -76,8 +97,12 @@ Rectangle {
                 width: EaStyle.Sizes.toolButtonHeight
                 borderColor: EaStyle.Colors.chartAxis
                 fontIcon: "backspace"
-                ToolTip.text: qsTr("Reset to default view")
-                onClicked: chartView.zoomReset()
+                ToolTip.text: chartView.allowZoom ?
+                                  qsTr("Reset axes after zoom") :
+                                  qsTr("Reset axes after move")
+                onClicked: chartView.allowZoom ?
+                               chartView.resetZoom() :
+                               chartView.resetMove()
             }
 
         }
@@ -85,6 +110,8 @@ Rectangle {
 
         // Legend
         Rectangle {
+            visible: Globals.Vars.showLegendOnExperimentPage
+
             x: chartView.plotArea.x + chartView.plotArea.width - width - EaStyle.Sizes.fontPixelSize
             y: chartView.plotArea.y + EaStyle.Sizes.fontPixelSize
             width: childrenRect.width

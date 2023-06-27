@@ -106,7 +106,7 @@ Rectangle {
 
             // Axes vectors
             Node {
-                visible: Globals.Vars.displayCoordinateVectors
+                visible: Globals.Vars.showCoordinateVectorsOnModelPage
 
                 // X-axis vector
                 Node {
@@ -270,7 +270,7 @@ Rectangle {
                            view.camera = cameraPerspectiveFront
         }
 
-        Item { height: 1; width: parent.spacing }  // spacer
+        Item { height: 1; width: 0.5 * EaStyle.Sizes.fontPixelSize }  // spacer
 
         EaElements.TabButton {
             checkable: false
@@ -306,7 +306,7 @@ Rectangle {
         }
 
 
-        Item { height: 1; width: parent.spacing }  // spacer
+        Item { height: 1; width: 0.5 * EaStyle.Sizes.fontPixelSize }  // spacer
 
         EaElements.TabButton {
             checkable: false
@@ -356,7 +356,7 @@ Rectangle {
 
     // Legend
     Rectangle {
-        visible: Globals.Vars.displayCoordinateVectors
+        visible: Globals.Vars.showCoordinateVectorsOnModelPage
 
         width: childrenRect.width
         height: childrenRect.height
