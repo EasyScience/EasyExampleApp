@@ -30,9 +30,9 @@ Rectangle {
                                      Math.max(cellLengthA, cellLengthB, cellLengthC) *
                                      0.5
     property var defaultEulerRotation: Qt.vector3d(12, -34, -8)
-    property var alongXEulerRotation: Qt.vector3d(-90, 90, -180)
-    property var alongYEulerRotation: Qt.vector3d(0, 90, 90)
-    property var alongZEulerRotation: Qt.vector3d(0, 0, 0)
+    property var alongAEulerRotation: Qt.vector3d(-90, 90, 180)
+    property var alongBEulerRotation: Qt.vector3d(0, 90, 90)
+    property var alongCEulerRotation: Qt.vector3d(0, 0, 0)
 
     color: EaStyle.Colors.chartBackground
     Behavior on color { EaAnimations.ThemeChange {} }
@@ -320,7 +320,7 @@ Rectangle {
             borderColor: EaStyle.Colors.chartAxis
             fontIcon: "a"
             ToolTip.text: qsTr("View along the a axis")
-            onClicked: structureViewScene.eulerRotation = alongXEulerRotation
+            onClicked: structureViewScene.eulerRotation = alongAEulerRotation
         }
 
         EaElements.TabButton {
@@ -331,7 +331,7 @@ Rectangle {
             borderColor: EaStyle.Colors.chartAxis
             fontIcon: "b"
             ToolTip.text: qsTr("View along the b axis")
-            onClicked: structureViewScene.eulerRotation = alongYEulerRotation
+            onClicked: structureViewScene.eulerRotation = alongBEulerRotation
         }
 
         EaElements.TabButton {
@@ -342,7 +342,7 @@ Rectangle {
             borderColor: EaStyle.Colors.chartAxis
             fontIcon: "c"
             ToolTip.text: qsTr("View along the c axis")
-            onClicked: structureViewScene.eulerRotation = alongZEulerRotation
+            onClicked: structureViewScene.eulerRotation = alongCEulerRotation
         }
 
         EaElements.TabButton {

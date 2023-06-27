@@ -20,9 +20,9 @@ Rectangle {
     property real axisConeSize: 20
 
     property var defaultEulerRotation: Qt.vector3d(12, -34, -8)
-    property var alongXEulerRotation: Qt.vector3d(-90, 90, -180)
-    property var alongYEulerRotation: Qt.vector3d(0, 90, 90)
-    property var alongZEulerRotation: Qt.vector3d(0, 0, 0)
+    property var alongAEulerRotation: Qt.vector3d(-90, 90, -180)
+    property var alongBEulerRotation: Qt.vector3d(0, 90, 90)
+    property var alongCEulerRotation: Qt.vector3d(0, 0, 0)
 
     width: 500
     height: 500
@@ -261,15 +261,15 @@ Rectangle {
         }
         Button {
             text: 'x'
-            onClicked: node.eulerRotation = alongXEulerRotation
+            onClicked: node.eulerRotation = alongAEulerRotation
         }
         Button {
             text: 'y'
-            onClicked: node.eulerRotation = alongYEulerRotation
+            onClicked: node.eulerRotation = alongBEulerRotation
         }
         Button {
             text: 'z'
-            onClicked: node.eulerRotation = alongZEulerRotation
+            onClicked: node.eulerRotation = alongCEulerRotation
         }
         Button {
             text: 'Reset'
