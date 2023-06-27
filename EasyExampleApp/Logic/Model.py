@@ -60,7 +60,7 @@ class Model(QObject):
     definedChanged = Signal()
     currentIndexChanged = Signal()
     dataBlocksChanged = Signal()
-    dataBlocksJsonChanged = Signal()
+    dataBlocksCifChanged = Signal()
     yCalcArraysChanged = Signal()
 
     structViewAtomsModelChanged = Signal()
@@ -73,7 +73,7 @@ class Model(QObject):
         self._defined = False
         self._currentIndex = 0
         self._dataBlocks = []
-        self._dataBlocksJson = ''
+        self._dataBlocksCif = ''
         self._yCalcArrays = []
         self._yBkgArrays = []
 
@@ -111,9 +111,9 @@ class Model(QObject):
     def dataBlocks(self):
         return self._dataBlocks
 
-    @Property(str, notify=dataBlocksJsonChanged)
-    def dataBlocksJson(self):
-        return self._dataBlocksJson
+    @Property(str, notify=dataBlocksCifChanged)
+    def dataBlocksCif(self):
+        return self._dataBlocksCif
 
     @Property('QVariant', notify=structViewAtomsModelChanged)
     def structViewAtomsModel(self):
@@ -409,11 +409,12 @@ class Model(QObject):
     #    self._yCalcArrays[index]['yArray'] *= scale
     #    self.calculatedDataChanged.emit()
 
-    def setDataBlocksJson(self):
-        console.debug("Converting model dataBlocks to JSON string")
-        self._dataBlocksJson = Converter.dictToJson(self._dataBlocks)
-        console.debug("Model dataBlocks have been converted to JSON string")
-        self.dataBlocksJsonChanged.emit()
+    def setDataBlocksCif(self):
+        #console.debug("Converting model dataBlocks to CIF string")
+        #self._dataBlocksCif = Converter.dictToJson(self._dataBlocks)
+        self._dataBlocksCif = Converter.dataBlocksToCif(self._dataBlocks)
+        console.debug("Model dataBlocks have been converted to CIF string")
+        self.dataBlocksCifChanged.emit()
 
     # Extract phases from cryspy_obj and cryspy_dict into internal ed_dict
     def parseModels(self, cryspy_obj):

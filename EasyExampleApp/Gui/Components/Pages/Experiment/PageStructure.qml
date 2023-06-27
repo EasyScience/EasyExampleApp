@@ -36,7 +36,7 @@ EaComponents.ContentPage {
     sideBar: EaComponents.SideBar {
         tabs: [
             EaElements.TabButton { text: qsTr("Basic controls") },
-            EaElements.TabButton { text: qsTr("Advanced controls"); enabled: Globals.Proxies.main.experiment.defined },
+            EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false },
             EaElements.TabButton { text: qsTr("Text mode"); enabled: Globals.Proxies.main.experiment.defined }
         ]
 

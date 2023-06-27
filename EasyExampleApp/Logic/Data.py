@@ -46,5 +46,3 @@ class Data(QObject):
         group = l[1]
         idx = tuple(np.fromstring(l[2], dtype=int, sep='__'))
         return block, group, idx
-
-

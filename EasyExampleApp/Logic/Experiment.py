@@ -60,7 +60,7 @@ class Experiment(QObject):
     definedChanged = Signal()
     currentIndexChanged = Signal()
     dataBlocksChanged = Signal()
-    dataBlocksJsonChanged = Signal()
+    dataBlocksCifChanged = Signal()
     yMeasArraysChanged = Signal()
     yBkgArraysChanged = Signal()
     chartRangesChanged = Signal()
@@ -71,7 +71,7 @@ class Experiment(QObject):
         self._defined = False
         self._currentIndex = 0
         self._dataBlocks = []
-        self._dataBlocksJson = ''
+        self._dataBlocksCif = ''
         self._xArrays = []
         self._yMeasArrays = []
         self._yBkgArrays = []
@@ -111,9 +111,9 @@ class Experiment(QObject):
     def dataBlocks(self):
         return self._dataBlocks
 
-    @Property(str, notify=dataBlocksJsonChanged)
-    def dataBlocksJson(self):
-        return self._dataBlocksJson
+    @Property(str, notify=dataBlocksCifChanged)
+    def dataBlocksCif(self):
+        return self._dataBlocksCif
 
     # QML accessible methods
 
@@ -475,11 +475,12 @@ class Experiment(QObject):
         console.debug(f"Y-background data for experiment data block no. {len(self._dataBlocks)} has been added to intern dataset")
         self.yBkgArraysChanged.emit()
 
-    def setDataBlocksJson(self):
-        #console.debug("Converting experiment dataBlocks to JSON string")
-        self._dataBlocksJson = Converter.dictToJson(self._dataBlocks)
-        console.debug("Experiment dataBlocks have been converted to JSON string")
-        self.dataBlocksJsonChanged.emit()
+    def setDataBlocksCif(self):
+        #console.debug("Converting experiment dataBlocks to CIF string")
+        #self._dataBlocksCif = Converter.dictToJson(self._dataBlocks)
+        self._dataBlocksCif = Converter.dataBlocksToCif(self._dataBlocks)
+        console.debug("Experiment dataBlocks have been converted to CIF string")
+        self.dataBlocksCifChanged.emit()
 
     # Extract experiments from cryspy_obj and cryspy_dict into internal ed_dict
     def parseExperiments(self, cryspy_obj):
@@ -589,10 +590,10 @@ class Experiment(QObject):
                         self.chartRangesChanged.emit()
 
                 ed_dict['experiments'].append(ed_experiment)
-                self.addDataBlock(ed_experiment)
                 self.addXArray(x_array)
                 self.addYMeasArray(y_meas_array)
                 self.addYBkgArray(y_bkg_array_interp)
+                self.addDataBlock(ed_experiment)
 
 #
 #                # Calculate data based on...

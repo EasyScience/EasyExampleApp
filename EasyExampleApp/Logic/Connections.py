@@ -62,12 +62,12 @@ class Connections(QObject):
             self._proxy.status.phaseCount = ''
 
         self._proxy.model.updateCurrentModelStructView()
-        #self._proxy.model.setDataBlocksJson()
-        #self._proxy.project.setNeedSaveToTrue()
+        self._proxy.model.setDataBlocksCif()
         if self._proxy.analysis.defined:
             self._proxy.fittables.set()
             #self._proxy.analysis.calculateYCalcTotal()
 
+        #self._proxy.project.setNeedSaveToTrue()
         console.debug('')
 
     def onModelCurrentIndexChanged(self):
@@ -79,7 +79,7 @@ class Connections(QObject):
         ############self._proxy.plotting.drawCalculatedOnModelChart()
 
     #def onModelParameterEdited(self, page, blockIndex, name):
-    #    self._proxy.model.setDataBlocksJson()
+    #    self._proxy.model.setDataBlocksCif()
     #    if page != 'analysis':
     #        self._proxy.fittables.set()
     #        self._proxy.model.updateCurrentModelYCalcArray()
@@ -103,12 +103,12 @@ class Connections(QObject):
 
         self._proxy.experiment.updateCurrentExperimentYBkgArray()  # NEED FIX: Check if bkg param changed
         #self._proxy.plotting.drawBackgroundOnExperimentChart()
-        #self._proxy.experiment.setDataBlocksJson()
-        #self._proxy.project.setNeedSaveToTrue()
+        self._proxy.experiment.setDataBlocksCif()
         if self._proxy.analysis.defined:
             self._proxy.fittables.set()
             #self._proxy.analysis.calculateYCalcTotal()
 
+        #self._proxy.project.setNeedSaveToTrue()
         console.debug('')
 
     #def onExperimentCurrentIndexChanged(self):
@@ -126,7 +126,7 @@ class Connections(QObject):
         #self._proxy.plotting.redrawBackgroundOnAnalysisChart()
 
     #def onExperimentParameterEdited(self, page, name):
-    #    self._proxy.experiment.setDataBlocksJson()
+    #    self._proxy.experiment.setDataBlocksCif()
     #    if name.startswith('background'):
     #        self._proxy.experiment.updateCurrentExperimentYBkgArray()
     #    if page != 'analysis':
@@ -172,8 +172,8 @@ class Connections(QObject):
     # Fitting
 
     def onFittingFitFinished(self):
-        self._proxy.experiment.setDataBlocksJson()
-        self._proxy.model.setDataBlocksJson()
+        self._proxy.experiment.setDataBlocksCif()
+        self._proxy.model.setDataBlocksCif()
         self._proxy.model.updateYCalcArrayByIndex(0)  # NED FIX
         self._proxy.fittables.set()
 

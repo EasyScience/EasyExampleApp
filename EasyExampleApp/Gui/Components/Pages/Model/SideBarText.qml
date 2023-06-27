@@ -16,7 +16,7 @@ ScrollView {
     anchors.fill: parent
 
     EaElements.TextArea {
-        text: Globals.Proxies.main.model.dataBlocksJson
+        text: Globals.Proxies.main.model.dataBlocksCif
 
         //textFormat: TextEdit.RichText
         font.family: EaStyle.Fonts.monoFontFamily
