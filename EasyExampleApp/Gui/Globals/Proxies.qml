@@ -565,12 +565,23 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
     // Common functions
 
+    // Model
+
     function modelMainParameterEnabled(name) {
         if (!main.model.defined) {
             return ''
         }
         const currentModelIndex = main.model.currentIndex
         const value = main.model.dataBlocks[currentModelIndex].params[name]['enabled']
+        return value
+    }
+
+    function modelMainParameterFit(name) {
+        if (!main.model.defined) {
+            return ''
+        }
+        const currentModelIndex = main.model.currentIndex
+        const value = main.model.dataBlocks[currentModelIndex].params[name]['fit']
         return value
     }
 
@@ -601,6 +612,15 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         return value
     }
 
+    function modelLoopParameterFit(loopName, parameterName, parameterIndex) {
+        if (!main.model.defined) {
+            return ''
+        }
+        const currentModelIndex = main.model.currentIndex
+        const value = main.model.dataBlocks[currentModelIndex].loops[loopName][parameterIndex][parameterName]['fit']
+        return value
+    }
+
     function modelLoopParameterValue(loopName, parameterName, parameterIndex, formatted=true) {
         if (!main.model.defined) {
             return ''
@@ -619,6 +639,26 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         main.model.setLoopParamValue(loopName, parameterName, parameterIndex, value)
     }
 
+    // Experiment
+
+    function experimentMainParameterEnabled(name) {
+        if (!main.experiment.defined) {
+            return ''
+        }
+        const currentModelIndex = main.experiment.currentIndex
+        const value = main.experiment.dataBlocks[currentModelIndex].params[name]['enabled']
+        return value
+    }
+
+    function experimentMainParameterFit(name) {
+        if (!main.experiment.defined) {
+            return ''
+        }
+        const currentModelIndex = main.experiment.currentIndex
+        const value = main.experiment.dataBlocks[currentModelIndex].params[name]['fit']
+        return value
+    }
+
     function experimentMainParameterValue(name) {
         if (!main.experiment.defined) {
             return ''
@@ -632,6 +672,24 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     function setExperimentMainParameterValue(name, value) {
         console.debug(`---------- Editing experiment main param ${name} value to ${value} ----------`)
         main.experiment.setMainParameterValue(name, value)
+    }
+
+    function experimentLoopParameterEnabled(loopName, parameterName, parameterIndex) {
+        if (!main.experiment.defined) {
+            return ''
+        }
+        const currentModelIndex = main.experiment.currentIndex
+        const value = main.experiment.dataBlocks[currentModelIndex].loops[loopName][parameterIndex][parameterName]['enabled']
+        return value
+    }
+
+    function experimentLoopParameterFit(loopName, parameterName, parameterIndex) {
+        if (!main.experiment.defined) {
+            return ''
+        }
+        const currentModelIndex = main.experiment.currentIndex
+        const value = main.experiment.dataBlocks[currentModelIndex].loops[loopName][parameterIndex][parameterName]['fit']
+        return value
     }
 
     function experimentLoopParameterValue(loopName, parameterName, parameterIndex) {
@@ -649,6 +707,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         main.experiment.setLoopParamValue(loopName, parameterName, parameterIndex, value)
     }
 
+    // Misc
 
     function atomColor(symbol) {
         const jmolColors = {

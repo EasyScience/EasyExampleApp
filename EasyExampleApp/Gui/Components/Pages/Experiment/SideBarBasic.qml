@@ -21,35 +21,35 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
-        title: qsTr("Diffrn radiation")
+        title: qsTr("Diffraction radiation")
         visible: Globals.Proxies.main.experiment.defined
 
         Loader { source: 'SideBarBasic/DiffrnRadiation.qml' }
     }
 
     EaElements.GroupBox {
-        title: qsTr("Pd meas 2θ range")
+        title: qsTr("Powder diffraction: measured 2θ")
         visible: Globals.Proxies.main.experiment.defined
 
-        Loader { source: 'SideBarBasic/PdMeas2ThetaRange.qml' }
+        Loader { source: 'SideBarBasic/PdMeas2Theta.qml' }
     }
 
     EaElements.GroupBox {
-        title: qsTr("Pd instr resolution")
+        title: qsTr("Powder diffraction: instrument resolution")
         visible: Globals.Proxies.main.experiment.defined
 
         Loader { source: 'SideBarBasic/PdInstrResolution.qml' }
     }
 
     EaElements.GroupBox {
-        title: qsTr("Pd instr reflex asymmetry")
+        title: qsTr("Powder diffraction: instrument peak asymmetry")
         visible: Globals.Proxies.main.experiment.defined
 
         Loader { source: 'SideBarBasic/PdInstrReflexAsymmetry.qml' }
     }
 
     EaElements.GroupBox {
-        title: qsTr("Pd background")
+        title: qsTr("Powder diffraction: background")
         visible: Globals.Proxies.main.experiment.defined
 
         Loader { source: 'SideBarBasic/PdBackgroundGroup.qml' }

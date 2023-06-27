@@ -11,11 +11,13 @@ from PySide6.QtCore import QObject, Signal, Slot, Property
 from EasyApp.Logic.Logging import console
 from Logic.Calculators import GaussianCalculator
 from Logic.Fittables import Parameter
-from Logic.Helpers import Converter
+from Logic.Helpers import Converter, IO
 from Logic.Data import Data
 
 try:
     import cryspy
+    from cryspy.H_functions_global.function_1_cryspy_objects import \
+        file_to_globaln, str_to_globaln
     from cryspy.procedure_rhochi.rhochi_by_dictionary import \
         rhochi_calc_chi_sq_by_dictionary
     console.debug('CrysPy module has been imported')
@@ -150,10 +152,17 @@ class Model(QObject):
 
     @Slot(str)
     def loadModelFromFile(self, fpath):
-        fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'Co2SiO4_model.cif')
+        #fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'Co2SiO4_model.cif')
+        fpath = IO.generalizePath(fpath)
         console.debug(f"File: {fpath}")
         # Load RCIF file by cryspy and extract phases into easydiffraction data block
-        cryspyModelObj = cryspy.load_file(fpath)
+        #cryspyModelObj = cryspy.load_file(fpath)  ## == cryspy.load_file(fpath)
+        # Load ED CIF file, convert it to CrysPy RCIF and create CrysPy obj from string
+        edCif = ''
+        with open(fpath, 'r') as file:
+            edCif = file.read()
+        cryspyCif = Converter.edCifToCryspyCif(edCif)
+        cryspyModelObj = str_to_globaln(cryspyCif)
         self._proxy.data._cryspyModelObj = cryspyModelObj  # NEED FIX!!!
         cryspyModelDict = cryspyModelObj.get_dictionary()
         self._proxy.data._cryspyDict.update(cryspyModelDict)

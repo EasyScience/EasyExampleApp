@@ -74,6 +74,7 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewTextInput {
+                fit: Globals.Proxies.experimentLoopParameterFit('_phase', '_scale', index)
                 text: Globals.Proxies.experimentLoopParameterValue('_phase', '_scale', index)
                 onEditingFinished: Globals.Proxies.setExperimentLoopParameterValue('_phase', '_scale', index, text)
             }

@@ -4,6 +4,7 @@
 
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Dialogs
 
 import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Style as EaStyle
@@ -97,8 +98,7 @@ Column {
             text: qsTr("Import data from local drive")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
-                console.debug(`---------- Loading experiment ----------`)
-                Globals.Proxies.main.experiment.loadExperimentFromFile('examples/PicoScope.json')
+                openCifFileDialog.open()
             }
             Component.onCompleted: Globals.Refs.app.experimentPage.importDataFromLocalDriveButton = this
         }
@@ -112,6 +112,18 @@ Column {
                 console.debug(`Clicking '${text}' button: ${this}`)
             }
             Component.onCompleted: Globals.Refs.app.experimentPage.addDefaultExperimentDataButton = this
+        }
+    }
+
+    // Misc
+
+    FileDialog{
+        id: openCifFileDialog
+        //selectMultiple: true
+        nameFilters: [ "CIF files (*.cif)"]
+        onAccepted: {
+            console.debug(`---------- Loading experiment ----------`)
+            Globals.Proxies.main.experiment.loadExperimentFromFile(selectedFile)
         }
     }
 

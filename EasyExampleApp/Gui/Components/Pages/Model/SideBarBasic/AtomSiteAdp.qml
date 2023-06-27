@@ -129,6 +129,7 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewTextInput {
+                fit: Globals.Proxies.modelLoopParameterFit('_atom_site', '_B_iso_or_equiv', index)
                 text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_B_iso_or_equiv', index)
                 onEditingFinished: Globals.Proxies.setModelLoopParameterValue('_atom_site', '_B_iso_or_equiv', index, text)
             }

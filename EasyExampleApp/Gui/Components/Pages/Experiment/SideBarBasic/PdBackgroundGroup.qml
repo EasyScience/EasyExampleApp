@@ -79,6 +79,7 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewTextInput {
+                fit: Globals.Proxies.experimentLoopParameterFit('_pd_background', '_intensity', index)
                 text: Globals.Proxies.experimentLoopParameterValue('_pd_background', '_intensity', index)
                 onEditingFinished: Globals.Proxies.setExperimentLoopParameterValue('_pd_background', '_intensity', index, text)
             }

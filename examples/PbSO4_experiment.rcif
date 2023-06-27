@@ -1,16 +1,16 @@
 data_pd
 
-_diffrn_radiation_probe neutron
-_diffrn_radiation_wavelength 1.9120
+_range_2theta_min 10.0
+_range_2theta_max 155.45
 
-_pd_meas_2theta_offset    0.0()
-_pd_meas_2theta_range_min 10.0
-_pd_meas_2theta_range_max 155.45
+_setup_wavelength 1.9120
+_setup_offset_2theta 0.0()
+_setup_radiation neutrons
 
-_pd_instr_reflex_asymmetry_p1  0.0
-_pd_instr_reflex_asymmetry_p2  0.0
-_pd_instr_reflex_asymmetry_p3  0.0
-_pd_instr_reflex_asymmetry_p4  0.0
+_pd_instr_reflex_asymmetry_p1 -0.000000000032
+_pd_instr_reflex_asymmetry_p2  0.00
+_pd_instr_reflex_asymmetry_p3 -0.000000000009
+_pd_instr_reflex_asymmetry_p4 -0.000000000010
 
 _pd_instr_resolution_U  0.151()
 _pd_instr_resolution_V -0.421()

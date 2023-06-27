@@ -101,6 +101,7 @@ Column {
             EaComponents.TableViewTextInput {
                 id: valueColumn
                 enabled: item.enabled
+                fit: item.fit
                 text: item.value.toFixed(4)
                 onEditingFinished: {
                     focus = false

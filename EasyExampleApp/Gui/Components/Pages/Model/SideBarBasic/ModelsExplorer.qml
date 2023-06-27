@@ -4,6 +4,7 @@
 
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Dialogs
 
 import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Style as EaStyle
@@ -100,8 +101,7 @@ Column {
             text: qsTr("Load new model from file")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
-                console.debug(`---------- Loading model ----------`)
-                Globals.Proxies.main.model.loadModelFromFile('examples/Gaussian.json')
+                openCifFileDialog.open()
             }
             Component.onCompleted: Globals.Refs.app.modelPage.loadNewModelFromFileButton = this
         }
@@ -115,6 +115,18 @@ Column {
                 Globals.Proxies.main.model.addDefaultModel()
             }
             Component.onCompleted: Globals.Refs.app.modelPage.addNewModelManuallyButton = this
+        }
+    }
+
+    // Misc
+
+    FileDialog{
+        id: openCifFileDialog
+        //selectMultiple: true
+        nameFilters: [ "CIF files (*.cif)"]
+        onAccepted: {
+            console.debug(`---------- Loading model ----------`)
+            Globals.Proxies.main.model.loadModelFromFile(selectedFile)
         }
     }
 

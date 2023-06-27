@@ -14,18 +14,25 @@ import Gui.Globals as Globals
 EaElements.GroupRow {
 
     EaElements.Parameter {
-        title: qsTr('min')
+        title: qsTr('range min')
         text: Globals.Proxies.experimentMainParameterValue('_pd_meas_2theta_range_min')
     }
 
     EaElements.Parameter {
-        title: qsTr('max')
+        title: qsTr('range max')
         text: Globals.Proxies.experimentMainParameterValue('_pd_meas_2theta_range_max')
     }
 
     EaElements.Parameter {
-        title: qsTr('inc')
+        title: qsTr('range inc')
         text: Globals.Proxies.experimentMainParameterValue('_pd_meas_2theta_range_inc')
+    }
+
+    EaElements.Parameter {
+        title: qsTr('offset')
+        fit: Globals.Proxies.experimentMainParameterFit('_pd_meas_2theta_offset')
+        text: Globals.Proxies.experimentMainParameterValue('_pd_meas_2theta_offset')
+        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_pd_meas_2theta_offset', text)
     }
 
 }

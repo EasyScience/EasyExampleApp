@@ -10,14 +10,16 @@ from PySide6.QtCore import QObject, Signal, Slot, Property
 from EasyApp.Logic.Logging import console
 from Logic.Calculators import GaussianCalculator
 from Logic.Fittables import Parameter
-from Logic.Helpers import Converter
+from Logic.Helpers import Converter, IO
 from Logic.Data import Data
 
 try:
     import cryspy
-    console.debug('CrysPy module has been imported')
+    from cryspy.H_functions_global.function_1_cryspy_objects import \
+        file_to_globaln, str_to_globaln
+    console.debug('CrysPy modules have been imported')
 except ImportError:
-    console.debug('No CrysPy module has been found')
+    console.debug('No CrysPy module have been found')
 
 _DEFAULT_DATA_BLOCK = {
     'name': 'PicoScopeB',
@@ -155,10 +157,16 @@ class Experiment(QObject):
 
     @Slot(str)
     def loadExperimentFromFile(self, fpath):
-        fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'Co2SiO4_experiment.cif')
+        #fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'Co2SiO4_experiment.cif')
+        fpath = IO.generalizePath(fpath)
         console.debug(f"File: {fpath}")
         # Load RCIF file by cryspy and extract experiments into easydiffraction data block
-        cryspyExperimentObj = cryspy.load_file(fpath)
+        #cryspyExperimentObj = file_to_globaln(fpath)  ## == cryspy.load_file(fpath)
+        # Load ED CIF file, convert it to CrysPy RCIF and create CrysPy obj from string
+        with open(fpath) as file:
+            edCif = file.read()
+        cryspyCif = Converter.edCifToCryspyCif(edCif)
+        cryspyExperimentObj = str_to_globaln(cryspyCif)
         cryspyExperimentDict = cryspyExperimentObj.get_dictionary()
         self._proxy.data._cryspyDict.update(cryspyExperimentDict)
         self.parseExperiments(cryspyExperimentObj)

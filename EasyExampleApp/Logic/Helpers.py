@@ -3,8 +3,10 @@
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 import os
-import argparse
+import sys
 import orjson
+import argparse
+from urllib.parse import urlparse
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QObject, Signal, Slot, QCoreApplication
 
@@ -87,6 +89,25 @@ class WebEngine:
         callback = None
         webEngine.runJavaScript(script, callback)
 
+
+class IO:
+
+    @staticmethod
+    def generalizePath(fpath: str) -> str:
+        """
+        Generalize the filepath to be platform-specific, so all file operations
+        can be performed.
+        :param URI rcfPath: URI to the file
+        :return URI filename: platform specific URI
+        """
+        filename = urlparse(fpath).path
+        if not sys.platform.startswith("win"):
+            return filename
+        if filename[0] == '/':
+            filename = filename[1:].replace('/', os.path.sep)
+        return filename
+
+
 class Converter:
 
     @staticmethod
@@ -152,6 +173,26 @@ class Converter:
                     cif += '\n'
                 cif += '\n'
         return cif
+
+    @staticmethod
+    def edCifToCryspyCif(edCif):
+        cryspyCif = edCif
+        edToCryspyNamesMap = {
+            '_diffrn_radiation_probe': '_setup_radiation',
+            '_diffrn_radiation_wavelength': '_setup_wavelength',
+            '_pd_meas_2theta_offset': '_setup_offset_2theta',
+            '_pd_meas_2theta_range_min': '_range_2theta_min',
+            '_pd_meas_2theta_range_max': '_range_2theta_max'
+        }
+        edToCryspyValuesMap = {
+            'neutron': 'neutrons',
+            'xray': 'X-rays'
+        }
+        for edName, cryspyName in edToCryspyNamesMap.items():
+            cryspyCif = cryspyCif.replace(edName, cryspyName)
+        for edValue, cryspyValue in edToCryspyValuesMap.items():
+            cryspyCif = cryspyCif.replace(edValue, cryspyValue)
+        return cryspyCif
 
 
 class Application(QApplication):  # QGuiApplication crashes when using in combination with QtCharts

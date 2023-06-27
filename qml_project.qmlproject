@@ -38,4 +38,6 @@ Project {
         recursive: true
     }
 
+
+    mainUiFile: "EasyExampleApp/Gui/Components/Pages/Experiment/SideBarBasic/PdMeas2Theta.qml"
 }
