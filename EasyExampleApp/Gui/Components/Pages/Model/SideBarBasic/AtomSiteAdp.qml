@@ -31,7 +31,6 @@ EaElements.GroupColumn {
         }
 
         // Header row
-
         header: EaComponents.TableViewHeader {
 
             EaComponents.TableViewLabel {
@@ -110,9 +109,9 @@ EaElements.GroupColumn {
             }
 
         }
+        // Header row
 
         // Table rows
-
         delegate: EaComponents.TableViewDelegate {
 
             EaComponents.TableViewLabel {
@@ -121,32 +120,33 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewTextInput {
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_label', index)
+                parameter: Globals.Proxies.modelLoopParam('_atom_site', '_label', index)
             }
 
             EaComponents.TableViewTextInput {
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_adp_type', index)
+                parameter: Globals.Proxies.modelLoopParam('_atom_site', '_adp_type', index)
             }
 
             EaComponents.TableViewTextInput {
-                fit: Globals.Proxies.modelLoopParameterFit('_atom_site', '_B_iso_or_equiv', index)
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_B_iso_or_equiv', index)
-                onEditingFinished: Globals.Proxies.setModelLoopParameterValue('_atom_site', '_B_iso_or_equiv', index, text)
-            }
-
-            EaComponents.TableViewTextInput {
-                enabled: false
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_B_iso_or_equiv', index)
+                id: iso
+                parameter: Globals.Proxies.modelLoopParam('_atom_site', '_B_iso_or_equiv', index)
+                onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', text)
+                fitCheckBox.onToggled: Globals.Proxies.setModelLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
             EaComponents.TableViewTextInput {
                 enabled: false
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_B_iso_or_equiv', index)
+                text: iso.text
             }
 
             EaComponents.TableViewTextInput {
                 enabled: false
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_B_iso_or_equiv', index)
+                text: iso.text
+            }
+
+            EaComponents.TableViewTextInput {
+                enabled: false
+                text: iso.text
             }
 
             EaComponents.TableViewTextInput {
@@ -168,6 +168,7 @@ EaElements.GroupColumn {
             EaComponents.TableViewLabel {}
 
         }
+        // Table rows
 
     }
 

@@ -185,48 +185,58 @@ class Model(QObject):
         self.yCalcArraysChanged.emit()
         console.debug("All models have been removed")
 
-    @Slot(str, float)
-    def setMainParameterValue(self, paramName, value):
-        changedIntern = self.editDataBlockMainParam(paramName, value)
-        changedCryspy = self.editCryspyDictByMainParam(paramName, value)
+    @Slot(str, str, float)
+    def setMainParam(self, paramName, field, value):
+        changedIntern = self.editDataBlockMainParam(paramName, field, value)
+        changedCryspy = True
+        if field == 'value':
+            changedCryspy = self.editCryspyDictByMainParam(paramName, value)
 
         if changedIntern and changedCryspy:
             self.dataBlocksChanged.emit()
 
-    @Slot(str, str, int, float)
-    def setLoopParamValue(self, loopName, paramName, paramIndex, value):
-        changedIntern = self.editDataBlockLoopParam(loopName, paramName, paramIndex, value)
-        changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, paramIndex, value)
+    @Slot(str, str, int, str, float)
+    def setLoopParam(self, loopName, paramName, paramIndex, field, value):
+        changedIntern = self.editDataBlockLoopParam(loopName, paramName, paramIndex, field, value)
+        changedCryspy = True
+        if field == 'value':
+            changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, paramIndex, value)
 
         if changedIntern and changedCryspy:
             self.dataBlocksChanged.emit()
 
     # Private methods
 
-    def editDataBlockMainParam(self, paramName, value, blockIndex=None):
+    def editDataBlockMainParam(self, paramName, field, value, blockIndex=None):
         block = 'model'
         if blockIndex is None:
             blockIndex = self._currentIndex
 
-        oldValue = self._dataBlocks[blockIndex]['params'][paramName]['value']
+        if field == 'fit':
+            value = bool(value)
+
+        oldValue = self._dataBlocks[blockIndex]['params'][paramName][field]
         if oldValue == value:
             return False
-        self._dataBlocks[blockIndex]['params'][paramName]['value'] = value
+        self._dataBlocks[blockIndex]['params'][paramName][field] = value
 
-        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{paramName}.value")
+        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{paramName}.{field}")
         return True
 
-    def editDataBlockLoopParam(self, loopName, paramName, paramIndex, value, blockIndex=None):
+    def editDataBlockLoopParam(self, loopName, paramName, paramIndex, field, value, blockIndex=None):
         block = 'model'
         if blockIndex is None:
             blockIndex = self._currentIndex
 
-        oldValue = self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName]['value']
+        if field == 'fit':
+            value = bool(value)
+
+        oldValue = self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName][field]
         if oldValue == value:
             return False
-        self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName]['value'] = value
+        self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName][field] = value
 
-        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.value")
+        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.{field}")
         return True
 
     def editCryspyDictByMainParam(self, paramName, value):
@@ -447,34 +457,161 @@ class Model(QObject):
 
                     # Space group section
                     if type(item) == cryspy.C_item_loop_classes.cl_2_space_group.SpaceGroup:
-                        ed_phase['params']['_space_group_name_H-M_alt'] = dict(Parameter(item.name_hm_alt))
-                        ed_phase['params']['_space_group_IT_coordinate_system_code'] = dict(Parameter(item.it_coordinate_system_code))
-
+                        ed_phase['params']['_space_group_name_H-M_alt'] = dict(Parameter(item.name_hm_alt,
+                                                                                         name = '_space_group_name_H-M_alt',
+                                                                                         prettyName = 'name H-M alt',
+                                                                                         url = 'https://easydiffraction.org'))
+                        ed_phase['params']['_space_group_IT_coordinate_system_code'] = dict(Parameter(item.it_coordinate_system_code,
+                                                                                                      name = '_space_group_IT_coordinate_system_code',
+                                                                                                      prettyName = 'IT coordinate system code',
+                                                                                                      url = 'https://easydiffraction.org'))
                     # Cell section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_cell.Cell:
-                        ed_phase['params']['_cell_length_a'] = dict(Parameter(item.length_a, enabled=not item.length_a_constraint, min=1, max=30, fittable=True, fit=item.length_a_refinement))
-                        ed_phase['params']['_cell_length_b'] = dict(Parameter(item.length_b, enabled=not item.length_b_constraint, min=1, max=30, fittable=True, fit=item.length_b_refinement))
-                        ed_phase['params']['_cell_length_c'] = dict(Parameter(item.length_c, enabled=not item.length_c_constraint, min=1, max=30, fittable=True, fit=item.length_c_refinement))
-                        ed_phase['params']['_cell_angle_alpha'] = dict(Parameter(item.angle_alpha, enabled=not item.angle_alpha_constraint, min=0, max=180, fittable=True, fit=item.angle_alpha_refinement))
-                        ed_phase['params']['_cell_angle_beta'] = dict(Parameter(item.angle_beta, enabled=not item.angle_alpha_constraint, min=0, max=180, fittable=True, fit=item.angle_beta_refinement))
-                        ed_phase['params']['_cell_angle_gamma'] = dict(Parameter(item.angle_gamma, enabled=not item.angle_alpha_constraint, min=0, max=180, fittable=True, fit=item.angle_gamma_refinement))
+                        ed_phase['params']['_cell_length_a'] = dict(Parameter(item.length_a,
+                                                                              name = '_cell_length_a',
+                                                                              prettyName = 'length a',
+                                                                              url = 'https://easydiffraction.org',
+                                                                              enabled = not item.length_a_constraint,
+                                                                              min = 1,
+                                                                              max = 30,
+                                                                              units = 'Å',
+                                                                              fittable = True,
+                                                                              fit = item.length_a_refinement))
+                        ed_phase['params']['_cell_length_b'] = dict(Parameter(item.length_b,
+                                                                              name = '_cell_length_b',
+                                                                              prettyName = 'length b',
+                                                                              url = 'https://easydiffraction.org',
+                                                                              enabled = not item.length_b_constraint,
+                                                                              min = 1,
+                                                                              max = 30,
+                                                                              units = 'Å',
+                                                                              fittable = True,
+                                                                              fit = item.length_b_refinement))
+                        ed_phase['params']['_cell_length_c'] = dict(Parameter(item.length_c,
+                                                                              name = '_cell_length_c',
+                                                                              prettyName = 'length c',
+                                                                              url = 'https://easydiffraction.org',
+                                                                              enabled = not item.length_c_constraint,
+                                                                              min = 1,
+                                                                              max = 30,
+                                                                              units = 'Å',
+                                                                              fittable = True,
+                                                                              fit = item.length_c_refinement))
+                        ed_phase['params']['_cell_angle_alpha'] = dict(Parameter(item.angle_alpha,
+                                                                              name = '_cell_angle_alpha',
+                                                                              prettyName = 'angle α',
+                                                                              url = 'https://easydiffraction.org',
+                                                                              enabled = not item.angle_alpha_constraint,
+                                                                              min = 0,
+                                                                              max = 180,
+                                                                              units = '°',
+                                                                              fittable = True,
+                                                                              fit = item.angle_alpha_refinement))
+                        ed_phase['params']['_cell_angle_beta'] = dict(Parameter(item.angle_beta,
+                                                                                name = '_cell_angle_beta',
+                                                                                prettyName = 'angle β',
+                                                                                url = 'https://easydiffraction.org',
+                                                                                enabled = not item.angle_alpha_constraint,
+                                                                                min = 0,
+                                                                                max = 180,
+                                                                                units = '°',
+                                                                                fittable = True,
+                                                                                fit = item.angle_beta_refinement))
+                        ed_phase['params']['_cell_angle_gamma'] = dict(Parameter(item.angle_gamma,
+                                                                                 name = '_cell_angle_gamma',
+                                                                                 prettyName = 'angle γ',
+                                                                                 url = 'https://easydiffraction.org',
+                                                                                 enabled = not item.angle_alpha_constraint,
+                                                                                 min = 0,
+                                                                                 max = 180,
+                                                                                 units = '°',
+                                                                                 fittable = True,
+                                                                                 fit = item.angle_gamma_refinement))
 
                     # Atoms section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_atom_site.AtomSiteL:
                         ed_atoms = []
                         cryspy_atoms = item.items
-                        for cryspy_atom in cryspy_atoms:
+                        for idx, cryspy_atom in enumerate(cryspy_atoms):
                             ed_atom = {}
-                            ed_atom['_label'] = dict(Parameter(cryspy_atom.label))
-                            ed_atom['_type_symbol'] = dict(Parameter(cryspy_atom.type_symbol))
-                            ed_atom['_fract_x'] = dict(Parameter(cryspy_atom.fract_x, enabled=not cryspy_atom.fract_x_constraint, min=-1, max=1, fittable=True, fit=cryspy_atom.fract_x_refinement))
-                            ed_atom['_fract_y'] = dict(Parameter(cryspy_atom.fract_y, enabled=not cryspy_atom.fract_y_constraint, min=-1, max=1, fittable=True, fit=cryspy_atom.fract_y_refinement))
-                            ed_atom['_fract_z'] = dict(Parameter(cryspy_atom.fract_z, enabled=not cryspy_atom.fract_z_constraint, min=-1, max=1, fittable=True, fit=cryspy_atom.fract_z_refinement))
-                            ed_atom['_occupancy'] = dict(Parameter(cryspy_atom.occupancy, enabled=not cryspy_atom.occupancy_constraint, min=0, max=1, fittable=True, fit=cryspy_atom.occupancy_refinement))
+                            ed_atom['_label'] = dict(Parameter(cryspy_atom.label,
+                                                               idx = idx,
+                                                               loopName = '_atom_site',
+                                                               name = '_label',
+                                                               prettyName = 'label',
+                                                               url = 'https://easydiffraction.org'))
+                            ed_atom['_type_symbol'] = dict(Parameter(cryspy_atom.type_symbol,
+                                                                     idx = idx,
+                                                                     loopName = '_atom_site',
+                                                                     name = '_type_symbol',
+                                                                     prettyName = 'type',
+                                                                     url = 'https://easydiffraction.org'))
+                            ed_atom['_fract_x'] = dict(Parameter(cryspy_atom.fract_x,
+                                                                 idx = idx,
+                                                                 loopName = '_atom_site',
+                                                                 name = '_fract_x',
+                                                                 prettyName = 'fract x',
+                                                                 url = 'https://easydiffraction.org',
+                                                                 enabled=not cryspy_atom.fract_x_constraint,
+                                                                 min=-1,
+                                                                 max=1,
+                                                                 fittable=True,
+                                                                 fit=cryspy_atom.fract_x_refinement))
+                            ed_atom['_fract_y'] = dict(Parameter(cryspy_atom.fract_y,
+                                                                 idx = idx,
+                                                                 loopName = '_atom_site',
+                                                                 name = '_fract_y',
+                                                                 prettyName = 'fract y',
+                                                                 url = 'https://easydiffraction.org',
+                                                                 enabled=not cryspy_atom.fract_y_constraint,
+                                                                 min=-1,
+                                                                 max=1,
+                                                                 fittable=True,
+                                                                 fit=cryspy_atom.fract_y_refinement))
+                            ed_atom['_fract_z'] = dict(Parameter(cryspy_atom.fract_z,
+                                                                 idx = idx,
+                                                                 loopName = '_atom_site',
+                                                                 name = '_fract_z',
+                                                                 prettyName = 'fract z',
+                                                                 url = 'https://easydiffraction.org',
+                                                                 enabled=not cryspy_atom.fract_z_constraint,
+                                                                 min=-1,
+                                                                 max=1,
+                                                                 fittable=True,
+                                                                 fit=cryspy_atom.fract_z_refinement))
+                            ed_atom['_occupancy'] = dict(Parameter(cryspy_atom.occupancy,
+                                                                   idx = idx,
+                                                                   loopName = '_atom_site',
+                                                                   name = '_occupancy',
+                                                                   prettyName = 'occ.',
+                                                                   url = 'https://easydiffraction.org',
+                                                                   enabled=not cryspy_atom.occupancy_constraint,
+                                                                   min=0,
+                                                                   max=1,
+                                                                   fittable=True,
+                                                                   fit=cryspy_atom.occupancy_refinement))
                             ed_atom['_adp_type'] = dict(Parameter(cryspy_atom.adp_type))
-                            ed_atom['_B_iso_or_equiv'] = dict(Parameter(cryspy_atom.b_iso_or_equiv, enabled=not cryspy_atom.b_iso_or_equiv_constraint, min=0, max=1, fittable=True, fit=cryspy_atom.b_iso_or_equiv_refinement))
-                            ed_atom['_multiplicity'] = dict(Parameter(cryspy_atom.multiplicity))
-                            ed_atom['_Wyckoff_symbol'] = dict(Parameter(cryspy_atom.wyckoff_symbol))
+                            ed_atom['_B_iso_or_equiv'] = dict(Parameter(cryspy_atom.b_iso_or_equiv,
+                                                                        idx = idx,
+                                                                        loopName = '_atom_site',
+                                                                        name = '_B_iso_or_equiv',
+                                                                        prettyName = 'iso',
+                                                                        url = 'https://easydiffraction.org',
+                                                                        enabled=not cryspy_atom.b_iso_or_equiv_constraint,
+                                                                        min=0,
+                                                                        max=1,
+                                                                        fittable=True,
+                                                                        fit=cryspy_atom.b_iso_or_equiv_refinement))
+                            ed_atom['_multiplicity'] = dict(Parameter(cryspy_atom.multiplicity,
+                                                                      idx = idx,
+                                                                      loopName = '_atom_site',
+                                                                      name = '_multiplicity',
+                                                                      prettyName = '',
+                                                                      url = 'https://easydiffraction.org'))
+                            ed_atom['_Wyckoff_symbol'] = dict(Parameter(cryspy_atom.wyckoff_symbol,
+                                                                        name = '_atom_site_Wyckoff_symbol',
+                                                                        prettyName = '',
+                                                                        url = 'https://easydiffraction.org'))
                             ed_atoms.append(ed_atom)
                         ed_phase['loops']['_atom_site'] = ed_atoms
 

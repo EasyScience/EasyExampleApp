@@ -14,13 +14,11 @@ import Gui.Globals as Globals
 EaElements.GroupRow {
 
     EaElements.Parameter {
-        title: qsTr('name H-M alt')
-        text: Globals.Proxies.modelMainParameterValue('_space_group_name_H-M_alt')
+        parameter: Globals.Proxies.modelMainParam('_space_group_name_H-M_alt')
     }
 
     EaElements.Parameter {
-        title: qsTr('IT coordinate system code')
-        text: Globals.Proxies.modelMainParameterValue('_space_group_IT_coordinate_system_code')
+        parameter: Globals.Proxies.modelMainParam('_space_group_IT_coordinate_system_code')
     }
 
 }

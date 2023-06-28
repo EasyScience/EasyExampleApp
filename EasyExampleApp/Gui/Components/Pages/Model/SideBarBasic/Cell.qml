@@ -14,51 +14,39 @@ import Gui.Globals as Globals
 EaElements.GroupRow {
 
     EaElements.Parameter {
-        title: qsTr('length a')
-        enabled: Globals.Proxies.modelMainParameterEnabled('_cell_length_a')
-        fit: Globals.Proxies.modelMainParameterFit('_cell_length_a')
-        text: Globals.Proxies.modelMainParameterValue('_cell_length_a')
-        onEditingFinished: Globals.Proxies.setModelMainParameterValue('_cell_length_a', text)
+        parameter: Globals.Proxies.modelMainParam('_cell_length_a')
+        onEditingFinished: Globals.Proxies.setModelMainParam(parameter, 'value', text)
+        fitCheckBox.onToggled: Globals.Proxies.setModelMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
     EaElements.Parameter {
-        title: qsTr('length b')
-        enabled: Globals.Proxies.modelMainParameterEnabled('_cell_length_b')
-        fit: Globals.Proxies.modelMainParameterFit('_cell_length_b')
-        text: Globals.Proxies.modelMainParameterValue('_cell_length_b')
-        onEditingFinished: Globals.Proxies.setModelMainParameterValue('_cell_length_b', text)
+        parameter: Globals.Proxies.modelMainParam('_cell_length_b')
+        onEditingFinished: Globals.Proxies.setModelMainParam(parameter, 'value', text)
+        fitCheckBox.onToggled: Globals.Proxies.setModelMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
     EaElements.Parameter {
-        title: qsTr('length c')
-        enabled: Globals.Proxies.modelMainParameterEnabled('_cell_length_c')
-        fit: Globals.Proxies.modelMainParameterFit('_cell_length_b')
-        text: Globals.Proxies.modelMainParameterValue('_cell_length_c')
-        onEditingFinished: Globals.Proxies.setModelMainParameterValue('_cell_length_c', text)
+        parameter: Globals.Proxies.modelMainParam('_cell_length_c')
+        onEditingFinished: Globals.Proxies.setModelMainParam(parameter, 'value', text)
+        fitCheckBox.onToggled: Globals.Proxies.setModelMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
     EaElements.Parameter {
-        title: qsTr('angle α')
-        enabled: Globals.Proxies.modelMainParameterEnabled('_cell_angle_alpha')
-        fit: Globals.Proxies.modelMainParameterFit('_cell_angle_alpha')
-        text: Globals.Proxies.modelMainParameterValue('_cell_angle_alpha')
-        onEditingFinished: Globals.Proxies.setModelMainParameterValue('_cell_angle_alpha', text)
+        parameter: Globals.Proxies.modelMainParam('_cell_angle_alpha')
+        onEditingFinished: Globals.Proxies.setModelMainParam(parameter, 'value', text)
+        fitCheckBox.onToggled: Globals.Proxies.setModelMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
     EaElements.Parameter {
-        title: qsTr('angle β')
-        enabled: Globals.Proxies.modelMainParameterEnabled('_cell_angle_beta')
-        fit: Globals.Proxies.modelMainParameterFit('_cell_angle_beta')
-        text: Globals.Proxies.modelMainParameterValue('_cell_angle_beta')
-        onEditingFinished: Globals.Proxies.setModelMainParameterValue('_cell_angle_beta', text)
+        parameter: Globals.Proxies.modelMainParam('_cell_angle_beta')
+        onEditingFinished: Globals.Proxies.setModelMainParam(parameter, 'value', text)
+        fitCheckBox.onToggled: Globals.Proxies.setModelMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
     EaElements.Parameter {
-        title: qsTr('angle γ')
-        enabled: Globals.Proxies.modelMainParameterEnabled('_cell_angle_gamma')
-        fit: Globals.Proxies.modelMainParameterFit('_cell_angle_gamma')
-        text: Globals.Proxies.modelMainParameterValue('_cell_angle_gamma')
-        onEditingFinished: Globals.Proxies.setModelMainParameterValue('_cell_angle_gamma', text)
+        parameter: Globals.Proxies.modelMainParam('_cell_angle_gamma')
+        onEditingFinished: Globals.Proxies.setModelMainParam(parameter, 'value', text)
+        fitCheckBox.onToggled: Globals.Proxies.setModelMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
 }

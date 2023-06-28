@@ -26,14 +26,20 @@ class Parameter(dict):
 
     def __init__(self,
                 value,
-                error=0.0,
-                min=-1.0,
-                max=1.0,
-                unit='',
-                enabled=True,
-                fittable=False,
-                fit=False):
+                idx = 0,
+                error = 0.0,
+                min = -1.0,
+                max = 1.0,
+                units = '',
+                loopName = '',
+                name = '',
+                prettyName = '',
+                url = '',
+                enabled = True,
+                fittable = False,
+                fit = False):
         self['value'] = value
+        self['idx'] = idx
         self['enabled'] = enabled
         self['fittable'] = fittable
         self['fit'] = fit
@@ -41,10 +47,13 @@ class Parameter(dict):
         self['group'] = ""
         self['min'] = min
         self['max'] = max
-        self['name'] = ''
+        self['loopName'] = loopName
+        self['name'] = name
+        self['prettyName'] = prettyName
+        self['url'] = url
         self['parentIndex'] = 0
         self['parentName'] = ''
-        self['unit'] = unit
+        self['units'] = units
 
 
 class Fittables(QObject):
@@ -72,13 +81,13 @@ class Fittables(QObject):
             if blockType == 'experiment':
                 self._proxy.experiment.setMainParameterValue(paramName, value)
             elif blockType == 'model':
-                self._proxy.model.setMainParameterValue(paramName, value)
+                self._proxy.model.setMainParam(paramName, value)
         else:
             console.debug(f"Editing fittable {blockType}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.value to '{value}'")
             if blockType == 'experiment':
                 self._proxy.experiment.setLoopParamValue(loopName, paramName, paramIndex, value)
             elif blockType == 'model':
-                self._proxy.model.setLoopParamValue(loopName, paramName, paramIndex, value)
+                self._proxy.model.setLoopParam(loopName, paramName, paramIndex, value)
 
     def set(self):
         console.debug('Fittables have been changed')

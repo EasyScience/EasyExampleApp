@@ -567,76 +567,30 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
     // Model
 
-    function modelMainParameterEnabled(name) {
+    function modelMainParam(name) {
         if (!main.model.defined) {
-            return ''
+            return {}
         }
         const currentModelIndex = main.model.currentIndex
-        const value = main.model.dataBlocks[currentModelIndex].params[name]['enabled']
-        return value
+        return main.model.dataBlocks[currentModelIndex].params[name]
     }
 
-    function modelMainParameterFit(name) {
+    function modelLoopParam(loopName, paramName, paramIndex) {
         if (!main.model.defined) {
-            return ''
+            return {}
         }
         const currentModelIndex = main.model.currentIndex
-        const value = main.model.dataBlocks[currentModelIndex].params[name]['fit']
-        return value
+        return main.model.dataBlocks[currentModelIndex].loops[loopName][paramIndex][paramName]
     }
 
-    function modelMainParameterValue(name, formatted=true) {
-        if (!main.model.defined) {
-            return ''
-        }
-        const currentModelIndex = main.model.currentIndex
-        const value = main.model.dataBlocks[currentModelIndex].params[name]['value']
-        if (formatted) {
-            const formattedValue = typeof value === "number" ? value.toFixed(4) : value
-            return formattedValue
-        }
-        return value
+    function setModelMainParam(parameter, field, value) {
+        console.debug(`---------- Editing model main param ${parameter.name} '${field}' to ${value} ----------`)
+        main.model.setMainParam(parameter.name, field, value)
     }
 
-    function setModelMainParameterValue(name, value) {
-        console.debug(`---------- Editing model main param ${name} value to ${value} ----------`)
-        main.model.setMainParameterValue(name, value)
-    }
-
-    function modelLoopParameterEnabled(loopName, parameterName, parameterIndex) {
-        if (!main.model.defined) {
-            return ''
-        }
-        const currentModelIndex = main.model.currentIndex
-        const value = main.model.dataBlocks[currentModelIndex].loops[loopName][parameterIndex][parameterName]['enabled']
-        return value
-    }
-
-    function modelLoopParameterFit(loopName, parameterName, parameterIndex) {
-        if (!main.model.defined) {
-            return ''
-        }
-        const currentModelIndex = main.model.currentIndex
-        const value = main.model.dataBlocks[currentModelIndex].loops[loopName][parameterIndex][parameterName]['fit']
-        return value
-    }
-
-    function modelLoopParameterValue(loopName, parameterName, parameterIndex, formatted=true) {
-        if (!main.model.defined) {
-            return ''
-        }
-        const currentModelIndex = main.model.currentIndex
-        const value = main.model.dataBlocks[currentModelIndex].loops[loopName][parameterIndex][parameterName]['value']
-        if (formatted) {
-            const formattedValue = typeof value === "number" ? value.toFixed(4) : value
-            return formattedValue
-        }
-        return value
-    }
-
-    function setModelLoopParameterValue(loopName, parameterName, parameterIndex, value) {
-        console.debug(`---------- Editing model loop param ${parameterName} value to ${value} ----------`)
-        main.model.setLoopParamValue(loopName, parameterName, parameterIndex, value)
+    function setModelLoopParam(param, field, value) {
+        console.debug(`---------- Editing model loop param ${param.loopName}${param.name}[${param.idx}] '${field}' to ${value} ----------`)
+        main.model.setLoopParam(param.loopName, param.name, param.idx, field, value)
     }
 
     // Experiment

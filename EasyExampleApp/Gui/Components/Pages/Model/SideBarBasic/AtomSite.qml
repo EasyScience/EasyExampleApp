@@ -31,7 +31,6 @@ EaElements.GroupColumn {
         }
 
         // Header row
-
         header: EaComponents.TableViewHeader {
 
             EaComponents.TableViewLabel {
@@ -56,28 +55,29 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewLabel {
-                width: atomSiteLabel.width
+                id: fractXLabel
+                width: EaStyle.Sizes.fontPixelSize * 4.4
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("fract x")
             }
 
             EaComponents.TableViewLabel {
-                width: atomSiteLabel.width
+                width: fractXLabel.width
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("fract y")
             }
 
             EaComponents.TableViewLabel {
-                width: atomSiteLabel.width
+                width: fractXLabel.width
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("fract z")
             }
 
             EaComponents.TableViewLabel {
-                width: atomSiteLabel.width
+                width: fractXLabel.width
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("occ.")
@@ -101,9 +101,9 @@ EaElements.GroupColumn {
             }
 
         }
+        // Header row
 
         // Table rows
-
         delegate: EaComponents.TableViewDelegate {
 
             EaComponents.TableViewLabel {
@@ -112,48 +112,45 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewTextInput {
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_label', index)
+                parameter: Globals.Proxies.modelLoopParam('_atom_site', '_label', index)
             }
 
             EaComponents.TableViewTextInput {
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_type_symbol', index)
+                parameter: Globals.Proxies.modelLoopParam('_atom_site', '_type_symbol', index)
             }
 
             EaComponents.TableViewTextInput {
-                enabled: Globals.Proxies.modelLoopParameterEnabled('_atom_site', '_fract_x', index)
-                fit: Globals.Proxies.modelLoopParameterFit('_atom_site', '_fract_x', index)
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_fract_x', index)
-                onEditingFinished: Globals.Proxies.setModelLoopParameterValue('_atom_site', '_fract_x', index, text)
+                parameter: Globals.Proxies.modelLoopParam('_atom_site', '_fract_x', index)
+                onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', text)
+                fitCheckBox.onToggled: Globals.Proxies.setModelLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
             EaComponents.TableViewTextInput {
-                enabled: Globals.Proxies.modelLoopParameterEnabled('_atom_site', '_fract_y', index)
-                fit: Globals.Proxies.modelLoopParameterFit('_atom_site', '_fract_y', index)
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_fract_y', index)
-                onEditingFinished: Globals.Proxies.setModelLoopParameterValue('_atom_site', '_fract_y', index, text)
+                parameter: Globals.Proxies.modelLoopParam('_atom_site', '_fract_y', index)
+                onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', text)
+                fitCheckBox.onToggled: Globals.Proxies.setModelLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
             EaComponents.TableViewTextInput {
-                enabled: Globals.Proxies.modelLoopParameterEnabled('_atom_site', '_fract_z', index)
-                fit: Globals.Proxies.modelLoopParameterFit('_atom_site', '_fract_z', index)
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_fract_z', index)
-                onEditingFinished: Globals.Proxies.setModelLoopParameterValue('_atom_site', '_fract_z', index, text)
+                parameter: Globals.Proxies.modelLoopParam('_atom_site', '_fract_z', index)
+                onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', text)
+                fitCheckBox.onToggled: Globals.Proxies.setModelLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
             EaComponents.TableViewTextInput {
-                enabled: Globals.Proxies.modelLoopParameterEnabled('_atom_site', '_occupancy', index)
-                fit: Globals.Proxies.modelLoopParameterFit('_atom_site', '_occupancy', index)
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_occupancy', index)
-                onEditingFinished: Globals.Proxies.setModelLoopParameterValue('_atom_site', '_occupancy', index, text)
+                parameter: Globals.Proxies.modelLoopParam('_atom_site', '_occupancy', index)
+                onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', text)
+                fitCheckBox.onToggled: Globals.Proxies.setModelLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
             EaComponents.TableViewTextInput {
-                text: Globals.Proxies.modelLoopParameterValue('_atom_site', '_multiplicity', index, false) +
-                      Globals.Proxies.modelLoopParameterValue('_atom_site', '_Wyckoff_symbol', index)
+                text: Globals.Proxies.modelLoopParam('_atom_site', '_multiplicity', index).value +
+                      Globals.Proxies.modelLoopParam('_atom_site', '_Wyckoff_symbol', index).value
             }
 
             EaComponents.TableViewLabel {
-                backgroundColor: Globals.Proxies.atomColor(Globals.Proxies.modelLoopParameterValue('_atom_site', '_type_symbol', index))
+                backgroundColor: Globals.Proxies.atomColor(
+                                     Globals.Proxies.modelLoopParam('_atom_site', '_type_symbol', index).value)
             }
 
             EaComponents.TableViewButton {
@@ -162,6 +159,7 @@ EaElements.GroupColumn {
             }
 
         }
+        // Table rows
 
     }
 
