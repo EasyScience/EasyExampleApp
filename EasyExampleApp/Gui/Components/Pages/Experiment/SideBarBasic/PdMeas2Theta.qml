@@ -14,25 +14,21 @@ import Gui.Globals as Globals
 EaElements.GroupRow {
 
     EaElements.Parameter {
-        title: qsTr('range min')
-        text: Globals.Proxies.experimentMainParameterValue('_pd_meas_2theta_range_min')
+        parameter: Globals.Proxies.experimentMainParam('_pd_meas_2theta_range_min')
     }
 
     EaElements.Parameter {
-        title: qsTr('range max')
-        text: Globals.Proxies.experimentMainParameterValue('_pd_meas_2theta_range_max')
+        parameter: Globals.Proxies.experimentMainParam('_pd_meas_2theta_range_max')
     }
 
     EaElements.Parameter {
-        title: qsTr('range inc')
-        text: Globals.Proxies.experimentMainParameterValue('_pd_meas_2theta_range_inc')
+        parameter: Globals.Proxies.experimentMainParam('_pd_meas_2theta_range_inc')
     }
 
     EaElements.Parameter {
-        title: qsTr('offset')
-        fit: Globals.Proxies.experimentMainParameterFit('_pd_meas_2theta_offset')
-        text: Globals.Proxies.experimentMainParameterValue('_pd_meas_2theta_offset')
-        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_pd_meas_2theta_offset', text)
+        parameter: Globals.Proxies.experimentMainParam('_pd_meas_2theta_offset')
+        onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', text)
+        fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
 }

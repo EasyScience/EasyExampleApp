@@ -14,31 +14,27 @@ import Gui.Globals as Globals
 EaElements.GroupRow {
 
     EaElements.Parameter {
-        title: qsTr('p1')
-        fit: Globals.Proxies.experimentMainParameterFit('_pd_instr_reflex_asymmetry_p1')
-        text: Globals.Proxies.experimentMainParameterValue('_pd_instr_reflex_asymmetry_p1')
-        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_pd_instr_reflex_asymmetry_p1', text)
+        parameter: Globals.Proxies.experimentMainParam('_pd_instr_reflex_asymmetry_p1')
+        onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', text)
+        fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
     EaElements.Parameter {
-        title: qsTr('p2')
-        fit: Globals.Proxies.experimentMainParameterFit('_pd_instr_reflex_asymmetry_p2')
-        text: Globals.Proxies.experimentMainParameterValue('_pd_instr_reflex_asymmetry_p2')
-        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_pd_instr_reflex_asymmetry_p2', text)
+        parameter: Globals.Proxies.experimentMainParam('_pd_instr_reflex_asymmetry_p2')
+        onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', text)
+        fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
     EaElements.Parameter {
-        title: qsTr('p3')
-        fit: Globals.Proxies.experimentMainParameterFit('_pd_instr_reflex_asymmetry_p3')
-        text: Globals.Proxies.experimentMainParameterValue('_pd_instr_reflex_asymmetry_p3')
-        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_pd_instr_reflex_asymmetry_p3', text)
+        parameter: Globals.Proxies.experimentMainParam('_pd_instr_reflex_asymmetry_p3')
+        onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', text)
+        fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
     EaElements.Parameter {
-        title: qsTr('p4')
-        fit: Globals.Proxies.experimentMainParameterFit('_pd_instr_reflex_asymmetry_p4')
-        text: Globals.Proxies.experimentMainParameterValue('_pd_instr_reflex_asymmetry_p4')
-        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_pd_instr_reflex_asymmetry_p4', text)
+        parameter: Globals.Proxies.experimentMainParam('_pd_instr_reflex_asymmetry_p4')
+        onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', text)
+        fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
 }

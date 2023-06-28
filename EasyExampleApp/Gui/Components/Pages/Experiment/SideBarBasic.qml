@@ -52,7 +52,7 @@ EaComponents.SideBarColumn {
         title: qsTr("Powder diffraction: background")
         visible: Globals.Proxies.main.experiment.defined
 
-        Loader { source: 'SideBarBasic/PdBackgroundGroup.qml' }
+        Loader { source: 'SideBarBasic/PdBackground.qml' }
     }
 
     EaElements.GroupBox {

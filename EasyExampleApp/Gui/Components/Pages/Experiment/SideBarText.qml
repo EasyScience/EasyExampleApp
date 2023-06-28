@@ -11,17 +11,21 @@ import EasyApp.Gui.Components as EaComponents
 
 import Gui.Globals as Globals
 
+EaComponents.SideBarColumn {
 
-ScrollView {
-    anchors.fill: parent
+    EaElements.GroupBox {
+        title: qsTr("Experiment data explorer")
+        collapsible: false
+        last: true
 
-    EaElements.TextArea {
-        text: Globals.Proxies.main.experiment.dataBlocksCif
-
-        //textFormat: TextEdit.RichText
-        font.family: EaStyle.Fonts.monoFontFamily
-        backgroundOpacity: 0
-        readOnly: true
+        Loader { source: 'SideBarText/ExperimentDataExplorer.qml' }
     }
-}
 
+    EaElements.GroupBox {
+        collapsible: false
+        last: true
+
+        Loader { source: 'SideBarText/TextView.qml' }
+    }
+
+}

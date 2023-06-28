@@ -17,7 +17,7 @@ _EMPTY_DATA = [
         "name": "",
         "parentIndex": 0,
         "parentName": "",
-        "unit": "",
+        "units": "",
         "value": 0
     }
 ]
@@ -79,13 +79,13 @@ class Fittables(QObject):
         if loopName == '':
             console.debug(f"Editing fittable {blockType}[{blockIndex}].{paramName}.value to '{value}'")
             if blockType == 'experiment':
-                self._proxy.experiment.setMainParameterValue(paramName, value)
+                self._proxy.experiment.setMainParam(paramName, value)
             elif blockType == 'model':
                 self._proxy.model.setMainParam(paramName, value)
         else:
             console.debug(f"Editing fittable {blockType}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.value to '{value}'")
             if blockType == 'experiment':
-                self._proxy.experiment.setLoopParamValue(loopName, paramName, paramIndex, value)
+                self._proxy.experiment.setLoopParam(loopName, paramName, paramIndex, value)
             elif blockType == 'model':
                 self._proxy.model.setLoopParam(loopName, paramName, paramIndex, value)
 
@@ -108,7 +108,7 @@ class Fittables(QObject):
                     fittable['error'] = paramContent['error']
                     fittable['min'] = paramContent['min']
                     fittable['max'] = paramContent['max']
-                    fittable['unit'] = paramContent['unit']
+                    fittable['units'] = paramContent['units']
                     fittable['fit'] = paramContent['fit']
                     _data.append(fittable)
 
@@ -128,7 +128,7 @@ class Fittables(QObject):
                             fittable['error'] = paramContent['error']
                             fittable['min'] = paramContent['min']
                             fittable['max'] = paramContent['max']
-                            fittable['unit'] = paramContent['unit']
+                            fittable['units'] = paramContent['units']
                             fittable['fit'] = paramContent['fit']
                             _data.append(fittable)
 
@@ -147,7 +147,7 @@ class Fittables(QObject):
                     fittable['error'] = paramContent['error']
                     fittable['min'] = paramContent['min']
                     fittable['max'] = paramContent['max']
-                    fittable['unit'] = paramContent['unit']
+                    fittable['units'] = paramContent['units']
                     fittable['fit'] = paramContent['fit']
                     _data.append(fittable)
 
@@ -167,7 +167,7 @@ class Fittables(QObject):
                             fittable['error'] = paramContent['error']
                             fittable['min'] = paramContent['min']
                             fittable['max'] = paramContent['max']
-                            fittable['unit'] = paramContent['unit']
+                            fittable['units'] = paramContent['units']
                             fittable['fit'] = paramContent['fit']
                             _data.append(fittable)
 

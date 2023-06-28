@@ -43,14 +43,14 @@ EaElements.GroupColumn {
                 width: EaStyle.Sizes.fontPixelSize * 11.0
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("2θ")
+                text: Globals.Proxies.experimentLoopParam('_pd_background', '_2theta', 0).prettyName
             }
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 11.0
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("intensity")
+                text: Globals.Proxies.experimentLoopParam('_pd_background', '_intensity', 0).prettyName
             }
 
             EaComponents.TableViewLabel {
@@ -69,19 +69,20 @@ EaElements.GroupColumn {
         delegate: EaComponents.TableViewDelegate {
 
             EaComponents.TableViewLabel {
-                color: EaStyle.Colors.themeForegroundMinor
                 text: index + 1
+                color: EaStyle.Colors.themeForegroundMinor
             }
 
             EaComponents.TableViewTextInput {
-                text: Globals.Proxies.experimentLoopParameterValue('_pd_background', '_2theta', index)
-                onEditingFinished: Globals.Proxies.setExperimentLoopParameterValue('_pd_background', '_2theta', index, text)
+                parameter: Globals.Proxies.experimentLoopParam('_pd_background', '_2theta', index)
+                onEditingFinished: Globals.Proxies.setExperimentLoopParam(parameter, 'value', text)
+                fitCheckBox.onToggled: Globals.Proxies.setExperimentLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
             EaComponents.TableViewTextInput {
-                fit: Globals.Proxies.experimentLoopParameterFit('_pd_background', '_intensity', index)
-                text: Globals.Proxies.experimentLoopParameterValue('_pd_background', '_intensity', index)
-                onEditingFinished: Globals.Proxies.setExperimentLoopParameterValue('_pd_background', '_intensity', index, text)
+                parameter: Globals.Proxies.experimentLoopParam('_pd_background', '_intensity', index)
+                onEditingFinished: Globals.Proxies.setExperimentLoopParam(parameter, 'value', text)
+                fitCheckBox.onToggled: Globals.Proxies.setExperimentLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
             EaComponents.TableViewLabel {

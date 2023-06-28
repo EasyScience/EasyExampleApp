@@ -14,16 +14,13 @@ import Gui.Globals as Globals
 EaElements.GroupRow {
 
     EaElements.Parameter {
-        //enabled: false
-        title: qsTr('probe')
-        text: Globals.Proxies.experimentMainParameterValue('_diffrn_radiation_probe')
-        //horizontalAlignment: TextField.AlignLeft
+        parameter: Globals.Proxies.experimentMainParam('_diffrn_radiation_probe')
     }
 
     EaElements.Parameter {
-        title: qsTr('wavelength')
-        text: Globals.Proxies.experimentMainParameterValue('_diffrn_radiation_wavelength')
-        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_diffrn_radiation_wavelength', text)
+        parameter: Globals.Proxies.experimentMainParam('_diffrn_radiation_wavelength')
+        onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', text)
+        fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
 }

@@ -595,70 +595,30 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
     // Experiment
 
-    function experimentMainParameterEnabled(name) {
+    function experimentMainParam(name) {
         if (!main.experiment.defined) {
-            return ''
+            return {}
         }
         const currentModelIndex = main.experiment.currentIndex
-        const value = main.experiment.dataBlocks[currentModelIndex].params[name]['enabled']
-        return value
+        return main.experiment.dataBlocks[currentModelIndex].params[name]
     }
 
-    function experimentMainParameterFit(name) {
+    function experimentLoopParam(loopName, paramName, paramIndex) {
         if (!main.experiment.defined) {
-            return ''
+            return {}
         }
         const currentModelIndex = main.experiment.currentIndex
-        const value = main.experiment.dataBlocks[currentModelIndex].params[name]['fit']
-        return value
+        return main.experiment.dataBlocks[currentModelIndex].loops[loopName][paramIndex][paramName]
     }
 
-    function experimentMainParameterValue(name) {
-        if (!main.experiment.defined) {
-            return ''
-        }
-        const currentExperimentIndex = main.experiment.currentIndex
-        const value = main.experiment.dataBlocks[currentExperimentIndex].params[name]['value']
-        const formattedValue = typeof value === "number" ? value.toFixed(4) : value
-        return formattedValue
+    function setExperimentMainParam(parameter, field, value) {
+        console.debug(`---------- Editing experiment main param ${parameter.name} '${field}' to ${value} ----------`)
+        main.experiment.setMainParam(parameter.name, field, value)
     }
 
-    function setExperimentMainParameterValue(name, value) {
-        console.debug(`---------- Editing experiment main param ${name} value to ${value} ----------`)
-        main.experiment.setMainParameterValue(name, value)
-    }
-
-    function experimentLoopParameterEnabled(loopName, parameterName, parameterIndex) {
-        if (!main.experiment.defined) {
-            return ''
-        }
-        const currentModelIndex = main.experiment.currentIndex
-        const value = main.experiment.dataBlocks[currentModelIndex].loops[loopName][parameterIndex][parameterName]['enabled']
-        return value
-    }
-
-    function experimentLoopParameterFit(loopName, parameterName, parameterIndex) {
-        if (!main.experiment.defined) {
-            return ''
-        }
-        const currentModelIndex = main.experiment.currentIndex
-        const value = main.experiment.dataBlocks[currentModelIndex].loops[loopName][parameterIndex][parameterName]['fit']
-        return value
-    }
-
-    function experimentLoopParameterValue(loopName, parameterName, parameterIndex) {
-        if (!main.experiment.defined) {
-            return ''
-        }
-        const currentExperimentIndex = main.experiment.currentIndex
-        const value = main.experiment.dataBlocks[currentExperimentIndex].loops[loopName][parameterIndex][parameterName]['value']
-        const formattedValue = typeof value === "number" ? value.toFixed(4) : value
-        return formattedValue
-    }
-
-    function setExperimentLoopParameterValue(loopName, parameterName, parameterIndex, value) {
-        console.debug(`---------- Editing experiment loop param ${parameterName} value to ${value} ----------`)
-        main.experiment.setLoopParamValue(loopName, parameterName, parameterIndex, value)
+    function setExperimentLoopParam(param, field, value) {
+        console.debug(`---------- Editing experiment loop param ${param.loopName}${param.name}[${param.idx}] '${field}' to ${value} ----------`)
+        main.experiment.setLoopParam(param.loopName, param.name, param.idx, field, value)
     }
 
     // Misc

@@ -4,31 +4,32 @@
 
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Dialogs
 
+import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
+import EasyApp.Gui.Logic as EaLogic
 
 import Gui.Globals as Globals
 
 
-EaElements.GroupColumn {
+Column {
+    spacing: EaStyle.Sizes.fontPixelSize
+
+    // Table
 
     EaComponents.TableView {
 
-        defaultInfoText: qsTr("No phases defined")
+        defaultInfoText: qsTr("No experiments defined")
 
         // Table model
 
         // We only use the length of the model object defined in backend logic and
         // directly access that model in every row using the TableView index property.
 
-        model: {
-            if (typeof Globals.Proxies.main.experiment.dataBlocks[Globals.Proxies.main.model.currentIndex] === 'undefined') {
-                return 0
-            }
-            return Globals.Proxies.main.experiment.dataBlocks[Globals.Proxies.main.model.currentIndex].loops._phase.length
-        }
+        model: Globals.Proxies.main.experiment.dataBlocks.length
 
         // Header row
 
@@ -43,14 +44,12 @@ EaElements.GroupColumn {
                 flexibleWidth: true
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.experimentLoopParam('_phase', '_label', 0).prettyName
+                text: qsTr("label")
             }
 
             EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 5.0
-                horizontalAlignment: Text.AlignRight
-                color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.experimentLoopParam('_phase', '_scale', 0).prettyName
+                width: EaStyle.Sizes.fontPixelSize * 3.0
+                //text: qsTr("Color")
             }
 
             EaComponents.TableViewLabel {
@@ -61,7 +60,6 @@ EaElements.GroupColumn {
         }
 
         // Table rows
-
         delegate: EaComponents.TableViewDelegate {
 
             EaComponents.TableViewLabel {
@@ -70,24 +68,23 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewTextInput {
-                parameter: Globals.Proxies.experimentLoopParam('_phase', '_label', index)
+                text: Globals.Proxies.main.experiment.dataBlocks[index].name
             }
 
-            EaComponents.TableViewTextInput {
-                parameter: Globals.Proxies.experimentLoopParam('_phase', '_scale', index)
-                onEditingFinished: Globals.Proxies.setExperimentLoopParam(parameter, 'value', text)
-                fitCheckBox.onToggled: Globals.Proxies.setExperimentLoopParam(parameter, 'fit', fitCheckBox.checked)
+            EaComponents.TableViewLabel {
+                backgroundColor: EaStyle.Colors.chartForegroundsExtra[2]
             }
 
             EaComponents.TableViewButton {
                 fontIcon: "minus-circle"
-                ToolTip.text: qsTr("Remove this phase")
-                onClicked: Globals.Proxies.main.model.removeModel(index)
+                ToolTip.text: qsTr("Remove this dataset")
+                onClicked: Globals.Proxies.main.experiment.removeExperiment(index)
             }
 
         }
 
-        onCurrentIndexChanged: Globals.Proxies.main.model.currentIndex = currentIndex
+        onCurrentIndexChanged: Globals.Proxies.main.experiment.currentIndex = currentIndex
+
     }
 
 }

@@ -43,14 +43,14 @@ EaElements.GroupColumn {
                 width: EaStyle.Sizes.fontPixelSize * 4.0
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("label")
-            }
+                text: Globals.Proxies.modelLoopParam('_atom_site', '_label', 0).prettyName
+           }
 
             EaComponents.TableViewLabel {
                 flexibleWidth: true
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("type")
+                text: Globals.Proxies.modelLoopParam('_atom_site', '_adp_type', 0).prettyName
             }
 
             EaComponents.TableViewLabel {
@@ -58,7 +58,7 @@ EaElements.GroupColumn {
                 width: EaStyle.Sizes.fontPixelSize * 3.7
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("iso")
+                text: Globals.Proxies.modelLoopParam('_atom_site', '_B_iso_or_equiv', 0).prettyName
             }
 
             EaComponents.TableViewLabel {

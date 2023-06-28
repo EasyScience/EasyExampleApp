@@ -194,48 +194,58 @@ class Experiment(QObject):
         self.yBkgArraysChanged.emit()
         console.debug("All experiments have been removed")
 
-    @Slot(str, float)
-    def setMainParameterValue(self, paramName, value):
-        changedIntern = self.editDataBlockMainParam(paramName, value)
-        changedCryspy = self.editCryspyDictByMainParam(paramName, value)
+    @Slot(str, str, float)
+    def setMainParam(self, paramName, field, value):
+        changedIntern = self.editDataBlockMainParam(paramName, field, value)
+        changedCryspy = True
+        if field == 'value':
+            changedCryspy = self.editCryspyDictByMainParam(paramName, value)
 
         if changedIntern and changedCryspy:
             self.dataBlocksChanged.emit()
 
-    @Slot(str, str, int, float)
-    def setLoopParamValue(self, loopName, paramName, paramIndex, value):
-        changedIntern = self.editDataBlockLoopParam(loopName, paramName, paramIndex, value)
-        changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, paramIndex, value)
+    @Slot(str, str, int, str, float)
+    def setLoopParam(self, loopName, paramName, paramIndex, field, value):
+        changedIntern = self.editDataBlockLoopParam(loopName, paramName, paramIndex, field, value)
+        changedCryspy = True
+        if field == 'value':
+            changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, paramIndex, value)
 
         if changedIntern and changedCryspy:
             self.dataBlocksChanged.emit()
 
     # Private methods
 
-    def editDataBlockMainParam(self, paramName, value, blockIndex=None):
+    def editDataBlockMainParam(self, paramName, field, value, blockIndex=None):
         block = 'experiment'
         if blockIndex is None:
             blockIndex = self._currentIndex
 
-        oldValue = self._dataBlocks[blockIndex]['params'][paramName]['value']
+        if field == 'fit':
+            value = bool(value)
+
+        oldValue = self._dataBlocks[blockIndex]['params'][paramName][field]
         if oldValue == value:
             return False
-        self._dataBlocks[blockIndex]['params'][paramName]['value'] = value
+        self._dataBlocks[blockIndex]['params'][paramName][field] = value
 
-        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{paramName}.value")
+        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{paramName}.{field}")
         return True
 
-    def editDataBlockLoopParam(self, loopName, paramName, paramIndex, value, blockIndex=None):
+    def editDataBlockLoopParam(self, loopName, paramName, paramIndex, field, value, blockIndex=None):
         block = 'experiment'
         if blockIndex is None:
             blockIndex = self._currentIndex
 
-        oldValue = self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName]['value']
+        if field == 'fit':
+            value = bool(value)
+
+        oldValue = self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName][field]
         if oldValue == value:
             return False
-        self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName]['value'] = value
+        self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName][field] = value
 
-        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.value")
+        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.{field}")
         return True
 
     def editCryspyDictByMainParam(self, paramName, value):
@@ -514,40 +524,158 @@ class Experiment(QObject):
                 for item in cryspy_experiment:
                     # Ranges section
                     if type(item) == cryspy.C_item_loop_classes.cl_1_range.Range:
-                        ed_experiment['params']['_pd_meas_2theta_range_min'] = dict(Parameter(item.ttheta_min))
-                        ed_experiment['params']['_pd_meas_2theta_range_max'] = dict(Parameter(item.ttheta_max))
-                        ed_experiment['params']['_pd_meas_2theta_range_inc'] = dict(Parameter(0.05))  # NEED FIX
+                        ed_experiment['params']['_pd_meas_2theta_range_min'] = dict(Parameter(
+                            item.ttheta_min,
+                            name = '_pd_meas_2theta_range_min',
+                            prettyName = 'range min',
+                            url = 'https://easydiffraction.org'
+                        ))
+                        ed_experiment['params']['_pd_meas_2theta_range_max'] = dict(Parameter(
+                            item.ttheta_max,
+                            name = '_pd_meas_2theta_range_max',
+                            prettyName = 'range max',
+                            url = 'https://easydiffraction.org'
+                        ))
+                        ed_experiment['params']['_pd_meas_2theta_range_inc'] = dict(Parameter(
+                            0.05, # NEED FIX
+                            name = '_pd_meas_2theta_range_inc',
+                            prettyName = 'range inc',
+                            url = 'https://easydiffraction.org'
+                        ))
 
                     # Setup section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_setup.Setup:
-                        ed_experiment['params']['_diffrn_radiation_probe'] = dict(Parameter(item.radiation.replace('neutrons', 'neutron').replace('X-rays', 'x-ray')))
-                        ed_experiment['params']['_diffrn_radiation_wavelength'] = dict(Parameter(item.wavelength, min=0.5, max=2.5, fittable=True, fit=item.wavelength_refinement))
-                        ed_experiment['params']['_pd_meas_2theta_offset'] = dict(Parameter(item.offset_ttheta, min=-0.5, max=0.5, fittable=True, fit=item.offset_ttheta_refinement))
+                        ed_experiment['params']['_diffrn_radiation_probe'] = dict(Parameter(
+                            item.radiation.replace('neutrons', 'neutron').replace('X-rays', 'x-ray'),
+                            name = '_diffrn_radiation_probe',
+                            prettyName = 'probe',
+                            url = 'https://easydiffraction.org'
+                        ))
+                        ed_experiment['params']['_diffrn_radiation_wavelength'] = dict(Parameter(
+                            item.wavelength,
+                            name = '_diffrn_radiation_wavelength',
+                            prettyName = 'wavelength',
+                            url = 'https://easydiffraction.org',
+                            min = 0.5,
+                            max = 2.5,
+                            fittable = True,
+                            fit = item.wavelength_refinement
+                        ))
+                        ed_experiment['params']['_pd_meas_2theta_offset'] = dict(Parameter(
+                            item.offset_ttheta,
+                            name = '_pd_meas_2theta_offset',
+                            prettyName = 'offset',
+                            url = 'https://easydiffraction.org',
+                            min = -0.5,
+                            max = 0.5,
+                            fittable = True,
+                            fit = item.offset_ttheta_refinement
+                        ))
 
                     # Instrument resolution section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_instr_resolution.PdInstrResolution:
-                        ed_experiment['params']['_pd_instr_resolution_u'] = dict(Parameter(item.u, fittable=True, fit=item.u_refinement))
-                        ed_experiment['params']['_pd_instr_resolution_v'] = dict(Parameter(item.v, fittable=True, fit=item.v_refinement))
-                        ed_experiment['params']['_pd_instr_resolution_w'] = dict(Parameter(item.w, fittable=True, fit=item.w_refinement))
-                        ed_experiment['params']['_pd_instr_resolution_x'] = dict(Parameter(item.x, fittable=True, fit=item.x_refinement))
-                        ed_experiment['params']['_pd_instr_resolution_y'] = dict(Parameter(item.y, fittable=True, fit=item.y_refinement))
+                        ed_experiment['params']['_pd_instr_resolution_u'] = dict(Parameter(
+                            item.u,
+                            name = '_pd_instr_resolution_u',
+                            prettyName = 'u',
+                            url = 'https://easydiffraction.org',
+                            fittable = True,
+                            fit = item.u_refinement
+                        ))
+                        ed_experiment['params']['_pd_instr_resolution_v'] = dict(Parameter(
+                            item.v,
+                            name = '_pd_instr_resolution_v',
+                            prettyName = 'v',
+                            url = 'https://easydiffraction.org',
+                            fittable = True,
+                            fit = item.v_refinement
+                        ))
+                        ed_experiment['params']['_pd_instr_resolution_w'] = dict(Parameter(
+                            item.w,
+                            name = '_pd_instr_resolution_w',
+                            prettyName = 'w',
+                            url = 'https://easydiffraction.org',
+                            fittable = True,
+                            fit = item.w_refinement
+                        ))
+                        ed_experiment['params']['_pd_instr_resolution_x'] = dict(Parameter(
+                            item.x,
+                            name = '_pd_instr_resolution_x',
+                            prettyName = 'x',
+                            url = 'https://easydiffraction.org',
+                            fittable = True,
+                            fit = item.x_refinement
+                        ))
+                        ed_experiment['params']['_pd_instr_resolution_y'] = dict(Parameter(
+                            item.y,
+                            name = '_pd_instr_resolution_y',
+                            prettyName = 'y',
+                            url = 'https://easydiffraction.org',
+                            fittable = True,
+                            fit = item.y_refinement
+                        ))
 
                     # Peak assymetries section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_instr_reflex_asymmetry.PdInstrReflexAsymmetry:
-                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p1'] = dict(Parameter(item.p1, fittable=True, fit=item.p1_refinement))
-                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p2'] = dict(Parameter(item.p2, fittable=True, fit=item.p2_refinement))
-                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p3'] = dict(Parameter(item.p3, fittable=True, fit=item.p3_refinement))
-                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p4'] = dict(Parameter(item.p4, fittable=True, fit=item.p4_refinement))
+                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p1'] = dict(Parameter(
+                            item.p1,
+                            name = '_pd_instr_reflex_asymmetry_p1',
+                            prettyName = 'p1',
+                            url = 'https://easydiffraction.org',
+                            fittable = True,
+                            fit = item.p1_refinement
+                        ))
+                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p2'] = dict(Parameter(
+                            item.p2,
+                            name = '_pd_instr_reflex_asymmetry_p2',
+                            prettyName = 'p2',
+                            url = 'https://easydiffraction.org',
+                            fittable = True,
+                            fit = item.p2_refinement
+                        ))
+                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p3'] = dict(Parameter(
+                            item.p3,
+                            name = '_pd_instr_reflex_asymmetry_p3',
+                            prettyName = 'p3',
+                            url = 'https://easydiffraction.org',
+                            fittable = True,
+                            fit = item.p3_refinement
+                        ))
+                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p4'] = dict(Parameter(
+                            item.p4,
+                            name = '_pd_instr_reflex_asymmetry_p4',
+                            prettyName = 'p4',
+                            url = 'https://easydiffraction.org',
+                            fittable = True,
+                            fit = item.p4_refinement))
 
                     # Phases section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_phase.PhaseL:
                         ed_phases = []
                         cryspy_phases = item.items
 
-                        for cryspy_phase in cryspy_phases:
+                        for idx, cryspy_phase in enumerate(cryspy_phases):
                             ed_phase = {}
-                            ed_phase['_label'] = dict(Parameter(cryspy_phase.label))
-                            ed_phase['_scale'] = dict(Parameter(cryspy_phase.scale, min=0.1, max=10, fittable=True, fit=cryspy_phase.scale_refinement))
+                            ed_phase['_label'] = dict(Parameter(
+                                cryspy_phase.label,
+                                idx = idx,
+                                loopName = '_phase',
+                                name = '_label',
+                                prettyName = 'label',
+                                url = 'https://easydiffraction.org',
+                            ))
+                            ed_phase['_scale'] = dict(Parameter(
+                                cryspy_phase.scale,
+                                idx = idx,
+                                loopName = '_phase',
+                                name = '_scale',
+                                prettyName = 'scale',
+                                url = 'https://easydiffraction.org',
+                                min = 0.1,
+                                max = 10,
+                                fittable = True,
+                                fit = cryspy_phase.scale_refinement
+                            ))
                             ed_phases.append(ed_phase)
 
                         ed_experiment['loops']['_phase'] = ed_phases
@@ -557,10 +685,28 @@ class Experiment(QObject):
                         ed_bkg_points = []
                         cryspy_bkg_points = item.items
 
-                        for cryspy_bkg_point in cryspy_bkg_points:
+                        for idx, cryspy_bkg_point in enumerate(cryspy_bkg_points):
                             ed_bkg_point = {}
-                            ed_bkg_point['_2theta'] = dict(Parameter(cryspy_bkg_point.ttheta))
-                            ed_bkg_point['_intensity'] = dict(Parameter(cryspy_bkg_point.intensity, min=0, max=3000, fittable=True, fit=cryspy_bkg_point.intensity_refinement))
+                            ed_bkg_point['_2theta'] = dict(Parameter(
+                                cryspy_bkg_point.ttheta,
+                                idx = idx,
+                                loopName = '_pd_background',
+                                name = '_2theta',
+                                prettyName = '2θ',
+                                url = 'https://easydiffraction.org'
+                            ))
+                            ed_bkg_point['_intensity'] = dict(Parameter(
+                                cryspy_bkg_point.intensity,
+                                idx = idx,
+                                loopName = '_pd_background',
+                                name = '_intensity',
+                                prettyName = 'intensity',
+                                url = 'https://easydiffraction.org',
+                                min = 0,
+                                max = 3000,
+                                fittable = True,
+                                fit = cryspy_bkg_point.intensity_refinement
+                            ))
                             ed_bkg_points.append(ed_bkg_point)
 
                         ed_experiment['loops']['_pd_background'] = ed_bkg_points

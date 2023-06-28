@@ -44,14 +44,14 @@ EaElements.GroupColumn {
                 width: EaStyle.Sizes.fontPixelSize * 4.0
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("label")
+                text: Globals.Proxies.modelLoopParam('_atom_site', '_label', 0).prettyName
             }
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 2.0
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("type")
+                text: Globals.Proxies.modelLoopParam('_atom_site', '_type_symbol', 0).prettyName
             }
 
             EaComponents.TableViewLabel {
@@ -59,28 +59,28 @@ EaElements.GroupColumn {
                 width: EaStyle.Sizes.fontPixelSize * 4.4
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("fract x")
+                text: Globals.Proxies.modelLoopParam('_atom_site', '_fract_x', 0).prettyName
             }
 
             EaComponents.TableViewLabel {
                 width: fractXLabel.width
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("fract y")
+                text: Globals.Proxies.modelLoopParam('_atom_site', '_fract_y', 0).prettyName
             }
 
             EaComponents.TableViewLabel {
                 width: fractXLabel.width
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("fract z")
+                text: Globals.Proxies.modelLoopParam('_atom_site', '_fract_z', 0).prettyName
             }
 
             EaComponents.TableViewLabel {
                 width: fractXLabel.width
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: qsTr("occ.")
+                text: Globals.Proxies.modelLoopParam('_atom_site', '_occupancy', 0).prettyName
             }
 
             EaComponents.TableViewLabel {

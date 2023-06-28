@@ -14,38 +14,33 @@ import Gui.Globals as Globals
 EaElements.GroupRow {
 
     EaElements.Parameter {
-        title: qsTr('u')
-        fit: Globals.Proxies.experimentMainParameterFit('_pd_instr_resolution_u')
-        text: Globals.Proxies.experimentMainParameterValue('_pd_instr_resolution_u')
-        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_pd_instr_resolution_u', text)
+        parameter: Globals.Proxies.experimentMainParam('_pd_instr_resolution_u')
+        onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', text)
+        fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
     EaElements.Parameter {
-        title: qsTr('v')
-        fit: Globals.Proxies.experimentMainParameterFit('_pd_instr_resolution_v')
-        text: Globals.Proxies.experimentMainParameterValue('_pd_instr_resolution_v')
-        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_pd_instr_resolution_v', text)
+        parameter: Globals.Proxies.experimentMainParam('_pd_instr_resolution_v')
+        onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', text)
+        fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
     EaElements.Parameter {
-        title: qsTr('w')
-        fit: Globals.Proxies.experimentMainParameterFit('_pd_instr_resolution_w')
-        text: Globals.Proxies.experimentMainParameterValue('_pd_instr_resolution_w')
-        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_pd_instr_resolution_w', text)
+        parameter: Globals.Proxies.experimentMainParam('_pd_instr_resolution_w')
+        onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', text)
+        fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
     EaElements.Parameter {
-        title: qsTr('x')
-        fit: Globals.Proxies.experimentMainParameterFit('_pd_instr_resolution_x')
-        text: Globals.Proxies.experimentMainParameterValue('_pd_instr_resolution_x')
-        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_pd_instr_resolution_x', text)
+        parameter: Globals.Proxies.experimentMainParam('_pd_instr_resolution_x')
+        onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', text)
+        fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
     EaElements.Parameter {
-        title: qsTr('y')
-        fit: Globals.Proxies.experimentMainParameterFit('_pd_instr_resolution_y')
-        text: Globals.Proxies.experimentMainParameterValue('_pd_instr_resolution_y')
-        onEditingFinished: Globals.Proxies.setExperimentMainParameterValue('_pd_instr_resolution_y', text)
+        parameter: Globals.Proxies.experimentMainParam('_pd_instr_resolution_y')
+        onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', text)
+        fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
 }
