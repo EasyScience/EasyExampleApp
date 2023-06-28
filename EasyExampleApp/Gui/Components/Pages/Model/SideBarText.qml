@@ -11,17 +11,36 @@ import EasyApp.Gui.Components as EaComponents
 
 import Gui.Globals as Globals
 
+EaComponents.SideBarColumn {
 
-ScrollView {
-    anchors.fill: parent
+    EaElements.GroupBox {
+        title: qsTr("Models explorer")
+        collapsible: false
+        last: true//!Globals.Proxies.main.model.defined
 
-    EaElements.TextArea {
-        text: Globals.Proxies.main.model.dataBlocksCif
-
-        //textFormat: TextEdit.RichText
-        font.family: EaStyle.Fonts.monoFontFamily
-        backgroundOpacity: 0
-        readOnly: true
+        Loader { source: 'SideBarText/ModelsExplorer.qml' }
     }
-}
 
+    EaElements.GroupBox {
+        title: ''//qsTr("Models explorer")
+        collapsible: false
+        last: true//!Globals.Proxies.main.model.defined
+
+        //ScrollView {
+            //anchors.fill: parent
+
+            EaElements.TextArea {
+                text: Globals.Proxies.main.model.dataBlocksCif
+
+                //textFormat: TextEdit.RichText
+                font.family: EaStyle.Fonts.monoFontFamily
+                backgroundOpacity: 0
+                readOnly: true
+            }
+        //}
+
+    }
+
+
+
+}

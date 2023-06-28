@@ -590,7 +590,12 @@ class Model(QObject):
                                                                    max=1,
                                                                    fittable=True,
                                                                    fit=cryspy_atom.occupancy_refinement))
-                            ed_atom['_adp_type'] = dict(Parameter(cryspy_atom.adp_type))
+                            ed_atom['_adp_type'] = dict(Parameter(cryspy_atom.adp_type,
+                                                                  idx = idx,
+                                                                  loopName = '_atom_site',
+                                                                  name = '_adp_type',
+                                                                  prettyName = 'type',
+                                                                  url = 'https://easydiffraction.org'))
                             ed_atom['_B_iso_or_equiv'] = dict(Parameter(cryspy_atom.b_iso_or_equiv,
                                                                         idx = idx,
                                                                         loopName = '_atom_site',
