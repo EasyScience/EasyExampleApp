@@ -12,10 +12,59 @@ import Gui.Globals as Globals
 
 
 EaElements.TextArea {
+    id: textArea
+
+    //readOnly: true
+
+    width: EaStyle.Sizes.sideBarContentWidth
+    backgroundRect.border.color: EaStyle.Colors.appBarComboBoxBorder
+
+    font.family: EaStyle.Fonts.monoFontFamily
+
     text: Globals.Proxies.main.model.dataBlocksCif
 
-    //textFormat: TextEdit.RichText
-    font.family: EaStyle.Fonts.monoFontFamily
-    backgroundOpacity: 0
-    readOnly: true
+    // Tool buttons
+    Row {
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.topMargin: EaStyle.Sizes.fontPixelSize
+        anchors.rightMargin: EaStyle.Sizes.fontPixelSize
+        spacing: 0.25 * EaStyle.Sizes.fontPixelSize
+
+        EaElements.TabButton {
+            enabled: textArea.text !== Globals.Proxies.main.model.dataBlocksCif
+            highlighted: textArea.text !== Globals.Proxies.main.model.dataBlocksCif
+            checkable: false
+            autoExclusive: false
+            height: EaStyle.Sizes.toolButtonHeight
+            width: EaStyle.Sizes.toolButtonHeight
+            borderColor: EaStyle.Colors.chartAxis
+            fontIcon: "check"
+            ToolTip.text: qsTr("Apply all changes")
+            //onClicked: forceActiveFocus()
+            onClicked: {
+                Globals.Proxies.main.model.loadModelFromEdCif(textArea.text)
+                forceActiveFocus()
+            }
+        }
+
+        EaElements.TabButton {
+            enabled: textArea.text !== Globals.Proxies.main.model.dataBlocksCif
+            highlighted: textArea.text !== Globals.Proxies.main.model.dataBlocksCif
+            checkable: false
+            autoExclusive: false
+            height: EaStyle.Sizes.toolButtonHeight
+            width: EaStyle.Sizes.toolButtonHeight
+            borderColor: EaStyle.Colors.chartAxis
+            fontIcon: "undo"
+            ToolTip.text: qsTr("Undo all changes")
+            onClicked: {
+                textArea.text = Globals.Proxies.main.model.dataBlocksCif
+                forceActiveFocus()
+            }
+        }
+
+    }
+    // Tool buttons
+
 }

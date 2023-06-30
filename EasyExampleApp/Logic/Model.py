@@ -155,12 +155,14 @@ class Model(QObject):
         #fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'Co2SiO4_model.cif')
         fpath = IO.generalizePath(fpath)
         console.debug(f"File: {fpath}")
-        # Load RCIF file by cryspy and extract phases into easydiffraction data block
-        #cryspyModelObj = cryspy.load_file(fpath)  ## == cryspy.load_file(fpath)
         # Load ED CIF file, convert it to CrysPy RCIF and create CrysPy obj from string
         edCif = ''
         with open(fpath, 'r') as file:
             edCif = file.read()
+        self.loadModelFromEdCif(edCif)
+
+    @Slot(str)
+    def loadModelFromEdCif(self, edCif):
         cryspyCif = Converter.edCifToCryspyCif(edCif)
         cryspyModelObj = str_to_globaln(cryspyCif)
         self._proxy.data._cryspyModelObj = cryspyModelObj  # NEED FIX!!!
@@ -410,7 +412,15 @@ class Model(QObject):
         self.updateYCalcArrayByIndex(index)
 
     def addDataBlock(self, dataBlock):
-        self._dataBlocks.append(dataBlock)
+        idx = -1
+        for i, block in enumerate(self._dataBlocks):
+            if dataBlock['name'] == block['name']:
+                idx = i
+                continue
+        if idx == -1:
+            self._dataBlocks.append(dataBlock)
+        else:
+            self._dataBlocks[idx] = dataBlock
         console.debug(f"Model data block no. {len(self._dataBlocks)} has been added to intern dataset")
         self.dataBlocksChanged.emit()
 
