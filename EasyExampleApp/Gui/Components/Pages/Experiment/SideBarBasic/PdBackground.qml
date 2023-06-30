@@ -73,13 +73,13 @@ EaElements.GroupColumn {
                 color: EaStyle.Colors.themeForegroundMinor
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.experimentLoopParam('_pd_background', '_2theta', index)
                 onEditingFinished: Globals.Proxies.setExperimentLoopParam(parameter, 'value', text)
                 fitCheckBox.onToggled: Globals.Proxies.setExperimentLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.experimentLoopParam('_pd_background', '_intensity', index)
                 onEditingFinished: Globals.Proxies.setExperimentLoopParam(parameter, 'value', text)
                 fitCheckBox.onToggled: Globals.Proxies.setExperimentLoopParam(parameter, 'fit', fitCheckBox.checked)

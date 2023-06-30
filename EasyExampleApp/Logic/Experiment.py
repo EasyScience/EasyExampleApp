@@ -528,19 +528,22 @@ class Experiment(QObject):
                             item.ttheta_min,
                             name = '_pd_meas_2theta_range_min',
                             prettyName = 'range min',
-                            url = 'https://easydiffraction.org'
+                            url = 'https://easydiffraction.org',
+                            cifDict = 'pd'
                         ))
                         ed_experiment['params']['_pd_meas_2theta_range_max'] = dict(Parameter(
                             item.ttheta_max,
                             name = '_pd_meas_2theta_range_max',
                             prettyName = 'range max',
-                            url = 'https://easydiffraction.org'
+                            url = 'https://easydiffraction.org',
+                            cifDict = 'pd'
                         ))
                         ed_experiment['params']['_pd_meas_2theta_range_inc'] = dict(Parameter(
                             0.05, # NEED FIX
                             name = '_pd_meas_2theta_range_inc',
                             prettyName = 'range inc',
-                            url = 'https://easydiffraction.org'
+                            url = 'https://easydiffraction.org',
+                            cifDict = 'pd'
                         ))
 
                     # Setup section

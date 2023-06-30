@@ -119,47 +119,47 @@ EaElements.GroupColumn {
                 color: EaStyle.Colors.themeForegroundMinor
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_label', index)
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_adp_type', index)
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 id: iso
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_B_iso_or_equiv', index)
                 onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', text)
                 fitCheckBox.onToggled: Globals.Proxies.setModelLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 enabled: false
                 text: iso.text
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 enabled: false
                 text: iso.text
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 enabled: false
                 text: iso.text
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 enabled: false
                 text: '0.0000'
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 enabled: false
                 text: '0.0000'
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 enabled: false
                 text: '0.0000'
             }

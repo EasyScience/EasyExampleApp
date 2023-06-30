@@ -98,7 +98,7 @@ Column {
                 elide: Text.ElideMiddle
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 id: valueColumn
                 enabled: item.enabled
                 fit: item.fit

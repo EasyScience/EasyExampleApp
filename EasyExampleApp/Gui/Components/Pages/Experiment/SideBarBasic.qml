@@ -35,14 +35,14 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
-        title: qsTr("Powder diffraction: instrument resolution")
+        title: qsTr("Powder diffraction: resolution")
         visible: Globals.Proxies.main.experiment.defined
 
         Loader { source: 'SideBarBasic/PdInstrResolution.qml' }
     }
 
     EaElements.GroupBox {
-        title: qsTr("Powder diffraction: instrument peak asymmetry")
+        title: qsTr("Powder diffraction: peak asymmetry")
         visible: Globals.Proxies.main.experiment.defined
 
         Loader { source: 'SideBarBasic/PdInstrReflexAsymmetry.qml' }
@@ -56,7 +56,7 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
-        title: qsTr("Phase")
+        title: qsTr("Associated phases")
         visible: Globals.Proxies.main.experiment.defined
         last: true
 

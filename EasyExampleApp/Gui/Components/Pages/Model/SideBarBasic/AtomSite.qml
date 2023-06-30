@@ -111,39 +111,39 @@ EaElements.GroupColumn {
                 color: EaStyle.Colors.themeForegroundMinor
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_label', index)
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_type_symbol', index)
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_fract_x', index)
                 onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', text)
                 fitCheckBox.onToggled: Globals.Proxies.setModelLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_fract_y', index)
                 onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', text)
                 fitCheckBox.onToggled: Globals.Proxies.setModelLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_fract_z', index)
                 onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', text)
                 fitCheckBox.onToggled: Globals.Proxies.setModelLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_occupancy', index)
                 onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', text)
                 fitCheckBox.onToggled: Globals.Proxies.setModelLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 text: Globals.Proxies.modelLoopParam('_atom_site', '_multiplicity', index).value +
                       Globals.Proxies.modelLoopParam('_atom_site', '_Wyckoff_symbol', index).value
             }

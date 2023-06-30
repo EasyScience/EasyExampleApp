@@ -67,7 +67,7 @@ Column {
                 text: index + 1
             }
 
-            EaComponents.TableViewTextInput {
+            EaComponents.TableViewParameter {
                 text: Globals.Proxies.main.experiment.dataBlocks[index].name
             }
 

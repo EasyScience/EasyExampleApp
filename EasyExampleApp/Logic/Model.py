@@ -461,13 +461,15 @@ class Model(QObject):
                             item.name_hm_alt,
                             name = '_space_group_name_H-M_alt',
                             prettyName = 'name H-M alt',
-                            url = 'https://easydiffraction.org'
+                            url = 'https://easydiffraction.org',
+                            cifDict = 'core'
                         ))
                         ed_phase['params']['_space_group_IT_coordinate_system_code'] = dict(Parameter(
                             item.it_coordinate_system_code,
                             name = '_space_group_IT_coordinate_system_code',
                             prettyName = 'IT coordinate system code',
-                            url = 'https://easydiffraction.org'
+                            url = 'https://easydiffraction.org',
+                            cifDict = 'core'
                         ))
                     # Cell section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_cell.Cell:
@@ -476,6 +478,7 @@ class Model(QObject):
                             name = '_cell_length_a',
                             prettyName = 'length a',
                             url = 'https://easydiffraction.org',
+                            cifDict = 'core',
                             enabled = not item.length_a_constraint,
                             min = 1,
                             max = 30,
@@ -488,6 +491,7 @@ class Model(QObject):
                             name = '_cell_length_b',
                             prettyName = 'length b',
                             url = 'https://easydiffraction.org',
+                            cifDict = 'core',
                             enabled = not item.length_b_constraint,
                             min = 1,
                             max = 30,
@@ -500,6 +504,7 @@ class Model(QObject):
                             name = '_cell_length_c',
                             prettyName = 'length c',
                             url = 'https://easydiffraction.org',
+                            cifDict = 'core',
                             enabled = not item.length_c_constraint,
                             min = 1,
                             max = 30,
@@ -512,6 +517,7 @@ class Model(QObject):
                             name = '_cell_angle_alpha',
                             prettyName = 'angle α',
                             url = 'https://easydiffraction.org',
+                            cifDict = 'core',
                             enabled = not item.angle_alpha_constraint,
                             min = 0,
                             max = 180,
@@ -524,6 +530,7 @@ class Model(QObject):
                             name = '_cell_angle_beta',
                             prettyName = 'angle β',
                             url = 'https://easydiffraction.org',
+                            cifDict = 'core',
                             enabled = not item.angle_alpha_constraint,
                             min = 0,
                             max = 180,
@@ -536,6 +543,7 @@ class Model(QObject):
                             name = '_cell_angle_gamma',
                             prettyName = 'angle γ',
                             url = 'https://easydiffraction.org',
+                            cifDict = 'core',
                             enabled = not item.angle_alpha_constraint,
                             min = 0,
                             max = 180,
@@ -556,7 +564,8 @@ class Model(QObject):
                                 loopName = '_atom_site',
                                 name = '_label',
                                 prettyName = 'label',
-                                url = 'https://easydiffraction.org'
+                                url = 'https://easydiffraction.org',
+                                cifDict = 'core'
                             ))
                             ed_atom['_type_symbol'] = dict(Parameter(
                                 cryspy_atom.type_symbol,
@@ -564,7 +573,8 @@ class Model(QObject):
                                 loopName = '_atom_site',
                                 name = '_type_symbol',
                                 prettyName = 'type',
-                                url = 'https://easydiffraction.org'
+                                url = 'https://easydiffraction.org',
+                                cifDict = 'core'
                             ))
                             ed_atom['_fract_x'] = dict(Parameter(
                                 cryspy_atom.fract_x,
@@ -573,6 +583,7 @@ class Model(QObject):
                                 name = '_fract_x',
                                 prettyName = 'fract x',
                                 url = 'https://easydiffraction.org',
+                                cifDict = 'core',
                                 enabled = not cryspy_atom.fract_x_constraint,
                                 min = -1,
                                 max = 1,
@@ -586,6 +597,7 @@ class Model(QObject):
                                 name = '_fract_y',
                                 prettyName = 'fract y',
                                 url = 'https://easydiffraction.org',
+                                cifDict = 'core',
                                 enabled = not cryspy_atom.fract_y_constraint,
                                 min = -1,
                                 max = 1,
@@ -599,6 +611,7 @@ class Model(QObject):
                                 name = '_fract_z',
                                 prettyName = 'fract z',
                                 url = 'https://easydiffraction.org',
+                                cifDict = 'core',
                                 enabled = not cryspy_atom.fract_z_constraint,
                                 min = -1,
                                 max = 1,
@@ -612,6 +625,7 @@ class Model(QObject):
                                 name = '_occupancy',
                                 prettyName = 'occ.',
                                 url = 'https://easydiffraction.org',
+                                cifDict = 'core',
                                 enabled = not cryspy_atom.occupancy_constraint,
                                 min = 0,
                                 max = 1,
@@ -624,7 +638,8 @@ class Model(QObject):
                                 loopName = '_atom_site',
                                 name = '_adp_type',
                                 prettyName = 'type',
-                                url = 'https://easydiffraction.org'
+                                url = 'https://easydiffraction.org',
+                                cifDict = 'core'
                             ))
                             ed_atom['_B_iso_or_equiv'] = dict(Parameter(
                                 cryspy_atom.b_iso_or_equiv,
@@ -633,6 +648,7 @@ class Model(QObject):
                                 name = '_B_iso_or_equiv',
                                 prettyName = 'iso',
                                 url = 'https://easydiffraction.org',
+                                cifDict = 'core',
                                 enabled = not cryspy_atom.b_iso_or_equiv_constraint,
                                 min = 0,
                                 max = 1,
@@ -645,13 +661,15 @@ class Model(QObject):
                                 loopName = '_atom_site',
                                 name = '_multiplicity',
                                 prettyName = '',
-                                url = 'https://easydiffraction.org'
+                                url = 'https://easydiffraction.org',
+                                cifDict = 'core'
                             ))
                             ed_atom['_Wyckoff_symbol'] = dict(Parameter(
                                 cryspy_atom.wyckoff_symbol,
                                 name = '_atom_site_Wyckoff_symbol',
                                 prettyName = '',
-                                url = 'https://easydiffraction.org'
+                                url = 'https://easydiffraction.org',
+                                cifDict = 'core'
                             ))
                             ed_atoms.append(ed_atom)
                         ed_phase['loops']['_atom_site'] = ed_atoms

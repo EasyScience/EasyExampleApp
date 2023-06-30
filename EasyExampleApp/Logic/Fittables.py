@@ -35,6 +35,7 @@ class Parameter(dict):
                 name = '',
                 prettyName = '',
                 url = '',
+                cifDict = '',
                 enabled = True,
                 fittable = False,
                 fit = False):
@@ -51,6 +52,7 @@ class Parameter(dict):
         self['name'] = name
         self['prettyName'] = prettyName
         self['url'] = url
+        self['cifDict'] = cifDict
         self['parentIndex'] = 0
         self['parentName'] = ''
         self['units'] = units
