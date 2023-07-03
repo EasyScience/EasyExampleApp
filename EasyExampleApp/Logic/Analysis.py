@@ -40,14 +40,14 @@ class Analysis(QObject):
         for i in range(len(self._proxy.model._yCalcArrays)):
             sum += self._proxy.model._yCalcArrays[i]
         self._yCalcTotal = sum
-        console.debug("Y-calculated data of all phases has been summed up into single total y-calculated array")
+        console.debug(" - Y-calculated data of all phases has been summed up into single total y-calculated array")
 
     def addBkgToYCalcTotal(self):
         ##console.debug("Adding background to total y-calculated array")
         index = self._proxy.experiment.currentIndex
         yBkgArray = self._proxy.experiment._yBkgArrays[index]
         self._yCalcTotal += yBkgArray
-        console.debug("Y-background has been added to total y-calculated array")
+        console.debug(" - Y-background has been added to total y-calculated array")
 
     def calculateYCalcTotal(self):
         self.sumAllYCalcArays()

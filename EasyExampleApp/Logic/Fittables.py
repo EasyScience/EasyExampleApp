@@ -18,7 +18,8 @@ _EMPTY_DATA = [
         "parentIndex": 0,
         "parentName": "",
         "units": "",
-        "value": 0
+        "value": 0,
+        "enabeld": True
     }
 ]
 
@@ -92,7 +93,6 @@ class Fittables(QObject):
                 self._proxy.model.setLoopParam(loopName, paramName, paramIndex, value)
 
     def set(self):
-        console.debug('Fittables have been changed')
         _data = []
 
         for i in range(len(self._proxy.experiment.dataBlocks)):
@@ -175,9 +175,10 @@ class Fittables(QObject):
 
         if len(_data):
             self._data = _data
+            console.debug(' - Fittables have been changed')
             self.dataChanged.emit()
 
     def setDataJson(self):
         self._dataJson = Converter.dictToJson(self._data)
-        console.debug("Fittables data have been converted to JSON string")
+        console.debug(" - Fittables data have been converted to JSON string")
         self.dataJsonChanged.emit()

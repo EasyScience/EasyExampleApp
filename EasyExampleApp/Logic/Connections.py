@@ -42,42 +42,50 @@ class Connections(QObject):
         self._proxy.fitting.fitFinished.connect(self.onFittingFitFinished)
         self._proxy.fitting.chiSqSignificantlyChanged.connect(self.onFittingChiSqSignificantlyChanged)
 
-
-
-
     # Project
 
     def onProjectDataChanged(self):
         self._proxy.status.project = self._proxy.project.data['name']
         self._proxy.project.setNeedSaveToTrue
 
-
     # Model
 
-    def onModelDataBlocksChanged(self):
+    def onModelDataBlocksChanged(self):        
+        # Project page
+        #self._proxy.project.setNeedSaveToTrue()
+
+        # Model page
         self._proxy.model.defined = bool(len(self._proxy.model.dataBlocks))
 
+        console.debug("Updating structure view for the current model...")
+        self._proxy.model.updateCurrentModelStructView()
+
+        console.debug("Converting model data blocks to CIF...")
+        self._proxy.model.setDataBlocksCif()
+
+        if self._proxy.experiment.defined:
+            console.debug("Updating calculated data for the current model...")
+            self._proxy.model.updateCurrentModelYCalcArray()
+
+        # Analysis page
+        if self._proxy.analysis.defined:
+            console.debug("Setting fittables on the analysis page...")
+            self._proxy.fittables.set()
+            #self._proxy.analysis.calculateYCalcTotal()
+
+        # Status bar
         if self._proxy.model.defined:
             self._proxy.status.phaseCount = f'{len(self._proxy.model.dataBlocks)}'
         else:
             self._proxy.status.phaseCount = ''
 
-        self._proxy.model.updateCurrentModelStructView()
-        self._proxy.model.setDataBlocksCif()
-        if self._proxy.analysis.defined:
-            self._proxy.fittables.set()
-            #self._proxy.analysis.calculateYCalcTotal()
-
-        #self._proxy.project.setNeedSaveToTrue()
         console.debug('')
 
     def onModelCurrentIndexChanged(self):
         self._proxy.model.updateCurrentModelStructView()
-        #self._proxy.plotting.drawCalculatedOnModelChart()
 
     def onModelYCalcArraysChanged(self):
         self._proxy.analysis.calculateYCalcTotal()
-        ############self._proxy.plotting.drawCalculatedOnModelChart()
 
     #def onModelParameterEdited(self, page, blockIndex, name):
     #    self._proxy.model.setDataBlocksCif()
@@ -93,43 +101,51 @@ class Connections(QObject):
     #        self._proxy.fittables.set()
     #        self._proxy.analysis.calculateYCalcTotal()
 
-
-
-
-
     # Experiment
 
     def onExperimentDataBlocksChanged(self):
+        # Project page
+        #self._proxy.project.setNeedSaveToTrue()
+
+        # Experiment page
         self._proxy.experiment.defined = bool(len(self._proxy.experiment.dataBlocks))
 
+        console.debug("Updating background for the current experiment...")
         self._proxy.experiment.updateCurrentExperimentYBkgArray()  # NEED FIX: Check if bkg param changed
-        #self._proxy.plotting.drawBackgroundOnExperimentChart()
+
+        console.debug("Converting experiment data blocks to CIF...")
         self._proxy.experiment.setDataBlocksCif()
+
+        # Model page
+        console.debug("Updating calculated data for the current model...")
+        self._proxy.model.updateCurrentModelYCalcArray()
+
+        # Analysis page
         if self._proxy.analysis.defined:
+            console.debug("Setting fittables on the analysis page...")
             self._proxy.fittables.set()
             #self._proxy.analysis.calculateYCalcTotal()
 
-        #self._proxy.project.setNeedSaveToTrue()
+        #self._proxy.plotting.drawBackgroundOnExperimentChart()
         console.debug('')
 
     def onExperimentDataBlocksMeasOnlyChanged(self, idx):
+        # Experiment page
         self._proxy.experiment.setDataBlocksCifMeasOnly()
         self._proxy.experiment.addXYArraysAndChartRanges(idx)
-        #console.debug('')
-
-    #def onExperimentCurrentIndexChanged(self):
-    #    self._proxy.plotting.drawMeasuredOnExperimentChart()
-    #    self._proxy.plotting.drawBackgroundOnExperimentChart()
 
     def onExperimentYMeasArraysChanged(self):
-        #####self._proxy.status.refresh()
         self._proxy.status.dataPoints = f'{self._proxy.experiment._xArrays[self._proxy.experiment.currentIndex].size}'
         self._proxy.plotting.drawMeasuredOnExperimentChart()
 
     def onExperimentYBkgArraysChanged(self):
         #self._proxy.analysis.calculateYCalcTotal()
-        self._proxy.plotting.drawBackgroundOnExperimentChart()
         #self._proxy.plotting.redrawBackgroundOnAnalysisChart()
+        self._proxy.plotting.drawBackgroundOnExperimentChart()
+
+    #def onExperimentCurrentIndexChanged(self):
+    #    self._proxy.plotting.drawMeasuredOnExperimentChart()
+    #    self._proxy.plotting.drawBackgroundOnExperimentChart()
 
     #def onExperimentParameterEdited(self, page, name):
     #    self._proxy.experiment.setDataBlocksCif()
@@ -146,34 +162,25 @@ class Connections(QObject):
     #        self._proxy.fittables.set()
     #        self._proxy.analysis.calculateYCalcTotal()
 
-
-
-
-
     # Analysis
 
     def onAnalysisDefined(self):
         self._proxy.status.calculator = 'CrysPy'
         self._proxy.status.minimizer = 'Lmfit (BFGS)'
         self._proxy.fittables.set()
+        console.debug(f"Updating all curves on analysis page using {self._proxy.plotting.currentLib1d}")
         self._proxy.plotting.drawAllOnAnalysisChart()
 
     def onAnalysisYCalcTotalChanged(self):
+        console.debug(f"Updating curves on analysis page using {self._proxy.plotting.currentLib1d}")
         self._proxy.plotting.redrawCalculatedOnAnalysisChart()
         self._proxy.plotting.redrawBackgroundOnAnalysisChart()
         self._proxy.plotting.redrawResidualOnAnalysisChart()
-
-
-
 
     # Fittables
 
     def onFittablesDataChanged(self):
         self._proxy.fittables.setDataJson()
-
-
-
-
 
     # Fitting
 
@@ -181,6 +188,8 @@ class Connections(QObject):
         self._proxy.experiment.setDataBlocksCif()
         self._proxy.model.setDataBlocksCif()
         self._proxy.model.updateYCalcArrayByIndex(0)  # NED FIX
+
+        console.debug("Setting fittables on the analysis page...")
         self._proxy.fittables.set()
 
     def onFittingChiSqSignificantlyChanged(self):

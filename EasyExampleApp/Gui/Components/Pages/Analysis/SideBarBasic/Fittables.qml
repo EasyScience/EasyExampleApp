@@ -100,7 +100,7 @@ Column {
 
             EaComponents.TableViewParameter {
                 id: valueColumn
-                enabled: item.enabled
+                enabled: item.enabled ?? true  // NEED FIX
                 fit: item.fit
                 text: item.value.toFixed(4)
                 onEditingFinished: {

@@ -482,13 +482,13 @@ class Experiment(QObject):
             yBkgArray = [point['_intensity']['value'] for point in bkg]
             yBkgArrayInterp = np.interp(xArray, xBkgArray, yBkgArray)
 
-        console.debug(f"Interpolation of background for experiment data block no. {index + 1} has been done")
+        console.debug(f" - Interpolation of background for experiment data block no. {index + 1} has been done")
         return yBkgArrayInterp
 
     def updateCurrentExperimentYBkgArray(self):
         index = self._currentIndex
         self._yBkgArrays[index] = self.calculatedYBkgArray(index)
-        console.debug(f"Background for experiment data block no. {index + 1} has been calculated and saved to intern dataset")
+        console.debug(f" - Background for experiment data block no. {index + 1} has been calculated and saved to intern dataset")
         self.yBkgArraysChanged.emit()
 
     def addDataBlock(self, dataBlock):
@@ -564,48 +564,48 @@ class Experiment(QObject):
     def addXArray(self, xArray, blockIdx):
         if blockIdx == -1:
             self._xArrays.append(xArray)
-            console.debug(f"X data for experiment data block no. {len(self._dataBlocks) + 1} has been added to intern dataset")
+            console.debug(f" - X data for experiment data block no. {len(self._dataBlocks) + 1} has been added to intern dataset")
         else:
             self._xArrays[blockIdx] = xArray
-            console.debug(f"X data for experiment data block no. {blockIdx + 1} in intern dataset has been replaced")
+            console.debug(f" - X data for experiment data block no. {blockIdx + 1} in intern dataset has been replaced")
 
     def addYMeasArray(self, yMeasArray, blockIdx):
         if blockIdx == -1:
             self._yMeasArrays.append(yMeasArray)
-            console.debug(f"Y-measured data for experiment data block no. {len(self._dataBlocks) + 1} has been added to intern dataset")
+            console.debug(f" - Y-measured data for experiment data block no. {len(self._dataBlocks) + 1} has been added to intern dataset")
         else:
             self._yMeasArrays[blockIdx] = yMeasArray
-            console.debug(f"Y-measured data for experiment data block no. {blockIdx + 1} in intern dataset has been replaced")
+            console.debug(f" - Y-measured data for experiment data block no. {blockIdx + 1} in intern dataset has been replaced")
         self.yMeasArraysChanged.emit()
 
     def addYBkgArray(self, yBkgArray, blockIdx):
         if blockIdx == -1:
             self._yBkgArrays.append(yBkgArray)
-            console.debug(f"Y-background data for experiment data block no. {len(self._dataBlocks) + 1} has been added to intern dataset")
+            console.debug(f" - Y-background data for experiment data block no. {len(self._dataBlocks) + 1} has been added to intern dataset")
         else:
             self._yBkgArrays[blockIdx] = yBkgArray
-            console.debug(f"Y-background data for experiment data block no. {blockIdx + 1} in intern dataset has been replaced")
+            console.debug(f" - Y-background data for experiment data block no. {blockIdx + 1} in intern dataset has been replaced")
         self.yBkgArraysChanged.emit()
 
     def addChartRanges(self, ranges, blockIdx):
         if blockIdx == -1:
             self.chartRanges.append(ranges)
-            console.debug(f"Chart ranges for experiment data block no. {len(self._dataBlocks) + 1} has been added to intern dataset")
+            console.debug(f" - Chart ranges for experiment data block no. {len(self._dataBlocks) + 1} has been added to intern dataset")
         else:
             self.chartRanges[blockIdx] = ranges
-            console.debug(f"Chart ranges for experiment data block no. {blockIdx + 1} in intern dataset has been replaced")
+            console.debug(f" - Chart ranges for experiment data block no. {blockIdx + 1} in intern dataset has been replaced")
         self.chartRangesChanged.emit()
 
     def setDataBlocksCif(self):
         #console.debug("Converting experiment dataBlocks to CIF string")
         #self._dataBlocksCif = Converter.dictToJson(self._dataBlocks)
         self._dataBlocksCif = Converter.dataBlocksToCif(self._dataBlocks)
-        console.debug("Experiment data blocks (without measured data) have been converted to CIF string")
+        console.debug(" - Experiment data blocks (without measured data) have been converted to CIF string")
         self.dataBlocksCifChanged.emit()
 
     def setDataBlocksCifMeasOnly(self):
         self._dataBlocksCifMeasOnly = Converter.dataBlockLoopsToCif(self._dataBlocksMeasOnly)
-        console.debug("Experiment data blocks (measured data only) have been converted to CIF string")
+        console.debug(" - Experiment data blocks (measured data only) have been converted to CIF string")
         self.dataBlocksCifMeasOnlyChanged.emit()
 
     # Extract experiments from cryspy_obj and cryspy_dict into internal ed_dict
@@ -627,9 +627,9 @@ class Experiment(QObject):
                                            'loops': {}}
                 cryspy_experiment = data_block.items
 
-                x_array = self.defaultXArray()  # NEED FIX
-                y_meas_array = self.defaultYMeasArray()  # NEED FIX
-                y_bkg_array = self.defaultYBkgArray()  # NEED FIX
+                #x_array = self.defaultXArray()  # NEED FIX
+                #y_meas_array = self.defaultYMeasArray()  # NEED FIX
+                #y_bkg_array = self.defaultYBkgArray()  # NEED FIX
 
                 for item in cryspy_experiment:
                     #console.info(f'=============== {type(item)}')
