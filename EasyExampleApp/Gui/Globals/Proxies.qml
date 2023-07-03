@@ -745,6 +745,10 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             'Og' : '#000000'
         }
         const colors = jmolColors
+        // If symbol is not defined
+        if (typeof symbol === 'undefined') {
+            return 'black'
+        }
         // Simple case, e.g. Co
         if (colors.hasOwnProperty(symbol)) {
             return colors[symbol]
@@ -758,7 +762,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             return colors[symbol.substring(0, 1)]
         }
         // Transparent color if no elements found
-        return 'transparent'
+        return 'black'
     }
 
 

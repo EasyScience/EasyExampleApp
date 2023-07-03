@@ -43,14 +43,14 @@ EaElements.GroupColumn {
                 width: EaStyle.Sizes.fontPixelSize * 11.0
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.experimentLoopParam('_pd_background', '_2theta', 0).prettyName
+                text: Globals.Proxies.experimentLoopParam('_pd_background', '_2theta', 0).prettyName ?? ''  // NEED FIX
             }
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 11.0
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.experimentLoopParam('_pd_background', '_intensity', 0).prettyName
+                text: Globals.Proxies.experimentLoopParam('_pd_background', '_intensity', 0).prettyName ?? ''  // NEED FIX
             }
 
             EaComponents.TableViewLabel {

@@ -17,7 +17,7 @@ EaComponents.SideBarColumn {
         collapsible: false
         last: !Globals.Proxies.main.experiment.defined
 
-        Loader { source: 'SideBarBasic/ExperimentDataExplorer.qml' }
+        Loader { source: 'SideBarBasic/ExperimentsExplorer.qml' }
     }
 
     EaElements.GroupBox {

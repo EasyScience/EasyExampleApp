@@ -43,14 +43,14 @@ EaElements.GroupColumn {
                 flexibleWidth: true
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.experimentLoopParam('_phase', '_label', 0).prettyName
+                text: Globals.Proxies.experimentLoopParam('_phase', '_label', 0).prettyName ?? ''  // NEED FIX
             }
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 5.0
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.experimentLoopParam('_phase', '_scale', 0).prettyName
+                text: Globals.Proxies.experimentLoopParam('_phase', '_scale', 0).prettyName ?? ''  // NEED FIX
             }
 
             EaComponents.TableViewLabel {

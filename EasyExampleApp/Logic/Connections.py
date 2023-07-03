@@ -25,6 +25,7 @@ class Connections(QObject):
 
         # Experiment
         self._proxy.experiment.dataBlocksChanged.connect(self.onExperimentDataBlocksChanged)
+        self._proxy.experiment.dataBlocksMeasOnlyChanged.connect(self.onExperimentDataBlocksMeasOnlyChanged)
         #self._proxy.experiment.currentIndexChanged.connect(self.onExperimentCurrentIndexChanged)
 
         self._proxy.experiment.yMeasArraysChanged.connect(self.onExperimentYMeasArraysChanged)
@@ -110,6 +111,11 @@ class Connections(QObject):
 
         #self._proxy.project.setNeedSaveToTrue()
         console.debug('')
+
+    def onExperimentDataBlocksMeasOnlyChanged(self, idx):
+        self._proxy.experiment.setDataBlocksCifMeasOnly()
+        self._proxy.experiment.addXYArraysAndChartRanges(idx)
+        #console.debug('')
 
     #def onExperimentCurrentIndexChanged(self):
     #    self._proxy.plotting.drawMeasuredOnExperimentChart()

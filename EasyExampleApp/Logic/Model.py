@@ -139,16 +139,16 @@ class Model(QObject):
         yCalcArray = self.defaultYCalcArray()
         self.addYCalcArray(yCalcArray)
 
-    @Slot(str)
-    def loadModelFromFile_OLD(self, fpath):
-        fpath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', fpath))
-        console.debug(f"Loading a model from {fpath}")
-        with open(fpath, 'r') as f:
-            dataBlock = json.load(f)
-        index = len(self._dataBlocks) - 1
-        self.addDataBlock(dataBlock)
-        yCalcArray = self.calculateYCalcArray(index)
-        self.addYCalcArray(yCalcArray)
+    #@Slot(str)
+    #def loadModelFromFile_OLD(self, fpath):
+    #    fpath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', fpath))
+    #    console.debug(f"Loading a model from {fpath}")
+    #    with open(fpath, 'r') as f:
+    #        dataBlock = json.load(f)
+    #    index = len(self._dataBlocks) - 1
+    #    self.addDataBlock(dataBlock)
+    #    yCalcArray = self.calculateYCalcArray(index)
+    #    self.addYCalcArray(yCalcArray)
 
     @Slot(str)
     def loadModelFromFile(self, fpath):
@@ -156,7 +156,6 @@ class Model(QObject):
         fpath = IO.generalizePath(fpath)
         console.debug(f"File: {fpath}")
         # Load ED CIF file, convert it to CrysPy RCIF and create CrysPy obj from string
-        edCif = ''
         with open(fpath, 'r') as file:
             edCif = file.read()
         self.loadModelFromEdCif(edCif)
@@ -391,11 +390,11 @@ class Model(QObject):
         yCalcArray = GaussianCalculator.calculated(xArray, params)
         return yCalcArray
 
-    def calculateYCalcArray_OLD(self, index):
-        xArray = self._proxy.experiment._xArrays[0]  # NEED FIX
-        params = self._dataBlocks[index]['params']
-        yCalcArray = GaussianCalculator.calculated(xArray, params)
-        return yCalcArray
+    #def calculateYCalcArray_OLD(self, index):
+    #    xArray = self._proxy.experiment._xArrays[0]  # NEED FIX
+    #    params = self._dataBlocks[index]['params']
+    #    yCalcArray = GaussianCalculator.calculated(xArray, params)
+    #    return yCalcArray
 
     def calculateYCalcArray(self, index):
         # Re-calculate diffraction pattern

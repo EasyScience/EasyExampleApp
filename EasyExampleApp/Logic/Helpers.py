@@ -141,37 +141,67 @@ class Converter:
         for block in blocks:
             cif += f'data_{block["name"]}'
             cif += '\n\n'
-            for name, param in block['params'].items():
-                value = param["value"]
-                if isinstance(value, str) and ' ' in value:
-                    value = f'"{value}"'
-                fit = ''
-                if param["fit"]:
-                    fit = '()'
-                cif += f'{name} {value}{fit}'
-                cif += '\n'
-            cif += '\n'
-            for loopName, loop in block['loops'].items():
-                cif += 'loop_'
-                cif += '\n'
-                # loop header
-                for paramName in loop[0].keys():
-                    cif += f'{loopName}{paramName}\n'
-                # loop data
-                for loopItem in loop:
-                    line = ''
-                    for param in loopItem.values():
-                        value = param["value"]
-                        if isinstance(value, str) and ' ' in value:
-                            value = f'"{value}"'
-                        fit = ''
-                        if param["fit"]:
-                            fit = '()'
-                        line += f'{value}{fit}'
-                        line += ' '
-                    cif += line
+            if 'params' in block:
+                for name, param in block['params'].items():
+                    value = param["value"]
+                    if isinstance(value, str) and ' ' in value:
+                        value = f'"{value}"'
+                    fit = ''
+                    if param["fit"]:
+                        fit = '()'
+                    cif += f'{name} {value}{fit}'
                     cif += '\n'
-                cif += '\n'
+            if 'loops' in block:
+                for loopName, loop in block['loops'].items():
+                    cif += '\n'
+                    cif += 'loop_'
+                    cif += '\n'
+                    # loop header
+                    for paramName in loop[0].keys():
+                        cif += f'{loopName}{paramName}\n'
+                    # loop data
+                    for loopItem in loop:
+                        line = ''
+                        for param in loopItem.values():
+                            value = param["value"]
+                            if isinstance(value, str) and ' ' in value:
+                                value = f'"{value}"'
+                            fit = ''
+                            if param["fit"]:
+                                fit = '()'
+                            line += f'{value}{fit}'
+                            line += ' '
+                        cif += line
+                        cif += '\n'
+                    #cif += '\n'
+        return cif
+
+    @staticmethod
+    def dataBlockLoopsToCif(blocks):
+        cif = ''
+        for block in blocks:
+            if 'loops' in block:
+                for loopName, loop in block['loops'].items():
+                    cif += '\n'
+                    cif += 'loop_'
+                    cif += '\n'
+                    # loop header
+                    for paramName in loop[0].keys():
+                        cif += f'{loopName}{paramName}\n'
+                    # loop data
+                    for loopItem in loop:
+                        line = ''
+                        for param in loopItem.values():
+                            value = param["value"]
+                            if isinstance(value, str) and ' ' in value:
+                                value = f'"{value}"'
+                            fit = ''
+                            if param["fit"]:
+                                fit = '()'
+                            line += f'{value}{fit}'
+                            line += ' '
+                        cif += line
+                        cif += '\n'
         return cif
 
     @staticmethod

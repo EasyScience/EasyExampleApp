@@ -17,9 +17,15 @@ import Gui.Globals as Globals
 Rectangle {
     id: container
 
-    property real cellLengthA: Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex].params['_cell_length_a']['value']
-    property real cellLengthB: Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex].params['_cell_length_b']['value']
-    property real cellLengthC: Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex].params['_cell_length_c']['value']
+    property real cellLengthA: typeof Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex] !== 'undefined' ?
+        Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex].params['_cell_length_a']['value'] :
+        10.0  // NEED FIX
+    property real cellLengthB: typeof Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex] !== 'undefined' ?
+        Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex].params['_cell_length_b']['value'] :
+        10.0  // NEED FIX
+    property real cellLengthC:  typeof Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex] !== 'undefined' ?
+        Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex].params['_cell_length_c']['value'] :
+        10.0  // NEED FIX
 
     property real scaleCoeff: defaultScaleCoeff
     property real cellCylinderThickness: 1

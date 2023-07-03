@@ -18,7 +18,7 @@ EaComponents.SideBarColumn {
         collapsible: false
         last: true
 
-        Loader { source: 'SideBarText/ExperimentDataExplorer.qml' }
+        Loader { source: 'SideBarText/ExperimentsExplorer.qml' }
     }
 
     EaElements.GroupBox {
