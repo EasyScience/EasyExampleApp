@@ -105,8 +105,8 @@ class Worker(QObject):
             #self._paramsInit.add(nameStr, value=val)
             paramsLmfit.add(nameStr, value=val)
 
-        self._proxy.fitting._fittablesCount = len(param_0)
-        self._proxy.status.variables = f'{self._proxy.fitting._fittablesCount}'  # NEED move to connection
+        ###self._proxy.fitting._fittablesCount = len(param_0)
+        ###self._proxy.status.variables = f'{self._proxy.fitting._fittablesCount}'  # NEED move to connection
 
         # Minimization: lmfit.minimize
         self._proxy.fitting._chiSqStart = self._proxy.fitting.chiSq
@@ -166,7 +166,7 @@ class Fitting(QObject):
         self._chiSqStart = None
         self._chiSq = None
         self._pointsCount = None # self._proxy.experiment._xArrays[self._proxy.experiment.currentIndex].size  # ???
-        self._fittablesCount = None
+        ###self._fittablesCount = None
         self._fitIteration = None
 
         self._worker.finished.connect(self.setIsFittingNowToFalse)

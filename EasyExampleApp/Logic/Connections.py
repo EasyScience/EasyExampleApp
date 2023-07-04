@@ -37,6 +37,9 @@ class Connections(QObject):
 
         # Fittables
         #self._proxy.fittables.dataChanged.connect(self.onFittablesDataChanged)
+        self._proxy.fittables.nameFilterCriteriaChanged.connect(self.onFittablesFilterCriteriaChanged)
+        self._proxy.fittables.variabilityFilterCriteriaChanged.connect(self.onFittablesFilterCriteriaChanged)
+        self._proxy.fittables.paramsCountChanged.connect(self.onFittablesParamsCountChanged)
 
         # Fitting
         self._proxy.fitting.fitFinished.connect(self.onFittingFitFinished)
@@ -181,6 +184,15 @@ class Connections(QObject):
 
     def onFittablesDataChanged(self):
         self._proxy.fittables.setDataJson()
+
+    def onFittablesFilterCriteriaChanged(self):
+        self._proxy.fittables.set()
+
+    def onFittablesParamsCountChanged(self):
+        free = self._proxy.fittables.freeParamsCount
+        fixed = self._proxy.fittables.fixedParamsCount
+        total = free + fixed
+        self._proxy.status.variables = f'{total} ({free} free, {fixed} fixed)'
 
     # Fitting
 

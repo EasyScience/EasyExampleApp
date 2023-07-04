@@ -20,7 +20,7 @@ EaElements.StatusBar {
     }
 
     EaElements.StatusBarItem {
-        key: qsTr('Phases')
+        key: qsTr('Models')
         value: Globals.Proxies.main.status.phaseCount
     }
 
@@ -30,17 +30,17 @@ EaElements.StatusBar {
     }
 
     EaElements.StatusBarItem {
-        key: qsTr('Calculator')
+        key: qsTr('Calculate')
         value: Globals.Proxies.main.status.calculator
     }
 
     EaElements.StatusBarItem {
-        key: qsTr('Minimizer')
+        key: qsTr('Minimize')
         value: Globals.Proxies.main.status.minimizer
     }
 
     EaElements.StatusBarItem {
-        key: qsTr('Variables')
+        key: qsTr('Parameters')
         value: Globals.Proxies.main.status.variables
     }
 

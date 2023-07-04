@@ -17,8 +17,88 @@ import Gui.Globals as Globals
 Column {
     spacing: EaStyle.Sizes.fontPixelSize
 
-    // Table
+    // Filter parameters widget
+    Row {
+        spacing: EaStyle.Sizes.fontPixelSize * 0.5
 
+        // Filter criteria
+        EaElements.TextField {
+            id: filterCriteriaField
+
+            width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize) / 3
+
+            placeholderText: qsTr("Filter criteria")
+
+            onTextChanged: {
+                nameFilterSelector.currentIndex = nameFilterSelector.indexOfValue(text)
+                Globals.Proxies.main.fittables.nameFilterCriteria = text
+            }
+        }
+        // Filter criteria
+
+        // Filter by name
+        EaElements.ComboBox {
+            id: nameFilterSelector
+
+            topInset: 0
+            bottomInset: 0
+
+            width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize) / 3
+
+            valueRole: "value"
+            textRole: "text"
+
+            displayText: currentIndex === -1 ? qsTr("Filter by name") : currentText
+
+            model: [
+                { value: "", text: qsTr("All types") },
+                { value: "cell", text: "Unit cell" },
+                { value: "fract", text: "Atomic coordinates" },
+                { value: "B_iso", text: "Atomic displacement" },
+                { value: "occupancy", text: "Atomic occupancies" },
+                { value: "resolution", text: "Instrument resolution" },
+                { value: "asymmetry", text: "Peak asymmetry" }
+            ]
+
+            onActivated: filterCriteriaField.text = currentValue
+        }
+        // Filter by name
+
+        // Filter by variability
+        EaElements.ComboBox {
+            id: variabilityFilterSelector
+
+            property int lastIndex: -1
+
+            topInset: 0
+            bottomInset: 0
+
+            width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize) / 3
+
+            displayText: currentIndex === -1 ? qsTr("Filter by variability") : currentText
+
+            valueRole: "value"
+            textRole: "text"
+
+            model: [
+                { value: 'all', text: `All parameters (${Globals.Proxies.main.fittables.freeParamsCount +
+                                                       Globals.Proxies.main.fittables.fixedParamsCount})` },
+                { value: 'free', text: `Free parameters (${Globals.Proxies.main.fittables.freeParamsCount})` },
+                { value: 'fixed', text: `Fixed parameters (${Globals.Proxies.main.fittables.fixedParamsCount})` }
+            ]
+            onModelChanged: currentIndex = lastIndex
+
+            onActivated: {
+                lastIndex = currentIndex
+                Globals.Proxies.main.fittables.variabilityFilterCriteria = currentValue
+            }
+        }
+        // Filter by variability
+
+    }
+    // Filter parameters widget
+
+    // Table
     EaComponents.TableView {
         id: table
 
@@ -26,6 +106,10 @@ Column {
 
         enabled: !Globals.Proxies.main.fitting.isFittingNow
         defaultInfoText: qsTr("No parameters found")
+
+        maxRowCountShow: 6 +
+                         Math.trunc((applicationWindow.height - EaStyle.Sizes.appWindowMinimumHeight) /
+                                    EaStyle.Sizes.tableRowHeight)
 
         // Table mode
 
@@ -35,7 +119,6 @@ Column {
         model: Globals.Proxies.main.fittables.data.length
 
         // Header row
-
         header: EaComponents.TableViewHeader {
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 2.5
@@ -75,9 +158,9 @@ Column {
                 text: qsTr("vary")
             }
         }
+        // Header row
 
-        // Table rows
-
+        // Table content row
         delegate: EaComponents.TableViewDelegate {
 
             property bool isCurrentItem: ListView.isCurrentItem
@@ -144,11 +227,11 @@ Column {
                 }
             }
         }
-
+        // Table content row
     }
+    // Table
 
     // Parameter change slider
-
     Row {
         spacing: EaStyle.Sizes.fontPixelSize
 
@@ -177,6 +260,7 @@ Column {
         }
 
     }
+    // Slider
 
     // Move delay timer
 

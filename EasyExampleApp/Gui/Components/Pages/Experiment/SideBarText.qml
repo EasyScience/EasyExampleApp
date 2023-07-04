@@ -11,6 +11,7 @@ import EasyApp.Gui.Components as EaComponents
 
 import Gui.Globals as Globals
 
+
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
