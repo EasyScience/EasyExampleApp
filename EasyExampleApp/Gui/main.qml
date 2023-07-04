@@ -8,4 +8,6 @@ import QtQuick.Controls
 import Gui.Components as Components
 
 
-Components.ApplicationWindow {}
+Components.ApplicationWindow {
+    id: applicationWindow  // Global access
+}

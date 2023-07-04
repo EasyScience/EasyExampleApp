@@ -36,7 +36,7 @@ class Connections(QObject):
         self._proxy.analysis.yCalcTotalChanged.connect(self.onAnalysisYCalcTotalChanged)
 
         # Fittables
-        self._proxy.fittables.dataChanged.connect(self.onFittablesDataChanged)
+        #self._proxy.fittables.dataChanged.connect(self.onFittablesDataChanged)
 
         # Fitting
         self._proxy.fitting.fitFinished.connect(self.onFittingFitFinished)

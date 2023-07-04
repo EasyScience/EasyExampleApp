@@ -35,6 +35,8 @@ Rectangle {
         axisY.minAfterReset: parameterValue('yMin')
         axisY.maxAfterReset: parameterValue('yMax')
 
+        measSerie.pointsVisible: true
+
         measSerie.onHovered: (point, state) => showMainTooltip(chartView, point, state)
         bkgSerie.onHovered: (point, state) => showMainTooltip(chartView, point, state)
 

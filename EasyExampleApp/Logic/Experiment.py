@@ -64,6 +64,7 @@ class Experiment(QObject):
     dataBlocksChanged = Signal(int)
     dataBlocksMeasOnlyChanged = Signal(int)
     dataBlocksCifChanged = Signal()
+    dataBlocksCifNoMeasChanged = Signal()
     dataBlocksCifMeasOnlyChanged = Signal()
     yMeasArraysChanged = Signal()
     yBkgArraysChanged = Signal()
@@ -76,8 +77,9 @@ class Experiment(QObject):
         self._currentIndex = 0
         self._dataBlocks = []
         self._dataBlocksMeasOnly = []
-        self._dataBlocksCif = ''
-        self._dataBlocksCifMeasOnly = ''
+        self._dataBlocksCif = []
+        self._dataBlocksCifNoMeas = []
+        self._dataBlocksCifMeasOnly = []
         self._xArrays = []
         self._yMeasArrays = []
         self._yBkgArrays = []
@@ -123,11 +125,15 @@ class Experiment(QObject):
         #console.error('dataBlocks getter')
         return self._dataBlocks
 
-    @Property(str, notify=dataBlocksCifChanged)
+    @Property('QVariant', notify=dataBlocksCifChanged)
     def dataBlocksCif(self):
         return self._dataBlocksCif
 
-    @Property(str, notify=dataBlocksCifMeasOnlyChanged)
+    @Property('QVariant', notify=dataBlocksCifNoMeasChanged)
+    def dataBlocksCifNoMeas(self):
+        return self._dataBlocksCifNoMeas
+
+    @Property('QVariant', notify=dataBlocksCifMeasOnlyChanged)
     def dataBlocksCifMeasOnly(self):
         return self._dataBlocksCifMeasOnly
 
@@ -599,14 +605,24 @@ class Experiment(QObject):
     def setDataBlocksCif(self):
         #console.debug("Converting experiment dataBlocks to CIF string")
         #self._dataBlocksCif = Converter.dictToJson(self._dataBlocks)
-        self._dataBlocksCif = Converter.dataBlocksToCif(self._dataBlocks)
+        #self._dataBlocksCif = Converter.dataBlocksToCif(self._dataBlocks)
+        cifStr = Converter.dataBlocksToCif(self._dataBlocks)
+        self._dataBlocksCifNoMeas = [cifStr]  #.split('\n')
+        self._dataBlocksCif = self._dataBlocksCifNoMeas + self._dataBlocksCifMeasOnly
         console.debug(" - Experiment data blocks (without measured data) have been converted to CIF string")
+        console.debug(" - Experiment data blocks (including measured data) have been converted to CIF string")
+        self.dataBlocksCifNoMeasChanged.emit()
         self.dataBlocksCifChanged.emit()
 
     def setDataBlocksCifMeasOnly(self):
-        self._dataBlocksCifMeasOnly = Converter.dataBlockLoopsToCif(self._dataBlocksMeasOnly)
+        #self._dataBlocksCifMeasOnly = Converter.dataBlockLoopsToCif(self._dataBlocksMeasOnly)
+        cifStr = Converter.dataBlockLoopsToCif(self._dataBlocksMeasOnly)
+        self._dataBlocksCifMeasOnly = cifStr.split('\n')
+        self._dataBlocksCif = self._dataBlocksCifNoMeas + self._dataBlocksCifMeasOnly
         console.debug(" - Experiment data blocks (measured data only) have been converted to CIF string")
+        console.debug(" - Experiment data blocks (including measured data) have been converted to CIF string")
         self.dataBlocksCifMeasOnlyChanged.emit()
+        self.dataBlocksCifChanged.emit()
 
     # Extract experiments from cryspy_obj and cryspy_dict into internal ed_dict
     def parseExperiments(self, cryspy_obj):

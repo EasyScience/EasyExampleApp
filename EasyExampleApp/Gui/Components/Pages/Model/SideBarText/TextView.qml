@@ -6,22 +6,71 @@ import QtQuick
 import QtQuick.Controls
 
 import EasyApp.Gui.Style as EaStyle
+import EasyApp.Gui.Animations as EaAnimations
 import EasyApp.Gui.Elements as EaElements
 
 import Gui.Globals as Globals
 
 
-EaElements.TextArea {
-    id: textArea
-
-    //readOnly: true
+Rectangle {
+    id: container
 
     width: EaStyle.Sizes.sideBarContentWidth
-    backgroundRect.border.color: EaStyle.Colors.appBarComboBoxBorder
+    height: 11 * EaStyle.Sizes.tableRowHeight -
+            EaStyle.Sizes.fontPixelSize * (Globals.Proxies.main.model.dataBlocks.length - 1) -
+            1.4 * EaStyle.Sizes.fontPixelSize +
+            (applicationWindow.height - EaStyle.Sizes.appWindowMinimumHeight)
 
-    font.family: EaStyle.Fonts.monoFontFamily
+    color: enabled ? EaStyle.Colors.textViewBackground : EaStyle.Colors.textViewBackgroundDisabled
+    Behavior on color { EaAnimations.ThemeChange {} }
 
-    text: Globals.Proxies.main.model.dataBlocksCif
+    border.color: EaStyle.Colors.appBarComboBoxBorder
+
+    // ListView
+    ListView {
+        id: listView
+
+        property var firstDelegateRef: null
+        property bool cifEdited: listView.firstDelegateRef === null ?
+                                     false :
+                                     listView.firstDelegateRef.text !== Globals.Proxies.main.model.dataBlocksCif[0]
+
+        anchors.fill: parent
+        anchors.topMargin: EaStyle.Sizes.fontPixelSize
+        anchors.bottomMargin: EaStyle.Sizes.fontPixelSize
+        anchors.leftMargin: EaStyle.Sizes.fontPixelSize
+
+        clip: true
+
+        ScrollBar.vertical: EaElements.ScrollBar {
+            policy: ScrollBar.AsNeeded
+            interactive: false
+        }
+
+        model: Globals.Proxies.main.model.dataBlocksCif
+
+        // ListView Delegate
+        delegate: TextEdit {
+            font.family: EaStyle.Fonts.monoFontFamily
+            font.pixelSize: EaStyle.Sizes.fontPixelSize
+
+            color: enabled ?
+                       EaStyle.Colors.themeForeground :
+                       EaStyle.Colors.themeForegroundDisabled
+            Behavior on color { EaAnimations.ThemeChange {} }
+
+            text: Globals.Proxies.main.model.dataBlocksCif[index]
+
+            Component.onCompleted: {
+                if (index === 0) {
+                    listView.firstDelegateRef = this
+                }
+            }
+       }
+        // ListView Delegate
+
+    }
+    // ListView
 
     // Tool buttons
     Row {
@@ -32,8 +81,8 @@ EaElements.TextArea {
         spacing: 0.25 * EaStyle.Sizes.fontPixelSize
 
         EaElements.TabButton {
-            enabled: textArea.text !== Globals.Proxies.main.model.dataBlocksCif
-            highlighted: textArea.text !== Globals.Proxies.main.model.dataBlocksCif
+            enabled: listView.cifEdited
+            highlighted: listView.cifEdited
             checkable: false
             autoExclusive: false
             height: EaStyle.Sizes.toolButtonHeight
@@ -43,14 +92,14 @@ EaElements.TextArea {
             ToolTip.text: qsTr("Apply all changes")
             //onClicked: forceActiveFocus()
             onClicked: {
-                Globals.Proxies.main.model.loadModelFromEdCif(textArea.text)
+                Globals.Proxies.main.model.loadModelFromEdCif(listView.firstDelegateRef.text)
                 forceActiveFocus()
             }
         }
 
         EaElements.TabButton {
-            enabled: textArea.text !== Globals.Proxies.main.model.dataBlocksCif
-            highlighted: textArea.text !== Globals.Proxies.main.model.dataBlocksCif
+            enabled: listView.cifEdited
+            highlighted: listView.cifEdited
             checkable: false
             autoExclusive: false
             height: EaStyle.Sizes.toolButtonHeight
@@ -59,12 +108,11 @@ EaElements.TextArea {
             fontIcon: "undo"
             ToolTip.text: qsTr("Undo all changes")
             onClicked: {
-                textArea.text = Globals.Proxies.main.model.dataBlocksCif
+                listView.firstDelegateRef.text = Globals.Proxies.main.model.dataBlocksCif[0]
                 forceActiveFocus()
             }
         }
 
     }
     // Tool buttons
-
 }

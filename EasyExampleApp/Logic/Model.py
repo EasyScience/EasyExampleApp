@@ -75,7 +75,7 @@ class Model(QObject):
         self._defined = False
         self._currentIndex = 0
         self._dataBlocks = []
-        self._dataBlocksCif = ''
+        self._dataBlocksCif = []
         self._yCalcArrays = []
         self._yBkgArrays = []
 
@@ -113,7 +113,7 @@ class Model(QObject):
     def dataBlocks(self):
         return self._dataBlocks
 
-    @Property(str, notify=dataBlocksCifChanged)
+    @Property('QVariant', notify=dataBlocksCifChanged)
     def dataBlocksCif(self):
         return self._dataBlocksCif
 
@@ -426,7 +426,9 @@ class Model(QObject):
     def setDataBlocksCif(self):
         #console.debug("Converting model dataBlocks to CIF string")
         #self._dataBlocksCif = Converter.dictToJson(self._dataBlocks)
-        self._dataBlocksCif = Converter.dataBlocksToCif(self._dataBlocks)
+        #self._dataBlocksCif = Converter.dataBlocksToCif(self._dataBlocks)
+        cifStr = Converter.dataBlocksToCif(self._dataBlocks)
+        self._dataBlocksCif = [cifStr]
         console.debug(" - Model dataBlocks have been converted to CIF string")
         self.dataBlocksCifChanged.emit()
 

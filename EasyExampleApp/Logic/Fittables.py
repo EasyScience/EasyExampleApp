@@ -77,20 +77,20 @@ class Fittables(QObject):
     def dataJson(self):
         return self._dataJson
 
-    @Slot(str, int, str, int, str, float)
-    def edit(self, blockType, blockIndex, loopName, paramIndex, paramName, value):
+    @Slot(str, int, str, int, str, str, float)
+    def edit(self, blockType, blockIndex, loopName, paramIndex, paramName, field, value):
         if loopName == '':
-            console.debug(f"Editing fittable {blockType}[{blockIndex}].{paramName}.value to '{value}'")
+            console.debug(f"Changing fittable {blockType}[{blockIndex}].{paramName}.{field} to {value}")
             if blockType == 'experiment':
-                self._proxy.experiment.setMainParam(paramName, value)
+                self._proxy.experiment.setMainParam(paramName, field, value)
             elif blockType == 'model':
-                self._proxy.model.setMainParam(paramName, value)
+                self._proxy.model.setMainParam(paramName, field, value)
         else:
-            console.debug(f"Editing fittable {blockType}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.value to '{value}'")
+            console.debug(f"Changing fittable {blockType}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.{field} to {value}")
             if blockType == 'experiment':
-                self._proxy.experiment.setLoopParam(loopName, paramName, paramIndex, value)
+                self._proxy.experiment.setLoopParam(loopName, paramName, paramIndex, field, value)
             elif blockType == 'model':
-                self._proxy.model.setLoopParam(loopName, paramName, paramIndex, value)
+                self._proxy.model.setLoopParam(loopName, paramName, paramIndex, field, value)
 
     def set(self):
         _data = []

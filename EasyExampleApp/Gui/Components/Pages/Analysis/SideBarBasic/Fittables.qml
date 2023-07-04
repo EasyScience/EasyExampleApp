@@ -4,6 +4,7 @@
 
 import QtQuick
 import QtQuick.Controls
+import QtCharts
 
 import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Style as EaStyle
@@ -49,7 +50,7 @@ Column {
             }
 
             EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 4.0
+                width: EaStyle.Sizes.fontPixelSize * 4.5
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("value")
@@ -58,6 +59,7 @@ Column {
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 2.0
                 horizontalAlignment: Text.AlignLeft
+                //text: qsTr("units")
             }
 
             EaComponents.TableViewLabel {
@@ -105,12 +107,13 @@ Column {
                 text: item.value.toFixed(4)
                 onEditingFinished: {
                     focus = false
-                    console.debug('-------------------- Fittable editing on Analysis page finished --------------------')
+                    console.debug("-------------------- Editing 'value' field of fittable on Analysis page --------------------")
                     Globals.Proxies.main.fittables.edit(item.blockType,
                                                         item.blockIndex,
                                                         item.loopName,
                                                         item.paramIndex,
                                                         item.paramName,
+                                                        'value',
                                                         text)
                 }
             }
@@ -129,11 +132,16 @@ Column {
                 id: fitColumn
                 enabled: Globals.Proxies.main.experiment.defined
                 checked: item.fit
-                onToggled: Globals.Proxies.main.fittables.edit(item.group,
-                                                               item.parentIndex,
-                                                               item.name,
-                                                               'fit',
-                                                               checked)
+                onToggled: {
+                    console.debug("-------------------- Editing 'fit' field of fittable on Analysis page --------------------")
+                    Globals.Proxies.main.fittables.edit(item.blockType,
+                                                        item.blockIndex,
+                                                        item.loopName,
+                                                        item.paramIndex,
+                                                        item.paramName,
+                                                        'fit',
+                                                        checked)
+                }
             }
         }
 
@@ -160,12 +168,7 @@ Column {
             to: Globals.Proxies.main.fittables.data[table.currentIndex].max
             value: table.currentValueTextInput.text
 
-            onMoved: {
-                enableOpenGL()
-                table.currentValueTextInput.text = value.toFixed(4)
-                table.currentValueTextInput.editingFinished()
-                disableOpenGL()
-            }
+            onMoved: moveDelayTimer.restart()
         }
 
         EaElements.TextField {
@@ -175,11 +178,26 @@ Column {
 
     }
 
+    // Move delay timer
+
+    Timer {
+        id: moveDelayTimer
+        interval: 50
+        onTriggered: {
+            if (table.currentValueTextInput.text !== slider.value.toFixed(4)) {
+                //enableOpenGL()
+                table.currentValueTextInput.text = slider.value.toFixed(4)
+                table.currentValueTextInput.editingFinished()
+                //disableOpenGL()
+            }
+        }
+    }
+
     // Use OpenGL on slider move only
 
     Timer {
         id: disableOpenGLTimer
-        interval: 500
+        interval: 1500
         onTriggered: disableOpenGLFromTimer()
     }
 
@@ -199,20 +217,25 @@ Column {
     function enableOpenGL() {
         if (Globals.Proxies.main.plotting.currentLib1d === 'QtCharts') {
             Globals.Refs.app.experimentPage.plotView.useOpenGL = true
-            Globals.Refs.app.modelPage.plotView.useOpenGL = true
+            //Globals.Refs.app.modelPage.plotView.useOpenGL = true
+            Globals.Refs.app.analysisPage.plotView.useAnimation = false
             Globals.Refs.app.analysisPage.plotView.useOpenGL = true
         }
     }
 
     function disableOpenGL() {
         if (Globals.Proxies.main.plotting.currentLib1d === 'QtCharts') {
+            ////Globals.Proxies.main.plotting.chartRefs.QtCharts.analysisPage.totalCalcSerie.pointsReplaced()
             disableOpenGLTimer.restart()
         }
     }
 
     function disableOpenGLFromTimer() {
         Globals.Refs.app.experimentPage.plotView.useOpenGL = false
-        Globals.Refs.app.modelPage.plotView.useOpenGL = false
+        //Globals.Refs.app.modelPage.plotView.useOpenGL = false
+        ////Globals.Proxies.main.plotting.chartRefs.QtCharts.analysisPage.totalCalcSerie.pointsReplaced()
+        ///console.error(Globals.Proxies.main.plotting.chartRefs.QtCharts.analysisPage.totalCalcSerie)
+        Globals.Refs.app.analysisPage.plotView.useAnimation = true
         Globals.Refs.app.analysisPage.plotView.useOpenGL = false
     }
 
