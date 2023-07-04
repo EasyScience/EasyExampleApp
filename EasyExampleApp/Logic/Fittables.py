@@ -153,19 +153,20 @@ class Fittables(QObject):
                     fittable['max'] = paramContent['max']
                     fittable['units'] = paramContent['units']
                     fittable['fit'] = paramContent['fit']
-                    if fittable['fit']:
-                        _freeParamsCount += 1
-                    else:
-                        _fixedParamsCount += 1
-                    if self.nameFilterCriteria in fittable['paramName']:
-                        if self.variabilityFilterCriteria == 'free' and fittable['fit']:
-                            _data.append(fittable)
-                        elif self.variabilityFilterCriteria == 'fixed' and not fittable['fit']:
-                            _data.append(fittable)
-                        elif self.variabilityFilterCriteria == 'all':
-                            _data.append(fittable)
-                        elif self.variabilityFilterCriteria == '':
-                            _data.append(fittable)
+                    if fittable['enabled']:
+                        if fittable['fit']:
+                            _freeParamsCount += 1
+                        else:
+                            _fixedParamsCount += 1
+                        if self.nameFilterCriteria in fittable['paramName']:
+                            if self.variabilityFilterCriteria == 'free' and fittable['fit']:
+                                _data.append(fittable)
+                            elif self.variabilityFilterCriteria == 'fixed' and not fittable['fit']:
+                                _data.append(fittable)
+                            elif self.variabilityFilterCriteria == 'all':
+                                _data.append(fittable)
+                            elif self.variabilityFilterCriteria == '':
+                                _data.append(fittable)
 
             for loopName, loopContent in block['loops'].items():
                 for paramIndex, param in enumerate(loopContent):
@@ -185,19 +186,20 @@ class Fittables(QObject):
                             fittable['max'] = paramContent['max']
                             fittable['units'] = paramContent['units']
                             fittable['fit'] = paramContent['fit']
-                            if fittable['fit']:
-                                _freeParamsCount += 1
-                            else:
-                                _fixedParamsCount += 1
-                            if self.nameFilterCriteria in fittable['paramName']:
-                                if self.variabilityFilterCriteria == 'free' and fittable['fit']:
-                                    _data.append(fittable)
-                                elif self.variabilityFilterCriteria == 'fixed' and not fittable['fit']:
-                                    _data.append(fittable)
-                                elif self.variabilityFilterCriteria == 'all':
-                                    _data.append(fittable)
-                                elif self.variabilityFilterCriteria == '':
-                                    _data.append(fittable)
+                            if fittable['enabled']:
+                                if fittable['fit']:
+                                    _freeParamsCount += 1
+                                else:
+                                    _fixedParamsCount += 1
+                                if self.nameFilterCriteria in fittable['paramName']:
+                                    if self.variabilityFilterCriteria == 'free' and fittable['fit']:
+                                        _data.append(fittable)
+                                    elif self.variabilityFilterCriteria == 'fixed' and not fittable['fit']:
+                                        _data.append(fittable)
+                                    elif self.variabilityFilterCriteria == 'all':
+                                        _data.append(fittable)
+                                    elif self.variabilityFilterCriteria == '':
+                                        _data.append(fittable)
 
         for i in range(len(self._proxy.model.dataBlocks)):
             block = self._proxy.model.dataBlocks[i]
@@ -216,19 +218,20 @@ class Fittables(QObject):
                     fittable['max'] = paramContent['max']
                     fittable['units'] = paramContent['units']
                     fittable['fit'] = paramContent['fit']
-                    if fittable['fit']:
-                        _freeParamsCount += 1
-                    else:
-                        _fixedParamsCount += 1
-                    if self.nameFilterCriteria in fittable['paramName']:
-                        if self.variabilityFilterCriteria == 'free' and fittable['fit']:
-                            _data.append(fittable)
-                        elif self.variabilityFilterCriteria == 'fixed' and not fittable['fit']:
-                            _data.append(fittable)
-                        elif self.variabilityFilterCriteria == 'all':
-                            _data.append(fittable)
-                        elif self.variabilityFilterCriteria == '':
-                            _data.append(fittable)
+                    if fittable['enabled']:
+                        if fittable['fit']:
+                            _freeParamsCount += 1
+                        else:
+                            _fixedParamsCount += 1
+                        if self.nameFilterCriteria in fittable['paramName']:
+                            if self.variabilityFilterCriteria == 'free' and fittable['fit']:
+                                _data.append(fittable)
+                            elif self.variabilityFilterCriteria == 'fixed' and not fittable['fit']:
+                                _data.append(fittable)
+                            elif self.variabilityFilterCriteria == 'all':
+                                _data.append(fittable)
+                            elif self.variabilityFilterCriteria == '':
+                                _data.append(fittable)
 
             for loopName, loopContent in block['loops'].items():
                 for paramIndex, param in enumerate(loopContent):
@@ -248,19 +251,20 @@ class Fittables(QObject):
                             fittable['max'] = paramContent['max']
                             fittable['units'] = paramContent['units']
                             fittable['fit'] = paramContent['fit']
-                            if fittable['fit']:
-                                _freeParamsCount += 1
-                            else:
-                                _fixedParamsCount += 1
-                            if self.nameFilterCriteria in fittable['paramName']:
-                                if self.variabilityFilterCriteria == 'free' and fittable['fit']:
-                                    _data.append(fittable)
-                                elif self.variabilityFilterCriteria == 'fixed' and not fittable['fit']:
-                                    _data.append(fittable)
-                                elif self.variabilityFilterCriteria == 'all':
-                                    _data.append(fittable)
-                                elif self.variabilityFilterCriteria == '':
-                                    _data.append(fittable)
+                            if fittable['enabled']:
+                                if fittable['fit']:
+                                    _freeParamsCount += 1
+                                else:
+                                    _fixedParamsCount += 1
+                                if self.nameFilterCriteria in fittable['paramName']:
+                                    if self.variabilityFilterCriteria == 'free' and fittable['fit']:
+                                        _data.append(fittable)
+                                    elif self.variabilityFilterCriteria == 'fixed' and not fittable['fit']:
+                                        _data.append(fittable)
+                                    elif self.variabilityFilterCriteria == 'all':
+                                        _data.append(fittable)
+                                    elif self.variabilityFilterCriteria == '':
+                                        _data.append(fittable)
 
         if True:  # len(_data):
             self._data = _data

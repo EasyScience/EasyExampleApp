@@ -233,6 +233,8 @@ Column {
 
     // Parameter change slider
     Row {
+        visible: Globals.Proxies.main.fittables.data.length
+
         spacing: EaStyle.Sizes.fontPixelSize
 
         EaElements.TextField {
