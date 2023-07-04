@@ -21,7 +21,6 @@ EaElements.Dialog {
 
     Component.onCompleted: Globals.Refs.app.analysisPage.fitStatusDialogOkButton = okButtonRef()
 
-
     EaElements.Label {
         text: {
             if (Globals.Proxies.main.status.fitStatus === 'Success') {

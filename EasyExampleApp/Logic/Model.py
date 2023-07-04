@@ -366,9 +366,9 @@ class Model(QObject):
                 blockIndex = [block['name'] for block in self._dataBlocks].index(blockName)
 
                 if loopName is None:
-                    self.editDataBlockMainParam(paramName, value, blockIndex)
+                    self.editDataBlockMainParam(paramName, 'value', value, blockIndex)
                 else:
-                    self.editDataBlockLoopParam(loopName, paramName, paramIndex, value, blockIndex)
+                    self.editDataBlockLoopParam(loopName, paramName, paramIndex, 'value', value, blockIndex)
 
 
 

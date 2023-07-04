@@ -101,6 +101,8 @@ Column {
                     color: EaStyle.Colors.chartForegroundsExtra[2]
                     width: 2
 
+                    pointsVisible: true
+
                     onHovered: (point, state) => showMainTooltip(mainChart, point, state)
                 }
 

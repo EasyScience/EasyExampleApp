@@ -3,7 +3,6 @@
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 import copy
-import numpy as np
 import lmfit
 
 from PySide6.QtCore import QObject, Signal, Slot, Property, QThreadPool

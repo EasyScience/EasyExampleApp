@@ -101,7 +101,13 @@ Column {
             text: qsTr("Load new model from file")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
-                openCifFileDialog.open()
+                if (Globals.Vars.isTestMode) {
+                    console.debug(`---------- Loading model (test mode) ----------`)
+                    const fpath = '../examples/Co2SiO4_model.cif'
+                    Globals.Proxies.main.model.loadModelFromFile(fpath)
+                } else {
+                    openCifFileDialog.open()
+                }
             }
             Component.onCompleted: Globals.Refs.app.modelPage.loadNewModelFromFileButton = this
         }

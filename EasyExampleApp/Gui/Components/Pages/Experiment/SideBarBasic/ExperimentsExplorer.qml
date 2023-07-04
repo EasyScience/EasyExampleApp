@@ -98,7 +98,13 @@ Column {
             text: qsTr("Import data from local drive")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
-                openCifFileDialog.open()
+                if (Globals.Vars.isTestMode) {
+                    console.debug(`---------- Loading experiment (test mode) ----------`)
+                    const fpath = '../examples/Co2SiO4_experiment.cif'
+                    Globals.Proxies.main.experiment.loadExperimentFromFile(fpath)
+                } else {
+                    openCifFileDialog.open()
+                }
             }
             Component.onCompleted: Globals.Refs.app.experimentPage.importDataFromLocalDriveButton = this
         }
