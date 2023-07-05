@@ -66,9 +66,9 @@ class Worker(QObject):
             self._gofPrevIter = self._gofLastIter
             # Update goodnes-of-fit (GOF) value updated in the status bar
             if iter == 1 or gofShift > 0.01:
-                reducedGofStart = self._proxy.fitting._chiSqStart / self._proxy.fitting._pointsCount
-                reducedGofLastIter = self._gofLastIter / self._proxy.fitting._pointsCount
-                self._proxy.status.goodnessOfFit = f'{reducedGofStart:0.2f} → {reducedGofLastIter:0.2f}'  # NEED move to connection
+                ###reducedGofStart = self._proxy.fitting._chiSqStart / self._proxy.fitting._pointsCount
+                ###reducedGofLastIter = self._gofLastIter / self._proxy.fitting._pointsCount
+                ###self._proxy.status.goodnessOfFit = f'{reducedGofStart:0.2f} → {reducedGofLastIter:0.2f}'  # NEED move to connection
                 self._proxy.fitting.chiSqSignificantlyChanged.emit()
             return False
 
@@ -82,6 +82,8 @@ class Worker(QObject):
                 flag_use_precalculated_data=self._cryspyUsePrecalculatedData,
                 flag_calc_analytical_derivatives=self._cryspyCalcAnalyticalDerivatives)
             return self._proxy.fitting.chiSq
+
+        self._proxy.fitting._freezeChiSqStart = True
 
         # Save initial state of cryspyDict if cancel fit is requested
         self._cryspyDictInitial = copy.deepcopy(self._cryspyDict)
@@ -107,6 +109,9 @@ class Worker(QObject):
 
         ###self._proxy.fitting._fittablesCount = len(param_0)
         ###self._proxy.status.variables = f'{self._proxy.fitting._fittablesCount}'  # NEED move to connection
+        self._proxy.fitting._freeParamsCount = len(param_0)
+        if self._proxy.fitting._freeParamsCount != self._proxy.fittables._freeParamsCount:
+            console.error(f'Number of free parameters differs. Expected {self._proxy.fittables._freeParamsCount}, got {self._proxy.fitting._freeParamsCount}')
 
         # Minimization: lmfit.minimize
         self._proxy.fitting._chiSqStart = self._proxy.fitting.chiSq
@@ -122,6 +127,7 @@ class Worker(QObject):
         #lmfit.report_fit(result)
 
         if result.success:
+            console.info('Minimization has been successfully finished')
             # Calculate optimal chi2
             self._cryspyDictInOut = {}
             self._cryspyUsePrecalculatedData = False
@@ -133,17 +139,19 @@ class Worker(QObject):
                 flag_calc_analytical_derivatives=self._cryspyCalcAnalyticalDerivatives)
             console.info(f"Optimal reduced chi2 per {self._proxy.fitting._pointsCount} points: {self._proxy.fitting._chiSq/self._proxy.fitting._pointsCount:.2f}")
 
-            self._proxy.fitting._chiSqStart = self._proxy.fitting.chiSq
+            ####self._proxy.fitting._chiSqStart = self._proxy.fitting.chiSq
             self._proxy.status.fitStatus = 'Success'
 
             names = [Data.cryspyDictParamPathToStr(name) for name in parameter_names_free]
             self._proxy.experiment.editDataBlockByCryspyDictParams(names)
             self._proxy.model.editDataBlockByCryspyDictParams(names)
 
+            self._proxy.fitting._freezeChiSqStart = False
+
             #self._paramsInit.pretty_print()
             #result.params.pretty_print()
         else:
-            self._proxy.fitting.fitStatus = 'Failure'
+            self._proxy.status.fitStatus = 'Failure'
 
         # Finishing
         self.finished.emit()
@@ -166,8 +174,11 @@ class Fitting(QObject):
         self._chiSqStart = None
         self._chiSq = None
         self._pointsCount = None # self._proxy.experiment._xArrays[self._proxy.experiment.currentIndex].size  # ???
-        ###self._fittablesCount = None
         self._fitIteration = None
+
+        self._freezeChiSqStart = False
+
+        self._freeParamsCount = 0
 
         self._worker.finished.connect(self.setIsFittingNowToFalse)
         self._worker.cancelled.connect(self.setIsFittingNowToFalse)
@@ -197,17 +208,24 @@ class Fitting(QObject):
 
     @Slot()
     def startStop(self):
+        self._proxy.status.fitStatus = ''
+
         if self._worker._needCancel:
             console.debug('Minimization process has been already requested to cancel')
             return
+
         if self.isFittingNow:
             self._worker._needCancel = True
             console.debug('Minimization process has been requested to cancel')
         else:
-            self.isFittingNow = True
-            #self._worker.run()
-            self._threadpool.start(self._worker.run)
-            console.debug('Minimization process has been started in a separate thread')
+            if self._proxy.fittables._freeParamsCount > 0:
+                self.isFittingNow = True
+                #self._worker.run()
+                self._threadpool.start(self._worker.run)
+                console.debug('Minimization process has been started in a separate thread')
+            else:
+                self._proxy.status.fitStatus = 'No free params'
+                console.debug('Minimization process has not been started. No free parameters found.')
 
     def setIsFittingNowToFalse(self):
         self.isFittingNow = False

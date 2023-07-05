@@ -251,7 +251,7 @@ Column {
 
             from: Globals.Proxies.main.fittables.data[table.currentIndex].min
             to: Globals.Proxies.main.fittables.data[table.currentIndex].max
-            value: table.currentValueTextInput.text
+            value: Globals.Proxies.main.fittables.data[table.currentIndex].value //table.currentValueTextInput.text
 
             onMoved: moveDelayTimer.restart()
         }

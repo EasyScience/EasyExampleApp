@@ -15,7 +15,7 @@ import Gui.Globals as Globals
 EaElements.Dialog {
     id: dialog
 
-    visible: !Globals.Proxies.main.fitting.isFittingNow && Globals.Proxies.main.status.fitStatus
+    visible: Globals.Proxies.main.status.fitStatus
     title: qsTr("Fit status")
     standardButtons: Dialog.Ok
 
@@ -29,6 +29,8 @@ EaElements.Dialog {
                 return 'Fitting is failed.'
             } else if (Globals.Proxies.main.status.fitStatus === 'Cancelled') {
                 return 'Fitting is cancelled.'
+            } else if (Globals.Proxies.main.status.fitStatus === 'No free params') {
+                return 'Nothing to vary. Allow some parameters to be free.'
             } else {
                 return ''
             }

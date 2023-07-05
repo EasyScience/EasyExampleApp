@@ -40,7 +40,7 @@ EaElements.StatusBar {
     }
 
     EaElements.StatusBarItem {
-        key: qsTr('Parameters')
+        key: qsTr('Params')
         value: Globals.Proxies.main.status.variables
     }
 

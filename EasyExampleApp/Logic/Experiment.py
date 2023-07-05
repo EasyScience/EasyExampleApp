@@ -218,20 +218,22 @@ class Experiment(QObject):
 
     @Slot(str, str, float)
     def setMainParam(self, paramName, field, value):
+        if field == 'fit':
+            value = bool(value)
+
         changedIntern = self.editDataBlockMainParam(paramName, field, value)
-        changedCryspy = True
-        if field == 'value':
-            changedCryspy = self.editCryspyDictByMainParam(paramName, value)
+        changedCryspy = self.editCryspyDictByMainParam(paramName, field, value)
 
         if changedIntern and changedCryspy:
             self.dataBlocksChanged.emit(None)  # NED FIX
 
     @Slot(str, str, int, str, float)
     def setLoopParam(self, loopName, paramName, paramIndex, field, value):
+        if field == 'fit':
+            value = bool(value)
+
         changedIntern = self.editDataBlockLoopParam(loopName, paramName, paramIndex, field, value)
-        changedCryspy = True
-        if field == 'value':
-            changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, paramIndex, value)
+        changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, paramIndex, field, value)
 
         if changedIntern and changedCryspy:
             self.dataBlocksChanged.emit(None)  # NED FIX
@@ -270,8 +272,8 @@ class Experiment(QObject):
         console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.{field}")
         return True
 
-    def editCryspyDictByMainParam(self, paramName, value):
-        path, value = self.cryspyDictPathByMainParam(paramName, value)
+    def editCryspyDictByMainParam(self, paramName, field, value):
+        path, value = self.cryspyDictPathByMainParam(paramName, field, value)
 
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
@@ -281,8 +283,8 @@ class Experiment(QObject):
         console.debug(f"Cryspy dict ▌ {oldValue} → {value} ▌ {path}")
         return True
 
-    def editCryspyDictByLoopParam(self, loopName, paramName, paramIndex, value):
-        path, value = self.cryspyDictPathByLoopParam(loopName, paramName, paramIndex, value)
+    def editCryspyDictByLoopParam(self, loopName, paramName, paramIndex, field, value):
+        path, value = self.cryspyDictPathByLoopParam(loopName, paramName, paramIndex, field, value)
 
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
@@ -292,7 +294,7 @@ class Experiment(QObject):
         console.debug(f"Cryspy dict ▌ {oldValue} → {value} ▌ {path}")
         return True
 
-    def cryspyDictPathByMainParam(self, paramName, value):
+    def cryspyDictPathByMainParam(self, paramName, field, value):
         blockIndex = self._currentIndex
         blockName = self._dataBlocks[blockIndex]['name']
         path = ['','','']
@@ -347,9 +349,13 @@ class Experiment(QObject):
         else:
             console.error(f"Undefined parameter name '{paramName}'")
 
+        # if 'flags' objects are needed
+        if field == 'fit':
+            path[1] = f'flags_{path[1]}'
+
         return path, value
 
-    def cryspyDictPathByLoopParam(self, loopName, paramName, paramIndex, value):
+    def cryspyDictPathByLoopParam(self, loopName, paramName, paramIndex, field, value):
         blockIndex = self._currentIndex
         blockName = self._dataBlocks[blockIndex]['name']
         path = ['','','']
@@ -370,6 +376,10 @@ class Experiment(QObject):
             if paramName == '_scale':
                 path[1] = 'phase_scale'
                 path[2] = paramIndex
+
+        # if 'flags' objects are needed
+        if field == 'fit':
+            path[1] = f'flags_{path[1]}'
 
         return path, value
 

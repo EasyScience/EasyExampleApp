@@ -177,20 +177,22 @@ class Model(QObject):
 
     @Slot(str, str, float)
     def setMainParam(self, paramName, field, value):
+        if field == 'fit':
+            value = bool(value)
+
         changedIntern = self.editDataBlockMainParam(paramName, field, value)
-        changedCryspy = True
-        if field == 'value':
-            changedCryspy = self.editCryspyDictByMainParam(paramName, value)
+        changedCryspy = self.editCryspyDictByMainParam(paramName, field, value)
 
         if changedIntern and changedCryspy:
             self.dataBlocksChanged.emit()
 
     @Slot(str, str, int, str, float)
     def setLoopParam(self, loopName, paramName, paramIndex, field, value):
+        if field == 'fit':
+            value = bool(value)
+
         changedIntern = self.editDataBlockLoopParam(loopName, paramName, paramIndex, field, value)
-        changedCryspy = True
-        if field == 'value':
-            changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, paramIndex, value)
+        changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, paramIndex, value)
 
         if changedIntern and changedCryspy:
             self.dataBlocksChanged.emit()
@@ -229,8 +231,8 @@ class Model(QObject):
         console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.{field}")
         return True
 
-    def editCryspyDictByMainParam(self, paramName, value):
-        path, value = self.cryspyDictPathByMainParam(paramName, value)
+    def editCryspyDictByMainParam(self, paramName, field, value):
+        path, value = self.cryspyDictPathByMainParam(paramName, field, value)
 
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
@@ -240,8 +242,8 @@ class Model(QObject):
         console.debug(f"Cryspy dict ▌ {oldValue} → {value} ▌ {path}")
         return True
 
-    def editCryspyDictByLoopParam(self, loopName, paramName, paramIndex, value):
-        path, value = self.cryspyDictPathByLoopParam(loopName, paramName, paramIndex, value)
+    def editCryspyDictByLoopParam(self, loopName, paramName, paramIndex, field, value):
+        path, value = self.cryspyDictPathByLoopParam(loopName, paramName, paramIndex, field, value)
 
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
@@ -251,7 +253,7 @@ class Model(QObject):
         console.debug(f"Cryspy dict ▌ {oldValue} → {value} ▌ {path}")
         return True
 
-    def cryspyDictPathByMainParam(self, paramName, value):
+    def cryspyDictPathByMainParam(self, paramName, field, value):
         blockIndex = self._currentIndex
         blockName = self._dataBlocks[blockIndex]['name']
         path = ['','','']
@@ -284,9 +286,13 @@ class Model(QObject):
         else:
             console.error(f"Undefined parameter name '{paramName}'")
 
+        # if 'flags' objects are needed
+        if field == 'fit':
+            path[1] = f'flags_{path[1]}'
+
         return path, value
 
-    def cryspyDictPathByLoopParam(self, loopName, paramName, paramIndex, value):
+    def cryspyDictPathByLoopParam(self, loopName, paramName, paramIndex, field, value):
         blockIndex = self._currentIndex
         blockName = self._dataBlocks[blockIndex]['name']
         path = ['','','']
@@ -306,6 +312,10 @@ class Model(QObject):
             if paramName == '_occupancy':
                 path[1] = 'atom_occupancy'
                 path[2] = paramIndex
+
+        # if 'flags' objects are needed
+        if field == 'fit':
+            path[1] = f'flags_{path[1]}'
 
         return path, value
 
@@ -684,16 +694,25 @@ class Model(QObject):
 #                self.setCurrentModelStructViewAxesModel()
 #                self.setCurrentModelStructViewAtomsModel()
 
-    def calculateDiffractionPattern(self):        
-        chiSq, pointsCount, _, _, paramNames = rhochi_calc_chi_sq_by_dictionary(self._proxy.data._cryspyDict,
-                                         dict_in_out=self._proxy.data._cryspyInOutDict,
-                                         flag_use_precalculated_data=False,
-                                         flag_calc_analytical_derivatives=False)
+    def calculateDiffractionPattern(self):
+        self._proxy.fitting.chiSq, self._proxy.fitting._pointsCount, _, _, paramNames = rhochi_calc_chi_sq_by_dictionary(self._proxy.data._cryspyDict,
+            dict_in_out=self._proxy.data._cryspyInOutDict,
+            flag_use_precalculated_data=False,
+            flag_calc_analytical_derivatives=False)
         first_experiment_name = self._proxy.data.edDict['experiments'][0]['name']  # NEED FIX
         y_calc_array = self._proxy.data._cryspyInOutDict[f'pd_{first_experiment_name}']['signal_minus'] + self._proxy.data._cryspyInOutDict[f'pd_{first_experiment_name}']['signal_plus']
 
         #################self._proxy.data._cryspyInOutDict[f'pd_{first_experiment_name}']['dict_in_out_co2sio4']['ttheta_hkl']
         self._proxy.experiment._yBkgArrays[0] = self._proxy.data._cryspyInOutDict[f'pd_{first_experiment_name}']['signal_background']  # NEED FIX
+
+        reducedGofLastIter = self._proxy.fitting.chiSq / self._proxy.fitting._pointsCount            # NEED FIX
+        if self._proxy.fitting._chiSqStart is None:
+            self._proxy.status.goodnessOfFit = f'{reducedGofLastIter:0.2f}'                           # NEED move to connection
+        else:
+            reducedGofStart = self._proxy.fitting._chiSqStart / self._proxy.fitting._pointsCount      # NEED FIX
+            self._proxy.status.goodnessOfFit = f'{reducedGofStart:0.2f} → {reducedGofLastIter:0.2f}'  # NEED move to connection
+            if not self._proxy.fitting._freezeChiSqStart:
+                self._proxy.fitting._chiSqStart = self._proxy.fitting.chiSq
 
         return y_calc_array
 
