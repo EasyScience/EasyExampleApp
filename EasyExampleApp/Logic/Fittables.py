@@ -33,6 +33,7 @@ class Parameter(dict):
                 max = 1.0,
                 units = '',
                 loopName = '',
+                rowName = '',
                 name = '',
                 prettyName = '',
                 url = '',
@@ -50,6 +51,7 @@ class Parameter(dict):
         self['min'] = min
         self['max'] = max
         self['loopName'] = loopName
+        self['rowName'] = rowName
         self['name'] = name
         self['prettyName'] = prettyName
         self['url'] = url
@@ -75,6 +77,8 @@ class Fittables(QObject):
         self._variabilityFilterCriteria = ''
         self._freeParamsCount = 0
         self._fixedParamsCount = 0
+        self._modelParamsCount = 0
+        self._experimentParamsCount = 0
 
     @Property('QVariant', notify=dataChanged)
     def data(self):
@@ -116,8 +120,16 @@ class Fittables(QObject):
     def fixedParamsCount(self):
         return self._fixedParamsCount
 
+    @Property(float, notify=paramsCountChanged)
+    def modelParamsCount(self):
+        return self._modelParamsCount
+
+    @Property(float, notify=paramsCountChanged)
+    def experimentParamsCount(self):
+        return self._experimentParamsCount
+
     @Slot(str, int, str, int, str, str, float)
-    def edit(self, blockType, blockIndex, loopName, paramIndex, paramName, field, value):
+    def edit(self, blockType, blockIndex, loopName, rowIndex, paramName, field, value):
         if loopName == '':
             console.debug(f"Changing fittable {blockType}[{blockIndex}].{paramName}.{field} to {value}")
             if blockType == 'experiment':
@@ -125,27 +137,33 @@ class Fittables(QObject):
             elif blockType == 'model':
                 self._proxy.model.setMainParam(paramName, field, value)
         else:
-            console.debug(f"Changing fittable {blockType}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.{field} to {value}")
+            console.debug(f"Changing fittable {blockType}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field} to {value}")
             if blockType == 'experiment':
-                self._proxy.experiment.setLoopParam(loopName, paramName, paramIndex, field, value)
+                self._proxy.experiment.setLoopParam(loopName, paramName, rowIndex, field, value)
             elif blockType == 'model':
-                self._proxy.model.setLoopParam(loopName, paramName, paramIndex, field, value)
+                self._proxy.model.setLoopParam(loopName, paramName, rowIndex, field, value)
 
     def set(self):
         _data = []
         _freeParamsCount = 0
         _fixedParamsCount = 0
+        _modelParamsCount = 0
+        _experimentParamsCount = 0
 
-        for i in range(len(self._proxy.experiment.dataBlocks)):
-            block = self._proxy.experiment.dataBlocks[i]
+        # Model params
+        for i in range(len(self._proxy.model.dataBlocks)):
+            block = self._proxy.model.dataBlocks[i]
 
+            # Model main params
             for paramName, paramContent in block['params'].items():
                 if paramContent['fittable']:
                     fittable = {}
-                    fittable['blockType'] = 'experiment'
+                    fittable['blockType'] = 'model'
                     fittable['blockIndex'] = i
                     fittable['blockName'] = block['name']
                     fittable['paramName'] = paramName
+                    fittable['fullName'] = f"{fittable['blockType']}.{fittable['blockName']}.{fittable['paramName'][1:]}"
+                    fittable['iconifiedName'] = fittable['fullName']
                     fittable['enabled'] = paramContent['enabled']
                     fittable['value'] = paramContent['value']
                     fittable['error'] = paramContent['error']
@@ -154,11 +172,12 @@ class Fittables(QObject):
                     fittable['units'] = paramContent['units']
                     fittable['fit'] = paramContent['fit']
                     if fittable['enabled']:
+                        _modelParamsCount += 1
                         if fittable['fit']:
                             _freeParamsCount += 1
                         else:
                             _fixedParamsCount += 1
-                        if self.nameFilterCriteria in fittable['paramName']:
+                        if self.nameFilterCriteria in fittable['fullName']:
                             if self.variabilityFilterCriteria == 'free' and fittable['fit']:
                                 _data.append(fittable)
                             elif self.variabilityFilterCriteria == 'fixed' and not fittable['fit']:
@@ -168,17 +187,21 @@ class Fittables(QObject):
                             elif self.variabilityFilterCriteria == '':
                                 _data.append(fittable)
 
+            # Model loop params
             for loopName, loopContent in block['loops'].items():
-                for paramIndex, param in enumerate(loopContent):
+                for rowIndex, param in enumerate(loopContent):
                     for paramName, paramContent in param.items():
                         if paramContent['fittable']:
                             fittable = {}
-                            fittable['blockType'] = 'experiment'
+                            fittable['blockType'] = 'model'
                             fittable['blockIndex'] = i
                             fittable['blockName'] = block['name']
                             fittable['loopName'] = loopName
-                            fittable['paramIndex'] = paramIndex
+                            fittable['rowName'] = paramContent['rowName']
+                            fittable['rowIndex'] = rowIndex
                             fittable['paramName'] = paramName
+                            fittable['fullName'] = f"{fittable['blockType']}.{fittable['blockName']}.{fittable['loopName'][1:]}.{fittable['rowName']}.{fittable['paramName'][1:]}"
+                            fittable['iconifiedName'] = fittable['fullName']
                             fittable['enabled'] = paramContent['enabled']
                             fittable['value'] = paramContent['value']
                             fittable['error'] = paramContent['error']
@@ -187,11 +210,12 @@ class Fittables(QObject):
                             fittable['units'] = paramContent['units']
                             fittable['fit'] = paramContent['fit']
                             if fittable['enabled']:
+                                _modelParamsCount += 1
                                 if fittable['fit']:
                                     _freeParamsCount += 1
                                 else:
                                     _fixedParamsCount += 1
-                                if self.nameFilterCriteria in fittable['paramName']:
+                                if self.nameFilterCriteria in fittable['fullName']:
                                     if self.variabilityFilterCriteria == 'free' and fittable['fit']:
                                         _data.append(fittable)
                                     elif self.variabilityFilterCriteria == 'fixed' and not fittable['fit']:
@@ -201,16 +225,20 @@ class Fittables(QObject):
                                     elif self.variabilityFilterCriteria == '':
                                         _data.append(fittable)
 
-        for i in range(len(self._proxy.model.dataBlocks)):
-            block = self._proxy.model.dataBlocks[i]
+        # Experiment params
+        for i in range(len(self._proxy.experiment.dataBlocks)):
+            block = self._proxy.experiment.dataBlocks[i]
 
+            # Experiment main params
             for paramName, paramContent in block['params'].items():
                 if paramContent['fittable']:
                     fittable = {}
-                    fittable['blockType'] = 'model'
+                    fittable['blockType'] = 'experiment'
                     fittable['blockIndex'] = i
                     fittable['blockName'] = block['name']
                     fittable['paramName'] = paramName
+                    fittable['fullName'] = f"{fittable['blockType']}.{fittable['blockName']}.{fittable['paramName'][1:]}"
+                    fittable['iconifiedName'] = fittable['fullName']
                     fittable['enabled'] = paramContent['enabled']
                     fittable['value'] = paramContent['value']
                     fittable['error'] = paramContent['error']
@@ -219,11 +247,12 @@ class Fittables(QObject):
                     fittable['units'] = paramContent['units']
                     fittable['fit'] = paramContent['fit']
                     if fittable['enabled']:
+                        _experimentParamsCount += 1
                         if fittable['fit']:
                             _freeParamsCount += 1
                         else:
                             _fixedParamsCount += 1
-                        if self.nameFilterCriteria in fittable['paramName']:
+                        if self.nameFilterCriteria in fittable['fullName']:
                             if self.variabilityFilterCriteria == 'free' and fittable['fit']:
                                 _data.append(fittable)
                             elif self.variabilityFilterCriteria == 'fixed' and not fittable['fit']:
@@ -233,17 +262,21 @@ class Fittables(QObject):
                             elif self.variabilityFilterCriteria == '':
                                 _data.append(fittable)
 
+            # Experiment loop params
             for loopName, loopContent in block['loops'].items():
-                for paramIndex, param in enumerate(loopContent):
+                for rowIndex, param in enumerate(loopContent):
                     for paramName, paramContent in param.items():
                         if paramContent['fittable']:
                             fittable = {}
-                            fittable['blockType'] = 'model'
+                            fittable['blockType'] = 'experiment'
                             fittable['blockIndex'] = i
                             fittable['blockName'] = block['name']
                             fittable['loopName'] = loopName
-                            fittable['paramIndex'] = paramIndex
+                            fittable['rowName'] = paramContent['rowName']
+                            fittable['rowIndex'] = rowIndex
                             fittable['paramName'] = paramName
+                            fittable['fullName'] = f"{fittable['blockType']}.{fittable['blockName']}.{fittable['loopName'][1:]}.{fittable['rowName']}.{fittable['paramName'][1:]}"
+                            fittable['iconifiedName'] = fittable['fullName']
                             fittable['enabled'] = paramContent['enabled']
                             fittable['value'] = paramContent['value']
                             fittable['error'] = paramContent['error']
@@ -252,11 +285,12 @@ class Fittables(QObject):
                             fittable['units'] = paramContent['units']
                             fittable['fit'] = paramContent['fit']
                             if fittable['enabled']:
+                                _experimentParamsCount += 1
                                 if fittable['fit']:
                                     _freeParamsCount += 1
                                 else:
                                     _fixedParamsCount += 1
-                                if self.nameFilterCriteria in fittable['paramName']:
+                                if self.nameFilterCriteria in fittable['fullName']:
                                     if self.variabilityFilterCriteria == 'free' and fittable['fit']:
                                         _data.append(fittable)
                                     elif self.variabilityFilterCriteria == 'fixed' and not fittable['fit']:
@@ -272,6 +306,8 @@ class Fittables(QObject):
             self.dataChanged.emit()
             self._freeParamsCount = _freeParamsCount
             self._fixedParamsCount = _fixedParamsCount
+            self._modelParamsCount = _modelParamsCount
+            self._experimentParamsCount = _experimentParamsCount
             self.paramsCountChanged.emit()
 
     def setDataJson(self):

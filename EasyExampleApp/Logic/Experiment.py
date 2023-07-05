@@ -228,12 +228,12 @@ class Experiment(QObject):
             self.dataBlocksChanged.emit(None)  # NED FIX
 
     @Slot(str, str, int, str, float)
-    def setLoopParam(self, loopName, paramName, paramIndex, field, value):
+    def setLoopParam(self, loopName, paramName, rowIndex, field, value):
         if field == 'fit':
             value = bool(value)
 
-        changedIntern = self.editDataBlockLoopParam(loopName, paramName, paramIndex, field, value)
-        changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, paramIndex, field, value)
+        changedIntern = self.editDataBlockLoopParam(loopName, paramName, rowIndex, field, value)
+        changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, rowIndex, field, value)
 
         if changedIntern and changedCryspy:
             self.dataBlocksChanged.emit(None)  # NED FIX
@@ -256,7 +256,7 @@ class Experiment(QObject):
         console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{paramName}.{field}")
         return True
 
-    def editDataBlockLoopParam(self, loopName, paramName, paramIndex, field, value, blockIndex=None):
+    def editDataBlockLoopParam(self, loopName, paramName, rowIndex, field, value, blockIndex=None):
         block = 'experiment'
         if blockIndex is None:
             blockIndex = self._currentIndex
@@ -264,12 +264,12 @@ class Experiment(QObject):
         if field == 'fit':
             value = bool(value)
 
-        oldValue = self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName][field]
+        oldValue = self._dataBlocks[blockIndex]['loops'][loopName][rowIndex][paramName][field]
         if oldValue == value:
             return False
-        self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName][field] = value
+        self._dataBlocks[blockIndex]['loops'][loopName][rowIndex][paramName][field] = value
 
-        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.{field}")
+        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field}")
         return True
 
     def editCryspyDictByMainParam(self, paramName, field, value):
@@ -283,8 +283,8 @@ class Experiment(QObject):
         console.debug(f"Cryspy dict ▌ {oldValue} → {value} ▌ {path}")
         return True
 
-    def editCryspyDictByLoopParam(self, loopName, paramName, paramIndex, field, value):
-        path, value = self.cryspyDictPathByLoopParam(loopName, paramName, paramIndex, field, value)
+    def editCryspyDictByLoopParam(self, loopName, paramName, rowIndex, field, value):
+        path, value = self.cryspyDictPathByLoopParam(loopName, paramName, rowIndex, field, value)
 
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
@@ -355,7 +355,7 @@ class Experiment(QObject):
 
         return path, value
 
-    def cryspyDictPathByLoopParam(self, loopName, paramName, paramIndex, field, value):
+    def cryspyDictPathByLoopParam(self, loopName, paramName, rowIndex, field, value):
         blockIndex = self._currentIndex
         blockName = self._dataBlocks[blockIndex]['name']
         path = ['','','']
@@ -365,17 +365,17 @@ class Experiment(QObject):
         if loopName == '_pd_background':
             if paramName == '_2theta':
                 path[1] = 'background_ttheta'
-                path[2] = paramIndex
+                path[2] = rowIndex
                 value = np.deg2rad(value)
             if paramName == '_intensity':
                 path[1] = 'background_intensity'
-                path[2] = paramIndex
+                path[2] = rowIndex
 
         # _phase
         if loopName == '_phase':
             if paramName == '_scale':
                 path[1] = 'phase_scale'
-                path[2] = paramIndex
+                path[2] = rowIndex
 
         # if 'flags' objects are needed
         if field == 'fit':
@@ -392,7 +392,7 @@ class Experiment(QObject):
                 blockName = block[3:]
                 loopName = None
                 paramName = None
-                paramIndex = None
+                rowIndex = None
                 value = self._proxy.data._cryspyDict[block][group][idx]
 
                 # wavelength
@@ -434,20 +434,20 @@ class Experiment(QObject):
                 elif group == 'background_ttheta':
                     loopName = '_pd_background'
                     paramName = '_2theta'
-                    paramIndex = idx[0]
+                    rowIndex = idx[0]
                     value = np.rad2deg(value)
 
                 # background_intensity
                 elif group == 'background_intensity':
                     loopName = '_pd_background'
                     paramName = '_intensity'
-                    paramIndex = idx[0]
+                    rowIndex = idx[0]
 
                 # phase_scale
                 elif group == 'phase_scale':
                     loopName = '_phase'
                     paramName = '_scale'
-                    paramIndex = idx[0]
+                    rowIndex = idx[0]
 
                 value = float(value)  # convert float64 to float (needed for QML access)
                 blockIndex = [block['name'] for block in self._dataBlocks].index(blockName)
@@ -455,7 +455,7 @@ class Experiment(QObject):
                 if loopName is None:
                     self.editDataBlockMainParam(paramName, 'value', value, blockIndex)
                 else:
-                    self.editDataBlockLoopParam(loopName, paramName, paramIndex, 'value', value, blockIndex)
+                    self.editDataBlockLoopParam(loopName, paramName, rowIndex, 'value', value, blockIndex)
 
 
     def defaultXArray(self):
@@ -658,7 +658,6 @@ class Experiment(QObject):
                 #y_bkg_array = self.defaultYBkgArray()  # NEED FIX
 
                 for item in cryspy_experiment:
-                    #console.info(f'=============== {type(item)}')
                     # Ranges section
                     if type(item) == cryspy.C_item_loop_classes.cl_1_range.Range:
                         ed_experiment['params']['_pd_meas_2theta_range_min'] = dict(Parameter(
@@ -808,6 +807,7 @@ class Experiment(QObject):
                                 cryspy_phase.scale,
                                 idx = idx,
                                 loopName = '_phase',
+                                rowName = cryspy_phase.label,
                                 name = '_scale',
                                 prettyName = 'scale',
                                 url = 'https://easydiffraction.org',
@@ -839,6 +839,7 @@ class Experiment(QObject):
                                 cryspy_bkg_point.intensity,
                                 idx = idx,
                                 loopName = '_pd_background',
+                                rowName = f'{cryspy_bkg_point.ttheta:g}_deg',  # formatting float to str without trailing zeros
                                 name = '_intensity',
                                 prettyName = 'intensity',
                                 url = 'https://easydiffraction.org',

@@ -48,16 +48,22 @@ Column {
             valueRole: "value"
             textRole: "text"
 
-            displayText: currentIndex === -1 ? qsTr("Filter by name") : currentText
+            displayText: currentIndex === -1 ?
+                             qsTr("Filter by name") :
+                             currentText.replace('&nbsp;◦ ', '')
 
             model: [
-                { value: "", text: qsTr("All types") },
-                { value: "cell", text: "Unit cell" },
-                { value: "fract", text: "Atomic coordinates" },
-                { value: "B_iso", text: "Atomic displacement" },
-                { value: "occupancy", text: "Atomic occupancies" },
-                { value: "resolution", text: "Instrument resolution" },
-                { value: "asymmetry", text: "Peak asymmetry" }
+                { value: "", text: `All groups (${Globals.Proxies.main.fittables.modelParamsCount +
+                                                Globals.Proxies.main.fittables.experimentParamsCount})` },
+                { value: "model", text: `Model group (${Globals.Proxies.main.fittables.modelParamsCount})` },
+                { value: "cell", text: "&nbsp;◦ Unit cell" },
+                { value: "fract", text: "&nbsp;◦ Atomic coordinates" },
+                { value: "occupancy", text: "&nbsp;◦ Atomic occupancies" },
+                { value: "B_iso", text: "&nbsp;◦ Atomic displacement" },
+                { value: "experiment", text: `Experiment group (${Globals.Proxies.main.fittables.experimentParamsCount})` },
+                { value: "resolution", text: "&nbsp;◦ Instrument resolution" },
+                { value: "asymmetry", text: "&nbsp;◦ Peak asymmetry" },
+                { value: "background", text: "&nbsp;◦ Background" }
             ]
 
             onActivated: filterCriteriaField.text = currentValue
@@ -178,9 +184,10 @@ Column {
             }
 
             EaComponents.TableViewLabel {
-                text: parameterName(item)
+                text: item.fullName
                 textFormat: Text.PlainText
                 elide: Text.ElideMiddle
+                ToolTip.text: text
             }
 
             EaComponents.TableViewParameter {
@@ -190,11 +197,12 @@ Column {
                 text: item.value.toFixed(4)
                 onEditingFinished: {
                     focus = false
+                    console.debug('')
                     console.debug("-------------------- Editing 'value' field of fittable on Analysis page --------------------")
                     Globals.Proxies.main.fittables.edit(item.blockType,
                                                         item.blockIndex,
                                                         item.loopName,
-                                                        item.paramIndex,
+                                                        item.rowIndex,
                                                         item.paramName,
                                                         'value',
                                                         text)
@@ -216,11 +224,12 @@ Column {
                 enabled: Globals.Proxies.main.experiment.defined
                 checked: item.fit
                 onToggled: {
+                    console.debug('')
                     console.debug("-------------------- Editing 'fit' field of fittable on Analysis page --------------------")
                     Globals.Proxies.main.fittables.edit(item.blockType,
                                                         item.blockIndex,
                                                         item.loopName,
-                                                        item.paramIndex,
+                                                        item.rowIndex,
                                                         item.paramName,
                                                         'fit',
                                                         checked)
@@ -268,7 +277,7 @@ Column {
 
     Timer {
         id: moveDelayTimer
-        interval: 50
+        interval: 0 //50
         onTriggered: {
             if (table.currentValueTextInput.text !== slider.value.toFixed(4)) {
                 //enableOpenGL()
@@ -288,17 +297,6 @@ Column {
     }
 
     // Logic
-
-    function parameterName(item) {
-        let name
-        if (typeof item.loopName === 'undefined') {
-            name = `${item.blockType}[${item.blockIndex}].${item.paramName}`
-        } else {
-            name = `${item.blockType}[${item.blockIndex}].${item.loopName}[${item.paramIndex}].${item.paramName}`
-        }
-        name = name.replace(/\._/g, ".")  // replace all '._' to '.' for prettier name
-        return name
-    }
 
     function enableOpenGL() {
         if (Globals.Proxies.main.plotting.currentLib1d === 'QtCharts') {

@@ -187,12 +187,12 @@ class Model(QObject):
             self.dataBlocksChanged.emit()
 
     @Slot(str, str, int, str, float)
-    def setLoopParam(self, loopName, paramName, paramIndex, field, value):
+    def setLoopParam(self, loopName, paramName, rowIndex, field, value):
         if field == 'fit':
             value = bool(value)
 
-        changedIntern = self.editDataBlockLoopParam(loopName, paramName, paramIndex, field, value)
-        changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, paramIndex, value)
+        changedIntern = self.editDataBlockLoopParam(loopName, paramName, rowIndex, field, value)
+        changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, rowIndex, value)
 
         if changedIntern and changedCryspy:
             self.dataBlocksChanged.emit()
@@ -215,7 +215,7 @@ class Model(QObject):
         console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{paramName}.{field}")
         return True
 
-    def editDataBlockLoopParam(self, loopName, paramName, paramIndex, field, value, blockIndex=None):
+    def editDataBlockLoopParam(self, loopName, paramName, rowIndex, field, value, blockIndex=None):
         block = 'model'
         if blockIndex is None:
             blockIndex = self._currentIndex
@@ -223,12 +223,12 @@ class Model(QObject):
         if field == 'fit':
             value = bool(value)
 
-        oldValue = self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName][field]
+        oldValue = self._dataBlocks[blockIndex]['loops'][loopName][rowIndex][paramName][field]
         if oldValue == value:
             return False
-        self._dataBlocks[blockIndex]['loops'][loopName][paramIndex][paramName][field] = value
+        self._dataBlocks[blockIndex]['loops'][loopName][rowIndex][paramName][field] = value
 
-        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{loopName}[{paramIndex}].{paramName}.{field}")
+        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field}")
         return True
 
     def editCryspyDictByMainParam(self, paramName, field, value):
@@ -242,8 +242,8 @@ class Model(QObject):
         console.debug(f"Cryspy dict ▌ {oldValue} → {value} ▌ {path}")
         return True
 
-    def editCryspyDictByLoopParam(self, loopName, paramName, paramIndex, field, value):
-        path, value = self.cryspyDictPathByLoopParam(loopName, paramName, paramIndex, field, value)
+    def editCryspyDictByLoopParam(self, loopName, paramName, rowIndex, field, value):
+        path, value = self.cryspyDictPathByLoopParam(loopName, paramName, rowIndex, field, value)
 
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
@@ -292,7 +292,7 @@ class Model(QObject):
 
         return path, value
 
-    def cryspyDictPathByLoopParam(self, loopName, paramName, paramIndex, field, value):
+    def cryspyDictPathByLoopParam(self, loopName, paramName, rowIndex, field, value):
         blockIndex = self._currentIndex
         blockName = self._dataBlocks[blockIndex]['name']
         path = ['','','']
@@ -302,16 +302,16 @@ class Model(QObject):
         if loopName == '_atom_site':
             if paramName == '_fract_x':
                 path[1] = 'atom_fract_xyz'
-                path[2] = (0, paramIndex)
+                path[2] = (0, rowIndex)
             if paramName == '_fract_y':
                 path[1] = 'atom_fract_xyz'
-                path[2] = (1, paramIndex)
+                path[2] = (1, rowIndex)
             if paramName == '_fract_z':
                 path[1] = 'atom_fract_xyz'
-                path[2] = (2, paramIndex)
+                path[2] = (2, rowIndex)
             if paramName == '_occupancy':
                 path[1] = 'atom_occupancy'
-                path[2] = paramIndex
+                path[2] = rowIndex
 
         # if 'flags' objects are needed
         if field == 'fit':
@@ -328,7 +328,7 @@ class Model(QObject):
                 blockName = block[8:]
                 loopName = None
                 paramName = None
-                paramIndex = None
+                rowIndex = None
                 value = self._proxy.data._cryspyDict[block][group][idx]
 
                 # unit_cell_parameters
@@ -352,7 +352,7 @@ class Model(QObject):
                 # atom_fract_xyz
                 elif group == 'atom_fract_xyz':
                     loopName = '_atom_site'
-                    paramIndex = idx[1]
+                    rowIndex = idx[1]
                     if idx[0] == 0:
                         paramName = '_fract_x'
                     elif idx[0] == 1:
@@ -363,13 +363,13 @@ class Model(QObject):
                 # atom_occupancy
                 elif group == 'atom_occupancy':
                     loopName = '_atom_site'
-                    paramIndex = idx[0]
+                    rowIndex = idx[0]
                     paramName = '_occupancy'
 
                 # b_iso_or_equiv
                 elif group == 'atom_b_iso':
                     loopName = '_atom_site'
-                    paramIndex = idx[0]
+                    rowIndex = idx[0]
                     paramName = '_B_iso_or_equiv'
 
                 value = float(value)  # convert float64 to float (needed for QML access)
@@ -378,7 +378,7 @@ class Model(QObject):
                 if loopName is None:
                     self.editDataBlockMainParam(paramName, 'value', value, blockIndex)
                 else:
-                    self.editDataBlockLoopParam(loopName, paramName, paramIndex, 'value', value, blockIndex)
+                    self.editDataBlockLoopParam(loopName, paramName, rowIndex, 'value', value, blockIndex)
 
 
 
@@ -587,6 +587,7 @@ class Model(QObject):
                                 cryspy_atom.fract_x,
                                 idx = idx,
                                 loopName = '_atom_site',
+                                rowName = cryspy_atom.label,
                                 name = '_fract_x',
                                 prettyName = 'fract x',
                                 url = 'https://easydiffraction.org',
@@ -601,6 +602,7 @@ class Model(QObject):
                                 cryspy_atom.fract_y,
                                 idx = idx,
                                 loopName = '_atom_site',
+                                rowName = cryspy_atom.label,
                                 name = '_fract_y',
                                 prettyName = 'fract y',
                                 url = 'https://easydiffraction.org',
@@ -615,6 +617,7 @@ class Model(QObject):
                                 cryspy_atom.fract_z,
                                 idx = idx,
                                 loopName = '_atom_site',
+                                rowName = cryspy_atom.label,
                                 name = '_fract_z',
                                 prettyName = 'fract z',
                                 url = 'https://easydiffraction.org',
@@ -629,6 +632,7 @@ class Model(QObject):
                                 cryspy_atom.occupancy,
                                 idx = idx,
                                 loopName = '_atom_site',
+                                rowName = cryspy_atom.label,
                                 name = '_occupancy',
                                 prettyName = 'occ.',
                                 url = 'https://easydiffraction.org',
@@ -652,6 +656,7 @@ class Model(QObject):
                                 cryspy_atom.b_iso_or_equiv,
                                 idx = idx,
                                 loopName = '_atom_site',
+                                rowName = cryspy_atom.label,
                                 name = '_B_iso_or_equiv',
                                 prettyName = 'iso',
                                 url = 'https://easydiffraction.org',

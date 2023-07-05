@@ -575,12 +575,12 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         return main.model.dataBlocks[currentModelIndex].params[name]
     }
 
-    function modelLoopParam(loopName, paramName, paramIndex) {
+    function modelLoopParam(loopName, paramName, rowIndex) {
         if (!main.model.defined) {
             return {}
         }
         const currentModelIndex = main.model.currentIndex
-        return main.model.dataBlocks[currentModelIndex].loops[loopName][paramIndex][paramName]
+        return main.model.dataBlocks[currentModelIndex].loops[loopName][rowIndex][paramName]
     }
 
     function setModelMainParam(parameter, field, value) {
@@ -603,12 +603,12 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         return main.experiment.dataBlocks[currentModelIndex].params[name]
     }
 
-    function experimentLoopParam(loopName, paramName, paramIndex) {
+    function experimentLoopParam(loopName, paramName, rowIndex) {
         if (!main.experiment.defined) {
             return {}
         }
         const currentModelIndex = main.experiment.currentIndex
-        return main.experiment.dataBlocks[currentModelIndex].loops[loopName][paramIndex][paramName]
+        return main.experiment.dataBlocks[currentModelIndex].loops[loopName][rowIndex][paramName]
     }
 
     function setExperimentMainParam(parameter, field, value) {
