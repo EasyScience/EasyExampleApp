@@ -335,13 +335,13 @@ class Experiment(QObject):
         elif paramName == '_pd_instr_reflex_asymmetry_p1':
             path[1] = 'asymmetry_parameters'
             path[2] = 0
-        elif paramName == '_pd_instr_reflex_asymmetry_p1':
+        elif paramName == '_pd_instr_reflex_asymmetry_p2':
             path[1] = 'asymmetry_parameters'
             path[2] = 1
-        elif paramName == '_pd_instr_reflex_asymmetry_p1':
+        elif paramName == '_pd_instr_reflex_asymmetry_p3':
             path[1] = 'asymmetry_parameters'
             path[2] = 2
-        elif paramName == '_pd_instr_reflex_asymmetry_p1':
+        elif paramName == '_pd_instr_reflex_asymmetry_p4':
             path[1] = 'asymmetry_parameters'
             path[2] = 3
 

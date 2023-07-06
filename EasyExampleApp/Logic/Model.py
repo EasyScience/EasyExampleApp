@@ -192,7 +192,7 @@ class Model(QObject):
             value = bool(value)
 
         changedIntern = self.editDataBlockLoopParam(loopName, paramName, rowIndex, field, value)
-        changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, rowIndex, value)
+        changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, rowIndex, field, value)
 
         if changedIntern and changedCryspy:
             self.dataBlocksChanged.emit()
@@ -303,14 +303,17 @@ class Model(QObject):
             if paramName == '_fract_x':
                 path[1] = 'atom_fract_xyz'
                 path[2] = (0, rowIndex)
-            if paramName == '_fract_y':
+            elif paramName == '_fract_y':
                 path[1] = 'atom_fract_xyz'
                 path[2] = (1, rowIndex)
-            if paramName == '_fract_z':
+            elif paramName == '_fract_z':
                 path[1] = 'atom_fract_xyz'
                 path[2] = (2, rowIndex)
-            if paramName == '_occupancy':
+            elif paramName == '_occupancy':
                 path[1] = 'atom_occupancy'
+                path[2] = rowIndex
+            elif paramName == '_B_iso_or_equiv':
+                path[1] = 'atom_b_iso'
                 path[2] = rowIndex
 
         # if 'flags' objects are needed
