@@ -1,0 +1,28 @@
+data_co2sio4
+
+_cell_length_a 10.309609565297752()
+_cell_length_b 6.004416215246756()
+_cell_length_c 4.786998812159574()
+_cell_angle_alpha 90.0
+_cell_angle_beta 90.0
+_cell_angle_gamma 90.0
+_space_group_name_H-M_alt "P n m a"
+_space_group_IT_coordinate_system_code abc
+
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+_atom_site_adp_type
+_atom_site_B_iso_or_equiv
+_atom_site_multiplicity
+_atom_site_Wyckoff_symbol
+Co1 Co 0.0 0.0 0.0 1.0 Biso 0.0 4 a
+Co2 Co 0.280418484464379() 0.25 0.984816289704932() 1.0 Biso 0.7888779334719108() 4 c
+Si Si 0.09372321919103371() 0.25 0.4291544469794409() 1.0 Biso 0.447590696339612() 4 c
+O1 O 0.09133438186274638() 0.25 0.7714701706629685() 1.0 Biso 0.6329835192217893() 4 c
+O2 O 0.44820309659559554() 0.25 0.21674034322774396() 1.0 Biso 0.6127299707425568() 4 c
+O3 O 0.16379141952116144() 0.031917478646583355() 0.2802524321373646() 0.9871714702898277() Biso 0.7762690586154523() 8 d
