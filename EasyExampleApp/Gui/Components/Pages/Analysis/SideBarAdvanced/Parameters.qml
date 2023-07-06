@@ -13,9 +13,9 @@ import Gui.Globals as Globals
 EaElements.GroupColumn {
 
     EaElements.CheckBox {
-        text: qsTr('Display coordinate vectors')
-        checked: Globals.Vars.showCoordinateVectorsOnModelPage
-        onCheckedChanged: Globals.Vars.showCoordinateVectorsOnModelPage = checked
+        text: qsTr('Iconified names')
+        checked: Globals.Vars.useIconifiedNames
+        onCheckedChanged: Globals.Vars.useIconifiedNames = checked
     }
 
 }

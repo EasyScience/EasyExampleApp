@@ -19,4 +19,3 @@ EaComponents.SideBarColumn {
     }
 
 }
-

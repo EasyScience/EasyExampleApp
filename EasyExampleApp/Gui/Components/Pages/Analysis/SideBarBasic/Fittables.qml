@@ -53,17 +53,17 @@ Column {
                              currentText.replace('&nbsp;◦ ', '')
 
             model: [
-                { value: "", text: `All groups (${Globals.Proxies.main.fittables.modelParamsCount +
-                                                Globals.Proxies.main.fittables.experimentParamsCount})` },
-                { value: "model", text: `Model group (${Globals.Proxies.main.fittables.modelParamsCount})` },
-                { value: "cell", text: "&nbsp;◦ Unit cell" },
-                { value: "fract", text: "&nbsp;◦ Atomic coordinates" },
-                { value: "occupancy", text: "&nbsp;◦ Atomic occupancies" },
-                { value: "B_iso", text: "&nbsp;◦ Atomic displacement" },
-                { value: "experiment", text: `Experiment group (${Globals.Proxies.main.fittables.experimentParamsCount})` },
-                { value: "resolution", text: "&nbsp;◦ Instrument resolution" },
-                { value: "asymmetry", text: "&nbsp;◦ Peak asymmetry" },
-                { value: "background", text: "&nbsp;◦ Background" }
+                { value: "", text: `All names (${Globals.Proxies.main.fittables.modelParamsCount + Globals.Proxies.main.fittables.experimentParamsCount})` },
+                { value: "model", text: `<font color='${EaStyle.Colors.themeForegroundMinor}' face='${EaStyle.Fonts.iconsFamily}'>layer-group </font>Model (${Globals.Proxies.main.fittables.modelParamsCount})` },
+                { value: "cell", text: `<font color='${EaStyle.Colors.themeForegroundMinor}' face='${EaStyle.Fonts.iconsFamily}'>cube </font>Unit cell` },
+                { value: "atom_site", text: `<font color='${EaStyle.Colors.themeForegroundMinor}' face='${EaStyle.Fonts.iconsFamily}'>atom </font>Atom sites` },
+                { value: "fract", text: `<font color='${EaStyle.Colors.themeForegroundMinor}' face='${EaStyle.Fonts.iconsFamily}'>map-marker-alt </font>Atomic coordinates` },
+                { value: "occupancy", text: `<font color='${EaStyle.Colors.themeForegroundMinor}' face='${EaStyle.Fonts.iconsFamily}'>fill </font>Atomic occupancies` },
+                { value: "B_iso", text: `<font color='${EaStyle.Colors.themeForegroundMinor}' face='${EaStyle.Fonts.iconsFamily}'>arrows-alt </font>Atomic displacement` },
+                { value: "experiment", text: `<font color='${EaStyle.Colors.themeForegroundMinor}' face='${EaStyle.Fonts.iconsFamily}'>microscope </font>Experiment (${Globals.Proxies.main.fittables.experimentParamsCount})` },
+                { value: "resolution", text: `<font color='${EaStyle.Colors.themeForegroundMinor}' face='${EaStyle.Fonts.iconsFamily}'>grip-lines-vertical </font>Instrument resolution` },
+                { value: "asymmetry", text: `<font color='${EaStyle.Colors.themeForegroundMinor}' face='${EaStyle.Fonts.iconsFamily}'>balance-scale-left </font>Peak asymmetry` },
+                { value: "background", text: `<font color='${EaStyle.Colors.themeForegroundMinor}' face='${EaStyle.Fonts.iconsFamily}'>wave-square </font>Background` }
             ]
 
             onActivated: filterCriteriaField.text = currentValue
@@ -184,8 +184,8 @@ Column {
             }
 
             EaComponents.TableViewLabel {
-                text: item.fullName
-                textFormat: Text.PlainText
+                text: parameterName(item.fullName)
+                textFormat: Text.RichText
                 elide: Text.ElideMiddle
                 ToolTip.text: text
             }
@@ -297,6 +297,60 @@ Column {
     }
 
     // Logic
+
+    function parameterName(fullName) {
+        if (typeof fullName === 'undefined') {
+            return ''
+        }
+
+        if (!Globals.Vars.useIconifiedNames) {
+            return fullName
+        }
+
+        const map = [
+                      { 'from': '.phase.',                     'icon': '&nbsp; layer-group &nbsp;'                              },
+                      { 'from': 'model.',                      'icon': 'layer-group &nbsp;'                                     },
+
+                      { 'from': '.cell_length_',               'icon': '&nbsp; cube ruler &nbsp;',          'txt': 'length '    },
+                      { 'from': '.cell_angle_',                'icon': '&nbsp; cube less-than &nbsp;',      'txt': 'angle '     },
+                      { 'from': 'alpha',                                                                    'txt': 'α'          },
+                      { 'from': 'beta',                                                                     'txt': 'β'          },
+                      { 'from': 'gamma',                                                                    'txt': 'γ'          },
+
+                      { 'from': '.atom_site.',                 'icon': '&nbsp; atom &nbsp;'                                     },
+                      { 'from': '.fract_',                     'icon': '&nbsp; map-marker-alt &nbsp;',      'txt': 'fract '     },
+                      { 'from': '.occupancy',                  'icon': '&nbsp; fill &nbsp;',                'txt': 'occ.'       },
+                      { 'from': '.B_iso_or_equiv',             'icon': '&nbsp; arrows-alt &nbsp;',          'txt': 'Biso'       },
+
+                      { 'from': 'experiment.',                 'icon': 'microscope &nbsp;'                                      },
+
+                      { 'from': '.diffrn_radiation_wavelength','icon': '&nbsp; radiation &nbsp;',           'txt': 'wavelength' },
+                      { 'from': '.pd_meas_2theta_offset',      'icon': '&nbsp; arrows-alt-h &nbsp;',        'txt': '2θ offset'  },
+                      { 'from': '.scale',                      'icon': '&nbsp; weight &nbsp;',              'txt': 'scale'      },
+                      { 'from': '.intensity',                  'icon': '&nbsp; mountain &nbsp;',            'txt': 'intensity'  },
+
+                      { 'from': '.pd_instr_resolution_',       'icon': '&nbsp; grip-lines-vertical &nbsp;'                      },
+                      { 'from': '.pd_instr_reflex_asymmetry_', 'icon': '&nbsp; balance-scale-left &nbsp;'                       },
+
+                      { 'from': '.pd_background.',             'icon': '&nbsp; wave-square &nbsp;',         'txt': 'bkg '       },
+                      { 'from': '_deg',                                                                     'txt': '°'          }
+                  ]
+        const face = `'${EaStyle.Fonts.iconsFamily}'`
+        const color = `'${EaStyle.Colors.themeForegroundDisabled}'`
+
+        let name = fullName
+        for (const item of map) {
+            if ('icon' in item && 'txt' in item) {
+                name = name.replace(item.from, `<font color=${color} face=${face}>${item.icon}</font>${item.txt}`)
+            } else if ('icon' in item) {
+                name = name.replace(item.from, `<font color=${color} face=${face}>${item.icon}</font>`)
+            } else if ('txt' in item) {
+                name = name.replace(item.from, item.txt)
+            }
+        }
+
+        return name
+    }
 
     function enableOpenGL() {
         if (Globals.Proxies.main.plotting.currentLib1d === 'QtCharts') {

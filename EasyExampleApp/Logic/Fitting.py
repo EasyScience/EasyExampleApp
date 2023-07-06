@@ -140,7 +140,6 @@ class Worker(QObject):
             console.info(f"Optimal reduced chi2 per {self._proxy.fitting._pointsCount} points: {self._proxy.fitting._chiSq/self._proxy.fitting._pointsCount:.2f}")
 
             ####self._proxy.fitting._chiSqStart = self._proxy.fitting.chiSq
-            self._proxy.status.fitStatus = 'Success'
 
             names = [Data.cryspyDictParamPathToStr(name) for name in parameter_names_free]
             self._proxy.experiment.editDataBlockByCryspyDictParams(names)
@@ -150,8 +149,11 @@ class Worker(QObject):
 
             #self._paramsInit.pretty_print()
             #result.params.pretty_print()
+            self._proxy.status.fitStatus = 'Success'
+            #console.error('Success')
         else:
             self._proxy.status.fitStatus = 'Failure'
+            #console.error('Failure')
 
         # Finishing
         self.finished.emit()

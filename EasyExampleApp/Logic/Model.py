@@ -380,9 +380,6 @@ class Model(QObject):
                 else:
                     self.editDataBlockLoopParam(loopName, paramName, rowIndex, 'value', value, blockIndex)
 
-
-
-
     def defaultYCalcArray(self):
         xArray = self._proxy.experiment._xArrays[0]  # NEED FIX
         params = _DEFAULT_DATA_BLOCK['params']

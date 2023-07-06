@@ -457,7 +457,6 @@ class Experiment(QObject):
                 else:
                     self.editDataBlockLoopParam(loopName, paramName, rowIndex, 'value', value, blockIndex)
 
-
     def defaultXArray(self):
         xMin = _DEFAULT_DATA_BLOCK['params']['xMin']['value']
         xMax = _DEFAULT_DATA_BLOCK['params']['xMax']['value']
