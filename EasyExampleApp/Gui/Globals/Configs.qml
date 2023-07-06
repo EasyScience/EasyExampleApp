@@ -17,7 +17,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         readonly property var tool: QtObject {
             property var poetry: QtObject {
                 readonly property string homepage: 'https://github.com/EasyScience/EasyExampleApp'
-                readonly property string version: '0.9.0-alpha.1'
+                readonly property string version: '0.9.0-pre-alpha.1'
             }
         }
         readonly property var ci: QtObject {
