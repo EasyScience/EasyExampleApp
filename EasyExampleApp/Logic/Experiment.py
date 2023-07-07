@@ -696,6 +696,7 @@ class Experiment(QObject):
                             url = 'https://easydiffraction.org',
                             min = 0.5,
                             max = 2.5,
+                            units = 'Å',
                             fittable = True,
                             fit = item.wavelength_refinement
                         ))
@@ -706,6 +707,7 @@ class Experiment(QObject):
                             url = 'https://easydiffraction.org',
                             min = -0.5,
                             max = 0.5,
+                            units = '°',
                             fittable = True,
                             fit = item.offset_ttheta_refinement
                         ))

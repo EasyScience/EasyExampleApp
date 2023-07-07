@@ -664,6 +664,7 @@ class Model(QObject):
                                 enabled = not cryspy_atom.b_iso_or_equiv_constraint,
                                 min = 0,
                                 max = 1,
+                                units = 'Å²',
                                 fittable = True,
                                 fit = cryspy_atom.b_iso_or_equiv_refinement
                             ))
