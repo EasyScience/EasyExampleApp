@@ -24,38 +24,29 @@ try:
 except ImportError:
     console.debug('No CrysPy module has been found')
 
-_DEFAULT_DATA_BLOCK = {
-    'name': 'GaussianB',
-    'params': {
-        'shift': {
-            'value': 3.0,
-            'error': 0,
-            'min': -5,
-            'max': 5,
-            'unit': '',
-            'fittable': True,
-            'fit': True
-        },
-        'width': {
-            'value': 2.0,
-            'error': 0,
-            'min': 0,
-            'max': 5,
-            'unit': '',
-            'fittable': True,
-            'fit': True
-        },
-        'scale': {
-            'value': 1.5,
-            'error': 0,
-            'min': 0.1,
-            'max': 5,
-            'unit': '',
-            'fittable': True,
-            'fit': True
-        }
-    }
-}
+_DEFAULT_DATA_BLOCK = """data_default
+
+_space_group_name_H-M_alt "F d -3 m"
+_space_group_IT_coordinate_system_code 2
+
+_cell_length_a 5
+_cell_length_b 5
+_cell_length_c 5
+_cell_angle_alpha 90
+_cell_angle_beta 90
+_cell_angle_gamma 90
+
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+_atom_site_adp_type
+_atom_site_B_iso_or_equiv
+O O 0 0 0 1 Biso 0
+"""
 
 
 class Model(QObject):
@@ -134,17 +125,12 @@ class Model(QObject):
     @Slot()
     def addDefaultModel(self):
         console.debug("Adding default model")
-        dataBlock = _DEFAULT_DATA_BLOCK
-        self.addDataBlock(dataBlock)
-        yCalcArray = self.defaultYCalcArray()
-        self.addYCalcArray(yCalcArray)
+        self.loadModelFromEdCif(_DEFAULT_DATA_BLOCK)
 
     @Slot(str)
     def loadModelFromFile(self, fpath):
-        #fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'Co2SiO4_model.cif')
         fpath = IO.generalizePath(fpath)
-        console.debug(f"File: {fpath}")
-        # Load ED CIF file, convert it to CrysPy RCIF and create CrysPy obj from string
+        console.debug(f"Loading model from: {fpath}")
         with open(fpath, 'r') as file:
             edCif = file.read()
         self.loadModelFromEdCif(edCif)

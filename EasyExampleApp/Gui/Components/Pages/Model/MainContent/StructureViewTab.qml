@@ -265,6 +265,7 @@ Rectangle {
 
         spacing: 0.25 * EaStyle.Sizes.fontPixelSize
 
+        /*
         EaElements.TabButton {
             checkable: false
             autoExclusive: false
@@ -281,6 +282,7 @@ Rectangle {
         }
 
         Item { height: 1; width: 0.5 * EaStyle.Sizes.fontPixelSize }  // spacer
+        */
 
         EaElements.TabButton {
             checkable: false

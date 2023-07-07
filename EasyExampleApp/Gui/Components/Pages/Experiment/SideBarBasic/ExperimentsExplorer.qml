@@ -99,11 +99,11 @@ Column {
         EaElements.SideBarButton {
             enabled: !Globals.Proxies.main.experiment.defined
             fontIcon: "upload"
-            text: qsTr("Import data from local drive")
+            text: qsTr("Load experiment from file")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
                 if (Globals.Vars.isTestMode) {
-                    console.debug(`---------- Loading experiment (test mode) ----------`)
+                    console.debug(`---------- Loading experiment from file (test mode) ----------`)
                     const fpath = '../examples/Co2SiO4_experiment.cif'
                     Globals.Proxies.main.experiment.loadExperimentFromFile(fpath)
                 } else {
@@ -114,12 +114,13 @@ Column {
         }
 
         EaElements.SideBarButton {
-            enabled: false  //!Globals.Proxies.main.experiment.defined
-            fontIcon: "upload"
-            text: qsTr("Add default experiment data")
+            enabled: !Globals.Proxies.main.experiment.defined
+            fontIcon: "plus-circle"
+            text: qsTr("Define experiment manually")
             onClicked: {
-                Globals.Proxies.main.experiment.addDefaultExperiment()
                 console.debug(`Clicking '${text}' button: ${this}`)
+                console.debug(`---------- Adding default experiment ----------`)
+                Globals.Proxies.main.experiment.addDefaultExperiment()
             }
             Component.onCompleted: Globals.Refs.app.experimentPage.addDefaultExperimentDataButton = this
         }
@@ -132,7 +133,7 @@ Column {
         //selectMultiple: true
         nameFilters: [ "CIF files (*.cif)"]
         onAccepted: {
-            console.debug(`---------- Loading experiment ----------`)
+            console.debug(`---------- Loading experiment from file ----------`)
             Globals.Proxies.main.experiment.loadExperimentFromFile(selectedFile)
         }
     }

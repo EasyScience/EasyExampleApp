@@ -102,11 +102,11 @@ Column {
 
         EaElements.SideBarButton {
             fontIcon: "upload"
-            text: qsTr("Load new model from file")
+            text: qsTr("Load model from file")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
                 if (Globals.Vars.isTestMode) {
-                    console.debug(`---------- Loading model (test mode) ----------`)
+                    console.debug(`---------- Loading model from file (test mode) ----------`)
                     const fpath = '../examples/Co2SiO4_model.cif'
                     Globals.Proxies.main.model.loadModelFromFile(fpath)
                 } else {
@@ -117,11 +117,11 @@ Column {
         }
 
         EaElements.SideBarButton {
-            enabled: false
             fontIcon: "plus-circle"
-            text: qsTr("Add new model manually")
+            text: qsTr("Define model manually")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
+                console.debug(`---------- Adding default model ----------`)
                 Globals.Proxies.main.model.addDefaultModel()
             }
             Component.onCompleted: Globals.Refs.app.modelPage.addNewModelManuallyButton = this
@@ -135,7 +135,7 @@ Column {
         //selectMultiple: true
         nameFilters: [ "CIF files (*.cif)"]
         onAccepted: {
-            console.debug(`---------- Loading model ----------`)
+            console.debug(`---------- Loading model from file ----------`)
             Globals.Proxies.main.model.loadModelFromFile(selectedFile)
         }
     }

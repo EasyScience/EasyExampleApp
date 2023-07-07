@@ -21,41 +21,49 @@ try:
 except ImportError:
     console.debug('No CrysPy module have been found')
 
-_DEFAULT_DATA_BLOCK = {
-    'name': 'PicoScopeB',
-    'params': {
-        'xMin': {
-            'value': -10.0,
-            'fittable': False
-        },
-        'xMax': {
-            'value': 10.0,
-            'fittable': False
-        },
-        'xStep': {
-            'value': 0.05,
-            'fittable': False
-        },
-        'background_min': {
-            'value': 0.5,
-            'error': 0,
-            'min': -5,
-            'max': 5,
-            'unit': '',
-            'fittable': True,
-            'fit': True
-        },
-        'background_max': {
-            'value': 0.75,
-            'error': 0,
-            'min': -5,
-            'max': 5,
-            'unit': '',
-            'fittable': True,
-            'fit': True
-        }
-    }
-}
+_DEFAULT_DATA_BLOCK = """data_default
+
+_diffrn_radiation_probe neutron
+_diffrn_radiation_wavelength 1.87
+
+_pd_meas_2theta_offset 0
+_pd_meas_2theta_range_min 36.5
+_pd_meas_2theta_range_max 39
+_pd_meas_2theta_range_inc 0.5
+
+_pd_instr_resolution_u 0.2
+_pd_instr_resolution_v -0.5
+_pd_instr_resolution_w 0.4
+_pd_instr_resolution_x 0
+_pd_instr_resolution_y 0
+
+_pd_instr_reflex_asymmetry_p1 0
+_pd_instr_reflex_asymmetry_p2 0
+_pd_instr_reflex_asymmetry_p3 0
+_pd_instr_reflex_asymmetry_p4 0
+
+loop_
+_phase_label
+_phase_scale
+default 1
+
+loop_
+_pd_background_2theta
+_pd_background_intensity
+10  1
+170 1
+
+loop_
+_pd_meas_2theta
+_pd_meas_intensity
+_pd_meas_intensity_sigma
+36.5 1    1
+37.0 10   3
+37.5 700  25
+38.0 1100 30
+38.5 50   7
+39.0 1    1
+"""
 
 
 class Experiment(QObject):
@@ -142,45 +150,12 @@ class Experiment(QObject):
     @Slot()
     def addDefaultExperiment(self):
         console.debug('Adding default experiment')
-        dataBlock = _DEFAULT_DATA_BLOCK
-        xArray = self.defaultXArray()
-        yMeasArray = self.defaultYMeasArray()
-        yBkgArray = self.defaultYBkgArray()
-        self.addDataBlock(dataBlock)
-        self.addXArray(xArray)
-        self.addYMeasArray(yMeasArray)
-        self.addYBkgArray(yBkgArray)
-
-    #@Slot(str)
-    #def loadExperimentFromFile_OLD(self, fpath):
-    #    fpath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', fpath))
-    #    console.debug(f"Loading an experiment from {fpath}")
-    #    # add to dataBlocks, xArrays, yMeasArrays
-    #    with open(fpath, 'r') as f:
-    #        dataBlock = json.load(f)
-    #    xArray = self.defaultXArray()  # NEED FIX
-    #    yMeasArray = self.defaultYMeasArray()  # NEED FIX
-    #    if 'xArray' and 'yMeasArray' in dataBlock.keys():
-    #        xArray = np.array(dataBlock['xArray'])
-    #        yMeasArray = np.array(dataBlock['yMeasArray'])
-    #        del dataBlock['xArray']
-    #        del dataBlock['yMeasArray']
-    #    self.addDataBlock(dataBlock)
-    #    self.addXArray(xArray)
-    #    self.addYMeasArray(yMeasArray)
-    #    # add to yBkgArray
-    #    yBkgArray = self.defaultYBkgArray()  # NEED FIX
-    #    if 'background_min' and 'background_max' in dataBlock['params'].keys():
-    #        index = len(self._dataBlocks) - 1
-    #        yBkgArray = self.calculatedYBkgArray(index)
-    #    self.addYBkgArray(yBkgArray)
+        self.loadExperimentFromCif(_DEFAULT_DATA_BLOCK)
 
     @Slot(str)
     def loadExperimentFromFile(self, fpath):
-        #fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'examples', 'Co2SiO4_experiment.cif')
         fpath = IO.generalizePath(fpath)
-        console.debug(f"File: {fpath}")
-        # Load ED CIF file, convert it to CrysPy RCIF and create CrysPy obj from string
+        console.debug(f"Loading experiment from: {fpath}")
         with open(fpath, 'r') as file:
             edCif = file.read()
         self.loadExperimentFromCif(edCif)
