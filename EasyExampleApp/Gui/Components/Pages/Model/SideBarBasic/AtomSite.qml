@@ -119,6 +119,8 @@ EaElements.GroupColumn {
                 ToolTip.text: qsTr("Atom color")
                 iconColor: Globals.Proxies.atomColor(
                                Globals.Proxies.modelLoopParam('_atom_site', '_type_symbol', index).value)
+                backgroundColor: "transparent"
+                borderColor: "transparent"
             }
 
             EaComponents.TableViewParameter {

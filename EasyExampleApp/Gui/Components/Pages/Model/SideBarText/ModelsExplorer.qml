@@ -73,6 +73,8 @@ Column {
                 fontIcon: "tint"
                 ToolTip.text: qsTr("Calculated pattern color")
                 iconColor: EaStyle.Colors.chartForegrounds[index]
+                backgroundColor: "transparent"
+                borderColor: "transparent"
             }
 
             EaComponents.TableViewParameter {
