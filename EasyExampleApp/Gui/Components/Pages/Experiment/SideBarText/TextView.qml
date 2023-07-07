@@ -108,6 +108,7 @@ Rectangle {
             }
         }
 
+        /*
         EaElements.TabButton {
             enabled: listView.cifEdited
             highlighted: listView.cifEdited
@@ -123,6 +124,7 @@ Rectangle {
                 forceActiveFocus()
             }
         }
+        */
 
     }
     // Tool buttons

@@ -106,6 +106,7 @@ Rectangle {
             }
         }
 
+        /*
         EaElements.TabButton {
             enabled: listView.cifEdited
             highlighted: listView.cifEdited
@@ -115,12 +116,13 @@ Rectangle {
             width: EaStyle.Sizes.toolButtonHeight
             borderColor: EaStyle.Colors.chartAxis
             fontIcon: "undo"
-            ToolTip.text: qsTr("Undo all changes")
+            ToolTip.text: qsTr("Undo changes")
             onClicked: {
                 listView.firstDelegateRef.text = Globals.Proxies.main.model.dataBlocksCif[0]
                 forceActiveFocus()
             }
         }
+        */
 
     }
     // Tool buttons
