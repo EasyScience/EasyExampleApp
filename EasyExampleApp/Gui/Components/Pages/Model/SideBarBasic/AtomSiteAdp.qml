@@ -58,49 +58,49 @@ EaElements.GroupColumn {
             EaComponents.TableViewLabel {
                 id: atomSiteIso
                 width: EaStyle.Sizes.fontPixelSize * 3.9
-                horizontalAlignment: Text.AlignRight
+                horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
                 text: Globals.Proxies.modelLoopParam('_atom_site', '_B_iso_or_equiv', 0).prettyName ?? ''  // NEED FIX
             }
 
             EaComponents.TableViewLabel {
                 width: atomSiteIso.width
-                horizontalAlignment: Text.AlignRight
+                horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("ani11")
             }
 
             EaComponents.TableViewLabel {
                 width: atomSiteIso.width
-                horizontalAlignment: Text.AlignRight
+                horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("ani22")
             }
 
             EaComponents.TableViewLabel {
                 width: atomSiteIso.width
-                horizontalAlignment: Text.AlignRight
+                horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("ani33")
             }
 
             EaComponents.TableViewLabel {
                 width: atomSiteIso.width
-                horizontalAlignment: Text.AlignRight
+                horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("ani12")
             }
 
             EaComponents.TableViewLabel {
                 width: atomSiteIso.width
-                horizontalAlignment: Text.AlignRight
+                horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("ani13")
             }
 
             EaComponents.TableViewLabel {
                 width: atomSiteIso.width
-                horizontalAlignment: Text.AlignRight
+                horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("ani23")
             }

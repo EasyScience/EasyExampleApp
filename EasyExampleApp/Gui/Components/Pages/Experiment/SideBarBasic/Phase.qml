@@ -53,7 +53,7 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 4.0
-                horizontalAlignment: Text.AlignRight
+                horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
                 text: Globals.Proxies.experimentLoopParam('_phase', '_scale', 0).prettyName ?? ''  // NEED FIX
             }

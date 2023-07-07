@@ -61,28 +61,28 @@ EaElements.GroupColumn {
             EaComponents.TableViewLabel {
                 id: fractXLabel
                 width: EaStyle.Sizes.fontPixelSize * 4.7
-                horizontalAlignment: Text.AlignRight
+                horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
                 text: Globals.Proxies.modelLoopParam('_atom_site', '_fract_x', 0).prettyName ?? ''  // NEED FIX
             }
 
             EaComponents.TableViewLabel {
                 width: fractXLabel.width
-                horizontalAlignment: Text.AlignRight
+                horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
                 text: Globals.Proxies.modelLoopParam('_atom_site', '_fract_y', 0).prettyName ?? ''  // NEED FIX
             }
 
             EaComponents.TableViewLabel {
                 width: fractXLabel.width
-                horizontalAlignment: Text.AlignRight
+                horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
                 text: Globals.Proxies.modelLoopParam('_atom_site', '_fract_z', 0).prettyName ?? ''  // NEED FIX
             }
 
             EaComponents.TableViewLabel {
                 width: fractXLabel.width
-                horizontalAlignment: Text.AlignRight
+                horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
                 text: Globals.Proxies.modelLoopParam('_atom_site', '_occupancy', 0).prettyName ?? ''  // NEED FIX
             }
