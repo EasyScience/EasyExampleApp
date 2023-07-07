@@ -611,26 +611,24 @@ class Experiment(QObject):
             console.debug(f" - Chart ranges for experiment data block no. {blockIdx + 1} in intern dataset has been replaced")
         self.chartRangesChanged.emit()
 
-    def setDataBlocksCif(self):
-        #console.debug("Converting experiment dataBlocks to CIF string")
-        #self._dataBlocksCif = Converter.dictToJson(self._dataBlocks)
-        #self._dataBlocksCif = Converter.dataBlocksToCif(self._dataBlocks)
-        cifStr = Converter.dataBlocksToCif(self._dataBlocks)
-        self._dataBlocksCifNoMeas = [cifStr]  #.split('\n')
-        self._dataBlocksCif = self._dataBlocksCifNoMeas + self._dataBlocksCifMeasOnly
+    def setDataBlocksCifNoMeas(self):
+        self._dataBlocksCifNoMeas = Converter.dataBlocksToCif(self._dataBlocks)
         console.debug(" - Experiment data blocks (without measured data) have been converted to CIF string")
-        console.debug(" - Experiment data blocks (including measured data) have been converted to CIF string")
         self.dataBlocksCifNoMeasChanged.emit()
-        self.dataBlocksCifChanged.emit()
 
     def setDataBlocksCifMeasOnly(self):
-        #self._dataBlocksCifMeasOnly = Converter.dataBlockLoopsToCif(self._dataBlocksMeasOnly)
-        cifStr = Converter.dataBlockLoopsToCif(self._dataBlocksMeasOnly)
-        self._dataBlocksCifMeasOnly = cifStr.split('\n')
-        self._dataBlocksCif = self._dataBlocksCifNoMeas + self._dataBlocksCifMeasOnly
+        self._dataBlocksCifMeasOnly = Converter.dataBlockLoopsToCif(self._dataBlocksMeasOnly)
         console.debug(" - Experiment data blocks (measured data only) have been converted to CIF string")
-        console.debug(" - Experiment data blocks (including measured data) have been converted to CIF string")
         self.dataBlocksCifMeasOnlyChanged.emit()
+
+    def setDataBlocksCif(self):
+        self.setDataBlocksCifNoMeas()
+        self.setDataBlocksCifMeasOnly()
+        cifMeasOnlyReduced =  self._dataBlocksCifMeasOnly.split('\n')[:10] + ['...'] + self._dataBlocksCifMeasOnly.split('\n')[-6:]
+        cifMeasOnlyReduced = '\n'.join(cifMeasOnlyReduced)
+        cifMeasOnlyReduced = cifMeasOnlyReduced.rstrip()
+        self._dataBlocksCif = [self._dataBlocksCifNoMeas] + [cifMeasOnlyReduced]
+        console.debug(" - Experiment data blocks (including short measured data) have been converted to CIF string")
         self.dataBlocksCifChanged.emit()
 
     # Extract experiments from cryspy_obj and cryspy_dict into internal ed_dict

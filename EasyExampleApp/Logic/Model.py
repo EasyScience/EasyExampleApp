@@ -434,11 +434,7 @@ class Model(QObject):
     #    self.calculatedDataChanged.emit()
 
     def setDataBlocksCif(self):
-        #console.debug("Converting model dataBlocks to CIF string")
-        #self._dataBlocksCif = Converter.dictToJson(self._dataBlocks)
-        #self._dataBlocksCif = Converter.dataBlocksToCif(self._dataBlocks)
-        cifStr = Converter.dataBlocksToCif(self._dataBlocks)
-        self._dataBlocksCif = [cifStr]
+        self._dataBlocksCif = [Converter.dataBlocksToCif([block]) for block in self._dataBlocks]
         console.debug(" - Model dataBlocks have been converted to CIF string")
         self.dataBlocksCifChanged.emit()
 

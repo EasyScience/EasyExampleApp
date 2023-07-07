@@ -56,10 +56,16 @@ Rectangle {
             font.family: EaStyle.Fonts.monoFontFamily
             font.pixelSize: EaStyle.Sizes.fontPixelSize
 
-            color: enabled ?
-                       EaStyle.Colors.themeForeground :
-                       EaStyle.Colors.themeForegroundDisabled
+            color: !enabled || readOnly ?
+                       EaStyle.Colors.themeForegroundDisabled :
+                       EaStyle.Colors.themeForeground
             Behavior on color { EaAnimations.ThemeChange {} }
+
+            selectionColor: EaStyle.Colors.themeAccent
+            Behavior on selectionColor { EaAnimations.ThemeChange {} }
+
+            selectedTextColor: EaStyle.Colors.themeBackground
+            Behavior on selectedTextColor { EaAnimations.ThemeChange {} }
 
             text: Globals.Proxies.main.experiment.dataBlocksCif[index]
 
@@ -96,8 +102,8 @@ Rectangle {
             //onClicked: forceActiveFocus()
             onClicked: {
                 Globals.Proxies.main.experiment.loadExperimentFromCif(
-                            listView.firstDelegateRef.text +
-                            Globals.Proxies.main.experiment.dataBlocksCifMeasOnly.join('\n'))  // NEED FIX
+                            listView.firstDelegateRef.text + '\n' +
+                            Globals.Proxies.main.experiment.dataBlocksCifMeasOnly)  //.join('\n'))  // NEED FIX
                 forceActiveFocus()
             }
         }

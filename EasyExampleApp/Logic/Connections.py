@@ -134,7 +134,7 @@ class Connections(QObject):
 
     def onExperimentDataBlocksMeasOnlyChanged(self, idx):
         # Experiment page
-        self._proxy.experiment.setDataBlocksCifMeasOnly()
+        self._proxy.experiment.setDataBlocksCif()  # setDataBlocksCifMeasOnly()
         self._proxy.experiment.addXYArraysAndChartRanges(idx)
 
     def onExperimentYMeasArraysChanged(self):

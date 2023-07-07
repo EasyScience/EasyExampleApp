@@ -33,7 +33,7 @@ Rectangle {
         property var firstDelegateRef: null
         property bool cifEdited: listView.firstDelegateRef === null ?
                                      false :
-                                     listView.firstDelegateRef.text !== Globals.Proxies.main.model.dataBlocksCif[0]
+                                     listView.firstDelegateRef.text !== Globals.Proxies.main.model.dataBlocksCif[Globals.Proxies.main.model.currentIndex]
 
         anchors.fill: parent
         anchors.topMargin: EaStyle.Sizes.fontPixelSize
@@ -47,22 +47,31 @@ Rectangle {
             interactive: false
         }
 
-        model: Globals.Proxies.main.model.dataBlocksCif
+        model: 1  // Globals.Proxies.main.model.dataBlocksCif
 
         // ListView Delegate
         delegate: TextEdit {
+            readOnly: true
+
             font.family: EaStyle.Fonts.monoFontFamily
             font.pixelSize: EaStyle.Sizes.fontPixelSize
 
-            color: enabled ?
-                       EaStyle.Colors.themeForeground :
-                       EaStyle.Colors.themeForegroundDisabled
+            color: !enabled || readOnly ?
+                       EaStyle.Colors.themeForegroundDisabled :
+                       EaStyle.Colors.themeForeground
             Behavior on color { EaAnimations.ThemeChange {} }
 
-            text: Globals.Proxies.main.model.dataBlocksCif[index]
+            selectionColor: EaStyle.Colors.themeAccent
+            Behavior on selectionColor { EaAnimations.ThemeChange {} }
+
+            selectedTextColor: EaStyle.Colors.themeBackground
+            Behavior on selectedTextColor { EaAnimations.ThemeChange {} }
+
+            text: Globals.Proxies.main.model.dataBlocksCif[Globals.Proxies.main.model.currentIndex] ?? ''
 
             Component.onCompleted: {
                 if (index === 0) {
+                    readOnly = false
                     listView.firstDelegateRef = this
                 }
             }

@@ -35,7 +35,7 @@ class Analysis(QObject):
     # Private methods
 
     def sumAllYCalcArays(self):
-        index = self._proxy.experiment.currentIndex
+        index = self._proxy.experiment.currentIndex  # NEED FIX
         sum = np.zeros(len(self._proxy.experiment._xArrays[index]))
         for i in range(len(self._proxy.model._yCalcArrays)):
             sum += self._proxy.model._yCalcArrays[i]
