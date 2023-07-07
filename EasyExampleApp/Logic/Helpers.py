@@ -146,7 +146,7 @@ class Converter:
                     value = param["value"]
                     # convert
                     if isinstance(value, float):
-                        value = f'{round(value, 4):g}'  # 3.0 -> "3", 3.012345 -> "3.0123"
+                        value = f'{round(value, 4):.8g}'  # 3.0 -> "3", 3.012345 -> "3.0123"
                     elif isinstance(value, str) and ' ' in value:  # P n m a -> "P n m a"
                         value = f'"{value}"'
                     # add brackets for free params
@@ -170,7 +170,7 @@ class Converter:
                             value = param["value"]
                             # convert
                             if isinstance(value, float):
-                                value = f'{round(value, 4):g}'  # 3.0 -> "3", 3.012345 -> "3.0123"
+                                value = f'{round(value, 4):.8g}'  # 3.0 -> "3", 3.012345 -> "3.0123"
                             elif isinstance(value, str) and ' ' in value:  # P n m a -> "P n m a"
                                 value = f'"{value}"'
                             # add brackets for free params
