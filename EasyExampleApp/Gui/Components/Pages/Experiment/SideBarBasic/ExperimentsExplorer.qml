@@ -36,8 +36,13 @@ Column {
         header: EaComponents.TableViewHeader {
 
             EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 2.5
-                //text: qsTr("No.")
+                width: EaStyle.Sizes.fontPixelSize * 3.0
+                //text: qsTr("no.")
+            }
+
+            EaComponents.TableViewLabel {
+                width: EaStyle.Sizes.tableRowHeight
+                //text: qsTr("color")
             }
 
             EaComponents.TableViewLabel {
@@ -48,13 +53,8 @@ Column {
             }
 
             EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 3.0
-                //text: qsTr("Color")
-            }
-
-            EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 3.0
-                //text: qsTr("Del.")
+                width: EaStyle.Sizes.tableRowHeight
+                //text: qsTr("del.")
             }
 
         }
@@ -63,16 +63,18 @@ Column {
         delegate: EaComponents.TableViewDelegate {
 
             EaComponents.TableViewLabel {
-                color: EaStyle.Colors.themeForegroundMinor
                 text: index + 1
+                color: EaStyle.Colors.themeForegroundMinor
+            }
+
+            EaComponents.TableViewButton {
+                fontIcon: "tint"
+                ToolTip.text: qsTr("Measured pattern color")
+                iconColor: EaStyle.Colors.chartForegroundsExtra[2]
             }
 
             EaComponents.TableViewParameter {
                 text: Globals.Proxies.main.experiment.dataBlocks[index].name
-            }
-
-            EaComponents.TableViewLabel {
-                backgroundColor: EaStyle.Colors.chartForegroundsExtra[2]
             }
 
             EaComponents.TableViewButton {

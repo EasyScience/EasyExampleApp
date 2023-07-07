@@ -92,7 +92,7 @@ Rectangle {
             width: EaStyle.Sizes.toolButtonHeight
             borderColor: EaStyle.Colors.chartAxis
             fontIcon: "check"
-            ToolTip.text: qsTr("Apply all changes")
+            ToolTip.text: qsTr("Apply changes")
             //onClicked: forceActiveFocus()
             onClicked: {
                 Globals.Proxies.main.experiment.loadExperimentFromCif(
@@ -111,7 +111,7 @@ Rectangle {
             width: EaStyle.Sizes.toolButtonHeight
             borderColor: EaStyle.Colors.chartAxis
             fontIcon: "undo"
-            ToolTip.text: qsTr("Undo all changes")
+            ToolTip.text: qsTr("Undo changes")
             onClicked: {
                 listView.firstDelegateRef.text = Globals.Proxies.main.experiment.dataBlocksCif[0]
                 forceActiveFocus()

@@ -35,19 +35,21 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewLabel {
                 enabled: false
-                width: EaStyle.Sizes.fontPixelSize * 2.5
-                //text: qsTr("No.")
+                width: EaStyle.Sizes.fontPixelSize * 3.0
+                //text: qsTr("no.")
             }
 
             EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 4.0
+                //width: EaStyle.Sizes.fontPixelSize * 4.0
+                flexibleWidth: true
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
                 text: Globals.Proxies.modelLoopParam('_atom_site', '_label', 0).prettyName ?? ''  // NEED FIX
            }
 
             EaComponents.TableViewLabel {
-                flexibleWidth: true
+                //flexibleWidth: true
+                width: EaStyle.Sizes.fontPixelSize * 2.0
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
                 text: Globals.Proxies.modelLoopParam('_atom_site', '_adp_type', 0).prettyName ?? ''  // NEED FIX
@@ -55,7 +57,7 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewLabel {
                 id: atomSiteIso
-                width: EaStyle.Sizes.fontPixelSize * 3.7
+                width: EaStyle.Sizes.fontPixelSize * 3.9
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
                 text: Globals.Proxies.modelLoopParam('_atom_site', '_B_iso_or_equiv', 0).prettyName ?? ''  // NEED FIX
@@ -105,7 +107,7 @@ EaElements.GroupColumn {
 
             // Temporary fix for right margin
             EaComponents.TableViewLabel {
-                width: 1
+                width: EaStyle.Sizes.fontPixelSize * 0.5
             }
 
         }
@@ -151,17 +153,17 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewParameter {
                 enabled: false
-                text: '0.0000'
+                text: '0'
             }
 
             EaComponents.TableViewParameter {
                 enabled: false
-                text: '0.0000'
+                text: '0'
             }
 
             EaComponents.TableViewParameter {
                 enabled: false
-                text: '0.0000'
+                text: '0'
             }
 
             // Temporary fix for right margin

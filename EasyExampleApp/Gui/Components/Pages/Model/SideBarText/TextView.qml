@@ -89,7 +89,7 @@ Rectangle {
             width: EaStyle.Sizes.toolButtonHeight
             borderColor: EaStyle.Colors.chartAxis
             fontIcon: "check"
-            ToolTip.text: qsTr("Apply all changes")
+            ToolTip.text: qsTr("Apply changes")
             //onClicked: forceActiveFocus()
             onClicked: {
                 Globals.Proxies.main.model.loadModelFromEdCif(listView.firstDelegateRef.text)

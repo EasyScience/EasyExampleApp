@@ -35,19 +35,19 @@ EaElements.GroupColumn {
         header: EaComponents.TableViewHeader {
 
             EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 2.5
-                //text: qsTr("No.")
+                width: EaStyle.Sizes.fontPixelSize * 3.0
+                //text: qsTr("no.")
             }
 
             EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 11.0
+                width: EaStyle.Sizes.fontPixelSize * 4.0
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
                 text: Globals.Proxies.experimentLoopParam('_pd_background', '_2theta', 0).prettyName ?? ''  // NEED FIX
             }
 
             EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 11.0
+                width: EaStyle.Sizes.fontPixelSize * 6.0
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
                 text: Globals.Proxies.experimentLoopParam('_pd_background', '_intensity', 0).prettyName ?? ''  // NEED FIX
@@ -58,8 +58,8 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 3.0
-                //text: qsTr("Del.")
+                width: EaStyle.Sizes.tableRowHeight
+                //text: qsTr("del.")
             }
 
         }
@@ -85,8 +85,7 @@ EaElements.GroupColumn {
                 fitCheckBox.onToggled: Globals.Proxies.setExperimentLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
-            EaComponents.TableViewLabel {
-            }
+            EaComponents.TableViewLabel {}
 
             EaComponents.TableViewButton {
                 fontIcon: "minus-circle"

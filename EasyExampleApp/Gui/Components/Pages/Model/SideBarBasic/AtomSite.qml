@@ -35,16 +35,20 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewLabel {
                 enabled: false
-                width: EaStyle.Sizes.fontPixelSize * 2.5
-                //text: qsTr("No.")
+                width: EaStyle.Sizes.fontPixelSize * 3.0
+                //text: qsTr("no.")
             }
 
             EaComponents.TableViewLabel {
-                id: atomSiteLabel
-                width: EaStyle.Sizes.fontPixelSize * 4.0
+                //width: EaStyle.Sizes.fontPixelSize * 4.0
+                flexibleWidth: true
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
                 text: Globals.Proxies.modelLoopParam('_atom_site', '_label', 0).prettyName ?? ''  // NEED FIX
+            }
+
+            EaComponents.TableViewLabel {
+                width: EaStyle.Sizes.tableRowHeight
             }
 
             EaComponents.TableViewLabel {
@@ -56,7 +60,7 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewLabel {
                 id: fractXLabel
-                width: EaStyle.Sizes.fontPixelSize * 4.4
+                width: EaStyle.Sizes.fontPixelSize * 4.7
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
                 text: Globals.Proxies.modelLoopParam('_atom_site', '_fract_x', 0).prettyName ?? ''  // NEED FIX
@@ -84,20 +88,15 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewLabel {
-                flexibleWidth: true
+                width: EaStyle.Sizes.fontPixelSize * 4.0
                 horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("WP")
             }
 
             EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 3.0
-                //text: qsTr("Color")
-            }
-
-            EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 3.0
-                //text: qsTr("Del.")
+                width: EaStyle.Sizes.tableRowHeight
+                //text: qsTr("del.")
             }
 
         }
@@ -113,6 +112,13 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_label', index)
+            }
+
+            EaComponents.TableViewButton {
+                fontIcon: "tint"
+                ToolTip.text: qsTr("Atom color")
+                iconColor: Globals.Proxies.atomColor(
+                               Globals.Proxies.modelLoopParam('_atom_site', '_type_symbol', index).value)
             }
 
             EaComponents.TableViewParameter {
@@ -146,11 +152,6 @@ EaElements.GroupColumn {
             EaComponents.TableViewParameter {
                 text: Globals.Proxies.modelLoopParam('_atom_site', '_multiplicity', index).value +
                       Globals.Proxies.modelLoopParam('_atom_site', '_Wyckoff_symbol', index).value
-            }
-
-            EaComponents.TableViewLabel {
-                backgroundColor: Globals.Proxies.atomColor(
-                                     Globals.Proxies.modelLoopParam('_atom_site', '_type_symbol', index).value)
             }
 
             EaComponents.TableViewButton {
