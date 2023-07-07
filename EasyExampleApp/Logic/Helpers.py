@@ -144,12 +144,16 @@ class Converter:
             if 'params' in block:
                 for name, param in block['params'].items():
                     value = param["value"]
-                    if isinstance(value, str) and ' ' in value:
+                    # convert
+                    if isinstance(value, float):
+                        value = f'{round(value, 4):g}'  # 3.0 -> "3", 3.012345 -> "3.0123"
+                    elif isinstance(value, str) and ' ' in value:  # P n m a -> "P n m a"
                         value = f'"{value}"'
-                    fit = ''
+                    # add brackets for free params
                     if param["fit"]:
-                        fit = '()'
-                    cif += f'{name} {value}{fit}'
+                        cif += f'{name} {value}()'
+                    else:
+                        cif += f'{name} {value}'
                     cif += '\n'
             if 'loops' in block:
                 for loopName, loop in block['loops'].items():
@@ -164,16 +168,21 @@ class Converter:
                         line = ''
                         for param in loopItem.values():
                             value = param["value"]
-                            if isinstance(value, str) and ' ' in value:
+                            # convert
+                            if isinstance(value, float):
+                                value = f'{round(value, 4):g}'  # 3.0 -> "3", 3.012345 -> "3.0123"
+                            elif isinstance(value, str) and ' ' in value:  # P n m a -> "P n m a"
                                 value = f'"{value}"'
-                            fit = ''
+                            # add brackets for free params
                             if param["fit"]:
-                                fit = '()'
-                            line += f'{value}{fit}'
+                                line += f'{value}()'
+                            else:
+                                line += f'{value}'
                             line += ' '
                         cif += line
                         cif += '\n'
                     #cif += '\n'
+            cif = cif.strip()
         return cif
 
     @staticmethod
