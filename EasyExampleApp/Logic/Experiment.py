@@ -673,6 +673,7 @@ class Experiment(QObject):
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_setup.Setup:
                         ed_experiment['params']['_diffrn_radiation_probe'] = dict(Parameter(
                             item.radiation.replace('neutrons', 'neutron').replace('X-rays', 'x-ray'),
+                            permittedValues = ['neutron', 'x-ray'],
                             name = '_diffrn_radiation_probe',
                             prettyName = 'probe',
                             url = 'https://easydiffraction.org'

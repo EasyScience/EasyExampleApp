@@ -13,14 +13,25 @@ import Gui.Globals as Globals
 
 EaElements.GroupRow {
 
-    EaElements.Parameter {
-        parameter: Globals.Proxies.modelMainParam('_space_group_name_H-M_alt')
-        onEditingFinished: Globals.Proxies.setModelMainParamWithFullUpdate(parameter, 'value', text)
+    EaElements.ParamTextField {
+        readOnly: true
+        parameter: Globals.Proxies.modelMainParam('_space_group_crystal_system')
     }
 
-    EaElements.Parameter {
-        parameter: Globals.Proxies.modelMainParam('_space_group_IT_coordinate_system_code')
+    EaElements.ParamTextField {
+        readOnly: true
+        parameter: Globals.Proxies.modelMainParam('_space_group_IT_number')
+    }
+
+    EaElements.ParamTextField {
+        parameter: Globals.Proxies.modelMainParam('_space_group_name_H-M_alt')
         onEditingFinished: Globals.Proxies.setModelMainParamWithFullUpdate(parameter, 'value', text)
+        warning: !Globals.Proxies.main.model.spaceGroupNames.includes(text)
+    }
+
+    EaElements.ParamComboBox {
+        parameter: Globals.Proxies.modelMainParam('_space_group_IT_coordinate_system_code')
+        onActivated: Globals.Proxies.setModelMainParamWithFullUpdate(parameter, 'value', currentText)
     }
 
 }

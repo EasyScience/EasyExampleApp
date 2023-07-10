@@ -13,12 +13,12 @@ import Gui.Globals as Globals
 
 EaElements.GroupRow {
 
-    EaElements.Parameter {
+    EaElements.ParamComboBox {
         parameter: Globals.Proxies.experimentMainParam('_diffrn_radiation_probe')
-        onEditingFinished: Globals.Proxies.setExperimentMainParamWithFullUpdate(parameter, 'value', text)
+        onActivated: Globals.Proxies.setExperimentMainParamWithFullUpdate(parameter, 'value', currentText)
     }
 
-    EaElements.Parameter {
+    EaElements.ParamTextField {
         parameter: Globals.Proxies.experimentMainParam('_diffrn_radiation_wavelength')
         onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', Number(text))
         fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)

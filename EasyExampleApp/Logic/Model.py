@@ -18,6 +18,12 @@ try:
     import cryspy
     from cryspy.H_functions_global.function_1_cryspy_objects import \
         file_to_globaln, str_to_globaln
+    from cryspy.A_functions_base.function_2_space_group import \
+        get_it_coordinate_system_codes_by_it_number, \
+        REFERENCE_TABLE_IT_COORDINATE_SYSTEM_CODE_NAME_HM_EXTENDED, \
+        REFERENCE_TABLE_IT_NUMBER_NAME_HM_FULL, \
+        ACCESIBLE_NAME_HM_SHORT
+
     from cryspy.procedure_rhochi.rhochi_by_dictionary import \
         rhochi_calc_chi_sq_by_dictionary
     console.debug('CrysPy module has been imported')
@@ -60,6 +66,8 @@ class Model(QObject):
     structViewCellModelChanged = Signal()
     structViewAxesModelChanged = Signal()
 
+    #itCoordinateSystemCodesChanged = Signal()
+
     def __init__(self, parent):
         super().__init__(parent)
         self._proxy = parent
@@ -74,7 +82,26 @@ class Model(QObject):
         self._structViewCellModel = []
         self._structViewAxesModel = []
 
+        self._spaceGroupDict = {}
+        self._spaceGroupNames = self.createSpaceGroupNames()
+        #self._itCoordinateSystemCodes = []
+
+
+    def createSpaceGroupNames(self):
+        names_short = ACCESIBLE_NAME_HM_SHORT
+        names_full = tuple((_[1] for _ in REFERENCE_TABLE_IT_NUMBER_NAME_HM_FULL))
+        names_extended = tuple((_[2] for _ in REFERENCE_TABLE_IT_COORDINATE_SYSTEM_CODE_NAME_HM_EXTENDED))
+        return list(set(names_short + names_full + names_extended))
+
     # QML accessible properties
+
+    @Property('QVariant', constant=True)
+    def spaceGroupNames(self):
+        return self._spaceGroupNames
+
+    #@Property('QVariant', notify=itCoordinateSystemCodesChanged)
+    #def itCoordinateSystemCodes(self):
+    #    return self._itCoordinateSystemCodes
 
     @Property(bool, notify=definedChanged)
     def defined(self):
@@ -224,7 +251,7 @@ class Model(QObject):
 
         # remove model from self._proxy.data._cryspyDict
         currentModelName = self.dataBlocks[self.currentIndex]['name']
-        del self._proxy.data._cryspyDict[f'pd_{currentModelName}']
+        del self._proxy.data._cryspyDict[f'crystal_{currentModelName}']
 
         # add model to self._proxy.data._cryspyDict
         edCif = Converter.dataBlocksToCif(self._dataBlocks)
@@ -463,16 +490,33 @@ class Model(QObject):
                         ed_phase['params']['_space_group_name_H-M_alt'] = dict(Parameter(
                             item.name_hm_alt,
                             name = '_space_group_name_H-M_alt',
-                            prettyName = 'name H-M alt',
+                            prettyName = 'name',
                             url = 'https://easydiffraction.org',
                             cifDict = 'core'
                         ))
                         ed_phase['params']['_space_group_IT_coordinate_system_code'] = dict(Parameter(
                             item.it_coordinate_system_code,
+                            permittedValues = list(get_it_coordinate_system_codes_by_it_number(item.it_number)),
                             name = '_space_group_IT_coordinate_system_code',
-                            prettyName = 'IT coordinate system code',
+                            prettyName = 'code',
                             url = 'https://easydiffraction.org',
                             cifDict = 'core'
+                        ))
+                        ed_phase['params']['_space_group_crystal_system'] = dict(Parameter(
+                            item.crystal_system,
+                            name = '_space_group_crystal_system',
+                            prettyName = 'crystal system',
+                            url = 'https://easydiffraction.org',
+                            cifDict = 'core',
+                            optional = True
+                        ))
+                        ed_phase['params']['_space_group_IT_number'] = dict(Parameter(
+                            item.it_number,
+                            name = '_space_group_IT_number',
+                            prettyName = 'number',
+                            url = 'https://easydiffraction.org',
+                            cifDict = 'core',
+                            optional = True
                         ))
                     # Cell section
                     elif type(item) == cryspy.C_item_loop_classes.cl_1_cell.Cell:

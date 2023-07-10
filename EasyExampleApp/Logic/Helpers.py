@@ -143,7 +143,11 @@ class Converter:
             cif += '\n\n'
             if 'params' in block:
                 for name, param in block['params'].items():
+                    if param["optional"]:
+                        continue
                     value = param["value"]
+                    if value is None:
+                        continue
                     # convert
                     if isinstance(value, float):
                         value = f'{round(value, 4):.8g}'  # 3.0 -> "3", 3.012345 -> "3.0123"

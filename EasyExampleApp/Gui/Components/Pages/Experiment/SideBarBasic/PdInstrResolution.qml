@@ -13,31 +13,31 @@ import Gui.Globals as Globals
 
 EaElements.GroupRow {
 
-    EaElements.Parameter {
+    EaElements.ParamTextField {
         parameter: Globals.Proxies.experimentMainParam('_pd_instr_resolution_u')
         onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', Number(text))
         fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
-    EaElements.Parameter {
+    EaElements.ParamTextField {
         parameter: Globals.Proxies.experimentMainParam('_pd_instr_resolution_v')
         onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', Number(text))
         fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
-    EaElements.Parameter {
+    EaElements.ParamTextField {
         parameter: Globals.Proxies.experimentMainParam('_pd_instr_resolution_w')
         onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', Number(text))
         fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
-    EaElements.Parameter {
+    EaElements.ParamTextField {
         parameter: Globals.Proxies.experimentMainParam('_pd_instr_resolution_x')
         onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', Number(text))
         fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 
-    EaElements.Parameter {
+    EaElements.ParamTextField {
         parameter: Globals.Proxies.experimentMainParam('_pd_instr_resolution_y')
         onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', Number(text))
         fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)

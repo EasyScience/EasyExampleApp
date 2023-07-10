@@ -15,7 +15,7 @@ Rectangle {
     width: 300
     height: 200
 
-    EaElements.Parameter {
+    EaElements.ParamTextField {
         anchors.centerIn: parent
         width: 100
 

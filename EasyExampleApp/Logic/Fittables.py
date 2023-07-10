@@ -27,6 +27,7 @@ class Parameter(dict):
 
     def __init__(self,
                 value,
+                permittedValues = None,
                 idx = 0,
                 error = 0.0,
                 min = -1.0,
@@ -38,11 +39,14 @@ class Parameter(dict):
                 prettyName = '',
                 url = '',
                 cifDict = '',
+                optional = False,
                 enabled = True,
                 fittable = False,
                 fit = False):
         self['value'] = value
+        self['permittedValues'] = permittedValues
         self['idx'] = idx
+        self['optional'] = optional
         self['enabled'] = enabled
         self['fittable'] = fittable
         self['fit'] = fit
