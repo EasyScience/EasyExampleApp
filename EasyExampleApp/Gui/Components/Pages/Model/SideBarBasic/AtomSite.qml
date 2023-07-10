@@ -14,7 +14,9 @@ import Gui.Globals as Globals
 
 EaElements.GroupColumn {
 
+    // Table
     EaComponents.TableView {
+        id: tableView
 
         defaultInfoText: qsTr("No atoms defined")
 
@@ -28,6 +30,11 @@ EaElements.GroupColumn {
                 return 0
             }
             return Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex].loops._atom_site.length
+        }
+
+        onModelChanged: {
+            currentIndex = model - 1
+            positionViewAtEnd()
         }
 
         // Header row
@@ -52,7 +59,7 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 2.0
+                width: EaStyle.Sizes.fontPixelSize * 3.0
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
                 text: Globals.Proxies.modelLoopParam('_atom_site', '_type_symbol', 0).prettyName ?? ''  // NEED FIX
@@ -60,7 +67,7 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewLabel {
                 id: fractXLabel
-                width: EaStyle.Sizes.fontPixelSize * 4.7
+                width: EaStyle.Sizes.fontPixelSize * 4.5
                 horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
                 text: Globals.Proxies.modelLoopParam('_atom_site', '_fract_x', 0).prettyName ?? ''  // NEED FIX
@@ -124,8 +131,9 @@ EaElements.GroupColumn {
                 //ToolTip.text: qsTr("Atom color")
                 backgroundColor: "transparent"
                 borderColor: "transparent"
-                iconColor: Globals.Proxies.atomColor(
-                               Globals.Proxies.modelLoopParam('_atom_site', '_type_symbol', index).value)
+                iconColor: Globals.Proxies.main.model.atomData(
+                               Globals.Proxies.modelLoopParam('_atom_site', '_type_symbol', index).value,
+                               'color')
             }
 
             EaComponents.TableViewParameter {
@@ -164,13 +172,42 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewButton {
+                enabled: tableView.model > 1
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this atom")
+                onClicked: Globals.Proxies.removeModelLoopRow('_atom_site', index)
             }
 
         }
         // Table rows
 
     }
+    // Table
+
+    // Control buttons below table
+    Row {
+        spacing: EaStyle.Sizes.fontPixelSize
+
+        EaElements.SideBarButton {
+            fontIcon: "plus-circle"
+            text: qsTr("Append new atom")
+            onClicked: {
+                console.debug(`Clicking '${text}' button: ${this}`)
+                console.debug(`---------- Appending new atom ----------`)
+                Globals.Proxies.appendModelLoopRow('_atom_site')
+            }
+        }
+
+        EaElements.SideBarButton {
+            fontIcon: "clone"
+            text: qsTr("Duplicate selected atom")
+            onClicked: {
+                console.debug(`Clicking '${text}' button: ${this}`)
+                console.debug(`---------- Duplicating selected atom ----------`)
+                Globals.Proxies.duplicateModelLoopRow('_atom_site', tableView.currentIndex)
+            }
+        }
+    }
+    // Control buttons below table
 
 }
