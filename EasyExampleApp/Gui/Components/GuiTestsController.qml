@@ -139,10 +139,10 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
 
-        res.push( rc.compare(Globals.Refs.app.modelPage.loadNewModelFromFileButton.text, 'Load new model from file') )
+        res.push( rc.compare(Globals.Refs.app.modelPage.loadNewModelFromFileButton.text, 'Load model from file') )
         res.push( rc.compare(Globals.Refs.app.modelPage.loadNewModelFromFileButton.enabled, true) )
-        res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.text, 'Add new model manually') )
-        res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.enabled, false) )
+        res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.text, 'Define model manually') )
+        res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.text, 'Continue') )
         res.push( rc.compare(Globals.Refs.app.modelPage.continueButton.enabled, false) )
 
@@ -178,10 +178,10 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
 
-        res.push( rc.compare(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton.text, 'Import data from local drive') )
+        res.push( rc.compare(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton.text, 'Load experiment from file') )
         res.push( rc.compare(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton.enabled, true) )
-        res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.text, 'Add default experiment data') )
-        res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.enabled, false) )
+        res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.text, 'Define experiment manually') )
+        res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.experimentPage.continueButton.text, 'Continue without experiment data') )
         res.push( rc.compare(Globals.Refs.app.experimentPage.continueButton.enabled, true) )
 
