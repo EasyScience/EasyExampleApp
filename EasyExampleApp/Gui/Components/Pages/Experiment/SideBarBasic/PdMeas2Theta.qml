@@ -14,20 +14,23 @@ import Gui.Globals as Globals
 EaElements.GroupRow {
 
     EaElements.Parameter {
+        enabled: false
         parameter: Globals.Proxies.experimentMainParam('_pd_meas_2theta_range_min')
     }
 
     EaElements.Parameter {
+        enabled: false
         parameter: Globals.Proxies.experimentMainParam('_pd_meas_2theta_range_max')
     }
 
     EaElements.Parameter {
+        enabled: false
         parameter: Globals.Proxies.experimentMainParam('_pd_meas_2theta_range_inc')
     }
 
     EaElements.Parameter {
         parameter: Globals.Proxies.experimentMainParam('_pd_meas_2theta_offset')
-        onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', text)
+        onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', Number(text))
         fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 

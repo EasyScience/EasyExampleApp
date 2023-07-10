@@ -15,11 +15,12 @@ EaElements.GroupRow {
 
     EaElements.Parameter {
         parameter: Globals.Proxies.experimentMainParam('_diffrn_radiation_probe')
+        onEditingFinished: Globals.Proxies.setExperimentMainParamWithFullUpdate(parameter, 'value', text)
     }
 
     EaElements.Parameter {
         parameter: Globals.Proxies.experimentMainParam('_diffrn_radiation_wavelength')
-        onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', text)
+        onEditingFinished: Globals.Proxies.setExperimentMainParam(parameter, 'value', Number(text))
         fitCheckBox.onToggled: Globals.Proxies.setExperimentMainParam(parameter, 'fit', fitCheckBox.checked)
     }
 

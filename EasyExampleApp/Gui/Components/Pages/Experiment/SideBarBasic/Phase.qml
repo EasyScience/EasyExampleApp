@@ -88,11 +88,12 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.experimentLoopParam('_phase', '_label', index)
+                onEditingFinished: Globals.Proxies.setExperimentLoopParamWithFullUpdate(parameter, 'value', text)
             }
 
             EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.experimentLoopParam('_phase', '_scale', index)
-                onEditingFinished: Globals.Proxies.setExperimentLoopParam(parameter, 'value', text)
+                onEditingFinished: Globals.Proxies.setExperimentLoopParam(parameter, 'value', Number(text))
                 fitCheckBox.onToggled: Globals.Proxies.setExperimentLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 

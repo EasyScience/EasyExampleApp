@@ -101,7 +101,7 @@ Rectangle {
             ToolTip.text: qsTr("Apply changes")
             //onClicked: forceActiveFocus()
             onClicked: {
-                Globals.Proxies.main.experiment.loadExperimentFromCif(
+                Globals.Proxies.main.experiment.loadExperimentFromEdCif(
                             listView.firstDelegateRef.text + '\n' +
                             Globals.Proxies.main.experiment.dataBlocksCifMeasOnly)  //.join('\n'))  // NEED FIX
                 forceActiveFocus()

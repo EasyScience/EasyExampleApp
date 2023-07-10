@@ -86,8 +86,8 @@ class Experiment(QObject):
         self._dataBlocks = []
         self._dataBlocksMeasOnly = []
         self._dataBlocksCif = []
-        self._dataBlocksCifNoMeas = []
-        self._dataBlocksCifMeasOnly = []
+        self._dataBlocksCifNoMeas = ""
+        self._dataBlocksCifMeasOnly = ""
         self._xArrays = []
         self._yMeasArrays = []
         self._yBkgArrays = []
@@ -150,7 +150,7 @@ class Experiment(QObject):
     @Slot()
     def addDefaultExperiment(self):
         console.debug('Adding default experiment')
-        self.loadExperimentFromCif(_DEFAULT_DATA_BLOCK)
+        self.loadExperimentFromEdCif(_DEFAULT_DATA_BLOCK)
 
     @Slot(str)
     def loadExperimentFromFile(self, fpath):
@@ -158,10 +158,10 @@ class Experiment(QObject):
         console.debug(f"Loading experiment from: {fpath}")
         with open(fpath, 'r') as file:
             edCif = file.read()
-        self.loadExperimentFromCif(edCif)
+        self.loadExperimentFromEdCif(edCif)
 
     @Slot(str)
-    def loadExperimentFromCif(self, edCif):
+    def loadExperimentFromEdCif(self, edCif):
         cryspyCif = Converter.edCifToCryspyCif(edCif)
         cryspyExperimentObj = str_to_globaln(cryspyCif)
         cryspyExperimentDict = cryspyExperimentObj.get_dictionary()
@@ -191,22 +191,30 @@ class Experiment(QObject):
         self.yBkgArraysChanged.emit()
         console.debug("All experiments have been removed")
 
+    @Slot(str, str, 'QVariant')
+    def setMainParamWithFullUpdate(self, paramName, field, value):
+        changedIntern = self.editDataBlockMainParam(paramName, field, value)
+        if not changedIntern:
+            return
+        self.createCryspyDictFromDataBlocks()
+
     @Slot(str, str, float)
     def setMainParam(self, paramName, field, value):
-        if field == 'fit':
-            value = bool(value)
-
         changedIntern = self.editDataBlockMainParam(paramName, field, value)
         changedCryspy = self.editCryspyDictByMainParam(paramName, field, value)
 
         if changedIntern and changedCryspy:
             self.dataBlocksChanged.emit(None)  # NED FIX
 
+    @Slot(str, str, int, str, 'QVariant')
+    def setLoopParamWithFullUpdate(self, loopName, paramName, rowIndex, field, value):
+        changedIntern = self.editDataBlockLoopParam(loopName, paramName, rowIndex, field, value)
+        if not changedIntern:
+            return
+        self.createCryspyDictFromDataBlocks()
+
     @Slot(str, str, int, str, float)
     def setLoopParam(self, loopName, paramName, rowIndex, field, value):
-        if field == 'fit':
-            value = bool(value)
-
         changedIntern = self.editDataBlockLoopParam(loopName, paramName, rowIndex, field, value)
         changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, rowIndex, field, value)
 
@@ -219,9 +227,6 @@ class Experiment(QObject):
         block = 'experiment'
         if blockIndex is None:
             blockIndex = self._currentIndex
-
-        if field == 'fit':
-            value = bool(value)
 
         oldValue = self._dataBlocks[blockIndex]['params'][paramName][field]
         if oldValue == value:
@@ -236,9 +241,6 @@ class Experiment(QObject):
         if blockIndex is None:
             blockIndex = self._currentIndex
 
-        if field == 'fit':
-            value = bool(value)
-
         oldValue = self._dataBlocks[blockIndex]['loops'][loopName][rowIndex][paramName][field]
         if oldValue == value:
             return False
@@ -246,6 +248,19 @@ class Experiment(QObject):
 
         console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field}")
         return True
+
+    def createCryspyDictFromDataBlocks(self):
+        console.debug("Cryspy dict need to be recreated")
+
+        # remove experiment from self._proxy.data._cryspyDict
+        currentExperimentName = self.dataBlocks[self.currentIndex]['name']
+        del self._proxy.data._cryspyDict[f'pd_{currentExperimentName}']
+
+        # add experiment to self._proxy.data._cryspyDict
+        cifNoMeas = Converter.dataBlocksToCif(self._dataBlocks)
+        cifMeasOnly = self.dataBlocksCifMeasOnly
+        edCif = cifNoMeas + '\n' + cifMeasOnly
+        self.loadExperimentFromEdCif(edCif)
 
     def editCryspyDictByMainParam(self, paramName, field, value):
         path, value = self.cryspyDictPathByMainParam(paramName, field, value)

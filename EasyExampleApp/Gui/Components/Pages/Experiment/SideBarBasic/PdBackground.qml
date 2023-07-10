@@ -75,13 +75,13 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.experimentLoopParam('_pd_background', '_2theta', index)
-                onEditingFinished: Globals.Proxies.setExperimentLoopParam(parameter, 'value', text)
+                onEditingFinished: Globals.Proxies.setExperimentLoopParam(parameter, 'value', Number(text))
                 fitCheckBox.onToggled: Globals.Proxies.setExperimentLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
             EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.experimentLoopParam('_pd_background', '_intensity', index)
-                onEditingFinished: Globals.Proxies.setExperimentLoopParam(parameter, 'value', text)
+                onEditingFinished: Globals.Proxies.setExperimentLoopParam(parameter, 'value', Number(text))
                 fitCheckBox.onToggled: Globals.Proxies.setExperimentLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 

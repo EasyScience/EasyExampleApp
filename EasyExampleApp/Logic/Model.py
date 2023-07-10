@@ -222,8 +222,13 @@ class Model(QObject):
     def createCryspyDictFromDataBlocks(self):
         console.debug("Cryspy dict need to be recreated")
 
+        # remove model from self._proxy.data._cryspyDict
+        currentModelName = self.dataBlocks[self.currentIndex]['name']
+        del self._proxy.data._cryspyDict[f'pd_{currentModelName}']
+
+        # add model to self._proxy.data._cryspyDict
         edCif = Converter.dataBlocksToCif(self._dataBlocks)
-        self.loadModelFromEdCif(edCif)  # set self._proxy.data._cryspyDict
+        self.loadModelFromEdCif(edCif)
 
     def editCryspyDictByMainParam(self, paramName, field, value):
         path, value = self.cryspyDictPathByMainParam(paramName, field, value)

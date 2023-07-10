@@ -621,9 +621,19 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         return main.experiment.dataBlocks[currentModelIndex].loops[loopName][rowIndex][paramName]
     }
 
-    function setExperimentMainParam(parameter, field, value) {
-        console.debug(`---------- Editing experiment main param ${parameter.name} '${field}' to ${value} ----------`)
-        main.experiment.setMainParam(parameter.name, field, value)
+    function setExperimentMainParamWithFullUpdate(param, field, value) {
+        console.debug(`---------- Editing experiment main param ${param.name} '${field}' to ${value} ----------`)
+        main.experiment.setMainParamWithFullUpdate(param.name, field, value)
+    }
+
+    function setExperimentMainParam(param, field, value) {
+        console.debug(`---------- Editing experiment main param ${param.name} '${field}' to ${value} ----------`)
+        main.experiment.setMainParam(param.name, field, value)
+    }
+
+    function setExperimentLoopParamWithFullUpdate(param, field, value) {
+        console.debug(`---------- Editing experiment loop param ${param.loopName}${param.name}[${param.idx}] '${field}' to ${value} ----------`)
+        main.experiment.setLoopParamWithFullUpdate(param.loopName, param.name, param.idx, field, value)
     }
 
     function setExperimentLoopParam(param, field, value) {

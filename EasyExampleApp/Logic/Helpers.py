@@ -225,7 +225,7 @@ class Converter:
         }
         edToCryspyValuesMap = {
             'neutron': 'neutrons',
-            'xray': 'X-rays'
+            'x-ray': 'X-rays'
         }
         for edName, cryspyName in edToCryspyNamesMap.items():
             cryspyCif = cryspyCif.replace(edName, cryspyName)
