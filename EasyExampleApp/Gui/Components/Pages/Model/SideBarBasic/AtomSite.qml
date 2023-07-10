@@ -139,6 +139,7 @@ EaElements.GroupColumn {
             EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_type_symbol', index)
                 onEditingFinished: Globals.Proxies.setModelLoopParamWithFullUpdate(parameter, 'value', text)
+                warning: !Globals.Proxies.main.model.isotopesNames.includes(text)
             }
 
             EaComponents.TableViewParameter {
