@@ -161,22 +161,30 @@ class Model(QObject):
         self.yCalcArraysChanged.emit()
         console.debug("All models have been removed")
 
-    @Slot(str, str, float)
-    def setMainParam(self, paramName, field, value):
-        if field == 'fit':
-            value = bool(value)
+    @Slot(str, str, 'QVariant')
+    def setMainParamWithFullUpdate(self, paramName, field, value):
+        changedIntern = self.editDataBlockMainParam(paramName, field, value)
+        if not changedIntern:
+            return
+        self.createCryspyDictFromDataBlocks()
 
+    @Slot(str, str, 'QVariant')
+    def setMainParam(self, paramName, field, value):
         changedIntern = self.editDataBlockMainParam(paramName, field, value)
         changedCryspy = self.editCryspyDictByMainParam(paramName, field, value)
 
         if changedIntern and changedCryspy:
             self.dataBlocksChanged.emit()
 
-    @Slot(str, str, int, str, float)
-    def setLoopParam(self, loopName, paramName, rowIndex, field, value):
-        if field == 'fit':
-            value = bool(value)
+    @Slot(str, str, int, str, 'QVariant')
+    def setLoopParamWithFullUpdate(self, loopName, paramName, rowIndex, field, value):
+        changedIntern = self.editDataBlockLoopParam(loopName, paramName, rowIndex, field, value)
+        if not changedIntern:
+            return
+        self.createCryspyDictFromDataBlocks()
 
+    @Slot(str, str, int, str, 'QVariant')
+    def setLoopParam(self, loopName, paramName, rowIndex, field, value):
         changedIntern = self.editDataBlockLoopParam(loopName, paramName, rowIndex, field, value)
         changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, rowIndex, field, value)
 
@@ -189,9 +197,6 @@ class Model(QObject):
         block = 'model'
         if blockIndex is None:
             blockIndex = self._currentIndex
-
-        if field == 'fit':
-            value = bool(value)
 
         oldValue = self._dataBlocks[blockIndex]['params'][paramName][field]
         if oldValue == value:
@@ -206,9 +211,6 @@ class Model(QObject):
         if blockIndex is None:
             blockIndex = self._currentIndex
 
-        if field == 'fit':
-            value = bool(value)
-
         oldValue = self._dataBlocks[blockIndex]['loops'][loopName][rowIndex][paramName][field]
         if oldValue == value:
             return False
@@ -217,12 +219,19 @@ class Model(QObject):
         console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field}")
         return True
 
+    def createCryspyDictFromDataBlocks(self):
+        console.debug("Cryspy dict need to be recreated")
+
+        edCif = Converter.dataBlocksToCif(self._dataBlocks)
+        self.loadModelFromEdCif(edCif)  # set self._proxy.data._cryspyDict
+
     def editCryspyDictByMainParam(self, paramName, field, value):
         path, value = self.cryspyDictPathByMainParam(paramName, field, value)
 
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
             return False
+
         self._proxy.data._cryspyDict[path[0]][path[1]][path[2]] = value
 
         console.debug(f"Cryspy dict ▌ {oldValue} → {value} ▌ {path}")

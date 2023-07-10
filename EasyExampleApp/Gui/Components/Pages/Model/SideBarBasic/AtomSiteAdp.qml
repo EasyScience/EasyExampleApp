@@ -122,17 +122,19 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewParameter {
+                enabled: false
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_label', index)
             }
 
             EaComponents.TableViewParameter {
+                enabled: false
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_adp_type', index)
             }
 
             EaComponents.TableViewParameter {
                 id: iso
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_B_iso_or_equiv', index)
-                onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', text)
+                onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', Number(text))
                 fitCheckBox.onToggled: Globals.Proxies.setModelLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 

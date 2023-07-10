@@ -583,9 +583,19 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         return main.model.dataBlocks[currentModelIndex].loops[loopName][rowIndex][paramName]
     }
 
-    function setModelMainParam(parameter, field, value) {
-        console.debug(`---------- Editing model main param ${parameter.name} '${field}' to ${value} ----------`)
-        main.model.setMainParam(parameter.name, field, value)
+    function setModelMainParamWithFullUpdate(param, field, value) {
+        console.debug(`---------- Editing model main param ${param.name} '${field}' to ${value} ----------`)
+        main.model.setMainParamWithFullUpdate(param.name, field, value)
+    }
+
+    function setModelMainParam(param, field, value) {
+        console.debug(`---------- Editing model main param ${param.name} '${field}' to ${value} ----------`)
+        main.model.setMainParam(param.name, field, value)
+    }
+
+    function setModelLoopParamWithFullUpdate(param, field, value) {
+        console.debug(`---------- Editing model loop param ${param.loopName}${param.name}[${param.idx}] '${field}' to ${value} ----------`)
+        main.model.setLoopParamWithFullUpdate(param.loopName, param.name, param.idx, field, value)
     }
 
     function setModelLoopParam(param, field, value) {

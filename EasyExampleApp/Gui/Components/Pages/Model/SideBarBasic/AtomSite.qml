@@ -112,46 +112,53 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_label', index)
+                onEditingFinished: Globals.Proxies.setModelLoopParamWithFullUpdate(parameter, 'value', text)
             }
 
             EaComponents.TableViewButton {
+                // NEED FIX
+                // H atom is white. Need add border/shadow, e.g.:
+                // import Qt5Compat.GraphicalEffects
+                // DropShadow {}
                 fontIcon: "tint"
-                ToolTip.text: qsTr("Atom color")
-                iconColor: Globals.Proxies.atomColor(
-                               Globals.Proxies.modelLoopParam('_atom_site', '_type_symbol', index).value)
+                //ToolTip.text: qsTr("Atom color")
                 backgroundColor: "transparent"
                 borderColor: "transparent"
+                iconColor: Globals.Proxies.atomColor(
+                               Globals.Proxies.modelLoopParam('_atom_site', '_type_symbol', index).value)
             }
 
             EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_type_symbol', index)
+                onEditingFinished: Globals.Proxies.setModelLoopParamWithFullUpdate(parameter, 'value', text)
             }
 
             EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_fract_x', index)
-                onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', text)
+                onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', Number(text))
                 fitCheckBox.onToggled: Globals.Proxies.setModelLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
             EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_fract_y', index)
-                onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', text)
+                onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', Number(text))
                 fitCheckBox.onToggled: Globals.Proxies.setModelLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
             EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_fract_z', index)
-                onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', text)
+                onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', Number(text))
                 fitCheckBox.onToggled: Globals.Proxies.setModelLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
             EaComponents.TableViewParameter {
                 parameter: Globals.Proxies.modelLoopParam('_atom_site', '_occupancy', index)
-                onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', text)
+                onEditingFinished: Globals.Proxies.setModelLoopParam(parameter, 'value', Number(text))
                 fitCheckBox.onToggled: Globals.Proxies.setModelLoopParam(parameter, 'fit', fitCheckBox.checked)
             }
 
             EaComponents.TableViewParameter {
+                enabled: false
                 text: Globals.Proxies.modelLoopParam('_atom_site', '_multiplicity', index).value +
                       Globals.Proxies.modelLoopParam('_atom_site', '_Wyckoff_symbol', index).value
             }

@@ -15,10 +15,12 @@ EaElements.GroupRow {
 
     EaElements.Parameter {
         parameter: Globals.Proxies.modelMainParam('_space_group_name_H-M_alt')
+        onEditingFinished: Globals.Proxies.setModelMainParamWithFullUpdate(parameter, 'value', text)
     }
 
     EaElements.Parameter {
         parameter: Globals.Proxies.modelMainParam('_space_group_IT_coordinate_system_code')
+        onEditingFinished: Globals.Proxies.setModelMainParamWithFullUpdate(parameter, 'value', text)
     }
 
 }
