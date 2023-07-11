@@ -113,7 +113,7 @@ Column {
         enabled: !Globals.Proxies.main.fitting.isFittingNow
         defaultInfoText: qsTr("No parameters found")
 
-        maxRowCountShow: 6 +
+        maxRowCountShow: 7 +
                          Math.trunc((applicationWindow.height - EaStyle.Sizes.appWindowMinimumHeight) /
                                     EaStyle.Sizes.tableRowHeight)
 

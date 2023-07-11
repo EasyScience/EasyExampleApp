@@ -18,7 +18,7 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
-        title: qsTr("Fitting")
+        //title: qsTr("Fitting")
         collapsible: false
 
         Loader { source: 'SideBarBasic/Fitting.qml' }
