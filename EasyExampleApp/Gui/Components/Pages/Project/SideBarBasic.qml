@@ -26,6 +26,4 @@ EaComponents.SideBarColumn {
 
         Loader { source: 'SideBarBasic/ExamplesGroup.qml' }
     }
-
 }
-

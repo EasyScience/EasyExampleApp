@@ -153,6 +153,8 @@ class Model(QObject):
 
     @Slot(str, str, result=str)
     def atomData(self, typeSymbol, key):
+        if typeSymbol == '':
+            return ''
         typeSymbol = re.sub(r'[0-9]', '', typeSymbol)  # '162Dy' -> 'Dy'
         return PERIODIC_TABLE[typeSymbol][key]
 
