@@ -115,7 +115,7 @@ EaElements.GroupColumn {
         }
 
         EaElements.SideBarButton {
-            fontIcon: "clone"
+            fontIcon: "backspace"
             text: qsTr("Reset to default points")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)

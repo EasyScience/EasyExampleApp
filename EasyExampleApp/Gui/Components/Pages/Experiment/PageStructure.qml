@@ -46,9 +46,7 @@ EaComponents.ContentPage {
             Loader { source: 'SideBarText.qml' }
         ]
 
-        continueButton.text: Globals.Proxies.main.experiment.defined ?
-                                 qsTr("Continue") :
-                                 qsTr("Continue without experiment data")
+        continueButton.enabled: Globals.Proxies.main.experiment.defined
 
         continueButton.onClicked: {
             console.debug(`Clicking '${continueButton.text}' button: ${this}`)
