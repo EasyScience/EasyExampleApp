@@ -122,12 +122,8 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewButton {
-                // NEED FIX
-                // H atom is white. Need add border/shadow, e.g.:
-                // import Qt5Compat.GraphicalEffects
-                // DropShadow {}
                 fontIcon: "tint"
-                //ToolTip.text: qsTr("Atom color")
+                outlineIcon: true
                 backgroundColor: "transparent"
                 borderColor: "transparent"
                 iconColor: Globals.Proxies.main.model.atomData(

@@ -70,9 +70,10 @@ Column {
             EaComponents.TableViewButton {
                 fontIcon: "tint"
                 ToolTip.text: qsTr("Measured pattern color")
-                iconColor: EaStyle.Colors.chartForegroundsExtra[2]
+                outlineIcon: true
                 backgroundColor: "transparent"
                 borderColor: "transparent"
+                iconColor: EaStyle.Colors.chartForegroundsExtra[2]
             }
 
             EaComponents.TableViewParameter {
