@@ -18,7 +18,7 @@ Rectangle {
     width: EaStyle.Sizes.sideBarContentWidth
     height: 11 * EaStyle.Sizes.tableRowHeight -
             EaStyle.Sizes.fontPixelSize * (Globals.Proxies.main.model.dataBlocks.length - 1) -
-            1.4 * EaStyle.Sizes.fontPixelSize +
+            2.4 * EaStyle.Sizes.fontPixelSize +
             (applicationWindow.height - EaStyle.Sizes.appWindowMinimumHeight)
 
     color: enabled ? EaStyle.Colors.textViewBackground : EaStyle.Colors.textViewBackgroundDisabled

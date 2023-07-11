@@ -4,6 +4,7 @@
 
 import os
 import json
+import copy
 import numpy as np
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
@@ -221,7 +222,59 @@ class Experiment(QObject):
         if changedIntern and changedCryspy:
             self.dataBlocksChanged.emit(None)  # NED FIX
 
+    @Slot(str, int)
+    def removeLoopRow(self, loopName, rowIndex):
+        self.removeDataBlockLoopRow(loopName, rowIndex)
+        self.createCryspyDictFromDataBlocks()
+
+    @Slot(str)
+    def appendLoopRow(self, loopName):
+        self.appendDataBlockLoopRow(loopName)
+        self.createCryspyDictFromDataBlocks()
+
+    @Slot()
+    def resetBkgToDefault(self):
+        self.resetDataBlockBkgToDefault()
+        self.createCryspyDictFromDataBlocks()
+
     # Private methods
+
+    def removeDataBlockLoopRow(self, loopName, rowIndex):
+        block = 'experiment'
+        blockIndex = self._currentIndex
+        del self._dataBlocks[blockIndex]['loops'][loopName][rowIndex]
+
+        console.debug(f"Intern dict ▌ {block}[{blockIndex}].{loopName}[{rowIndex}] has been removed")
+
+    def appendDataBlockLoopRow(self, loopName):
+        block = 'experiment'
+        blockIndex = self._currentIndex
+
+        lastBkgPoint = self._dataBlocks[blockIndex]['loops'][loopName][-1]
+
+        newBkgPoint = copy.deepcopy(lastBkgPoint)
+        newBkgPoint['_2theta']['value'] += 10
+
+        self._dataBlocks[blockIndex]['loops'][loopName].append(newBkgPoint)
+        atomsCount = len(self._dataBlocks[blockIndex]['loops'][loopName])
+
+        console.debug(f"Intern dict ▌ {block}[{blockIndex}].{loopName}[{atomsCount}] has been added")
+
+    def resetDataBlockBkgToDefault(self):
+        block = 'experiment'
+        blockIndex = self._currentIndex
+        loopName = '_pd_background'
+
+        firstBkgPoint = copy.deepcopy(self._dataBlocks[blockIndex]['loops'][loopName][0])  # copy of the 1st point
+        firstBkgPoint['_2theta']['value'] = 0
+        firstBkgPoint['_intensity']['value'] = 0
+
+        lastBkgPoint = copy.deepcopy(firstBkgPoint)
+        lastBkgPoint['_2theta']['value'] = 180
+
+        self._dataBlocks[blockIndex]['loops'][loopName] = [firstBkgPoint, lastBkgPoint]
+
+        console.debug(f"Intern dict ▌ {block}[{blockIndex}].{loopName} has been reset to default values")
 
     def editDataBlockMainParam(self, paramName, field, value, blockIndex=None):
         block = 'experiment'

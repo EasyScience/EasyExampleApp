@@ -14,24 +14,24 @@ import Gui.Globals as Globals
 
 EaElements.GroupColumn {
 
+    // Table
     EaComponents.TableView {
+        id: tableView
 
         defaultInfoText: qsTr("No background points defined")
 
         // Table model
-
         // We only use the length of the model object defined in backend logic and
         // directly access that model in every row using the TableView index property.
-
         model: {
             if (typeof Globals.Proxies.main.experiment.dataBlocks[Globals.Proxies.main.model.currentIndex] === 'undefined') {
                 return 0
             }
             return Globals.Proxies.main.experiment.dataBlocks[Globals.Proxies.main.model.currentIndex].loops._pd_background.length
         }
+        // Table model
 
         // Header row
-
         header: EaComponents.TableViewHeader {
 
             EaComponents.TableViewLabel {
@@ -63,9 +63,9 @@ EaElements.GroupColumn {
             }
 
         }
+        // Header row
 
         // Table rows
-
         delegate: EaComponents.TableViewDelegate {
 
             EaComponents.TableViewLabel {
@@ -88,13 +88,42 @@ EaElements.GroupColumn {
             EaComponents.TableViewLabel {}
 
             EaComponents.TableViewButton {
+                enabled: tableView.model > 2
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this point")
-                onClicked: Globals.Proxies.main.model.removeModel(index)
+                onClicked: Globals.Proxies.removeExperimentLoopRow('_pd_background', index)
             }
 
         }
+        // Table rows
 
     }
+    // Table
+
+    // Control buttons below table
+    Row {
+        spacing: EaStyle.Sizes.fontPixelSize
+
+        EaElements.SideBarButton {
+            fontIcon: "plus-circle"
+            text: qsTr("Append new point")
+            onClicked: {
+                console.debug(`Clicking '${text}' button: ${this}`)
+                console.debug(`---------- Appending new background point ----------`)
+                Globals.Proxies.appendExperimentLoopRow('_pd_background')
+            }
+        }
+
+        EaElements.SideBarButton {
+            fontIcon: "clone"
+            text: qsTr("Reset to default points")
+            onClicked: {
+                console.debug(`Clicking '${text}' button: ${this}`)
+                console.debug(`---------- Resetting background points to default ones ----------`)
+                Globals.Proxies.main.experiment.resetBkgToDefault()
+            }
+        }
+    }
+    // Control buttons below table
 
 }

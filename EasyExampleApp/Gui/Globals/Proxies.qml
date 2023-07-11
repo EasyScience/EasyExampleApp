@@ -656,4 +656,14 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         main.experiment.setLoopParam(param.loopName, param.name, param.idx, field, value)
     }
 
+    function removeExperimentLoopRow(loopName, idx) {
+        console.debug(`---------- Removing experiment loop row ${loopName}[${idx}] ----------`)
+        main.experiment.removeLoopRow(loopName, idx)
+    }
+
+    function appendExperimentLoopRow(loopName) {
+        console.debug(`---------- Appending experiment loop row ${loopName} ----------`)
+        main.experiment.appendLoopRow(loopName)
+    }
+
 }

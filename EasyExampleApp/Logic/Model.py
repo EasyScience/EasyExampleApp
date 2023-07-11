@@ -244,6 +244,13 @@ class Model(QObject):
 
     # Private methods
 
+    def removeDataBlockLoopRow(self, loopName, rowIndex):
+        block = 'model'
+        blockIndex = self._currentIndex
+        del self._dataBlocks[blockIndex]['loops'][loopName][rowIndex]
+
+        console.debug(f"Intern dict ▌ {block}[{blockIndex}].{loopName}[{rowIndex}] has been removed")
+
     def appendDataBlockLoopRow(self, loopName):
         block = 'model'
         blockIndex = self._currentIndex
@@ -274,13 +281,6 @@ class Model(QObject):
         atomsCount = len(self._dataBlocks[blockIndex]['loops'][loopName])
 
         console.debug(f"Intern dict ▌ {block}[{blockIndex}].{loopName}[{atomsCount}] has been added")
-
-    def removeDataBlockLoopRow(self, loopName, rowIndex):
-        block = 'model'
-        blockIndex = self._currentIndex
-        del self._dataBlocks[blockIndex]['loops'][loopName][rowIndex]
-
-        console.debug(f"Intern dict ▌ {block}[{blockIndex}].{loopName}[{rowIndex}] has been removed")
 
     def editDataBlockMainParam(self, paramName, field, value, blockIndex=None):
         block = 'model'

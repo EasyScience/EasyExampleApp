@@ -15,6 +15,7 @@ import Gui.Globals as Globals
 EaElements.GroupColumn {
 
     EaComponents.TableView {
+        id: tableView
 
         defaultInfoText: qsTr("No phases defined")
 
@@ -88,6 +89,7 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewParameter {
+                readOnly: true
                 parameter: Globals.Proxies.experimentLoopParam('_phase', '_label', index)
                 onEditingFinished: Globals.Proxies.setExperimentLoopParamWithFullUpdate(parameter, 'value', text)
             }
@@ -101,6 +103,7 @@ EaElements.GroupColumn {
             EaComponents.TableViewLabel {}
 
             EaComponents.TableViewButton {
+                enabled: tableView.model > 1
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this phase")
                 onClicked: Globals.Proxies.main.model.removeModel(index)

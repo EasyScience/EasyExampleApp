@@ -21,21 +21,19 @@ EaElements.GroupColumn {
         defaultInfoText: qsTr("No atoms defined")
 
         // Table model
-
         // We only use the length of the model object defined in backend logic and
         // directly access that model in every row using the TableView index property.
-
         model: {
             if (typeof Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex] === 'undefined') {
                 return 0
             }
             return Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex].loops._atom_site.length
         }
-
         onModelChanged: {
             currentIndex = model - 1
             positionViewAtEnd()
         }
+        // Table model
 
         // Header row
         header: EaComponents.TableViewHeader {
