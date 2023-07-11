@@ -58,7 +58,6 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Associated phases")
         visible: Globals.Proxies.main.experiment.defined
-        last: true
 
         Loader { source: 'SideBarBasic/Phase.qml' }
     }

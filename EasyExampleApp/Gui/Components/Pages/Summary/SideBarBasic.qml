@@ -16,7 +16,6 @@ EaComponents.SideBarColumn {
         enabled: Globals.Proxies.main.project.created
         title: qsTr("Export report")
         collapsible: false
-        last: true
 
         Loader { source: 'SideBarBasic/ExportReportGroup.qml' }
     }

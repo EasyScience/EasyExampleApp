@@ -13,7 +13,6 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Appearance")
         collapsed: false
-        last: true
 
         Loader { source: 'SideBarAdvanced/Appearance.qml' }
     }

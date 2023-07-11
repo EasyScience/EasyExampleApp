@@ -12,7 +12,6 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Empty group")
-        last: true
     }
 
 }

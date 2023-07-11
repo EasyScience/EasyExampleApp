@@ -20,7 +20,6 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Fitting")
         collapsible: false
-        last: true
 
         Loader { source: 'SideBarBasic/Fitting.qml' }
     }

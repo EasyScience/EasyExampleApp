@@ -22,7 +22,6 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Examples")
         collapsed: true
-        last: true
 
         Loader { source: 'SideBarBasic/ExamplesGroup.qml' }
     }

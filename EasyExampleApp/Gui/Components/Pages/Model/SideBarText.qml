@@ -23,7 +23,6 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         collapsible: false
-        last: true
 
         Loader { source: 'SideBarText/TextView.qml' }
     }

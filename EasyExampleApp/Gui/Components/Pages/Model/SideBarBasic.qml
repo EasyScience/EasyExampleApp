@@ -44,7 +44,6 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Atomic displacement")
         visible: Globals.Proxies.main.model.defined
-        last: true
 
         Loader { source: 'SideBarBasic/AtomSiteAdp.qml' }
     }

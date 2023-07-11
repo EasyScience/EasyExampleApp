@@ -13,7 +13,6 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Parameters")
         collapsed: false
-        last: true
 
         Loader { source: 'SideBarAdvanced/Parameters.qml' }
     }
