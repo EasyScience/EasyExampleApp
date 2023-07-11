@@ -319,7 +319,7 @@ Column {
 
                       { 'from': '.atom_site.',                 'icon': '&nbsp; atom &nbsp;'                                     },
                       { 'from': '.fract_',                     'icon': '&nbsp; map-marker-alt &nbsp;',      'txt': 'fract '     },
-                      { 'from': '.occupancy',                  'icon': '&nbsp; fill &nbsp;',                'txt': 'occ.'       },
+                      { 'from': '.occupancy',                  'icon': '&nbsp; fill &nbsp;',                'txt': 'occ'        },
                       { 'from': '.B_iso_or_equiv',             'icon': '&nbsp; arrows-alt &nbsp;',          'txt': 'Biso'       },
 
                       { 'from': 'experiment.',                 'icon': 'microscope &nbsp;'                                      },

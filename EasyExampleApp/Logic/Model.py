@@ -529,7 +529,6 @@ class Model(QObject):
 
     # Extract phases from cryspy_obj and cryspy_dict into internal ed_dict
     def parseModels(self, cryspy_obj):
-        ###ed_dict = self._proxy.data.edDict
         cryspy_dict = self._proxy.data._cryspyDict
         phase_names = [name.replace('crystal_', '') for name in cryspy_dict.keys() if name.startswith('crystal_')]
 
@@ -539,7 +538,6 @@ class Model(QObject):
             # Phase datablock
             if data_block_name in phase_names:
 
-                ###ed_dict['phases'] = []
                 ed_phase = {'name': data_block_name,
                             'params': {},
                             'loops': {}}
@@ -736,7 +734,7 @@ class Model(QObject):
                                 loopName = '_atom_site',
                                 rowName = cryspy_atom.label,
                                 name = '_occupancy',
-                                prettyName = 'occ.',
+                                prettyName = 'occ',
                                 url = 'https://easydiffraction.org',
                                 cifDict = 'core',
                                 enabled = not cryspy_atom.occupancy_constraint,
@@ -789,18 +787,7 @@ class Model(QObject):
                             ed_atoms.append(ed_atom)
                         ed_phase['loops']['_atom_site'] = ed_atoms
 
-                ###ed_dict['phases'].append(ed_phase)
                 self.addDataBlock(ed_phase)
-
-#                # Calculate data based on...
-#                y_calc_array = self.calculateDiffractionPattern()
-#                self.addYCalcArray(y_calc_array)
-#
-#                pass
-#
-#                self.setCurrentModelStructViewCellModel()
-#                self.setCurrentModelStructViewAxesModel()
-#                self.setCurrentModelStructViewAtomsModel()
 
     def calculateDiffractionPattern(self):
         self._proxy.fitting.chiSq, self._proxy.fitting._pointsCount, _, _, paramNames = rhochi_calc_chi_sq_by_dictionary(self._proxy.data._cryspyDict,

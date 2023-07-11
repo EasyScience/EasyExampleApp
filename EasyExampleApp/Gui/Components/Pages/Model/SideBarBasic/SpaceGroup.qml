@@ -26,7 +26,7 @@ EaElements.GroupRow {
     EaElements.ParamTextField {
         parameter: Globals.Proxies.modelMainParam('_space_group_name_H-M_alt')
         onEditingFinished: Globals.Proxies.setModelMainParamWithFullUpdate(parameter, 'value', text)
-        warning: !Globals.Proxies.main.model.spaceGroupNames.includes(text)
+        warned: !Globals.Proxies.main.model.spaceGroupNames.includes(text)
     }
 
     EaElements.ParamComboBox {
