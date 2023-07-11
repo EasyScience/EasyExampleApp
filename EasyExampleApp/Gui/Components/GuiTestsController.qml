@@ -182,8 +182,8 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.text, 'Define experiment manually') )
         res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.enabled, true) )
-        res.push( rc.compare(Globals.Refs.app.experimentPage.continueButton.text, 'Continue without experiment data') )
-        res.push( rc.compare(Globals.Refs.app.experimentPage.continueButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.experimentPage.continueButton.text, 'Continue') )
+        res.push( rc.compare(Globals.Refs.app.experimentPage.continueButton.enabled, false) )
 
         rc.mouseClick(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton)
         rc.wait(2000)
