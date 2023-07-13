@@ -120,7 +120,7 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewButton {
-                fontIcon: "tint"
+                fontIcon: "atom"
                 outlineIcon: true
                 backgroundColor: "transparent"
                 borderColor: "transparent"
@@ -187,7 +187,7 @@ EaElements.GroupColumn {
             text: qsTr("Append new atom")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
-                console.debug(`---------- Appending new atom ----------`)
+                console.debug('*** Appending new atom ***')
                 Globals.Proxies.appendModelLoopRow('_atom_site')
             }
         }
@@ -197,7 +197,7 @@ EaElements.GroupColumn {
             text: qsTr("Duplicate selected atom")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
-                console.debug(`---------- Duplicating selected atom ----------`)
+                console.debug('*** Duplicating selected atom ***')
                 Globals.Proxies.duplicateModelLoopRow('_atom_site', tableView.currentIndex)
             }
         }

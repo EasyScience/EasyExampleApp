@@ -13,11 +13,11 @@ import Gui.Globals as Globals
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
-        title: qsTr("Experiment data explorer")
+        title: Globals.Proxies.experimentGroupTitle(qsTr("Experiments"))
         collapsible: false
         last: !Globals.Proxies.main.experiment.defined
 
-        Loader { source: 'SideBarBasic/ExperimentsExplorer.qml' }
+        Loader { source: 'SideBarBasic/Experiments.qml' }
     }
 
     EaElements.GroupBox {
@@ -49,14 +49,14 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
-        title: qsTr("Powder diffraction: background")
+        title: Globals.Proxies.experimentLoopTitle(qsTr('Powder diffraction: background'), '_pd_background')
         visible: Globals.Proxies.main.experiment.defined
 
         Loader { source: 'SideBarBasic/PdBackground.qml' }
     }
 
     EaElements.GroupBox {
-        title: qsTr("Associated phases")
+        title: Globals.Proxies.experimentLoopTitle(qsTr('Associated phases'), '_phase')
         visible: Globals.Proxies.main.experiment.defined
 
         Loader { source: 'SideBarBasic/Phase.qml' }

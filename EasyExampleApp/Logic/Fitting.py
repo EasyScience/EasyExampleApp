@@ -29,9 +29,7 @@ class Worker(QObject):
         self._proxy = proxy
         self._needCancel = False
 
-        self._cryspyDict = self._proxy.data._cryspyDict
-        self._cryspyDictInitial = copy.deepcopy(self._cryspyDict)
-        self._cryspyDictInOut = {}
+        self._cryspyDictInitial = copy.deepcopy(self._proxy.data._cryspyDict)
         self._cryspyUsePrecalculatedData = False
         self._cryspyCalcAnalyticalDerivatives = False
 
@@ -50,7 +48,7 @@ class Worker(QObject):
             # Check if fitting termination is requested
             if self._needCancel:
                 self._needCancel = False
-                self._cryspyDict = self._cryspyDictInitial
+                self._proxy.data._cryspyDict = copy.deepcopy(self._cryspyDictInitial)
                 self.cancelled.emit()
                 self._proxy.status.fitStatus = 'Cancelled'
                 console.error('Terminating the execution of the minimization thread')
@@ -75,43 +73,47 @@ class Worker(QObject):
         def chiSqFunc(params):
             for param in params:
                 block, group, idx = Data.strToCryspyDictParamPath(param)
-                self._cryspyDict[block][group][idx] = params[param].value
+                self._proxy.data._cryspyDict[block][group][idx] = params[param].value
             self._proxy.fitting.chiSq, _, _, _, _ = rhochi_calc_chi_sq_by_dictionary(
-                self._cryspyDict,
-                dict_in_out=self._cryspyDictInOut,
+                self._proxy.data._cryspyDict,
+                dict_in_out=self._proxy.data._cryspyInOutDict,
                 flag_use_precalculated_data=self._cryspyUsePrecalculatedData,
                 flag_calc_analytical_derivatives=self._cryspyCalcAnalyticalDerivatives)
             return self._proxy.fitting.chiSq
 
         self._proxy.fitting._freezeChiSqStart = True
+        console.error('')
 
         # Save initial state of cryspyDict if cancel fit is requested
-        self._cryspyDictInitial = copy.deepcopy(self._cryspyDict)
+        self._cryspyDictInitial = copy.deepcopy(self._proxy.data._cryspyDict)
+        console.error('')
 
         # Preliminary calculations
-        self._cryspyDictInOut = {}
         self._cryspyUsePrecalculatedData = False
         self._cryspyCalcAnalyticalDerivatives = False
         self._proxy.fitting.chiSq, self._proxy.fitting._pointsCount, _, _, parameter_names = rhochi_calc_chi_sq_by_dictionary(
-            self._cryspyDict,
-            dict_in_out=self._cryspyDictInOut,
+            self._proxy.data._cryspyDict,
+            dict_in_out=self._proxy.data._cryspyInOutDict,
             flag_use_precalculated_data=self._cryspyUsePrecalculatedData,
             flag_calc_analytical_derivatives=self._cryspyCalcAnalyticalDerivatives)
+        console.error('')
 
         # Create list of parameters to be varied
         parameter_names_free = [way for way in parameter_names]
-        param_0 = [self._cryspyDict[way[0]][way[1]][way[2]] for way in parameter_names_free]
+        param_0 = [self._proxy.data._cryspyDict[way[0]][way[1]][way[2]] for way in parameter_names_free]
         paramsLmfit = lmfit.Parameters()
         for name, val in zip(parameter_names_free, param_0):
             nameStr = Data.cryspyDictParamPathToStr(name)
             #self._paramsInit.add(nameStr, value=val)
             paramsLmfit.add(nameStr, value=val)
+        console.error('')
 
         ###self._proxy.fitting._fittablesCount = len(param_0)
         ###self._proxy.status.variables = f'{self._proxy.fitting._fittablesCount}'  # NEED move to connection
         self._proxy.fitting._freeParamsCount = len(param_0)
         if self._proxy.fitting._freeParamsCount != self._proxy.fittables._freeParamsCount:
             console.error(f'Number of free parameters differs. Expected {self._proxy.fittables._freeParamsCount}, got {self._proxy.fitting._freeParamsCount}')
+        console.error('')
 
         # Minimization: lmfit.minimize
         self._proxy.fitting._chiSqStart = self._proxy.fitting.chiSq
@@ -125,16 +127,16 @@ class Worker(QObject):
                                 tol=tol
                                 )
         #lmfit.report_fit(result)
+        console.error('')
 
         if result.success:
             console.info('Minimization has been successfully finished')
             # Calculate optimal chi2
-            self._cryspyDictInOut = {}
             self._cryspyUsePrecalculatedData = False
             self._cryspyCalcAnalyticalDerivatives = False
             self._proxy.fitting.chiSq, _, _, _, _ = rhochi_calc_chi_sq_by_dictionary(
-                self._cryspyDict,
-                dict_in_out=self._cryspyDictInOut,
+                self._proxy.data._cryspyDict,
+                dict_in_out=self._proxy.data._cryspyInOutDict,
                 flag_use_precalculated_data=self._cryspyUsePrecalculatedData,
                 flag_calc_analytical_derivatives=self._cryspyCalcAnalyticalDerivatives)
             console.info(f"Optimal reduced chi2 per {self._proxy.fitting._pointsCount} points: {self._proxy.fitting._chiSq/self._proxy.fitting._pointsCount:.2f}")

@@ -19,21 +19,30 @@ Column {
     spacing: EaStyle.Sizes.fontPixelSize
 
     // Table
-
     EaComponents.TableView {
-        id: table
+        id: tableView
+
+        property int modelCurrentIndex: Globals.Proxies.main.model.currentIndex
 
         defaultInfoText: qsTr("No models defined")
 
+        maxRowCountShow: 3
+        onModelCurrentIndexChanged: currentIndex = Globals.Proxies.main.model.currentIndex
+        onCurrentIndexChanged: Globals.Proxies.main.model.currentIndex = currentIndex
+
+        // Table model
+        model: Globals.Proxies.main.model.dataBlocks
+        /*
+        onModelChanged: {
+            if (model) {
+                Globals.Proxies.main.model.currentIndex = Globals.Proxies.main.model.dataBlocks.length - 1
+                positionViewAtEnd()
+            }
+        }
+        */
         // Table model
 
-        // We only use the length of the model object defined in backend logic and
-        // directly access that model in every row using the TableView index property.
-
-        model: Globals.Proxies.main.model.dataBlocks.length
-
         // Header row
-
         header: EaComponents.TableViewHeader {
 
             EaComponents.TableViewLabel {
@@ -59,9 +68,9 @@ Column {
             }
 
         }
+        // Header row
 
         // Table rows
-
         delegate: EaComponents.TableViewDelegate {
 
             EaComponents.TableViewLabel {
@@ -70,7 +79,7 @@ Column {
             }
 
             EaComponents.TableViewButton {
-                fontIcon: "tint"
+                fontIcon: "layer-group"
                 ToolTip.text: qsTr("Calculated pattern color")
                 outlineIcon: true
                 backgroundColor: "transparent"
@@ -79,7 +88,7 @@ Column {
             }
 
             EaComponents.TableViewParameter {
-                text: Globals.Proxies.main.model.dataBlocks[index].name
+                text: tableView.model[index].name
             }
 
             EaComponents.TableViewButton {
@@ -89,27 +98,26 @@ Column {
             }
 
         }
-
-        onCurrentIndexChanged: Globals.Proxies.main.model.currentIndex = currentIndex
+        // Table rows
 
         Component.onCompleted: Globals.Refs.app.modelPage.modelsExplorer = this
 
     }
+    // Table
 
     // Control buttons below table
-
     Row {
         spacing: EaStyle.Sizes.fontPixelSize
 
         EaElements.SideBarButton {
             fontIcon: "upload"
-            text: qsTr("Load model from file")
+            text: qsTr("Load model(s) from file(s)")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
                 if (Globals.Vars.isTestMode) {
-                    console.debug(`---------- Loading model from file (test mode) ----------`)
-                    const fpath = '../examples/Co2SiO4_model.cif'
-                    Globals.Proxies.main.model.loadModelFromFile(fpath)
+                    console.debug('*** Loading model from file (test mode) ***')
+                    const fpaths = ['../examples/Co2SiO4_model.cif']
+                    Globals.Proxies.main.model.loadModelsFromFiles(fpaths)
                 } else {
                     openCifFileDialog.open()
                 }
@@ -122,22 +130,23 @@ Column {
             text: qsTr("Define model manually")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
-                console.debug(`---------- Adding default model ----------`)
+                console.debug('*** Adding default model ***')
                 Globals.Proxies.main.model.addDefaultModel()
             }
             Component.onCompleted: Globals.Refs.app.modelPage.addNewModelManuallyButton = this
         }
     }
+    // Control buttons below table
 
     // Misc
 
     FileDialog{
         id: openCifFileDialog
-        //selectMultiple: true
+        fileMode: FileDialog.OpenFiles
         nameFilters: [ "CIF files (*.cif)"]
         onAccepted: {
-            console.debug(`---------- Loading model from file ----------`)
-            Globals.Proxies.main.model.loadModelFromFile(selectedFile)
+            console.debug('*** Loading model(s) from file(s) ***')
+            Globals.Proxies.main.model.loadModelsFromFiles(selectedFiles)
         }
     }
 

@@ -10,17 +10,19 @@ from PySide6.QtCore import QObject, Signal, Slot, Property
 
 from EasyApp.Logic.Logging import console
 from Logic.Calculators import GaussianCalculator
-from Logic.Fittables import Parameter
-from Logic.Helpers import Converter, IO
+from Logic.Helpers import CryspyParser, Parameter, IO
 from Logic.Data import Data
 
 try:
     import cryspy
     from cryspy.H_functions_global.function_1_cryspy_objects import \
         file_to_globaln, str_to_globaln
+    from cryspy.procedure_rhochi.rhochi_by_dictionary import \
+        rhochi_calc_chi_sq_by_dictionary
     console.debug('CrysPy modules have been imported')
 except ImportError:
     console.debug('No CrysPy module have been found')
+
 
 _DEFAULT_DATA_BLOCK = """data_default
 
@@ -70,28 +72,39 @@ _pd_meas_intensity_sigma
 class Experiment(QObject):
     definedChanged = Signal()
     currentIndexChanged = Signal()
-    dataBlocksChanged = Signal(int)
-    dataBlocksMeasOnlyChanged = Signal(int)
+    dataBlocksChanged = Signal()
+    dataBlocksNoMeasChanged = Signal()
+    dataBlocksMeasOnlyChanged = Signal()
     dataBlocksCifChanged = Signal()
     dataBlocksCifNoMeasChanged = Signal()
     dataBlocksCifMeasOnlyChanged = Signal()
     yMeasArraysChanged = Signal()
     yBkgArraysChanged = Signal()
+    yCalcTotalArraysChanged = Signal()
+    yResidArraysChanged = Signal()
     chartRangesChanged = Signal()
 
     def __init__(self, parent):
         super().__init__(parent)
         self._proxy = parent
+
         self._defined = False
         self._currentIndex = 0
-        self._dataBlocks = []
+
+        self._dataBlocksNoMeas = []
         self._dataBlocksMeasOnly = []
+
         self._dataBlocksCif = []
         self._dataBlocksCifNoMeas = ""
         self._dataBlocksCifMeasOnly = ""
+
         self._xArrays = []
         self._yMeasArrays = []
+        self._syMeasArrays = []
         self._yBkgArrays = []
+        self._yCalcTotalArrays = []
+        self._yResidArrays = []
+
         self._chartRanges = []
 
     # QML accessible properties
@@ -109,7 +122,7 @@ class Experiment(QObject):
         if self._defined == newValue:
             return
         self._defined = newValue
-        console.debug(f"Experiment defined: {newValue}")
+        console.debug(IO.formatMsg('main', f'Experiment defined: {newValue}'))
         self.definedChanged.emit()
 
     @Property(int, notify=currentIndexChanged)
@@ -129,10 +142,10 @@ class Experiment(QObject):
         #console.error('dataBlocks (measured data only) getter')
         return self._dataBlocksMeasOnly
 
-    @Property('QVariant', notify=dataBlocksChanged)
-    def dataBlocks(self):
-        #console.error('dataBlocks getter')
-        return self._dataBlocks
+    @Property('QVariant', notify=dataBlocksNoMeasChanged)
+    def dataBlocksNoMeas(self):
+        #console.error('dataBlocks (without measured data) getter')
+        return self._dataBlocksNoMeas
 
     @Property('QVariant', notify=dataBlocksCifChanged)
     def dataBlocksCif(self):
@@ -151,98 +164,178 @@ class Experiment(QObject):
     @Slot()
     def addDefaultExperiment(self):
         console.debug('Adding default experiment')
-        self.loadExperimentFromEdCif(_DEFAULT_DATA_BLOCK)
+        self.loadExperimentsFromEdCif(_DEFAULT_DATA_BLOCK)
+
+    @Slot('QVariant')
+    def loadExperimentsFromFiles(self, fpaths):
+        for fpath in fpaths:
+            fpath = fpath.toLocalFile()
+            fpath = IO.generalizePath(fpath)
+            console.debug(f"Loading experiment(s) from: {fpath}")
+            with open(fpath, 'r') as file:
+                edCif = file.read()
+            self.loadExperimentsFromEdCif(edCif)
 
     @Slot(str)
-    def loadExperimentFromFile(self, fpath):
-        fpath = IO.generalizePath(fpath)
-        console.debug(f"Loading experiment from: {fpath}")
-        with open(fpath, 'r') as file:
-            edCif = file.read()
-        self.loadExperimentFromEdCif(edCif)
+    def loadExperimentsFromEdCif(self, edCif):
+        cryspyObj = self._proxy.data._cryspyObj
+        cryspyCif = CryspyParser.edCifToCryspyCif(edCif)
+        cryspyExperimentsObj = str_to_globaln(cryspyCif)
+
+        experimentsCountBefore = len(self.cryspyObjExperiments())
+        cryspyObj.add_items(cryspyExperimentsObj.items)
+        experimentsCountAfter = len(self.cryspyObjExperiments())
+        success = experimentsCountAfter - experimentsCountBefore
+
+        if success:
+            cryspyExperimentsDict = cryspyExperimentsObj.get_dictionary()
+            edExperimentsMeasOnly, edExperimentsNoMeas = CryspyParser.cryspyObjAndDictToEdExperiments(cryspyExperimentsObj, cryspyExperimentsDict)
+
+            self._proxy.data._cryspyDict.update(cryspyExperimentsDict)
+            self._dataBlocksMeasOnly += edExperimentsMeasOnly
+            self._dataBlocksNoMeas += edExperimentsNoMeas
+
+            self.defined = bool(len(self.dataBlocksNoMeas))
+
+            console.debug(IO.formatMsg('sub', f'{len(edExperimentsMeasOnly)} experiment(s)', 'meas data only', 'to intern dataset', 'added'))
+            console.debug(IO.formatMsg('sub', f'{len(edExperimentsNoMeas)} experiment(s)', 'without meas data', 'to intern dataset', 'added'))
+
+            self.dataBlocksChanged.emit()
+        else:
+            console.debug(IO.formatMsg('sub', f'No experiment(s)', '', 'to intern dataset', 'added'))
+
+
+
 
     @Slot(str)
-    def loadExperimentFromEdCif(self, edCif):
-        cryspyCif = Converter.edCifToCryspyCif(edCif)
-        cryspyExperimentObj = str_to_globaln(cryspyCif)
-        cryspyExperimentDict = cryspyExperimentObj.get_dictionary()
-        self._proxy.data._cryspyDict.update(cryspyExperimentDict)
-        self.parseExperiments(cryspyExperimentObj)
+    def replaceExperiment(self, edCif=''):
+        console.debug("Cryspy obj and dict need to be replaced")
+
+        currentDataBlock = self.dataBlocksNoMeas[self.currentIndex]
+        currentExperimentName = currentDataBlock['name']
+
+        cryspyObjBlockNames = [item.data_name for item in self._proxy.data._cryspyObj.items]
+        cryspyObjBlockIdx = cryspyObjBlockNames.index(currentExperimentName)
+
+        cryspyDictBlockName = f'pd_{currentExperimentName}'
+
+        if not edCif:
+            edCif = CryspyParser.dataBlockToCif(currentDataBlock)
+        cryspyCif = CryspyParser.edCifToCryspyCif(edCif)
+        cryspyExperimentsObj = str_to_globaln(cryspyCif)
+        cryspyExperimentsDict = cryspyExperimentsObj.get_dictionary()
+        _, edExperimentsNoMeas = CryspyParser.cryspyObjAndDictToEdExperiments(cryspyExperimentsObj, cryspyExperimentsDict)
+
+        self._proxy.data._cryspyObj.items[cryspyObjBlockIdx] = cryspyExperimentsObj.items[0]
+        self._proxy.data._cryspyDict[cryspyDictBlockName] = cryspyExperimentsDict[cryspyDictBlockName]
+        self._dataBlocksNoMeas[self.currentIndex] = edExperimentsNoMeas[0]
+
+        console.debug(f"Experiment data block '{currentExperimentName}' (no. {self.currentIndex + 1}) (without measured data) has been replaced")
+        self.dataBlocksNoMeasChanged.emit()  # self.dataBlocksNoMeasChanged.emit(blockIdx)
+
+#        # remove experiment from self._proxy.data._cryspyDict
+#        currentExperimentName = self.dataBlocks[self.currentIndex]['name']
+#        del self._proxy.data._cryspyDict[f'pd_{currentExperimentName}']
+#
+#        # add experiment to self._proxy.data._cryspyDict
+#        cifNoMeas = CryspyParser.dataBlocksToCif(self._dataBlocks)
+#        cifMeasOnly = self.dataBlocksCifMeasOnly
+#        edCif = cifNoMeas + '\n' + cifMeasOnly
+#        self.loadExperimentsFromEdCif(edCif)
+
+
+
+
+
 
     @Slot(int)
     def removeExperiment(self, index):
         console.debug(f"Removing experiment no. {index + 1}")
         self.currentIndex = index - 1
-        del self._dataBlocks[index]
+        del self._dataBlocksNoMeas[index]
+        del self._dataBlocksMeasOnly[index]
         del self._xArrays[index]
         del self._yMeasArrays[index]
         del self._yBkgArrays[index]
-        self.dataBlocksChanged.emit()
+
+        self.defined = bool(len(self.dataBlocksNoMeas))
+
+        self.dataBlocksNoMeasChanged.emit()
+        self.dataBlocksMeasOnlyChanged.emit()
         self.yMeasArraysChanged.emit()
         self.yBkgArraysChanged.emit()
         console.debug(f"Experiment no. {index + 1} has been removed")
 
     @Slot()
     def removeAllExperiments(self):
-        self._dataBlocks.clear()
-        self._xArrays.clear()
-        self._yMeasArrays.clear()
-        self.dataBlocksChanged.emit()
-        self.yMeasArraysChanged.emit()
-        self.yBkgArraysChanged.emit()
-        console.debug("All experiments have been removed")
+        pass
+        #self._dataBlocksNoMeas.clear()
+        #self._dataBlocksMeasOnly.clear()
+        #self._xArrays.clear()
+        #self._yMeasArrays.clear()
+        #self.dataBlocksNoMeasChanged.emit()
+        #self.dataBlocksMeasOnlyChanged.emit()
+        #self.yMeasArraysChanged.emit()
+        #self.yBkgArraysChanged.emit()
+        #console.debug("All experiments have been removed")
 
-    @Slot(str, str, 'QVariant')
-    def setMainParamWithFullUpdate(self, paramName, field, value):
-        changedIntern = self.editDataBlockMainParam(paramName, field, value)
+
+
+    @Slot(int, str, str, 'QVariant')
+    def setMainParamWithFullUpdate(self, blockIndex, paramName, field, value):
+        changedIntern = self.editDataBlockMainParam(blockIndex, paramName, field, value)
         if not changedIntern:
             return
-        self.createCryspyDictFromDataBlocks()
+        self.replaceExperiment()
 
-    @Slot(str, str, float)
-    def setMainParam(self, paramName, field, value):
-        changedIntern = self.editDataBlockMainParam(paramName, field, value)
-        changedCryspy = self.editCryspyDictByMainParam(paramName, field, value)
-
+    @Slot(int, str, str, 'QVariant')
+    def setMainParam(self, blockIndex, paramName, field, value):
+        changedIntern = self.editDataBlockMainParam(blockIndex, paramName, field, value)
+        changedCryspy = self.editCryspyDictByMainParam(blockIndex, paramName, field, value)
         if changedIntern and changedCryspy:
-            self.dataBlocksChanged.emit(None)  # NED FIX
+            self.dataBlocksNoMeasChanged.emit()
 
-    @Slot(str, str, int, str, 'QVariant')
-    def setLoopParamWithFullUpdate(self, loopName, paramName, rowIndex, field, value):
-        changedIntern = self.editDataBlockLoopParam(loopName, paramName, rowIndex, field, value)
+    @Slot(int, str, str, int, str, 'QVariant')
+    def setLoopParamWithFullUpdate(self, blockIndex, loopName, paramName, rowIndex, field, value):
+        changedIntern = self.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
         if not changedIntern:
             return
-        self.createCryspyDictFromDataBlocks()
+        self.replaceExperiment()
 
-    @Slot(str, str, int, str, float)
-    def setLoopParam(self, loopName, paramName, rowIndex, field, value):
-        changedIntern = self.editDataBlockLoopParam(loopName, paramName, rowIndex, field, value)
-        changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, rowIndex, field, value)
-
+    @Slot(int, str, str, int, str, 'QVariant')
+    def setLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
+        changedIntern = self.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
+        changedCryspy = self.editCryspyDictByLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
         if changedIntern and changedCryspy:
-            self.dataBlocksChanged.emit(None)  # NED FIX
+            self.dataBlocksNoMeasChanged.emit()
 
     @Slot(str, int)
     def removeLoopRow(self, loopName, rowIndex):
         self.removeDataBlockLoopRow(loopName, rowIndex)
-        self.createCryspyDictFromDataBlocks()
+        self.replaceExperiment()
 
     @Slot(str)
     def appendLoopRow(self, loopName):
         self.appendDataBlockLoopRow(loopName)
-        self.createCryspyDictFromDataBlocks()
+        self.replaceExperiment()
 
     @Slot()
     def resetBkgToDefault(self):
         self.resetDataBlockBkgToDefault()
-        self.createCryspyDictFromDataBlocks()
+        self.replaceExperiment()
 
     # Private methods
+
+    def cryspyObjExperiments(self):
+        cryspyObj = self._proxy.data._cryspyObj
+        cryspyExperimentType = cryspy.E_data_classes.cl_2_pd.Pd
+        experiments = [block for block in cryspyObj.items if type(block) == cryspyExperimentType]
+        return experiments
 
     def removeDataBlockLoopRow(self, loopName, rowIndex):
         block = 'experiment'
         blockIndex = self._currentIndex
-        del self._dataBlocks[blockIndex]['loops'][loopName][rowIndex]
+        del self._dataBlocksNoMeas[blockIndex]['loops'][loopName][rowIndex]
 
         console.debug(f"Intern dict ▌ {block}[{blockIndex}].{loopName}[{rowIndex}] has been removed")
 
@@ -250,13 +343,13 @@ class Experiment(QObject):
         block = 'experiment'
         blockIndex = self._currentIndex
 
-        lastBkgPoint = self._dataBlocks[blockIndex]['loops'][loopName][-1]
+        lastBkgPoint = self._dataBlocksNoMeas[blockIndex]['loops'][loopName][-1]
 
         newBkgPoint = copy.deepcopy(lastBkgPoint)
         newBkgPoint['_2theta']['value'] += 10
 
-        self._dataBlocks[blockIndex]['loops'][loopName].append(newBkgPoint)
-        atomsCount = len(self._dataBlocks[blockIndex]['loops'][loopName])
+        self._dataBlocksNoMeas[blockIndex]['loops'][loopName].append(newBkgPoint)
+        atomsCount = len(self._dataBlocksNoMeas[blockIndex]['loops'][loopName])
 
         console.debug(f"Intern dict ▌ {block}[{blockIndex}].{loopName}[{atomsCount}] has been added")
 
@@ -265,81 +358,59 @@ class Experiment(QObject):
         blockIndex = self._currentIndex
         loopName = '_pd_background'
 
-        firstBkgPoint = copy.deepcopy(self._dataBlocks[blockIndex]['loops'][loopName][0])  # copy of the 1st point
+        firstBkgPoint = copy.deepcopy(self._dataBlocksNoMeas[blockIndex]['loops'][loopName][0])  # copy of the 1st point
         firstBkgPoint['_2theta']['value'] = 0
         firstBkgPoint['_intensity']['value'] = 0
 
         lastBkgPoint = copy.deepcopy(firstBkgPoint)
         lastBkgPoint['_2theta']['value'] = 180
 
-        self._dataBlocks[blockIndex]['loops'][loopName] = [firstBkgPoint, lastBkgPoint]
+        self._dataBlocksNoMeas[blockIndex]['loops'][loopName] = [firstBkgPoint, lastBkgPoint]
 
         console.debug(f"Intern dict ▌ {block}[{blockIndex}].{loopName} has been reset to default values")
 
-    def editDataBlockMainParam(self, paramName, field, value, blockIndex=None):
-        block = 'experiment'
-        if blockIndex is None:
-            blockIndex = self._currentIndex
 
-        oldValue = self._dataBlocks[blockIndex]['params'][paramName][field]
+
+    def editDataBlockMainParam(self, blockIndex, paramName, field, value):
+        block = 'experiment'
+        oldValue = self._dataBlocksNoMeas[blockIndex]['params'][paramName][field]
         if oldValue == value:
             return False
-        self._dataBlocks[blockIndex]['params'][paramName][field] = value
-
-        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{paramName}.{field}")
+        self._dataBlocksNoMeas[blockIndex]['params'][paramName][field] = value
+        console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value}', f'{block}[{blockIndex}].{paramName}.{field}'))
         return True
 
-    def editDataBlockLoopParam(self, loopName, paramName, rowIndex, field, value, blockIndex=None):
+    def editDataBlockLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
         block = 'experiment'
-        if blockIndex is None:
-            blockIndex = self._currentIndex
-
-        oldValue = self._dataBlocks[blockIndex]['loops'][loopName][rowIndex][paramName][field]
+        oldValue = self._dataBlocksNoMeas[blockIndex]['loops'][loopName][rowIndex][paramName][field]
         if oldValue == value:
             return False
-        self._dataBlocks[blockIndex]['loops'][loopName][rowIndex][paramName][field] = value
-
-        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field}")
+        self._dataBlocksNoMeas[blockIndex]['loops'][loopName][rowIndex][paramName][field] = value
+        console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value}', f'{block}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field}'))
         return True
 
-    def createCryspyDictFromDataBlocks(self):
-        console.debug("Cryspy dict need to be recreated")
-
-        # remove experiment from self._proxy.data._cryspyDict
-        currentExperimentName = self.dataBlocks[self.currentIndex]['name']
-        del self._proxy.data._cryspyDict[f'pd_{currentExperimentName}']
-
-        # add experiment to self._proxy.data._cryspyDict
-        cifNoMeas = Converter.dataBlocksToCif(self._dataBlocks)
-        cifMeasOnly = self.dataBlocksCifMeasOnly
-        edCif = cifNoMeas + '\n' + cifMeasOnly
-        self.loadExperimentFromEdCif(edCif)
-
-    def editCryspyDictByMainParam(self, paramName, field, value):
-        path, value = self.cryspyDictPathByMainParam(paramName, field, value)
-
+    def editCryspyDictByMainParam(self, blockIndex, paramName, field, value):
+        path, value = self.cryspyDictPathByMainParam(blockIndex, paramName, field, value)
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
             return False
         self._proxy.data._cryspyDict[path[0]][path[1]][path[2]] = value
-
-        console.debug(f"Cryspy dict ▌ {oldValue} → {value} ▌ {path}")
+        console.debug(IO.formatMsg('sub', 'Cryspy dict', f'{oldValue} → {value}', f'{path}'))
         return True
 
-    def editCryspyDictByLoopParam(self, loopName, paramName, rowIndex, field, value):
-        path, value = self.cryspyDictPathByLoopParam(loopName, paramName, rowIndex, field, value)
-
+    def editCryspyDictByLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
+        path, value = self.cryspyDictPathByLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
             return False
         self._proxy.data._cryspyDict[path[0]][path[1]][path[2]] = value
-
-        console.debug(f"Cryspy dict ▌ {oldValue} → {value} ▌ {path}")
+        console.debug(IO.formatMsg('sub', 'Cryspy dict', f'{oldValue} → {value}', f'{path}'))
         return True
 
-    def cryspyDictPathByMainParam(self, paramName, field, value):
-        blockIndex = self._currentIndex
-        blockName = self._dataBlocks[blockIndex]['name']
+
+
+    def cryspyDictPathByMainParam(self, blockIndex, paramName, field, value):
+        blockName = self._dataBlocksNoMeas[blockIndex]['name']
         path = ['','','']
         path[0] = f"pd_{blockName}"
 
@@ -398,9 +469,8 @@ class Experiment(QObject):
 
         return path, value
 
-    def cryspyDictPathByLoopParam(self, loopName, paramName, rowIndex, field, value):
-        blockIndex = self._currentIndex
-        blockName = self._dataBlocks[blockIndex]['name']
+    def cryspyDictPathByLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
+        blockName = self._dataBlocksNoMeas[blockIndex]['name']
         path = ['','','']
         path[0] = f"pd_{blockName}"
 
@@ -493,7 +563,7 @@ class Experiment(QObject):
                     rowIndex = idx[0]
 
                 value = float(value)  # convert float64 to float (needed for QML access)
-                blockIndex = [block['name'] for block in self._dataBlocks].index(blockName)
+                blockIndex = [block['name'] for block in self._dataBlocksNoMeas].index(blockName)
 
                 if loopName is None:
                     self.editDataBlockMainParam(paramName, 'value', value, blockIndex)
@@ -528,452 +598,184 @@ class Experiment(QObject):
         yBkgArray = np.interp(xArray, xBkgPoints, yBkgPoints)
         return yBkgArray
 
-    def calculatedYBkgArray(self, index):
-        #console.error('Interpolation')
-        dataBlock = self._dataBlocks[index]
-        xArray = self._xArrays[index]
-        yBkgArrayInterp = np.zeros_like(xArray)
 
-        if '_pd_background' in dataBlock['loops'].keys():
-            bkg = dataBlock['loops']['_pd_background']
-            xBkgArray = [point['_2theta']['value'] for point in bkg]
-            yBkgArray = [point['_intensity']['value'] for point in bkg]
-            yBkgArrayInterp = np.interp(xArray, xBkgArray, yBkgArray)
 
-        console.debug(f" - Interpolation of background for experiment data block no. {index + 1} has been done")
-        return yBkgArrayInterp
 
-    def updateCurrentExperimentYBkgArray(self):
-        index = self._currentIndex
-        self._yBkgArrays[index] = self.calculatedYBkgArray(index)
-        console.debug(f" - Background for experiment data block no. {index + 1} has been calculated and saved to intern dataset")
-        self.yBkgArraysChanged.emit()
 
-    def addDataBlock(self, dataBlock):
-        blockIdx = -1
-        for i, block in enumerate(self._dataBlocks):
-            if dataBlock['name'] == block['name']:
-                blockIdx = i
-                break
-        if blockIdx == -1:
-            self._dataBlocks.append(dataBlock)
-            console.debug(f"Experiment data block no. {len(self._dataBlocks)} (without measured data) has been added to intern dataset")
+    def runCryspyCalculations(self):
+        result = rhochi_calc_chi_sq_by_dictionary(
+            self._proxy.data._cryspyDict,
+            dict_in_out=self._proxy.data._cryspyInOutDict,
+            flag_use_precalculated_data=False,
+            flag_calc_analytical_derivatives=False)
+
+        console.debug(IO.formatMsg('sub', 'Cryspy calculations', 'finished'))
+
+        self._proxy.fitting.chiSq = result[0]
+        self._proxy.fitting._pointsCount = result[1]
+
+        reducedGofLastIter = self._proxy.fitting.chiSq / self._proxy.fitting._pointsCount            # NEED FIX
+        if self._proxy.fitting._chiSqStart is None:
+            self._proxy.status.goodnessOfFit = f'{reducedGofLastIter:0.2f}'                           # NEED move to connection
         else:
-            self._dataBlocks[blockIdx] = dataBlock
-            console.debug(f"Experiment data block no. {blockIdx + 1} (without measured data) in intern dataset has been replaced")
-        self.dataBlocksChanged.emit(blockIdx)
+            reducedGofStart = self._proxy.fitting._chiSqStart / self._proxy.fitting._pointsCount      # NEED FIX
+            self._proxy.status.goodnessOfFit = f'{reducedGofStart:0.2f} → {reducedGofLastIter:0.2f}'  # NEED move to connection
+            if not self._proxy.fitting._freezeChiSqStart:
+                self._proxy.fitting._chiSqStart = self._proxy.fitting.chiSq
 
-    def addDataBlockMeasOnly(self, dataBlock):
-        blockIdx = -1
-        for i, block in enumerate(self._dataBlocksMeasOnly):
-            if dataBlock['name'] == block['name']:
-                blockIdx = i
-                break
-        if blockIdx == -1:
-            self._dataBlocksMeasOnly.append(dataBlock)
-            console.debug(f"Experiment data block no. {len(self._dataBlocksMeasOnly)} (measured data only) has been added to intern dataset")
-        else:
-            self._dataBlocksMeasOnly[blockIdx] = dataBlock
-            console.debug(f"Experiment data block no. {blockIdx + 1} (measured data only) in intern dataset has been replaced")
-        self.dataBlocksMeasOnlyChanged.emit(blockIdx)
 
-    def addXYArraysAndChartRanges(self, blockIdx):
-        idx = blockIdx
-        if idx == -1:
-            idx = len(self._dataBlocksMeasOnly) - 1
-        data = self._dataBlocksMeasOnly[idx]['loops']['_pd_meas']
+    def setMeasuredArraysForSingleExperiment(self, idx):
+        ed_name = self._proxy.experiment.dataBlocksNoMeas[idx]['name']
+        cryspy_name = f'pd_{ed_name}'
+        cryspyInOutDict = self._proxy.data._cryspyInOutDict
 
         # X data
-        x_array = [point['_2theta']['value'] for point in data]
-        x_array = np.array(x_array)
-        self.addXArray(x_array, blockIdx)
+        x_array = cryspyInOutDict[cryspy_name]['ttheta']
+        x_array = np.rad2deg(x_array)
+        self.setXArray(x_array, idx)
 
         # Measured Y data
-        y_meas_array = [point['_intensity']['value'] for point in data]
-        y_meas_array = np.array(y_meas_array)
-        self.addYMeasArray(y_meas_array, blockIdx)
+        y_meas_array = cryspyInOutDict[cryspy_name]['signal_exp'][0]
+        self.setYMeasArray(y_meas_array, idx)
 
         # Standard deviation of the measured Y data
-        #sy_meas_array = [point['_intensity_sigma']['value'] for point in data]
-        #sy_meas_array = np.array(sy_meas_array)
-        #self.addSYMeasArray(sy_meas_array)
+        sy_meas_array = cryspyInOutDict[cryspy_name]['signal_exp'][1]
+        self.setSYMeasArray(sy_meas_array, idx)
+
+    def setCalculatedArraysForSingleExperiment(self, idx):
+        ed_name = self._proxy.experiment.dataBlocksNoMeas[idx]['name']
+        cryspy_name = f'pd_{ed_name}'
+        cryspyInOutDict = self._proxy.data._cryspyInOutDict
 
         # Background Y data # NED FIX: use calculatedYBkgArray()
-        y_bkg_array_interp = np.zeros_like(x_array)
-        #if '_pd_background' in ed_experiment['loops'].keys():
-        #    bkg = ed_experiment['loops']['_pd_background']
-        #    x_bkg_array = [point['_2theta']['value'] for point in bkg]
-        #    y_bkg_array = [point['_intensity']['value'] for point in bkg]
-        #    y_bkg_array_interp = np.interp(x_array, x_bkg_array, y_bkg_array)
-        self.addYBkgArray(y_bkg_array_interp, blockIdx)
+        y_bkg_array = cryspyInOutDict[cryspy_name]['signal_background']
+        self.setYBkgArray(y_bkg_array, idx)
 
-        # Ranges (for charts)
-        x_min = dict(Parameter(float(x_array.min())))
-        x_max = dict(Parameter(float(x_array.max())))
+        # Total calculated Y data (sum of all phases up and down polarisation plus background)
+        y_calc_total_array = cryspyInOutDict[cryspy_name]['signal_plus'] + \
+                             cryspyInOutDict[cryspy_name]['signal_minus'] + \
+                             cryspyInOutDict[cryspy_name]['signal_background']
+        self.setYCalcTotalArray(y_calc_total_array, idx)
+
+        # Residual (Ymeas -Ycalc)
+        y_meas_array = self._yMeasArrays[idx]
+        y_resid_array = y_meas_array - y_calc_total_array
+        self.setYResidArray(y_resid_array, idx)
+
+        # Bragg peaks data
+        #cryspyInOutDict[cryspy_name]['dict_in_out_co2sio4']['index_hkl'] # [0] - h array, [1] - k array, [2] - l array
+        #cryspyInOutDict[cryspy_name]['dict_in_out_co2sio4']['ttheta_hkl'] # need rad2deg
+
+    def setChartRangesForSingleExperiment(self, idx):
+        x_array = self._xArrays[idx]
+        y_meas_array = self._yMeasArrays[idx]
+        x_min = float(x_array.min())
+        x_max = float(x_array.max())
         y_min = float(y_meas_array.min())
         y_max = float(y_meas_array.max())
         y_range = y_max - y_min
         y_extra = y_range * 0.1
-        y_min = dict(Parameter(y_min - y_extra))
-        y_max = dict(Parameter(y_max + y_extra))
+        y_min -= y_extra
+        y_max += y_extra
         ranges = {'xMin':x_min, 'xMax':x_max, 'yMin':y_min, 'yMax':y_max}
-        self.addChartRanges(ranges, blockIdx)
+        self.setChartRanges(ranges, idx)
 
-    def addXArray(self, xArray, blockIdx):
-        if blockIdx == -1:
+    def replaceArrays(self):
+        for idx in range(len(self._dataBlocksMeasOnly)):
+            self.setCalculatedArraysForSingleExperiment(idx)
+
+    def addArraysAndChartRanges(self):
+        for idx in range(len(self._xArrays), len(self._dataBlocksMeasOnly)):
+            self.setMeasuredArraysForSingleExperiment(idx)
+            self.setCalculatedArraysForSingleExperiment(idx)
+            self.setChartRangesForSingleExperiment(idx)
+
+
+
+
+
+
+    def setXArray(self, xArray, idx):
+        try:
+            self._xArrays[idx] = xArray
+            console.debug(IO.formatMsg('sub', 'X', f'experiment no. {idx + 1}', 'in intern dataset', 'replaced'))
+        except IndexError:
             self._xArrays.append(xArray)
-            console.debug(f" - X data for experiment data block no. {len(self._dataBlocks) + 1} has been added to intern dataset")
-        else:
-            self._xArrays[blockIdx] = xArray
-            console.debug(f" - X data for experiment data block no. {blockIdx + 1} in intern dataset has been replaced")
+            console.debug(IO.formatMsg('sub', 'X', f'experiment no. {len(self._xArrays)}', 'to intern dataset', 'added'))
 
-    def addYMeasArray(self, yMeasArray, blockIdx):
-        if blockIdx == -1:
+    def setYMeasArray(self, yMeasArray, idx):
+        try:
+            self._yMeasArrays[idx] = yMeasArray
+            console.debug(IO.formatMsg('sub', 'Y-meas', f'experiment no. {idx + 1}', 'in intern dataset', 'replaced'))
+        except IndexError:
             self._yMeasArrays.append(yMeasArray)
-            console.debug(f" - Y-measured data for experiment data block no. {len(self._dataBlocks) + 1} has been added to intern dataset")
-        else:
-            self._yMeasArrays[blockIdx] = yMeasArray
-            console.debug(f" - Y-measured data for experiment data block no. {blockIdx + 1} in intern dataset has been replaced")
+            console.debug(IO.formatMsg('sub', 'Y-meas', f'experiment no. {len(self._yMeasArrays)}', 'to intern dataset', 'added'))
         self.yMeasArraysChanged.emit()
 
-    def addYBkgArray(self, yBkgArray, blockIdx):
-        if blockIdx == -1:
+    def setSYMeasArray(self, syMeasArray, idx):
+        try:
+            self._syMeasArrays[idx] = syMeasArray
+            console.debug(IO.formatMsg('sub', 'sY-meas', f'experiment no. {idx + 1}', 'in intern dataset', 'replaced'))
+        except IndexError:
+            self._syMeasArrays.append(syMeasArray)
+            console.debug(IO.formatMsg('sub', 'sY-meas', f'experiment no. {len(self._syMeasArrays)}', 'to intern dataset', 'added'))
+
+    def setYBkgArray(self, yBkgArray, idx):
+        try:
+            self._yBkgArrays[idx] = yBkgArray
+            console.debug(IO.formatMsg('sub', 'Y-bkg (inter)', f'experiment no. {idx + 1}', 'in intern dataset', 'replaced'))
+        except IndexError:
             self._yBkgArrays.append(yBkgArray)
-            console.debug(f" - Y-background data for experiment data block no. {len(self._dataBlocks) + 1} has been added to intern dataset")
-        else:
-            self._yBkgArrays[blockIdx] = yBkgArray
-            console.debug(f" - Y-background data for experiment data block no. {blockIdx + 1} in intern dataset has been replaced")
+            console.debug(IO.formatMsg('sub', 'Y-bkg (inter)', f'experiment no. {len(self._yBkgArrays)}', 'to intern dataset', 'added'))
         self.yBkgArraysChanged.emit()
 
-    def addChartRanges(self, ranges, blockIdx):
-        if blockIdx == -1:
-            self.chartRanges.append(ranges)
-            console.debug(f" - Chart ranges for experiment data block no. {len(self._dataBlocks) + 1} has been added to intern dataset")
-        else:
-            self.chartRanges[blockIdx] = ranges
-            console.debug(f" - Chart ranges for experiment data block no. {blockIdx + 1} in intern dataset has been replaced")
+    def setYCalcTotalArray(self, yCalcTotalArray, idx):
+        try:
+            self._yCalcTotalArrays[idx] = yCalcTotalArray
+            console.debug(IO.formatMsg('sub', 'Y-calc (total)', f'experiment no. {idx + 1}', 'in intern dataset', 'replaced'))
+        except IndexError:
+            self._yCalcTotalArrays.append(yCalcTotalArray)
+            console.debug(IO.formatMsg('sub', 'Y-calc (total)', f'experiment no. {len(self._yCalcTotalArrays)}', 'to intern dataset', 'added'))
+        self.yCalcTotalArraysChanged.emit()
+
+    def setYResidArray(self, yResidArray, idx):
+        try:
+            self._yResidArrays[idx] = yResidArray
+            console.debug(IO.formatMsg('sub', 'Y-resid (meas-calc)', f'experiment no. {idx + 1}', 'in intern dataset', 'replaced'))
+        except IndexError:
+            self._yResidArrays.append(yResidArray)
+            console.debug(IO.formatMsg('sub', 'Y-resid (meas-calc)', f'experiment no. {len(self._yResidArrays)}', 'to intern dataset', 'added'))
+        self.yResidArraysChanged.emit()
+
+    def setChartRanges(self, ranges, idx):
+        try:
+            self._chartRanges[idx] = ranges
+            console.debug(IO.formatMsg('sub', 'Chart ranges', f'experiment no. {idx + 1}', 'in intern dataset', 'replaced'))
+        except IndexError:
+            self._chartRanges.append(ranges)
+            console.debug(IO.formatMsg('sub', 'Chart ranges', f'experiment no. {len(self._chartRanges)}', 'to intern dataset', 'added'))
         self.chartRangesChanged.emit()
 
+
+
+
     def setDataBlocksCifNoMeas(self):
-        self._dataBlocksCifNoMeas = Converter.dataBlocksToCif(self._dataBlocks)
-        console.debug(" - Experiment data blocks (without measured data) have been converted to CIF string")
+        self._dataBlocksCifNoMeas = [CryspyParser.dataBlockToCif(block) for block in self._dataBlocksNoMeas]
+        console.debug(IO.formatMsg('sub', f'{len(self._dataBlocksCifNoMeas)} experiment(s)', 'without meas data', 'to CIF string', 'converted'))
         self.dataBlocksCifNoMeasChanged.emit()
 
     def setDataBlocksCifMeasOnly(self):
-        self._dataBlocksCifMeasOnly = Converter.dataBlockLoopsToCif(self._dataBlocksMeasOnly)
-        console.debug(" - Experiment data blocks (measured data only) have been converted to CIF string")
+        self._dataBlocksCifMeasOnly = [CryspyParser.dataBlockToCif(block, includeBlockName=False) for block in self._dataBlocksMeasOnly]
+        console.debug(IO.formatMsg('sub', f'{len(self._dataBlocksCifMeasOnly)} experiment(s)', 'meas data only', 'to CIF string', 'converted'))
         self.dataBlocksCifMeasOnlyChanged.emit()
 
     def setDataBlocksCif(self):
         self.setDataBlocksCifNoMeas()
         self.setDataBlocksCifMeasOnly()
-        cifMeasOnlyReduced =  self._dataBlocksCifMeasOnly.split('\n')[:10] + ['...'] + self._dataBlocksCifMeasOnly.split('\n')[-6:]
-        cifMeasOnlyReduced = '\n'.join(cifMeasOnlyReduced)
-        cifMeasOnlyReduced = cifMeasOnlyReduced.rstrip()
-        self._dataBlocksCif = [self._dataBlocksCifNoMeas] + [cifMeasOnlyReduced]
-        console.debug(" - Experiment data blocks (including short measured data) have been converted to CIF string")
+        cifMeasOnlyReduced =  [block.split('\n')[:10] + ['...'] + block.split('\n')[-6:] for block in self._dataBlocksCifMeasOnly]
+        cifMeasOnlyReduced = ['\n'.join(block) for block in cifMeasOnlyReduced]
+        cifMeasOnlyReduced = [f'\n{block}' for block in cifMeasOnlyReduced]
+        cifMeasOnlyReduced = [block.rstrip() for block in cifMeasOnlyReduced]
+        self._dataBlocksCif = [[noMeas, measOnlyReduced] for (noMeas, measOnlyReduced) in zip(self._dataBlocksCifNoMeas, cifMeasOnlyReduced)]
+        console.debug(IO.formatMsg('sub', f'{len(self._dataBlocksCif)} experiment(s)', 'simplified meas data', 'to CIF string', 'converted'))
         self.dataBlocksCifChanged.emit()
-
-    # Extract experiments from cryspy_obj and cryspy_dict into internal ed_dict
-    def parseExperiments(self, cryspy_obj):
-        ed_dict = self._proxy.data.edDict  # ???
-        cryspy_dict = self._proxy.data._cryspyDict
-        experiment_names = [name.replace('pd_', '') for name in cryspy_dict.keys() if name.startswith('pd_')]
-
-        for data_block in cryspy_obj.items:
-            data_block_name = data_block.data_name
-
-            # Experiment datablock
-            if data_block_name in experiment_names:
-                ed_dict['experiments'] = []  # ???
-                ed_experiment = {'name': data_block_name,
-                                 'params': {},
-                                 'loops': {}}
-                ed_experiment_meas_only = {'name': data_block_name,
-                                           'loops': {}}
-                cryspy_experiment = data_block.items
-
-                #x_array = self.defaultXArray()  # NEED FIX
-                #y_meas_array = self.defaultYMeasArray()  # NEED FIX
-                #y_bkg_array = self.defaultYBkgArray()  # NEED FIX
-
-                for item in cryspy_experiment:
-                    # Ranges section
-                    if type(item) == cryspy.C_item_loop_classes.cl_1_range.Range:
-                        ed_experiment['params']['_pd_meas_2theta_range_min'] = dict(Parameter(
-                            item.ttheta_min,
-                            name = '_pd_meas_2theta_range_min',
-                            prettyName = 'range min',
-                            url = 'https://easydiffraction.org',
-                            cifDict = 'pd'
-                        ))
-                        ed_experiment['params']['_pd_meas_2theta_range_max'] = dict(Parameter(
-                            item.ttheta_max,
-                            name = '_pd_meas_2theta_range_max',
-                            prettyName = 'range max',
-                            url = 'https://easydiffraction.org',
-                            cifDict = 'pd'
-                        ))
-                        ed_experiment['params']['_pd_meas_2theta_range_inc'] = dict(Parameter(
-                            0.05, # NEED FIX
-                            name = '_pd_meas_2theta_range_inc',
-                            prettyName = 'range inc',
-                            url = 'https://easydiffraction.org',
-                            cifDict = 'pd'
-                        ))
-
-                    # Setup section
-                    elif type(item) == cryspy.C_item_loop_classes.cl_1_setup.Setup:
-                        ed_experiment['params']['_diffrn_radiation_probe'] = dict(Parameter(
-                            item.radiation.replace('neutrons', 'neutron').replace('X-rays', 'x-ray'),
-                            permittedValues = ['neutron', 'x-ray'],
-                            name = '_diffrn_radiation_probe',
-                            prettyName = 'probe',
-                            url = 'https://easydiffraction.org'
-                        ))
-                        ed_experiment['params']['_diffrn_radiation_wavelength'] = dict(Parameter(
-                            item.wavelength,
-                            name = '_diffrn_radiation_wavelength',
-                            prettyName = 'wavelength',
-                            url = 'https://easydiffraction.org',
-                            min = 0.5,
-                            max = 2.5,
-                            units = 'Å',
-                            fittable = True,
-                            fit = item.wavelength_refinement
-                        ))
-                        ed_experiment['params']['_pd_meas_2theta_offset'] = dict(Parameter(
-                            item.offset_ttheta,
-                            name = '_pd_meas_2theta_offset',
-                            prettyName = 'offset',
-                            url = 'https://easydiffraction.org',
-                            min = -0.5,
-                            max = 0.5,
-                            units = '°',
-                            fittable = True,
-                            fit = item.offset_ttheta_refinement
-                        ))
-
-                    # Instrument resolution section
-                    elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_instr_resolution.PdInstrResolution:
-                        ed_experiment['params']['_pd_instr_resolution_u'] = dict(Parameter(
-                            item.u,
-                            name = '_pd_instr_resolution_u',
-                            prettyName = 'u',
-                            url = 'https://easydiffraction.org',
-                            fittable = True,
-                            fit = item.u_refinement
-                        ))
-                        ed_experiment['params']['_pd_instr_resolution_v'] = dict(Parameter(
-                            item.v,
-                            name = '_pd_instr_resolution_v',
-                            prettyName = 'v',
-                            url = 'https://easydiffraction.org',
-                            fittable = True,
-                            fit = item.v_refinement
-                        ))
-                        ed_experiment['params']['_pd_instr_resolution_w'] = dict(Parameter(
-                            item.w,
-                            name = '_pd_instr_resolution_w',
-                            prettyName = 'w',
-                            url = 'https://easydiffraction.org',
-                            fittable = True,
-                            fit = item.w_refinement
-                        ))
-                        ed_experiment['params']['_pd_instr_resolution_x'] = dict(Parameter(
-                            item.x,
-                            name = '_pd_instr_resolution_x',
-                            prettyName = 'x',
-                            url = 'https://easydiffraction.org',
-                            fittable = True,
-                            fit = item.x_refinement
-                        ))
-                        ed_experiment['params']['_pd_instr_resolution_y'] = dict(Parameter(
-                            item.y,
-                            name = '_pd_instr_resolution_y',
-                            prettyName = 'y',
-                            url = 'https://easydiffraction.org',
-                            fittable = True,
-                            fit = item.y_refinement
-                        ))
-
-                    # Peak assymetries section
-                    elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_instr_reflex_asymmetry.PdInstrReflexAsymmetry:
-                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p1'] = dict(Parameter(
-                            item.p1,
-                            name = '_pd_instr_reflex_asymmetry_p1',
-                            prettyName = 'p1',
-                            url = 'https://easydiffraction.org',
-                            fittable = True,
-                            fit = item.p1_refinement
-                        ))
-                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p2'] = dict(Parameter(
-                            item.p2,
-                            name = '_pd_instr_reflex_asymmetry_p2',
-                            prettyName = 'p2',
-                            url = 'https://easydiffraction.org',
-                            fittable = True,
-                            fit = item.p2_refinement
-                        ))
-                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p3'] = dict(Parameter(
-                            item.p3,
-                            name = '_pd_instr_reflex_asymmetry_p3',
-                            prettyName = 'p3',
-                            url = 'https://easydiffraction.org',
-                            fittable = True,
-                            fit = item.p3_refinement
-                        ))
-                        ed_experiment['params']['_pd_instr_reflex_asymmetry_p4'] = dict(Parameter(
-                            item.p4,
-                            name = '_pd_instr_reflex_asymmetry_p4',
-                            prettyName = 'p4',
-                            url = 'https://easydiffraction.org',
-                            fittable = True,
-                            fit = item.p4_refinement))
-
-                    # Phases section
-                    elif type(item) == cryspy.C_item_loop_classes.cl_1_phase.PhaseL:
-                        ed_phases = []
-                        cryspy_phases = item.items
-
-                        for idx, cryspy_phase in enumerate(cryspy_phases):
-                            ed_phase = {}
-                            ed_phase['_label'] = dict(Parameter(
-                                cryspy_phase.label,
-                                idx = idx,
-                                loopName = '_phase',
-                                name = '_label',
-                                prettyName = 'label',
-                                url = 'https://easydiffraction.org',
-                            ))
-                            ed_phase['_scale'] = dict(Parameter(
-                                cryspy_phase.scale,
-                                idx = idx,
-                                loopName = '_phase',
-                                rowName = cryspy_phase.label,
-                                name = '_scale',
-                                prettyName = 'scale',
-                                url = 'https://easydiffraction.org',
-                                min = 0.1,
-                                max = 10,
-                                fittable = True,
-                                fit = cryspy_phase.scale_refinement
-                            ))
-                            ed_phases.append(ed_phase)
-
-                        ed_experiment['loops']['_phase'] = ed_phases
-
-                    # Background section
-                    elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_background.PdBackgroundL:
-                        ed_bkg_points = []
-                        cryspy_bkg_points = item.items
-
-                        for idx, cryspy_bkg_point in enumerate(cryspy_bkg_points):
-                            ed_bkg_point = {}
-                            ed_bkg_point['_2theta'] = dict(Parameter(
-                                cryspy_bkg_point.ttheta,
-                                idx = idx,
-                                loopName = '_pd_background',
-                                name = '_2theta',
-                                prettyName = '2θ',
-                                url = 'https://easydiffraction.org'
-                            ))
-                            ed_bkg_point['_intensity'] = dict(Parameter(
-                                cryspy_bkg_point.intensity,
-                                idx = idx,
-                                loopName = '_pd_background',
-                                rowName = f'{cryspy_bkg_point.ttheta:g}_deg',  # formatting float to str without trailing zeros
-                                name = '_intensity',
-                                prettyName = 'intensity',
-                                url = 'https://easydiffraction.org',
-                                min = 0,
-                                max = 3000,
-                                fittable = True,
-                                fit = cryspy_bkg_point.intensity_refinement
-                            ))
-                            ed_bkg_points.append(ed_bkg_point)
-
-                        ed_experiment['loops']['_pd_background'] = ed_bkg_points
-
-                    # Measured data section
-                    elif type(item) == cryspy.C_item_loop_classes.cl_1_pd_meas.PdMeasL:
-                        ed_meas_points = []
-                        cryspy_meas_points = item.items
-
-
-
-                        for idx, cryspy_meas_point in enumerate(cryspy_meas_points):
-                            ed_meas_point = {}
-                            ed_meas_point['_2theta'] = dict(Parameter(
-                                cryspy_meas_point.ttheta,
-                                idx = idx,
-                                loopName = '_pd_meas',
-                                name = '_2theta',
-                                prettyName = '2θ',
-                                url = 'https://easydiffraction.org'
-                            ))
-                            ed_meas_point['_intensity'] = dict(Parameter(
-                                cryspy_meas_point.intensity,
-                                idx = idx,
-                                loopName = '_pd_meas',
-                                name = '_intensity',
-                                prettyName = 'I',
-                                url = 'https://easydiffraction.org'
-                            ))
-                            ed_meas_point['_intensity_sigma'] = dict(Parameter(
-                                cryspy_meas_point.intensity_sigma,
-                                idx = idx,
-                                loopName = '_pd_meas',
-                                name = '_intensity_sigma',
-                                prettyName = 'sI',
-                                url = 'https://easydiffraction.org'
-                            ))
-                            ed_meas_points.append(ed_meas_point)
-
-                        ed_experiment_meas_only['loops']['_pd_meas'] = ed_meas_points
-
-
-
-#                        x_array = [point.ttheta for point in cryspy_meas_points]
-#                        y_meas_array = [point.intensity for point in cryspy_meas_points]
-#                        #sy_meas_array = [point.intensity_sigma for point in cryspy_meas_points]
-#                        x_array = np.array(x_array)
-#                        y_meas_array = np.array(y_meas_array)
-#
-#                        # Background  # NED FIX: use calculatedYBkgArray()
-#                        y_bkg_array_interp = np.zeros_like(x_array)
-#                        if '_pd_background' in ed_experiment['loops'].keys():
-#                            bkg = ed_experiment['loops']['_pd_background']
-#                            x_bkg_array = [point['_2theta']['value'] for point in bkg]
-#                            y_bkg_array = [point['_intensity']['value'] for point in bkg]
-#                            y_bkg_array_interp = np.interp(x_array, x_bkg_array, y_bkg_array)
-
-#                        # Ranges (for charts)
-#                        x_min = dict(Parameter(float(x_array.min())))
-#                        x_max = dict(Parameter(float(x_array.max())))
-#                        y_min = float(y_meas_array.min())
-#                        y_max = float(y_meas_array.max())
-#                        y_range = y_max - y_min
-#                        y_extra = y_range * 0.1
-#                        y_min = dict(Parameter(y_min - y_extra))
-#                        y_max = dict(Parameter(y_max + y_extra))
-#                        self.chartRanges.append({'xMin': x_min,
-#                                                 'xMax': x_max,
-#                                                 'yMin': y_min,
-#                                                 'yMax': y_max})
-#                        self.chartRangesChanged.emit()
-
-                ed_dict['experiments'].append(ed_experiment)  # ???
-
-
-#                self.addXArray(x_array)
-#                self.addYMeasArray(y_meas_array)
-#                self.addYBkgArray(y_bkg_array_interp)
-
-                self.addDataBlockMeasOnly(ed_experiment_meas_only)  # NEED FIX: need to be called before self.addDataBlock(ed_experiment)
-                self.addDataBlock(ed_experiment) # NEED FIX: need to be called after self.addDataBlockMeasOnly(ed_experiment_meas_only)
-
-#
-#                # Calculate data based on...
-#                y_calc_array = self._proxy.model.calculateDiffractionPattern()
-#                self._proxy.model.addYCalcArray(y_calc_array)

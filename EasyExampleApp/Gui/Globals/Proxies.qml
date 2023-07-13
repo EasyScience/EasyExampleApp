@@ -199,7 +199,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                     out['project'] = data
                 }
                 if (qmlProxy.experiment.defined) {
-                    out['experiment'] = qmlProxy.experiment.dataBlocks
+                    out['experiment'] = qmlProxy.experiment.dataBlocksNoMeas
                 }
                 if (qmlProxy.model.defined) {
                     out['model'] = qmlProxy.model.dataBlocks
@@ -246,6 +246,8 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                     'yArray': []
                 }
             ]
+
+            property var chartRanges: [ { 'xMin': 0, 'xMax': 1, 'yMin': 0, 'yMax': 1 } ]
 
             property var data: _EMPTY_DATA
             property bool defined: false
@@ -565,104 +567,154 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
     // Common functions
 
+    function rangeValue(name) {
+        if (!main.experiment.defined || !main.experiment.chartRanges.length) {
+            return 0
+        }
+        const idx = main.experiment.currentIndex
+        return main.experiment.chartRanges[idx][name]
+    }
+
     // Model
+
+    function modelGroupTitle(title) {
+        if (!main.model.defined) {
+            return title
+        }
+        const count = main.model.dataBlocks.length
+        return `${title} (${count})`
+    }
+
+    function modelLoopTitle(title, loopName) {
+        if (!main.model.defined) {
+            return title
+        }
+        const idx = main.model.currentIndex
+        const count = main.model.dataBlocks[idx].loops[loopName].length
+        return `${title} (${count})`
+    }
 
     function modelMainParam(name) {
         if (!main.model.defined) {
             return {}
         }
-        const currentModelIndex = main.model.currentIndex
-        return main.model.dataBlocks[currentModelIndex].params[name]
+        const idx = main.model.currentIndex
+        return main.model.dataBlocks[idx].params[name]
     }
 
     function modelLoopParam(loopName, paramName, rowIndex) {
         if (!main.model.defined) {
             return {}
         }
-        const currentModelIndex = main.model.currentIndex
-        return main.model.dataBlocks[currentModelIndex].loops[loopName][rowIndex][paramName]
+        const idx = main.model.currentIndex
+        return main.model.dataBlocks[idx].loops[loopName][rowIndex][paramName]
     }
 
     function setModelMainParamWithFullUpdate(param, field, value) {
-        console.debug(`---------- Editing model main param ${param.name} '${field}' to ${value} ----------`)
-        main.model.setMainParamWithFullUpdate(param.name, field, value)
+        const idx = main.model.currentIndex
+        console.debug(`*** Editing (full update) model no. ${idx + 1} main param ${param.name} '${field}' to ${value} ***`)
+        main.model.setMainParamWithFullUpdate(idx, param.name, field, value)
     }
 
     function setModelMainParam(param, field, value) {
-        console.debug(`---------- Editing model main param ${param.name} '${field}' to ${value} ----------`)
-        main.model.setMainParam(param.name, field, value)
+        const idx = main.model.currentIndex
+        console.debug(`*** Editing model no. ${idx + 1} main param ${param.name} '${field}' to ${value} ***`)
+        main.model.setMainParam(idx, param.name, field, value)
     }
 
     function setModelLoopParamWithFullUpdate(param, field, value) {
-        console.debug(`---------- Editing model loop param ${param.loopName}${param.name}[${param.idx}] '${field}' to ${value} ----------`)
-        main.model.setLoopParamWithFullUpdate(param.loopName, param.name, param.idx, field, value)
+        const idx = main.model.currentIndex
+        console.debug(`*** Editing (full update) model no. ${idx + 1} loop param ${param.loopName}${param.name}[${param.idx}] '${field}' to ${value} ***`)
+        main.model.setLoopParamWithFullUpdate(idx, param.loopName, param.name, param.idx, field, value)
     }
 
     function setModelLoopParam(param, field, value) {
-        console.debug(`---------- Editing model loop param ${param.loopName}${param.name}[${param.idx}] '${field}' to ${value} ----------`)
-        main.model.setLoopParam(param.loopName, param.name, param.idx, field, value)
+        const idx = main.model.currentIndex
+        console.debug(`*** Editing model no. ${idx + 1} loop param ${param.loopName}${param.name}[${param.idx}] '${field}' to ${value} ***`)
+        main.model.setLoopParam(idx, param.loopName, param.name, param.idx, field, value)
     }
 
     function removeModelLoopRow(loopName, idx) {
-        console.debug(`---------- Removing model loop row ${loopName}[${idx}] ----------`)
+        console.debug(`*** Removing model loop row ${loopName}[${idx}] ***`)
         main.model.removeLoopRow(loopName, idx)
     }
 
     function appendModelLoopRow(loopName) {
-        console.debug(`---------- Appending model loop row ${loopName} ----------`)
+        console.debug(`*** Appending model loop row ${loopName} ***`)
         main.model.appendLoopRow(loopName)
     }
 
     function duplicateModelLoopRow(loopName, idx) {
-        console.debug(`---------- Duplicating model loop row ${loopName}[${idx}] ----------`)
+        console.debug(`*** Duplicating model loop row ${loopName}[${idx}] ***`)
         main.model.duplicateLoopRow(loopName, idx)
     }
 
     // Experiment
 
+    function experimentGroupTitle(title) {
+        if (!main.experiment.defined) {
+            return title
+        }
+        const count = main.experiment.dataBlocksNoMeas.length
+        return `${title} (${count})`
+    }
+
+    function experimentLoopTitle(title, loopName) {
+        if (!main.experiment.defined) {
+            return title
+        }
+        const idx = main.experiment.currentIndex
+        const count = main.experiment.dataBlocksNoMeas[idx].loops[loopName].length
+        return `${title} (${count})`
+    }
+
     function experimentMainParam(name) {
         if (!main.experiment.defined) {
             return {}
         }
-        const currentModelIndex = main.experiment.currentIndex
-        return main.experiment.dataBlocks[currentModelIndex].params[name]
+        const idx = main.experiment.currentIndex
+        return main.experiment.dataBlocksNoMeas[idx].params[name]
     }
 
     function experimentLoopParam(loopName, paramName, rowIndex) {
         if (!main.experiment.defined) {
             return {}
         }
-        const currentModelIndex = main.experiment.currentIndex
-        return main.experiment.dataBlocks[currentModelIndex].loops[loopName][rowIndex][paramName]
+        const idx = main.experiment.currentIndex
+        return main.experiment.dataBlocksNoMeas[idx].loops[loopName][rowIndex][paramName]
     }
 
     function setExperimentMainParamWithFullUpdate(param, field, value) {
-        console.debug(`---------- Editing experiment main param ${param.name} '${field}' to ${value} ----------`)
-        main.experiment.setMainParamWithFullUpdate(param.name, field, value)
+        const idx = main.experiment.currentIndex
+        console.debug(`*** Editing (full update) experiment no. ${idx + 1} main param ${param.name} '${field}' to ${value} ***`)
+        main.experiment.setMainParamWithFullUpdate(idx, param.name, field, value)
     }
 
     function setExperimentMainParam(param, field, value) {
-        console.debug(`---------- Editing experiment main param ${param.name} '${field}' to ${value} ----------`)
-        main.experiment.setMainParam(param.name, field, value)
+        const idx = main.experiment.currentIndex
+        console.debug(`*** Editing experiment no. ${idx + 1} main param ${param.name} '${field}' to ${value} ***`)
+        main.experiment.setMainParam(idx, param.name, field, value)
     }
 
     function setExperimentLoopParamWithFullUpdate(param, field, value) {
-        console.debug(`---------- Editing experiment loop param ${param.loopName}${param.name}[${param.idx}] '${field}' to ${value} ----------`)
-        main.experiment.setLoopParamWithFullUpdate(param.loopName, param.name, param.idx, field, value)
+        const idx = main.experiment.currentIndex
+        console.debug(`*** Editing (full update) experiment no. ${idx + 1} loop param ${param.loopName}${param.name}[${param.idx}] '${field}' to ${value} ***`)
+        main.experiment.setLoopParamWithFullUpdate(idx, param.loopName, param.name, param.idx, field, value)
     }
 
     function setExperimentLoopParam(param, field, value) {
-        console.debug(`---------- Editing experiment loop param ${param.loopName}${param.name}[${param.idx}] '${field}' to ${value} ----------`)
-        main.experiment.setLoopParam(param.loopName, param.name, param.idx, field, value)
+        const idx = main.experiment.currentIndex
+        console.debug(`*** Editing experiment no. ${idx + 1} loop param ${param.loopName}${param.name}[${param.idx}] '${field}' to ${value} ***`)
+        main.experiment.setLoopParam(idx, param.loopName, param.name, param.idx, field, value)
     }
 
     function removeExperimentLoopRow(loopName, idx) {
-        console.debug(`---------- Removing experiment loop row ${loopName}[${idx}] ----------`)
+        console.debug(`*** Removing experiment loop row ${loopName}[${idx}] ***`)
         main.experiment.removeLoopRow(loopName, idx)
     }
 
     function appendExperimentLoopRow(loopName) {
-        console.debug(`---------- Appending experiment loop row ${loopName} ----------`)
+        console.debug(`*** Appending experiment loop row ${loopName} ***`)
         main.experiment.appendLoopRow(loopName)
     }
 

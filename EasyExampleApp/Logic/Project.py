@@ -111,7 +111,7 @@ class Project(QObject):
         if self.created:
             out['project'] = self._data
         if self._proxy.experiment.defined:
-            out['experiment'] = self._proxy.experiment.dataBlocks
+            out['experiment'] = self._proxy.experiment.dataBlocksNoMeas
             for idx, data in enumerate(out['experiment']):
                 data['xArray'] = self._proxy.experiment._xArrays[idx].tolist()
                 data['yMeasArray'] = self._proxy.experiment._yMeasArrays[idx].tolist()

@@ -19,20 +19,30 @@ Column {
     spacing: EaStyle.Sizes.fontPixelSize
 
     // Table
-
     EaComponents.TableView {
+        id: tableView
+
+        property int experimentCurrentIndex: Globals.Proxies.main.experiment.currentIndex
 
         defaultInfoText: qsTr("No experiments defined")
 
+        maxRowCountShow: 3
+        onExperimentCurrentIndexChanged: currentIndex = Globals.Proxies.main.experiment.currentIndex
+        onCurrentIndexChanged: Globals.Proxies.main.experiment.currentIndex = currentIndex
+
+        // Table model
+        model: Globals.Proxies.main.experiment.dataBlocksNoMeas
+        /*
+        onModelChanged: {
+            if (model) {
+                Globals.Proxies.main.experiment.currentIndex = Globals.Proxies.main.experiment.dataBlocksNoMeas.length - 1
+                positionViewAtEnd()
+            }
+        }
+        */
         // Table model
 
-        // We only use the length of the model object defined in backend logic and
-        // directly access that model in every row using the TableView index property.
-
-        model: Globals.Proxies.main.experiment.dataBlocks.length
-
         // Header row
-
         header: EaComponents.TableViewHeader {
 
             EaComponents.TableViewLabel {
@@ -58,6 +68,7 @@ Column {
             }
 
         }
+        // Header row
 
         // Table rows
         delegate: EaComponents.TableViewDelegate {
@@ -68,7 +79,7 @@ Column {
             }
 
             EaComponents.TableViewButton {
-                fontIcon: "tint"
+                fontIcon: "microscope"
                 ToolTip.text: qsTr("Measured pattern color")
                 outlineIcon: true
                 backgroundColor: "transparent"
@@ -77,7 +88,7 @@ Column {
             }
 
             EaComponents.TableViewParameter {
-                text: Globals.Proxies.main.experiment.dataBlocks[index].name
+                text: tableView.model[index].name
             }
 
             EaComponents.TableViewButton {
@@ -87,26 +98,25 @@ Column {
             }
 
         }
-
-        onCurrentIndexChanged: Globals.Proxies.main.experiment.currentIndex = currentIndex
+        // Table rows
 
     }
+    // Table
 
     // Control buttons below table
-
     Row {
         spacing: EaStyle.Sizes.fontPixelSize
 
         EaElements.SideBarButton {
-            enabled: !Globals.Proxies.main.experiment.defined
+            //enabled: !Globals.Proxies.main.experiment.defined
             fontIcon: "upload"
-            text: qsTr("Load experiment from file")
+            text: qsTr("Load experiment(s) from file(s)")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
                 if (Globals.Vars.isTestMode) {
-                    console.debug(`---------- Loading experiment from file (test mode) ----------`)
-                    const fpath = '../examples/Co2SiO4_experiment.cif'
-                    Globals.Proxies.main.experiment.loadExperimentFromFile(fpath)
+                    console.debug('*** Loading experiment from file (test mode) ***')
+                    const fpaths = ['../examples/Co2SiO4_experiment.cif']
+                    Globals.Proxies.main.experiment.loadExperimentsFromFiles(fpaths)
                 } else {
                     openCifFileDialog.open()
                 }
@@ -115,27 +125,28 @@ Column {
         }
 
         EaElements.SideBarButton {
-            enabled: !Globals.Proxies.main.experiment.defined
+            //enabled: !Globals.Proxies.main.experiment.defined
             fontIcon: "plus-circle"
             text: qsTr("Define experiment manually")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
-                console.debug(`---------- Adding default experiment ----------`)
+                console.debug('*** Adding default experiment ***')
                 Globals.Proxies.main.experiment.addDefaultExperiment()
             }
             Component.onCompleted: Globals.Refs.app.experimentPage.addDefaultExperimentDataButton = this
         }
     }
+    // Control buttons below table
 
     // Misc
 
     FileDialog{
         id: openCifFileDialog
-        //selectMultiple: true
+        fileMode: FileDialog.OpenFiles
         nameFilters: [ "CIF files (*.cif)"]
         onAccepted: {
-            console.debug(`---------- Loading experiment from file ----------`)
-            Globals.Proxies.main.experiment.loadExperimentFromFile(selectedFile)
+            console.debug('*** Loading experiment(s) from file(s) ***')
+            Globals.Proxies.main.experiment.loadExperimentsFromFiles(selectedFiles)
         }
     }
 

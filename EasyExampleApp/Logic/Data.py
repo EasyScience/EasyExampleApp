@@ -5,6 +5,15 @@
 import numpy as np
 from PySide6.QtCore import QObject, Signal, Property
 
+from EasyApp.Logic.Logging import console
+
+try:
+    import cryspy
+    from cryspy.H_functions_global.function_1_cryspy_objects import str_to_globaln
+    console.debug('CrysPy module has been imported')
+except ImportError:
+    console.debug('No CrysPy module has been found')
+
 
 class Data(QObject):
     edDictChanged = Signal()
@@ -15,11 +24,14 @@ class Data(QObject):
         self._edDict = {}
 
         self._cryspyExperimentObj = None
-        self._cryspyModelObj = None
+        self._cryspyModelObjs = []
 
         self._cryspyExperimentDict = {}
-        self._cryspyModelDict = {}
+        self._cryspyModelDicts = []
 
+
+
+        self._cryspyObj = str_to_globaln('')
         self._cryspyDict = {}
         self._cryspyInOutDict = {}
 

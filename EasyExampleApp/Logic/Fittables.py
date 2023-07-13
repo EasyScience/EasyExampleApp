@@ -5,7 +5,7 @@
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
 from EasyApp.Logic.Logging import console
-from Logic.Helpers import Converter
+from Logic.Helpers import Converter, IO
 
 _EMPTY_DATA = [
     {
@@ -23,46 +23,6 @@ _EMPTY_DATA = [
     }
 ]
 
-class Parameter(dict):
-
-    def __init__(self,
-                value,
-                permittedValues = None,
-                idx = 0,
-                error = 0.0,
-                min = -1.0,
-                max = 1.0,
-                units = '',
-                loopName = '',
-                rowName = '',
-                name = '',
-                prettyName = '',
-                url = '',
-                cifDict = '',
-                optional = False,
-                enabled = True,
-                fittable = False,
-                fit = False):
-        self['value'] = value
-        self['permittedValues'] = permittedValues
-        self['idx'] = idx
-        self['optional'] = optional
-        self['enabled'] = enabled
-        self['fittable'] = fittable
-        self['fit'] = fit
-        self['error'] = error
-        self['group'] = ""
-        self['min'] = min
-        self['max'] = max
-        self['loopName'] = loopName
-        self['rowName'] = rowName
-        self['name'] = name
-        self['prettyName'] = prettyName
-        self['url'] = url
-        self['cifDict'] = cifDict
-        self['parentIndex'] = 0
-        self['parentName'] = ''
-        self['units'] = units
 
 
 class Fittables(QObject):
@@ -135,17 +95,17 @@ class Fittables(QObject):
     @Slot(str, int, str, int, str, str, float)
     def edit(self, blockType, blockIndex, loopName, rowIndex, paramName, field, value):
         if loopName == '':
-            console.debug(f"Changing fittable {blockType}[{blockIndex}].{paramName}.{field} to {value}")
+            console.debug(IO.formatMsg('main', 'Changing fittable', f'{blockType}[{blockIndex}].{paramName}.{field} to {value}'))
             if blockType == 'experiment':
-                self._proxy.experiment.setMainParam(paramName, field, value)
+                self._proxy.experiment.setMainParam(blockIndex, paramName, field, value)
             elif blockType == 'model':
-                self._proxy.model.setMainParam(paramName, field, value)
+                self._proxy.model.setMainParam(blockIndex, paramName, field, value)
         else:
-            console.debug(f"Changing fittable {blockType}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field} to {value}")
+            console.debug(IO.formatMsg('main', 'Changing fittable', f'{blockType}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field} to {value}'))
             if blockType == 'experiment':
-                self._proxy.experiment.setLoopParam(loopName, paramName, rowIndex, field, value)
+                self._proxy.experiment.setLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
             elif blockType == 'model':
-                self._proxy.model.setLoopParam(loopName, paramName, rowIndex, field, value)
+                self._proxy.model.setLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
 
     def set(self):
         _data = []
@@ -230,8 +190,8 @@ class Fittables(QObject):
                                         _data.append(fittable)
 
         # Experiment params
-        for i in range(len(self._proxy.experiment.dataBlocks)):
-            block = self._proxy.experiment.dataBlocks[i]
+        for i in range(len(self._proxy.experiment.dataBlocksNoMeas)):
+            block = self._proxy.experiment.dataBlocksNoMeas[i]
 
             # Experiment main params
             for paramName, paramContent in block['params'].items():
@@ -306,7 +266,8 @@ class Fittables(QObject):
 
         if True:  # len(_data):
             self._data = _data
-            console.debug(' - Fittables have been changed')
+            console.debug(IO.formatMsg('sub', 'Fittables changed'))
+
             self.dataChanged.emit()
             self._freeParamsCount = _freeParamsCount
             self._fixedParamsCount = _fixedParamsCount
@@ -316,5 +277,5 @@ class Fittables(QObject):
 
     def setDataJson(self):
         self._dataJson = Converter.dictToJson(self._data)
-        console.debug(" - Fittables data have been converted to JSON string")
+        console.debug(" - Fittables converted to JSON string")
         self.dataJsonChanged.emit()

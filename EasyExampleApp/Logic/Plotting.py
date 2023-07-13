@@ -7,7 +7,7 @@ from PySide6.QtCore import QObject, Signal, Slot, Property
 from PySide6 import QtCharts
 
 from EasyApp.Logic.Logging import console
-from Logic.Helpers import Converter, WebEngine
+from Logic.Helpers import Converter, IO, WebEngine
 
 
 _LIBS_1D = ['QtCharts', 'Plotly']
@@ -99,9 +99,10 @@ class Plotting(QObject):
 
     # Backend public methods
 
+    # Experiment
+
     def drawMeasuredOnExperimentChart(self):
         lib = self._proxy.plotting.currentLib1d
-        #console.debug(f"(Re)plotting measured curve on experiment page using {lib}")
         if lib == 'QtCharts':
             self.qtchartsReplaceMeasuredOnExperimentChartAndRedraw()
         elif lib == 'Plotly':
@@ -111,68 +112,41 @@ class Plotting(QObject):
 
     def drawBackgroundOnExperimentChart(self):
         lib = self._proxy.plotting.currentLib1d
-        #console.debug(f"(Re)plotting background curve on experiment page using {lib}")
         if lib == 'QtCharts':
             self.qtchartsReplaceBackgroundOnExperimentChartAndRedraw()
         elif lib == 'Plotly':
             pass
 
-    def drawCalculatedOnModelChart(self):
-        lib = self._proxy.plotting.currentLib1d
-        #console.debug(f"Updating calculated curve on model page using {lib}")
-        if lib == 'QtCharts':
-            self.qtchartsReplaceCalculatedOnModelChartAndRedraw()
-        elif lib == 'Plotly':
-            self.plotlyReplaceXOnModelChart()
-            self.plotlyReplaceCalculatedYOnModelChart()
-            self.plotlyRedrawModelChart()
+    # Analysis
 
-    def redrawCalculatedOnModelChart(self):
+    def drawMeasuredOnAnalysisChart(self):
         lib = self._proxy.plotting.currentLib1d
-        if lib == 'QtCharts':
-            self.qtchartsReplaceCalculatedOnModelChartAndRedraw()
-        elif lib == 'Plotly':
-            self.plotlyReplaceCalculatedYOnModelChartAndRedraw()
-
-    def drawAllOnAnalysisChart(self):
-        lib = self._proxy.plotting.currentLib1d
-        #console.debug(f"Updating all curves on analysis page using {lib}")
         if lib == 'QtCharts':
             self.qtchartsReplaceMeasuredOnAnalysisChartAndRedraw()
-            self.qtchartsReplaceBackgroundOnAnalysisChartAndRedraw()
-            self.qtchartsReplaceTotalCalculatedOnAnalysisChartAndRedraw()
-            self.qtchartsReplaceResidualOnAnalysisChartAndRedraw()
         elif lib == 'Plotly':
             self.plotlyReplaceXOnAnalysisChart()
             self.plotlyReplaceMeasuredYOnAnalysisChart()
-            self.plotlyReplaceTotalCalculatedYOnAnalysisChart()
-            self.plotlyRedrawAnalysisChart()
 
-    def redrawCalculatedOnAnalysisChart(self):
+    def drawBackgroundOnAnalysisChart(self):
         lib = self._proxy.plotting.currentLib1d
-        #console.debug(f"Updating total calculated curve on analysis page using {lib}")
+        if lib == 'QtCharts':
+            self.qtchartsReplaceBackgroundOnAnalysisChartAndRedraw()
+        elif lib == 'Plotly':
+            pass
+
+    def drawCalculatedOnAnalysisChart(self):
+        lib = self._proxy.plotting.currentLib1d
         if lib == 'QtCharts':
             self.qtchartsReplaceTotalCalculatedOnAnalysisChartAndRedraw()
         elif lib == 'Plotly':
             self.plotlyReplaceTotalCalculatedYOnAnalysisChartAndRedraw()
-        #console.debug("Total calculated curve on analysis page has been updated")
 
-    def redrawBackgroundOnAnalysisChart(self):
+    def drawResidualOnAnalysisChart(self):
         lib = self._proxy.plotting.currentLib1d
-        #console.debug(f"Updating background curve on analysis page using {lib}")
-        if lib == 'QtCharts':
-            self.qtchartsReplaceBackgroundOnAnalysisChartAndRedraw()
-        elif lib == 'Plotly':
-            pass
-
-    def redrawResidualOnAnalysisChart(self):
-        lib = self._proxy.plotting.currentLib1d
-        #console.debug(f"Updating residual curve on analysis page using {lib}")
         if lib == 'QtCharts':
             self.qtchartsReplaceResidualOnAnalysisChartAndRedraw()
         elif lib == 'Plotly':
             pass
-        #console.debug("Residual curve on analysis page has been updated")
 
     # Backend private methods
 
@@ -180,26 +154,19 @@ class Plotting(QObject):
 
     def qtchartsReplaceMeasuredOnExperimentChartAndRedraw(self):
         index = self._proxy.experiment.currentIndex
-        xArray = np.empty(0)
-        yMeasArray = np.empty(0)
-        if index > -1 and len(self._proxy.experiment._xArrays):  # NEED FIX
-            xArray = self._proxy.experiment._xArrays[index]
-            yMeasArray = self._proxy.experiment._yMeasArrays[index]
+        xArray = self._proxy.experiment._xArrays[index]
+        yMeasArray = self._proxy.experiment._yMeasArrays[index]
         measSerie = self._chartRefs['QtCharts']['experimentPage']['measSerie']
-        #console.debug(f"Replacing x and y numpy arrays of size {xArray.size} with measured data on QtChart serie has been started")
         measSerie.replaceNp(xArray, yMeasArray)
-        console.debug(f" - X and y numpy arrays of size {xArray.size} with measured data on QtChart serie has been replaced")
+        console.debug(IO.formatMsg('sub', 'Meas curve', f'{xArray.size} points', 'on experiment page', 'replaced'))
 
     def qtchartsReplaceBackgroundOnExperimentChartAndRedraw(self):
         index = self._proxy.experiment.currentIndex
-        xArray = np.empty(0)
-        yBkgArray = np.empty(0)
-        if index > -1 and len(self._proxy.experiment._xArrays):  # NEED FIX
-            xArray = self._proxy.experiment._xArrays[index]
-            yBkgArray = self._proxy.experiment._yBkgArrays[index]
+        xArray = self._proxy.experiment._xArrays[index]
+        yBkgArray = self._proxy.experiment._yBkgArrays[index]
         bkgSerie = self._chartRefs['QtCharts']['experimentPage']['bkgSerie']
         bkgSerie.replaceNp(xArray, yBkgArray)
-        console.debug(f" - X and y numpy arrays of size {xArray.size} with background data on QtChart serie has been replaced")
+        console.debug(IO.formatMsg('sub', 'Bkg curve', f'{xArray.size} points', 'on experiment page', 'replaced'))
 
     # QtCharts: Model
 
@@ -212,69 +179,42 @@ class Plotting(QObject):
             yCalcArray = self._proxy.model._yCalcArrays[index]
         calcSerie = self._chartRefs['QtCharts']['modelPage']['calcSerie']
         calcSerie.replaceNp(xArray, yCalcArray)
+        console.error(' - This method is outdated')
 
     # QtCharts: Analysis
 
     def qtchartsReplaceMeasuredOnAnalysisChartAndRedraw(self):
         index = self._proxy.experiment.currentIndex
-        xArray = np.empty(0)
-        yMeasArray = np.empty(0)
-        if index > -1 and len(self._proxy.experiment._xArrays):  # NEED FIX
-            xArray = self._proxy.experiment._xArrays[index]
-            yMeasArray = self._proxy.experiment._yMeasArrays[index]
+        xArray = self._proxy.experiment._xArrays[index]
+        yMeasArray = self._proxy.experiment._yMeasArrays[index]
         measSerie = self._chartRefs['QtCharts']['analysisPage']['measSerie']
         measSerie.replaceNp(xArray, yMeasArray)
-        console.debug(" - Measured curve data on analysis page have been replaced")
+        console.debug(IO.formatMsg('sub', 'Meas curve', f'{xArray.size} points', 'on analysis page', 'replaced'))
 
     def qtchartsReplaceBackgroundOnAnalysisChartAndRedraw(self):
-        if not self._proxy.analysis.defined:
-            return
         index = self._proxy.experiment.currentIndex
-        xArray = np.empty(0)
-        yBkgArray = np.empty(0)
-        if index > -1 and len(self._proxy.experiment._xArrays):  # NEED FIX
-            xArray = self._proxy.experiment._xArrays[index]
-            yBkgArray = self._proxy.experiment._yBkgArrays[index]
+        xArray = self._proxy.experiment._xArrays[index]
+        yBkgArray = self._proxy.experiment._yBkgArrays[index]
         bkgSerie = self._chartRefs['QtCharts']['analysisPage']['bkgSerie']
         bkgSerie.replaceNp(xArray, yBkgArray)
-        console.debug(" - Background curve data on analysis page have been replaced")
+        console.debug(IO.formatMsg('sub', 'Bkg curve', f'{xArray.size} points', 'on analysis page', 'replaced'))
 
     def qtchartsReplaceTotalCalculatedOnAnalysisChartAndRedraw(self):
-        if not self._proxy.analysis.defined:
-            return
         index = self._proxy.experiment.currentIndex
-        xArray = np.empty(0)
-        yTotalCalcArray = np.empty(0)
-        if index > -1 and len(self._proxy.experiment._xArrays):  # NEED FIX
-            xArray = self._proxy.experiment._xArrays[index]  # NEED FIX
-            yTotalCalcArray = self._proxy.analysis._yCalcTotal
+        xArray = self._proxy.experiment._xArrays[index]
+        yCalcTotalArray = self._proxy.experiment._yCalcTotalArrays[index]
         calcSerie = self._chartRefs['QtCharts']['analysisPage']['totalCalcSerie']
-        calcSerie.replaceNp(xArray, yTotalCalcArray)
-        console.debug(" - Total calculated curve data on analysis page have been replaced")
+        calcSerie.replaceNp(xArray, yCalcTotalArray)
+        console.debug(IO.formatMsg('sub', 'Calc (total) curve', f'{xArray.size} points', 'on analysis page', 'replaced'))
 
     def qtchartsReplaceResidualOnAnalysisChartAndRedraw(self):
-        if not self._proxy.analysis.defined:
-            return
         index = self._proxy.experiment.currentIndex
-        xArray = np.empty(0)
-        yResidArray = np.empty(0)
-        if index > -1 and len(self._proxy.experiment._xArrays):  # NEED FIX
-            xArray = self._proxy.experiment._xArrays[index]  # NEED FIX
-            yMeasArray = self._proxy.experiment._yMeasArrays[index]
-            yTotalCalcArray = self._proxy.analysis._yCalcTotal
-            yResidArray = yMeasArray - yTotalCalcArray
+        xArray = self._proxy.experiment._xArrays[index]
+        yResidArray = self._proxy.experiment._yResidArrays[index]
         residSerie = self._chartRefs['QtCharts']['analysisPage']['residSerie']
         residSerie.replaceNp(xArray, yResidArray)
-        console.debug(" - Residual curve data on analysis page have been replaced")
+        console.debug(IO.formatMsg('sub', 'Resid curve', f'{xArray.size} points', 'on analysis page', 'replaced'))
 
-        y_min = float(yResidArray.min())
-        y_max = float(yResidArray.max())
-        y_range = y_max - y_min
-        y_extra = y_range * 0.1
-        y_min -= y_extra
-        y_max += y_extra
-        self._chartRanges = {'yMin': y_min, 'yMax': y_max}
-        self.chartRangesChanged.emit()
 
     # Plotly: Experiment
 

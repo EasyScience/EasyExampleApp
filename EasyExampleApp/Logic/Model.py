@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-import os
-import json
 import copy
 import re
 import random
@@ -12,8 +10,7 @@ from PySide6.QtCore import QObject, Signal, Slot, Property
 
 from EasyApp.Logic.Logging import console
 from Logic.Calculators import GaussianCalculator
-from Logic.Fittables import Parameter
-from Logic.Helpers import Converter, IO, PERIODIC_TABLE
+from Logic.Helpers import CryspyParser, IO, PERIODIC_TABLE
 from Logic.Data import Data
 
 try:
@@ -26,14 +23,14 @@ try:
         REFERENCE_TABLE_IT_COORDINATE_SYSTEM_CODE_NAME_HM_EXTENDED, \
         REFERENCE_TABLE_IT_NUMBER_NAME_HM_FULL, \
         ACCESIBLE_NAME_HM_SHORT
-
     from cryspy.procedure_rhochi.rhochi_by_dictionary import \
         rhochi_calc_chi_sq_by_dictionary
     console.debug('CrysPy module has been imported')
 except ImportError:
     console.debug('No CrysPy module has been found')
 
-_DEFAULT_DATA_BLOCK = """data_default
+
+_DEFAULT_CIF_BLOCK = """data_default
 
 _space_group_name_H-M_alt "P b n m"
 
@@ -86,15 +83,6 @@ class Model(QObject):
         self._spaceGroupNames = self.createSpaceGroupNames()
         self._isotopesNames = self.createIsotopesNames()
 
-    def createSpaceGroupNames(self):
-        names_short = ACCESIBLE_NAME_HM_SHORT
-        names_full = tuple((_[1] for _ in REFERENCE_TABLE_IT_NUMBER_NAME_HM_FULL))
-        names_extended = tuple((_[2] for _ in REFERENCE_TABLE_IT_COORDINATE_SYSTEM_CODE_NAME_HM_EXTENDED))
-        return list(set(names_short + names_full + names_extended))
-
-    def createIsotopesNames(self):
-        return [_[1] for _ in list(DATABASE['Isotopes'].keys())]
-
     # QML accessible properties
 
     @Property('QVariant', constant=True)
@@ -114,7 +102,8 @@ class Model(QObject):
         if self._defined == newValue:
             return
         self._defined = newValue
-        console.debug(f"Model defined: {newValue}")
+        console.debug(IO.formatMsg('main', 'Model defined: {newValue}'))
+
         self.definedChanged.emit()
 
     @Property(int, notify=currentIndexChanged)
@@ -131,6 +120,7 @@ class Model(QObject):
 
     @Property('QVariant', notify=dataBlocksChanged)
     def dataBlocks(self):
+        # console.error('GET MODEL DATABLOCK')
         return self._dataBlocks
 
     @Property('QVariant', notify=dataBlocksCifChanged)
@@ -160,96 +150,178 @@ class Model(QObject):
 
     @Slot()
     def addDefaultModel(self):
-        console.debug("Adding default model")
-        self.loadModelFromEdCif(_DEFAULT_DATA_BLOCK)
+        console.debug("Adding default model(s)")
+        self.loadModelsFromEdCif(_DEFAULT_CIF_BLOCK)
+
+    @Slot('QVariant')
+    def loadModelsFromFiles(self, fpaths):
+        for fpath in fpaths:
+            fpath = fpath.toLocalFile()
+            fpath = IO.generalizePath(fpath)
+            console.debug(f"Loading model(s) from: {fpath}")
+            with open(fpath, 'r') as file:
+                edCif = file.read()
+            self.loadModelsFromEdCif(edCif)
 
     @Slot(str)
-    def loadModelFromFile(self, fpath):
-        fpath = IO.generalizePath(fpath)
-        console.debug(f"Loading model from: {fpath}")
-        with open(fpath, 'r') as file:
-            edCif = file.read()
-        self.loadModelFromEdCif(edCif)
+    def loadModelsFromEdCif(self, edCif):
+        cryspyObj = self._proxy.data._cryspyObj
+        cryspyCif = CryspyParser.edCifToCryspyCif(edCif)
+        cryspyModelsObj = str_to_globaln(cryspyCif)
+
+        modelsCountBefore = len(self.cryspyObjCrystals())
+        cryspyObj.add_items(cryspyModelsObj.items)
+        modelsCountAfter = len(self.cryspyObjCrystals())
+        success = modelsCountAfter - modelsCountBefore
+
+        if success:
+            cryspyModelsDict = cryspyModelsObj.get_dictionary()
+            edModels = CryspyParser.cryspyObjAndDictToEdModels(cryspyModelsObj, cryspyModelsDict)
+
+            self._proxy.data._cryspyDict.update(cryspyModelsDict)
+            self._dataBlocks += edModels
+
+            self.defined = bool(len(self.dataBlocks))
+
+            console.debug(IO.formatMsg('sub', f'{len(edModels)} model(s)', '', 'to intern dataset', 'added'))
+
+            self.dataBlocksChanged.emit()
+        else:
+            console.debug(IO.formatMsg('sub', 'No model(s)', '', 'to intern dataset', 'added'))
+
 
     @Slot(str)
-    def loadModelFromEdCif(self, edCif):
-        cryspyCif = Converter.edCifToCryspyCif(edCif)
-        cryspyModelObj = str_to_globaln(cryspyCif)
-        self._proxy.data._cryspyModelObj = cryspyModelObj  # NEED FIX!!!
-        cryspyModelDict = cryspyModelObj.get_dictionary()
-        self._proxy.data._cryspyDict.update(cryspyModelDict)
-        self.parseModels(cryspyModelObj)
+    def replaceModel(self, edCif=''):
+        console.debug("Cryspy obj and dict need to be replaced")
+
+        currentDataBlock = self.dataBlocks[self.currentIndex]
+        currentModelName = currentDataBlock['name']
+
+        cryspyObjBlockNames = [item.data_name for item in self._proxy.data._cryspyObj.items]
+        cryspyObjBlockIdx = cryspyObjBlockNames.index(currentModelName)
+
+        cryspyDictBlockName = f'crystal_{currentModelName}'
+
+        if not edCif:
+            edCif = CryspyParser.dataBlockToCif(currentDataBlock)
+        cryspyCif = CryspyParser.edCifToCryspyCif(edCif)
+        cryspyModelsObj = str_to_globaln(cryspyCif)
+        cryspyModelsDict = cryspyModelsObj.get_dictionary()
+        edModels = CryspyParser.cryspyObjAndDictToEdModels(cryspyModelsObj, cryspyModelsDict)
+
+        self._proxy.data._cryspyObj.items[cryspyObjBlockIdx] = cryspyModelsObj.items[0]
+        self._proxy.data._cryspyDict[cryspyDictBlockName] = cryspyModelsDict[cryspyDictBlockName]
+        self._dataBlocks[self.currentIndex] = edModels[0]
+
+        console.debug(f"Model data block '{currentModelName}' (no. {self.currentIndex + 1}) has been replaced")
+        self.dataBlocksChanged.emit()
+
+
+
 
     @Slot(int)
     def removeModel(self, index):
         console.debug(f"Removing model no. {index + 1}")
+
+        currentDataBlock = self.dataBlocks[index]
+        currentModelName = currentDataBlock['name']
+
+        cryspyObjBlockNames = [item.data_name for item in self._proxy.data._cryspyObj.items]
+        cryspyObjBlockIdx = cryspyObjBlockNames.index(currentModelName)
+
+        cryspyDictBlockName = f'crystal_{currentModelName}'
+
+        del self._proxy.data._cryspyObj.items[cryspyObjBlockIdx]
+        del self._proxy.data._cryspyDict[cryspyDictBlockName]
         del self._dataBlocks[index]
-        del self._yCalcArrays[index]
+
+        self.defined = bool(len(self.dataBlocks))
+
         self.dataBlocksChanged.emit()
-        self.yCalcArraysChanged.emit()
+
+        if len(self._yCalcArrays) > index:
+            del self._yCalcArrays[index]
+            self.yCalcArraysChanged.emit()
+
         console.debug(f"Model no. {index + 1} has been removed")
 
     @Slot()
     def removeAllModels(self):
-        self._dataBlocks.clear()
-        self._yCalcArrays.clear()
-        self.dataBlocksChanged.emit()
-        self.yCalcArraysChanged.emit()
-        console.debug("All models have been removed")
+        pass
+        #self._dataBlocks.clear()
+        #self._yCalcArrays.clear()
+        #self.dataBlocksChanged.emit()
+        #self.yCalcArraysChanged.emit()
+        #console.debug("All models have been removed")
 
-    @Slot(str, str, 'QVariant')
-    def setMainParamWithFullUpdate(self, paramName, field, value):
-        changedIntern = self.editDataBlockMainParam(paramName, field, value)
+
+
+    @Slot(int, str, str, 'QVariant')
+    def setMainParamWithFullUpdate(self, blockIndex, paramName, field, value):
+        changedIntern = self.editDataBlockMainParam(blockIndex, paramName, field, value)
         if not changedIntern:
             return
-        self.createCryspyDictFromDataBlocks()
+        self.replaceModel()
 
-    @Slot(str, str, 'QVariant')
-    def setMainParam(self, paramName, field, value):
-        changedIntern = self.editDataBlockMainParam(paramName, field, value)
-        changedCryspy = self.editCryspyDictByMainParam(paramName, field, value)
-
+    @Slot(int, str, str, 'QVariant')
+    def setMainParam(self, blockIndex, paramName, field, value):
+        changedIntern = self.editDataBlockMainParam(blockIndex, paramName, field, value)
+        changedCryspy = self.editCryspyDictByMainParam(blockIndex, paramName, field, value)
         if changedIntern and changedCryspy:
             self.dataBlocksChanged.emit()
 
-    @Slot(str, str, int, str, 'QVariant')
-    def setLoopParamWithFullUpdate(self, loopName, paramName, rowIndex, field, value):
-        changedIntern = self.editDataBlockLoopParam(loopName, paramName, rowIndex, field, value)
+    @Slot(int, str, str, int, str, 'QVariant')
+    def setLoopParamWithFullUpdate(self, blockIndex, loopName, paramName, rowIndex, field, value):
+        changedIntern = self.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
         if not changedIntern:
             return
-        self.createCryspyDictFromDataBlocks()
+        self.replaceModel()
 
-    @Slot(str, str, int, str, 'QVariant')
-    def setLoopParam(self, loopName, paramName, rowIndex, field, value):
-        changedIntern = self.editDataBlockLoopParam(loopName, paramName, rowIndex, field, value)
-        changedCryspy = self.editCryspyDictByLoopParam(loopName, paramName, rowIndex, field, value)
-
+    @Slot(int, str, str, int, str, 'QVariant')
+    def setLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
+        changedIntern = self.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
+        changedCryspy = self.editCryspyDictByLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
         if changedIntern and changedCryspy:
             self.dataBlocksChanged.emit()
 
     @Slot(str, int)
     def removeLoopRow(self, loopName, rowIndex):
         self.removeDataBlockLoopRow(loopName, rowIndex)
-        self.createCryspyDictFromDataBlocks()
+        self.replaceModel()
 
     @Slot(str)
     def appendLoopRow(self, loopName):
         self.appendDataBlockLoopRow(loopName)
-        self.createCryspyDictFromDataBlocks()
+        self.replaceModel()
 
     @Slot(str, int)
     def duplicateLoopRow(self, loopName, idx):
         self.duplicateDataBlockLoopRow(loopName, idx)
-        self.createCryspyDictFromDataBlocks()
+        self.replaceModel()
 
     # Private methods
+
+    def cryspyObjCrystals(self):
+        cryspyObj = self._proxy.data._cryspyObj
+        cryspyModelType = cryspy.E_data_classes.cl_1_crystal.Crystal
+        models = [block for block in cryspyObj.items if type(block) == cryspyModelType]
+        return models
+
+    def createSpaceGroupNames(self):
+        namesShort = ACCESIBLE_NAME_HM_SHORT
+        namesFull = tuple((name[1] for name in REFERENCE_TABLE_IT_NUMBER_NAME_HM_FULL))
+        namesExtended = tuple((name[2] for name in REFERENCE_TABLE_IT_COORDINATE_SYSTEM_CODE_NAME_HM_EXTENDED))
+        return list(set(namesShort + namesFull + namesExtended))
+
+    def createIsotopesNames(self):
+        return [isotope[1] for isotope in list(DATABASE['Isotopes'].keys())]
 
     def removeDataBlockLoopRow(self, loopName, rowIndex):
         block = 'model'
         blockIndex = self._currentIndex
         del self._dataBlocks[blockIndex]['loops'][loopName][rowIndex]
 
-        console.debug(f"Intern dict ▌ {block}[{blockIndex}].{loopName}[{rowIndex}] has been removed")
+        console.debug(IO.formatMsg('sub', 'Intern dict', 'removed', f'{block}[{blockIndex}].{loopName}[{rowIndex}]'))
 
     def appendDataBlockLoopRow(self, loopName):
         block = 'model'
@@ -269,7 +341,7 @@ class Model(QObject):
         self._dataBlocks[blockIndex]['loops'][loopName].append(newAtom)
         atomsCount = len(self._dataBlocks[blockIndex]['loops'][loopName])
 
-        console.debug(f"Intern dict ▌ {block}[{blockIndex}].{loopName}[{atomsCount}] has been added")
+        console.debug(IO.formatMsg('sub', 'Intern dict', 'added', f'{block}[{blockIndex}].{loopName}[{atomsCount}]'))
 
     def duplicateDataBlockLoopRow(self, loopName, idx):
         block = 'model'
@@ -280,70 +352,49 @@ class Model(QObject):
         self._dataBlocks[blockIndex]['loops'][loopName].append(lastAtom)
         atomsCount = len(self._dataBlocks[blockIndex]['loops'][loopName])
 
-        console.debug(f"Intern dict ▌ {block}[{blockIndex}].{loopName}[{atomsCount}] has been added")
+        console.debug(IO.formatMsg('sub', 'Intern dict', 'added', f'{block}[{blockIndex}].{loopName}[{atomsCount}]'))
 
-    def editDataBlockMainParam(self, paramName, field, value, blockIndex=None):
-        block = 'model'
-        if blockIndex is None:
-            blockIndex = self._currentIndex
 
+
+    def editDataBlockMainParam(self, blockIndex, paramName, field, value):
+        blockType = 'model'
         oldValue = self._dataBlocks[blockIndex]['params'][paramName][field]
         if oldValue == value:
             return False
         self._dataBlocks[blockIndex]['params'][paramName][field] = value
-
-        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{paramName}.{field}")
+        console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value}', f'{blockType}[{blockIndex}].{paramName}.{field}'))
         return True
 
-    def editDataBlockLoopParam(self, loopName, paramName, rowIndex, field, value, blockIndex=None):
+    def editDataBlockLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
         block = 'model'
-        if blockIndex is None:
-            blockIndex = self._currentIndex
-
         oldValue = self._dataBlocks[blockIndex]['loops'][loopName][rowIndex][paramName][field]
         if oldValue == value:
             return False
         self._dataBlocks[blockIndex]['loops'][loopName][rowIndex][paramName][field] = value
-
-        console.debug(f"Intern dict ▌ {oldValue} → {value} ▌ {block}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field}")
+        console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value}', f'{block}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field}'))
         return True
 
-    def createCryspyDictFromDataBlocks(self):
-        console.debug("Cryspy dict need to be recreated")
-
-        # remove model from self._proxy.data._cryspyDict
-        currentModelName = self.dataBlocks[self.currentIndex]['name']
-        del self._proxy.data._cryspyDict[f'crystal_{currentModelName}']
-
-        # add model to self._proxy.data._cryspyDict
-        edCif = Converter.dataBlocksToCif(self._dataBlocks)
-        self.loadModelFromEdCif(edCif)
-
-    def editCryspyDictByMainParam(self, paramName, field, value):
-        path, value = self.cryspyDictPathByMainParam(paramName, field, value)
-
-        oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
-        if oldValue == value:
-            return False
-
-        self._proxy.data._cryspyDict[path[0]][path[1]][path[2]] = value
-
-        console.debug(f"Cryspy dict ▌ {oldValue} → {value} ▌ {path}")
-        return True
-
-    def editCryspyDictByLoopParam(self, loopName, paramName, rowIndex, field, value):
-        path, value = self.cryspyDictPathByLoopParam(loopName, paramName, rowIndex, field, value)
-
+    def editCryspyDictByMainParam(self, blockIndex, paramName, field, value):
+        path, value = self.cryspyDictPathByMainParam(blockIndex, paramName, field, value)
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
             return False
         self._proxy.data._cryspyDict[path[0]][path[1]][path[2]] = value
-
-        console.debug(f"Cryspy dict ▌ {oldValue} → {value} ▌ {path}")
+        console.debug(IO.formatMsg('sub', 'Cryspy dict', f'{oldValue} → {value}', f'{path}'))
         return True
 
-    def cryspyDictPathByMainParam(self, paramName, field, value):
-        blockIndex = self._currentIndex
+    def editCryspyDictByLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
+        path, value = self.cryspyDictPathByLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
+        oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
+        if oldValue == value:
+            return False
+        self._proxy.data._cryspyDict[path[0]][path[1]][path[2]] = value
+        console.debug(IO.formatMsg('sub', 'Cryspy dict', f'{oldValue} → {value}', f'{path}'))
+        return True
+
+
+
+    def cryspyDictPathByMainParam(self, blockIndex, paramName, field, value):
         blockName = self._dataBlocks[blockIndex]['name']
         path = ['','','']
         path[0] = f"crystal_{blockName}"
@@ -381,8 +432,7 @@ class Model(QObject):
 
         return path, value
 
-    def cryspyDictPathByLoopParam(self, loopName, paramName, rowIndex, field, value):
-        blockIndex = self._currentIndex
+    def cryspyDictPathByLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
         blockName = self._dataBlocks[blockIndex]['name']
         path = ['','','']
         path[0] = f"crystal_{blockName}"
@@ -421,7 +471,7 @@ class Model(QObject):
                 loopName = None
                 paramName = None
                 rowIndex = None
-                value = self._proxy.data._cryspyDict[block][group][idx]
+                value = self._proxy.data._cryspyModelDicts[0][block][group][idx]  # NEED FIX: 0 should correspond to the model index !!!
 
                 # unit_cell_parameters
                 if group == 'unit_cell_parameters':
@@ -474,7 +524,7 @@ class Model(QObject):
 
     def defaultYCalcArray(self):
         xArray = self._proxy.experiment._xArrays[0]  # NEED FIX
-        params = _DEFAULT_DATA_BLOCK['params']
+        params = _DEFAULT_CIF_BLOCK['params']
         yCalcArray = GaussianCalculator.calculated(xArray, params)
         return yCalcArray
 
@@ -495,305 +545,26 @@ class Model(QObject):
         index = self._currentIndex
         self.updateYCalcArrayByIndex(index)
 
-    def addDataBlock(self, dataBlock):
-        idx = -1
-        for i, block in enumerate(self._dataBlocks):
-            if dataBlock['name'] == block['name']:
-                idx = i
-                continue
-        if idx == -1:
-            self._dataBlocks.append(dataBlock)
-        else:
-            self._dataBlocks[idx] = dataBlock
-        console.debug(f"Model data block no. {len(self._dataBlocks)} has been added to intern dataset")
-        self.dataBlocksChanged.emit()
-
     def addYCalcArray(self, yCalcArray):
         self._yCalcArrays.append(yCalcArray)
         console.debug(f" - Y-calculated data for model data block no. {len(self._dataBlocks)} has been added to intern dataset")
         self.yCalcArraysChanged.emit()
 
-    #def calculateAllYArrays(self):
-    #    for i in range(len(self._dataBlocks)):
-    #        self.calculateSingleYArray(i)
-
-    #def scaleSingleDataBlock(self, index):
-    #    scale = self._proxy.experiment.models[index]['scale']
-    #    self._yCalcArrays[index]['yArray'] *= scale
-    #    self.calculatedDataChanged.emit()
-
     def setDataBlocksCif(self):
-        self._dataBlocksCif = [Converter.dataBlocksToCif([block]) for block in self._dataBlocks]
-        console.debug(" - Model dataBlocks have been converted to CIF string")
+        self._dataBlocksCif = [[CryspyParser.dataBlockToCif(block)] for block in self._dataBlocks]
+        console.debug(IO.formatMsg('sub', f'{len(self._dataBlocksCif)} model(s)', '', 'to CIF string', 'converted'))
         self.dataBlocksCifChanged.emit()
 
-    # Extract phases from cryspy_obj and cryspy_dict into internal ed_dict
-    def parseModels(self, cryspy_obj):
-        cryspy_dict = self._proxy.data._cryspyDict
-        phase_names = [name.replace('crystal_', '') for name in cryspy_dict.keys() if name.startswith('crystal_')]
 
-        for data_block in cryspy_obj.items:
-            data_block_name = data_block.data_name
 
-            # Phase datablock
-            if data_block_name in phase_names:
 
-                ed_phase = {'name': data_block_name,
-                            'params': {},
-                            'loops': {}}
-                cryspy_phase = data_block.items
-
-                for item in cryspy_phase:
-
-                    # Space group section
-                    if type(item) == cryspy.C_item_loop_classes.cl_2_space_group.SpaceGroup:
-                        ed_phase['params']['_space_group_name_H-M_alt'] = dict(Parameter(
-                            item.name_hm_alt,
-                            name = '_space_group_name_H-M_alt',
-                            prettyName = 'name',
-                            url = 'https://easydiffraction.org',
-                            cifDict = 'core'
-                        ))
-                        ed_phase['params']['_space_group_IT_coordinate_system_code'] = dict(Parameter(
-                            item.it_coordinate_system_code,
-                            permittedValues = list(get_it_coordinate_system_codes_by_it_number(item.it_number)),
-                            name = '_space_group_IT_coordinate_system_code',
-                            prettyName = 'code',
-                            url = 'https://easydiffraction.org',
-                            cifDict = 'core'
-                        ))
-                        ed_phase['params']['_space_group_crystal_system'] = dict(Parameter(
-                            item.crystal_system,
-                            name = '_space_group_crystal_system',
-                            prettyName = 'crystal system',
-                            url = 'https://easydiffraction.org',
-                            cifDict = 'core',
-                            optional = True
-                        ))
-                        ed_phase['params']['_space_group_IT_number'] = dict(Parameter(
-                            item.it_number,
-                            name = '_space_group_IT_number',
-                            prettyName = 'number',
-                            url = 'https://easydiffraction.org',
-                            cifDict = 'core',
-                            optional = True
-                        ))
-                    # Cell section
-                    elif type(item) == cryspy.C_item_loop_classes.cl_1_cell.Cell:
-                        ed_phase['params']['_cell_length_a'] = dict(Parameter(
-                            item.length_a,
-                            name = '_cell_length_a',
-                            prettyName = 'length a',
-                            url = 'https://easydiffraction.org',
-                            cifDict = 'core',
-                            enabled = not item.length_a_constraint,
-                            min = 1,
-                            max = 30,
-                            units = 'Å',
-                            fittable = True,
-                            fit = item.length_a_refinement
-                        ))
-                        ed_phase['params']['_cell_length_b'] = dict(Parameter(
-                            item.length_b,
-                            name = '_cell_length_b',
-                            prettyName = 'length b',
-                            url = 'https://easydiffraction.org',
-                            cifDict = 'core',
-                            enabled = not item.length_b_constraint,
-                            min = 1,
-                            max = 30,
-                            units = 'Å',
-                            fittable = True,
-                            fit = item.length_b_refinement
-                        ))
-                        ed_phase['params']['_cell_length_c'] = dict(Parameter(
-                            item.length_c,
-                            name = '_cell_length_c',
-                            prettyName = 'length c',
-                            url = 'https://easydiffraction.org',
-                            cifDict = 'core',
-                            enabled = not item.length_c_constraint,
-                            min = 1,
-                            max = 30,
-                            units = 'Å',
-                            fittable = True,
-                            fit = item.length_c_refinement
-                        ))
-                        ed_phase['params']['_cell_angle_alpha'] = dict(Parameter(
-                            item.angle_alpha,
-                            name = '_cell_angle_alpha',
-                            prettyName = 'angle α',
-                            url = 'https://easydiffraction.org',
-                            cifDict = 'core',
-                            enabled = not item.angle_alpha_constraint,
-                            min = 0,
-                            max = 180,
-                            units = '°',
-                            fittable = True,
-                            fit = item.angle_alpha_refinement
-                        ))
-                        ed_phase['params']['_cell_angle_beta'] = dict(Parameter(
-                            item.angle_beta,
-                            name = '_cell_angle_beta',
-                            prettyName = 'angle β',
-                            url = 'https://easydiffraction.org',
-                            cifDict = 'core',
-                            enabled = not item.angle_alpha_constraint,
-                            min = 0,
-                            max = 180,
-                            units = '°',
-                            fittable = True,
-                            fit = item.angle_beta_refinement
-                        ))
-                        ed_phase['params']['_cell_angle_gamma'] = dict(Parameter(
-                            item.angle_gamma,
-                            name = '_cell_angle_gamma',
-                            prettyName = 'angle γ',
-                            url = 'https://easydiffraction.org',
-                            cifDict = 'core',
-                            enabled = not item.angle_alpha_constraint,
-                            min = 0,
-                            max = 180,
-                            units = '°',
-                            fittable = True,
-                            fit = item.angle_gamma_refinement
-                        ))
-
-                    # Atoms section
-                    elif type(item) == cryspy.C_item_loop_classes.cl_1_atom_site.AtomSiteL:
-                        ed_atoms = []
-                        cryspy_atoms = item.items
-                        for idx, cryspy_atom in enumerate(cryspy_atoms):
-                            ed_atom = {}
-                            ed_atom['_label'] = dict(Parameter(
-                                cryspy_atom.label,
-                                idx = idx,
-                                loopName = '_atom_site',
-                                name = '_label',
-                                prettyName = 'label',
-                                url = 'https://easydiffraction.org',
-                                cifDict = 'core'
-                            ))
-                            ed_atom['_type_symbol'] = dict(Parameter(
-                                cryspy_atom.type_symbol,
-                                idx = idx,
-                                loopName = '_atom_site',
-                                name = '_type_symbol',
-                                prettyName = 'type',
-                                url = 'https://easydiffraction.org',
-                                cifDict = 'core'
-                            ))
-                            ed_atom['_fract_x'] = dict(Parameter(
-                                cryspy_atom.fract_x,
-                                idx = idx,
-                                loopName = '_atom_site',
-                                rowName = cryspy_atom.label,
-                                name = '_fract_x',
-                                prettyName = 'fract x',
-                                url = 'https://easydiffraction.org',
-                                cifDict = 'core',
-                                enabled = not cryspy_atom.fract_x_constraint,
-                                min = -1,
-                                max = 1,
-                                fittable = True,
-                                fit = cryspy_atom.fract_x_refinement
-                            ))
-                            ed_atom['_fract_y'] = dict(Parameter(
-                                cryspy_atom.fract_y,
-                                idx = idx,
-                                loopName = '_atom_site',
-                                rowName = cryspy_atom.label,
-                                name = '_fract_y',
-                                prettyName = 'fract y',
-                                url = 'https://easydiffraction.org',
-                                cifDict = 'core',
-                                enabled = not cryspy_atom.fract_y_constraint,
-                                min = -1,
-                                max = 1,
-                                fittable = True,
-                                fit = cryspy_atom.fract_y_refinement
-                            ))
-                            ed_atom['_fract_z'] = dict(Parameter(
-                                cryspy_atom.fract_z,
-                                idx = idx,
-                                loopName = '_atom_site',
-                                rowName = cryspy_atom.label,
-                                name = '_fract_z',
-                                prettyName = 'fract z',
-                                url = 'https://easydiffraction.org',
-                                cifDict = 'core',
-                                enabled = not cryspy_atom.fract_z_constraint,
-                                min = -1,
-                                max = 1,
-                                fittable = True,
-                                fit = cryspy_atom.fract_z_refinement
-                            ))
-                            ed_atom['_occupancy'] = dict(Parameter(
-                                cryspy_atom.occupancy,
-                                idx = idx,
-                                loopName = '_atom_site',
-                                rowName = cryspy_atom.label,
-                                name = '_occupancy',
-                                prettyName = 'occ',
-                                url = 'https://easydiffraction.org',
-                                cifDict = 'core',
-                                enabled = not cryspy_atom.occupancy_constraint,
-                                min = 0,
-                                max = 1,
-                                fittable = True,
-                                fit = cryspy_atom.occupancy_refinement
-                            ))
-                            ed_atom['_adp_type'] = dict(Parameter(
-                                cryspy_atom.adp_type,
-                                idx = idx,
-                                loopName = '_atom_site',
-                                name = '_adp_type',
-                                prettyName = 'type',
-                                url = 'https://easydiffraction.org',
-                                cifDict = 'core'
-                            ))
-                            ed_atom['_B_iso_or_equiv'] = dict(Parameter(
-                                cryspy_atom.b_iso_or_equiv,
-                                idx = idx,
-                                loopName = '_atom_site',
-                                rowName = cryspy_atom.label,
-                                name = '_B_iso_or_equiv',
-                                prettyName = 'iso',
-                                url = 'https://easydiffraction.org',
-                                cifDict = 'core',
-                                enabled = not cryspy_atom.b_iso_or_equiv_constraint,
-                                min = 0,
-                                max = 1,
-                                units = 'Å²',
-                                fittable = True,
-                                fit = cryspy_atom.b_iso_or_equiv_refinement
-                            ))
-                            ed_atom['_multiplicity'] = dict(Parameter(
-                                cryspy_atom.multiplicity,
-                                idx = idx,
-                                loopName = '_atom_site',
-                                name = '_multiplicity',
-                                prettyName = '',
-                                url = 'https://easydiffraction.org',
-                                cifDict = 'core'
-                            ))
-                            ed_atom['_Wyckoff_symbol'] = dict(Parameter(
-                                cryspy_atom.wyckoff_symbol,
-                                name = '_atom_site_Wyckoff_symbol',
-                                prettyName = '',
-                                url = 'https://easydiffraction.org',
-                                cifDict = 'core'
-                            ))
-                            ed_atoms.append(ed_atom)
-                        ed_phase['loops']['_atom_site'] = ed_atoms
-
-                self.addDataBlock(ed_phase)
-
-    def calculateDiffractionPattern(self):
-        self._proxy.fitting.chiSq, self._proxy.fitting._pointsCount, _, _, paramNames = rhochi_calc_chi_sq_by_dictionary(self._proxy.data._cryspyDict,
+    def calculateDiffractionPattern(self): # ?????????????? move to _proxy.analysis ????
+        self._proxy.fitting.chiSq, self._proxy.fitting._pointsCount, _, _, paramNames = rhochi_calc_chi_sq_by_dictionary(
+            self._proxy.data._cryspyDict,
             dict_in_out=self._proxy.data._cryspyInOutDict,
             flag_use_precalculated_data=False,
-            flag_calc_analytical_derivatives=False)
+            flag_calc_analytical_derivatives=False
+        )
         first_experiment_name = self._proxy.data.edDict['experiments'][0]['name']  # NEED FIX
         y_calc_array = self._proxy.data._cryspyInOutDict[f'pd_{first_experiment_name}']['signal_minus'] + self._proxy.data._cryspyInOutDict[f'pd_{first_experiment_name}']['signal_plus']
 
@@ -810,6 +581,8 @@ class Model(QObject):
                 self._proxy.fitting._chiSqStart = self._proxy.fitting.chiSq
 
         return y_calc_array
+
+
 
     def updateCurrentModelStructView(self):
         self.setCurrentModelStructViewAtomsModel()
@@ -856,13 +629,10 @@ class Model(QObject):
 
     def setCurrentModelStructViewAtomsModel(self):
         structViewModel = set()
-        #self._structViewAtomsModel = []
-        spaceGroup = self._proxy.data._cryspyModelObj.items[0].items[1]  # NEED FIX. model index!!! [0], 'Space group' [1] cryspy.C_item_loop_classes.cl_2_space_group.SpaceGroup
+        currentModelIndex = self._proxy.model.currentIndex
+        models = self.cryspyObjCrystals()
+        spaceGroup = [sg for sg in models[currentModelIndex].items if type(sg) == cryspy.C_item_loop_classes.cl_2_space_group.SpaceGroup][0]
         atoms = self._dataBlocks[self._currentIndex]['loops']['_atom_site']
-        #params = self._dataBlocks[self._currentIndex]['params']
-        #a = params['_cell_length_a']['value']
-        #b = params['_cell_length_b']['value']
-        #c = params['_cell_length_c']['value']
         # Add all atoms in the cell, including those in equivalent positions
         for atom in atoms:
             symbol = atom['_type_symbol']['value']
@@ -910,5 +680,5 @@ class Model(QObject):
         # Create dict from set for GUI
         self._structViewAtomsModel = [{'x':x, 'y':y, 'z':z, 'diameter':diameter, 'color':color}
                                       for x, y, z, diameter, color in structViewModel]
-        console.debug(f" - Structure view atoms for model no. {self._currentIndex + 1} has been set. Atoms count: {len(atoms)}")
+        console.debug(IO.formatMsg('sub', f'{len(atoms)} atom(s)', f'model no. {self._currentIndex + 1}', 'for structure view', 'defined'))
         self.structViewAtomsModelChanged.emit()

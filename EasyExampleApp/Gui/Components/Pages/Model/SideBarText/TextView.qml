@@ -16,10 +16,12 @@ Rectangle {
     id: container
 
     width: EaStyle.Sizes.sideBarContentWidth
-    height: 11 * EaStyle.Sizes.tableRowHeight -
-            EaStyle.Sizes.fontPixelSize * (Globals.Proxies.main.model.dataBlocks.length - 1) -
-            2.4 * EaStyle.Sizes.fontPixelSize +
-            (applicationWindow.height - EaStyle.Sizes.appWindowMinimumHeight)
+    height: Globals.Proxies.main.model.dataBlocks.length > 1 ?
+                (12 - Globals.Proxies.main.model.dataBlocks.length) * EaStyle.Sizes.tableRowHeight -
+                EaStyle.Sizes.fontPixelSize +
+                (applicationWindow.height - EaStyle.Sizes.appWindowMinimumHeight) :
+                13 * EaStyle.Sizes.tableRowHeight +
+                 (applicationWindow.height - EaStyle.Sizes.appWindowMinimumHeight)
 
     color: enabled ? EaStyle.Colors.textViewBackground : EaStyle.Colors.textViewBackgroundDisabled
     Behavior on color { EaAnimations.ThemeChange {} }
@@ -33,7 +35,7 @@ Rectangle {
         property var firstDelegateRef: null
         property bool cifEdited: listView.firstDelegateRef === null ?
                                      false :
-                                     listView.firstDelegateRef.text !== Globals.Proxies.main.model.dataBlocksCif[Globals.Proxies.main.model.currentIndex]
+                                     listView.firstDelegateRef.text !== Globals.Proxies.main.model.dataBlocksCif[Globals.Proxies.main.model.currentIndex][0]
 
         anchors.fill: parent
         anchors.topMargin: EaStyle.Sizes.fontPixelSize
@@ -47,7 +49,7 @@ Rectangle {
             interactive: false
         }
 
-        model: 1  // Globals.Proxies.main.model.dataBlocksCif
+        model: Globals.Proxies.main.model.dataBlocksCif[Globals.Proxies.main.model.currentIndex]
 
         // ListView Delegate
         delegate: TextEdit {
@@ -67,7 +69,7 @@ Rectangle {
             selectedTextColor: EaStyle.Colors.themeBackground
             Behavior on selectedTextColor { EaAnimations.ThemeChange {} }
 
-            text: Globals.Proxies.main.model.dataBlocksCif[Globals.Proxies.main.model.currentIndex] ?? ''
+            text: listView.model[index]
 
             Component.onCompleted: {
                 if (index === 0) {
@@ -101,29 +103,10 @@ Rectangle {
             ToolTip.text: qsTr("Apply changes")
             //onClicked: forceActiveFocus()
             onClicked: {
-                Globals.Proxies.main.model.loadModelFromEdCif(listView.firstDelegateRef.text)
+                Globals.Proxies.main.model.replaceModel(listView.firstDelegateRef.text)
                 forceActiveFocus()
             }
         }
-
-        /*
-        EaElements.TabButton {
-            enabled: listView.cifEdited
-            highlighted: listView.cifEdited
-            checkable: false
-            autoExclusive: false
-            height: EaStyle.Sizes.toolButtonHeight
-            width: EaStyle.Sizes.toolButtonHeight
-            borderColor: EaStyle.Colors.chartAxis
-            fontIcon: "undo"
-            ToolTip.text: qsTr("Undo changes")
-            onClicked: {
-                listView.firstDelegateRef.text = Globals.Proxies.main.model.dataBlocksCif[0]
-                forceActiveFocus()
-            }
-        }
-        */
-
     }
     // Tool buttons
 }

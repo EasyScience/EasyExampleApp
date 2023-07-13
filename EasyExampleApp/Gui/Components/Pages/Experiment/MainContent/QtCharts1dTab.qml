@@ -24,16 +24,16 @@ Rectangle {
         useOpenGL: EaGlobals.Vars.useOpenGL //Globals.Proxies.main.plotting.useWebGL1d
 
         axisX.title: "2θ (degree)"
-        axisX.min: parameterValue('xMin')
-        axisX.max: parameterValue('xMax')
-        axisX.minAfterReset: parameterValue('xMin')
-        axisX.maxAfterReset: parameterValue('xMax')
+        axisX.min: Globals.Proxies.rangeValue('xMin')
+        axisX.max: Globals.Proxies.rangeValue('xMax')
+        axisX.minAfterReset: Globals.Proxies.rangeValue('xMin')
+        axisX.maxAfterReset: Globals.Proxies.rangeValue('xMax')
 
         axisY.title: "Imeas, Ibkg"
-        axisY.min: parameterValue('yMin')
-        axisY.max: parameterValue('yMax')
-        axisY.minAfterReset: parameterValue('yMin')
-        axisY.maxAfterReset: parameterValue('yMax')
+        axisY.min: Globals.Proxies.rangeValue('yMin')
+        axisY.max: Globals.Proxies.rangeValue('yMax')
+        axisY.minAfterReset: Globals.Proxies.rangeValue('yMin')
+        axisY.maxAfterReset: Globals.Proxies.rangeValue('yMax')
 
         measSerie.pointsVisible: true
 
@@ -164,16 +164,6 @@ Rectangle {
     }
 
     // Logic
-
-    function parameterValue(name) {
-        if (!Globals.Proxies.main.experiment.defined) {
-            return ''
-        }
-        const currentExperimentIndex = Globals.Proxies.main.experiment.currentIndex
-        const value = Globals.Proxies.main.experiment.chartRanges[currentExperimentIndex][name].value
-        const formattedValue = value.toFixed(4)
-        return formattedValue
-    }
 
     function showMainTooltip(chart, point, state) {
         if (!chartView.allowHover) {

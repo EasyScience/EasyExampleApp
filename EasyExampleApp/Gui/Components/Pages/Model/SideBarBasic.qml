@@ -13,11 +13,11 @@ import Gui.Globals as Globals
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
-        title: qsTr("Models explorer")
+        title: Globals.Proxies.modelGroupTitle(qsTr("Models"))
         collapsible: false
         last: !Globals.Proxies.main.model.defined
 
-        Loader { source: 'SideBarBasic/ModelsExplorer.qml' }
+        Loader { source: 'SideBarBasic/Models.qml' }
     }
 
     EaElements.GroupBox {
@@ -35,14 +35,14 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
-        title: qsTr("Atom site")
+        title: Globals.Proxies.modelLoopTitle(qsTr('Atom site'), '_atom_site')
         visible: Globals.Proxies.main.model.defined
 
         Loader { source: 'SideBarBasic/AtomSite.qml' }
     }
 
     EaElements.GroupBox {
-        title: qsTr("Atomic displacement")
+        title: Globals.Proxies.modelLoopTitle(qsTr('Atomic displacement'), '_atom_site')
         visible: Globals.Proxies.main.model.defined
 
         Loader { source: 'SideBarBasic/AtomSiteAdp.qml' }

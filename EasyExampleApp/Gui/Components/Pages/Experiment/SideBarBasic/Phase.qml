@@ -14,25 +14,21 @@ import Gui.Globals as Globals
 
 EaElements.GroupColumn {
 
+    // Table
     EaComponents.TableView {
         id: tableView
 
         defaultInfoText: qsTr("No phases defined")
 
         // Table model
-
         // We only use the length of the model object defined in backend logic and
         // directly access that model in every row using the TableView index property.
-
-        model: {
-            if (typeof Globals.Proxies.main.experiment.dataBlocks[Globals.Proxies.main.model.currentIndex] === 'undefined') {
-                return 0
-            }
-            return Globals.Proxies.main.experiment.dataBlocks[Globals.Proxies.main.model.currentIndex].loops._phase.length
-        }
+        model: typeof Globals.Proxies.main.experiment.dataBlocksNoMeas[Globals.Proxies.main.experiment.currentIndex] === 'undefined' ?
+            [] :
+            Globals.Proxies.main.experiment.dataBlocksNoMeas[Globals.Proxies.main.experiment.currentIndex].loops._phase
+        // Table model
 
         // Header row
-
         header: EaComponents.TableViewHeader {
 
             EaComponents.TableViewLabel {
@@ -49,14 +45,14 @@ EaElements.GroupColumn {
                 width: EaStyle.Sizes.fontPixelSize * 6.0
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.experimentLoopParam('_phase', '_label', 0).prettyName ?? ''  // NEED FIX
+                text: Globals.Proxies.experimentLoopParam('_phase', '_label', 0).prettyName ?? ''  // 0 = 1st element inde§
             }
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 4.0
                 horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.experimentLoopParam('_phase', '_scale', 0).prettyName ?? ''  // NEED FIX
+                text: Globals.Proxies.experimentLoopParam('_phase', '_scale', 0).prettyName ?? ''  // 0 = 1st element index
             }
 
             EaComponents.TableViewLabel {
@@ -69,9 +65,9 @@ EaElements.GroupColumn {
             }
 
         }
+        // Header row
 
         // Table rows
-
         delegate: EaComponents.TableViewDelegate {
 
             EaComponents.TableViewLabel {
@@ -110,8 +106,9 @@ EaElements.GroupColumn {
             }
 
         }
+        // Table rows
 
-        onCurrentIndexChanged: Globals.Proxies.main.model.currentIndex = currentIndex
     }
+    // Table
 
 }

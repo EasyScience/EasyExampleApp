@@ -139,7 +139,7 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
 
-        res.push( rc.compare(Globals.Refs.app.modelPage.loadNewModelFromFileButton.text, 'Load model from file') )
+        res.push( rc.compare(Globals.Refs.app.modelPage.loadNewModelFromFileButton.text, 'Load model(s) from file(s)') )
         res.push( rc.compare(Globals.Refs.app.modelPage.loadNewModelFromFileButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.text, 'Define model manually') )
         res.push( rc.compare(Globals.Refs.app.modelPage.addNewModelManuallyButton.enabled, true) )
@@ -178,7 +178,7 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.appbar.analysisButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.appbar.summaryButton.enabled, false) )
 
-        res.push( rc.compare(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton.text, 'Load experiment from file') )
+        res.push( rc.compare(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton.text, 'Load experiment(s) from file(s)') )
         res.push( rc.compare(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.text, 'Define experiment manually') )
         res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.enabled, true) )

@@ -6,6 +6,7 @@ import numpy as np
 from PySide6.QtCore import QObject, Signal, Property
 
 from EasyApp.Logic.Logging import console
+from Logic.Helpers import IO
 
 
 class Analysis(QObject):
@@ -29,7 +30,7 @@ class Analysis(QObject):
         if self._defined == newValue:
             return
         self._defined = newValue
-        console.debug(f"Analysis defined: {newValue}")
+        console.debug(IO.formatMsg('main', f'Analysis defined: {newValue}'))
         self.definedChanged.emit()
 
     # Private methods

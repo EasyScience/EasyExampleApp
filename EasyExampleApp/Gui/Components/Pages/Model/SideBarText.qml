@@ -14,11 +14,12 @@ import Gui.Globals as Globals
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
-        title: qsTr("Models explorer")
+        visible: Globals.Proxies.main.model.dataBlocks.length > 1
+        bottomPadding: 0
         collapsible: false
         last: true
 
-        Loader { source: 'SideBarText/ModelsExplorer.qml' }
+        Loader { source: 'SideBarText/Models.qml' }
     }
 
     EaElements.GroupBox {

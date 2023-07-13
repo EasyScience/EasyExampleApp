@@ -15,11 +15,12 @@ import Gui.Globals as Globals
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
-        title: qsTr("Experiment data explorer")
+        visible: Globals.Proxies.main.experiment.dataBlocksNoMeas.length > 1
+        bottomPadding: 0
         collapsible: false
         last: true
 
-        Loader { source: 'SideBarText/ExperimentsExplorer.qml' }
+        Loader { source: 'SideBarText/Experiments.qml' }
     }
 
     EaElements.GroupBox {

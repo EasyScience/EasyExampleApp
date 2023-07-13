@@ -7,8 +7,20 @@ import QtQuick
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
+import Gui.Globals as Globals
+
 
 EaComponents.SideBarColumn {
+
+    EaElements.GroupBox {
+        title: Globals.Proxies.main.experiment.dataBlocksNoMeas.length ?
+                   qsTr("Experiments") + ` (${Globals.Proxies.main.experiment.dataBlocksNoMeas.length})` :
+                   qsTr("Experiments")
+        visible: Globals.Proxies.main.experiment.dataBlocksNoMeas.length > 1
+        collapsible: false
+
+        Loader { source: 'SideBarBasic/Experiments.qml' }
+    }
 
     EaElements.GroupBox {
         title: qsTr("Parameters")

@@ -23,12 +23,9 @@ EaElements.GroupColumn {
         // Table model
         // We only use the length of the model object defined in backend logic and
         // directly access that model in every row using the TableView index property.
-        model: {
-            if (typeof Globals.Proxies.main.experiment.dataBlocks[Globals.Proxies.main.model.currentIndex] === 'undefined') {
-                return 0
-            }
-            return Globals.Proxies.main.experiment.dataBlocks[Globals.Proxies.main.model.currentIndex].loops._pd_background.length
-        }
+        model: typeof Globals.Proxies.main.experiment.dataBlocksNoMeas[Globals.Proxies.main.experiment.currentIndex] === 'undefined' ?
+            [] :
+            Globals.Proxies.main.experiment.dataBlocksNoMeas[Globals.Proxies.main.experiment.currentIndex].loops._pd_background
         // Table model
 
         // Header row
@@ -109,7 +106,7 @@ EaElements.GroupColumn {
             text: qsTr("Append new point")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
-                console.debug(`---------- Appending new background point ----------`)
+                console.debug('*** Appending new background point ***')
                 Globals.Proxies.appendExperimentLoopRow('_pd_background')
             }
         }
@@ -119,7 +116,7 @@ EaElements.GroupColumn {
             text: qsTr("Reset to default points")
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
-                console.debug(`---------- Resetting background points to default ones ----------`)
+                console.debug('*** Resetting background points to default ones ***')
                 Globals.Proxies.main.experiment.resetBkgToDefault()
             }
         }
