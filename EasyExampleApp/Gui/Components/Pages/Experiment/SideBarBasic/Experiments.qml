@@ -114,7 +114,7 @@ Column {
                 console.debug(`Clicking '${text}' button: ${this}`)
                 if (Globals.Vars.isTestMode) {
                     console.debug('*** Loading experiment from file (test mode) ***')
-                    const fpaths = ['../examples/Co2SiO4_experiment.cif']
+                    const fpaths = [Qt.resolvedUrl('../../../../../../examples/2-models_2-experiments/Co2SiO4_mult-experiments.cif')]
                     Globals.Proxies.main.experiment.loadExperimentsFromFiles(fpaths)
                 } else {
                     openCifFileDialog.open()

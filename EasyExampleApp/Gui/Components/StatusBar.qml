@@ -25,7 +25,7 @@ EaElements.StatusBar {
         keyIcon: 'layer-group'
         keyText: qsTr('Models')
         valueText: Globals.Proxies.main.status.phaseCount ?? ''
-        ToolTip.text: qsTr('Project description page')
+        ToolTip.text: qsTr('Number of models added')
     }
 
     EaElements.StatusBarItem {

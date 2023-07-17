@@ -3,9 +3,9 @@ data_npd1
 _diffrn_radiation_probe neutron
 _diffrn_radiation_wavelength 1.87
 
-_pd_meas_2theta_offset    0.0
+_pd_meas_2theta_offset    0.0()
 _pd_meas_2theta_range_min 45.3953
-_pd_meas_2theta_range_max 50.0953
+_pd_meas_2theta_range_max 52.0953
 _pd_meas_2theta_range_inc 0.1
 
 _pd_instr_resolution_u  0.241
@@ -23,7 +23,7 @@ loop_
 _phase_label
 _phase_scale
 _phase_igsize
-co2sio4  2.5() 0.0
+co2sio4  1.5() 0.0
 
 loop_
 _pd_background_2theta
@@ -83,54 +83,26 @@ _pd_meas_intensity_sigma
 49.8953 453.83 9.108
 49.9953 478.375 9.378
 50.0953 459.499 9.234
-
-data_npd1
-
-_diffrn_radiation_probe neutron
-_diffrn_radiation_wavelength 1.87
-
-_pd_meas_2theta_offset    0.0()
-_pd_meas_2theta_range_min 45.3953
-_pd_meas_2theta_range_max 46.2953
-_pd_meas_2theta_range_inc 0.1
-
-_pd_instr_resolution_u  0.241
-_pd_instr_resolution_v -0.528
-_pd_instr_resolution_w  0.384
-_pd_instr_resolution_x  0.0
-_pd_instr_resolution_y  0.016
-
-_pd_instr_reflex_asymmetry_p1 0.0
-_pd_instr_reflex_asymmetry_p2 0.0
-_pd_instr_reflex_asymmetry_p3 0.0
-_pd_instr_reflex_asymmetry_p4 0.0
-
-loop_
-_phase_label
-_phase_scale
-_phase_igsize
-co2sio4  0.5() 0.0
-
-loop_
-_pd_background_2theta
-_pd_background_intensity
- 30.0  434
- 60.0  451
-
-loop_
-_pd_meas_2theta
-_pd_meas_intensity
-_pd_meas_intensity_sigma
-45.3953 454.575 9.21
-45.4953 429.901 8.927
-45.5953 431.843 8.973
-45.6953 448.988 9.116
-45.7953 475.34 9.371
-45.8953 524.029 9.872
-45.9953 608.676 10.584
-46.0953 713.815 11.457
-46.1953 860.698 12.603
-46.2953 927.299 13.089
+50.1953 466.659 9.285
+50.2953 479.434 9.404
+50.3953 469.281 9.31
+50.4953 461.507 9.23
+50.5953 470.357 9.346
+50.6953 469.077 9.298
+50.7953 485.325 9.494
+50.8953 522.23 9.839
+50.9953 608.549 10.631
+51.0953 712.536 11.517
+51.1953 837.201 12.489
+51.2953 820.515 12.373
+51.3953 719.171 11.577
+51.4953 591.815 10.759
+51.5953 527.229 10.089
+51.6953 476.713 9.487
+51.7953 475.485 9.409
+51.8953 469.952 9.33
+51.9953 494.795 9.551
+52.0953 490.366 9.542
 
 data_npd2
 
@@ -157,7 +129,8 @@ loop_
 _phase_label
 _phase_scale
 _phase_igsize
-co2sio4  1.0() 0.0
+co2sio4  0.3() 0.0
+coo      4.0() 0.0
 
 loop_
 _pd_background_2theta

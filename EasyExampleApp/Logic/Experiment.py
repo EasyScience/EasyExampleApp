@@ -2,15 +2,14 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-import os
-import json
 import copy
 import numpy as np
 from PySide6.QtCore import QObject, Signal, Slot, Property
+from PySide6.QtQml import QJSValue
 
 from EasyApp.Logic.Logging import console
 from Logic.Calculators import GaussianCalculator
-from Logic.Helpers import CryspyParser, Parameter, IO
+from Logic.Helpers import CryspyParser, IO
 from Logic.Data import Data
 
 try:
@@ -139,12 +138,12 @@ class Experiment(QObject):
 
     @Property('QVariant', notify=dataBlocksMeasOnlyChanged)
     def dataBlocksMeasOnly(self):
-        #console.error('dataBlocks (measured data only) getter')
+        #console.error('EXPERIMENT DATABLOCK (MEAS ONLY) GETTER')
         return self._dataBlocksMeasOnly
 
     @Property('QVariant', notify=dataBlocksNoMeasChanged)
     def dataBlocksNoMeas(self):
-        #console.error('dataBlocks (without measured data) getter')
+        #console.error('EXPERIMENT DATABLOCK (NO MEAS) GETTER')
         return self._dataBlocksNoMeas
 
     @Property('QVariant', notify=dataBlocksCifChanged)
@@ -168,6 +167,8 @@ class Experiment(QObject):
 
     @Slot('QVariant')
     def loadExperimentsFromFiles(self, fpaths):
+        if type(fpaths) == QJSValue:
+            fpaths = fpaths.toVariant()
         for fpath in fpaths:
             fpath = fpath.toLocalFile()
             fpath = IO.generalizePath(fpath)
@@ -377,7 +378,7 @@ class Experiment(QObject):
         if oldValue == value:
             return False
         self._dataBlocksNoMeas[blockIndex]['params'][paramName][field] = value
-        console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value}', f'{block}[{blockIndex}].{paramName}.{field}'))
+        console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value:.6f}', f'{block}[{blockIndex}].{paramName}.{field}'))
         return True
 
     def editDataBlockLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
@@ -386,7 +387,7 @@ class Experiment(QObject):
         if oldValue == value:
             return False
         self._dataBlocksNoMeas[blockIndex]['loops'][loopName][rowIndex][paramName][field] = value
-        console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value}', f'{block}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field}'))
+        console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value:.6f}', f'{block}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field}'))
         return True
 
     def editCryspyDictByMainParam(self, blockIndex, paramName, field, value):
@@ -566,9 +567,9 @@ class Experiment(QObject):
                 blockIndex = [block['name'] for block in self._dataBlocksNoMeas].index(blockName)
 
                 if loopName is None:
-                    self.editDataBlockMainParam(paramName, 'value', value, blockIndex)
+                    self.editDataBlockMainParam(blockIndex, paramName, 'value', value)
                 else:
-                    self.editDataBlockLoopParam(loopName, paramName, rowIndex, 'value', value, blockIndex)
+                    self.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, 'value', value)
 
     def defaultXArray(self):
         xMin = _DEFAULT_DATA_BLOCK['params']['xMin']['value']

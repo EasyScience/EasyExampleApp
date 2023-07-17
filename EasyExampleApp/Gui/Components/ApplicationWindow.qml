@@ -136,6 +136,7 @@ EaComponents.ApplicationWindow {
             onEnabledChanged: enabled ?
                                   modelPageLoader.source = 'Pages/Model/PageStructure.qml' :
                                   modelPageLoader.source = ''
+            onClicked: Globals.Proxies.main.connections.updateModelPageOnly()
             Component.onCompleted: Globals.Refs.app.appbar.modelButton = this
         },
 
@@ -148,6 +149,7 @@ EaComponents.ApplicationWindow {
             onEnabledChanged: enabled ?
                                   experimentPageLoader.source = 'Pages/Experiment/PageStructure.qml' :
                                   experimentPageLoader.source = ''
+            onClicked: Globals.Proxies.main.connections.updateExperimentPageOnly()
             Component.onCompleted: Globals.Refs.app.appbar.experimentButton = this
         },
 

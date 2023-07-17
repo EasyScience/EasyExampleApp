@@ -161,7 +161,7 @@ EaElements.RemoteController {
 //        res.push( rc.compare(Globals.Refs.app.modelPage.plotView.xData, Globals.Tests.expected.created.experiment.xData) )
 //        res.push( rc.compare(Globals.Refs.app.modelPage.plotView.calculatedYData, Globals.Tests.expected.created.model.yData) )
 
-        res.push( rc.compare(Globals.Proxies.main.status.phaseCount, '1') )
+        res.push( rc.compare(Globals.Proxies.main.status.phaseCount, '2') )
 
         rc.mouseClick(Globals.Refs.app.modelPage.continueButton)
         //rc.wait(2000)
@@ -188,14 +188,14 @@ EaElements.RemoteController {
         rc.mouseClick(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton)
         rc.wait(2000)
 
-        res.push( rc.compare(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton.enabled, false) )
-        res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.enabled, false) )
+        res.push( rc.compare(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.experimentPage.continueButton.text, 'Continue') )
 
 //        res.push( rc.compare(Globals.Refs.app.modelPage.plotView.xData, Globals.Tests.expected.created.experiment.xData) )
 //        res.push( rc.compare(Globals.Refs.app.experimentPage.plotView.measuredYData, Globals.Tests.expected.created.experiment.yData) )
 
-        res.push( rc.compare(Globals.Proxies.main.status.experimentsCount, '1') )
+        res.push( rc.compare(Globals.Proxies.main.status.experimentsCount, '2') )
 
         rc.mouseClick(Globals.Refs.app.experimentPage.continueButton)
         //rc.wait(2000)
@@ -243,9 +243,9 @@ EaElements.RemoteController {
 
         rc.mouseClick(Globals.Refs.app.analysisPage.fitStatusDialogOkButton)
 
-        res.push( rc.compare(Globals.Proxies.main.status.variables, '52 (5 free, 47 fixed)') )
-        res.push( rc.compare(Globals.Proxies.main.status.fitIteration, '127') )
-        res.push( rc.compare(Globals.Proxies.main.status.goodnessOfFit, '133.81 → 4.47') )
+        res.push( rc.compare(Globals.Proxies.main.status.variables, '72 (8 free, 64 fixed)') )
+        res.push( rc.compare(Globals.Proxies.main.status.fitIteration, '316') )
+        res.push( rc.compare(Globals.Proxies.main.status.goodnessOfFit, '368.68 → 4.41') )
         res.push( rc.compare(Globals.Proxies.main.status.fitStatus, 'Success') )
 
         rc.mouseClick(Globals.Refs.app.analysisPage.continueButton)

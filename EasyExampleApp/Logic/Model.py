@@ -6,7 +6,8 @@ import copy
 import re
 import random
 import numpy as np
-from PySide6.QtCore import QObject, Signal, Slot, Property
+from PySide6.QtCore import QObject, Signal, Slot, Property, QThreadPool
+from PySide6.QtQml import QJSValue
 
 from EasyApp.Logic.Logging import console
 from Logic.Calculators import GaussianCalculator
@@ -75,6 +76,8 @@ class Model(QObject):
         self._yCalcArrays = []
         self._yBkgArrays = []
 
+        self._structureViewUpdater = StructureViewUpdater(self._proxy)
+
         self._structViewAtomsModel = []
         self._structViewCellModel = []
         self._structViewAxesModel = []
@@ -120,7 +123,7 @@ class Model(QObject):
 
     @Property('QVariant', notify=dataBlocksChanged)
     def dataBlocks(self):
-        # console.error('GET MODEL DATABLOCK')
+        #console.error('MODEL DATABLOCK GETTER')
         return self._dataBlocks
 
     @Property('QVariant', notify=dataBlocksCifChanged)
@@ -155,6 +158,8 @@ class Model(QObject):
 
     @Slot('QVariant')
     def loadModelsFromFiles(self, fpaths):
+        if type(fpaths) == QJSValue:
+            fpaths = fpaths.toVariant()
         for fpath in fpaths:
             fpath = fpath.toLocalFile()
             fpath = IO.generalizePath(fpath)
@@ -362,7 +367,7 @@ class Model(QObject):
         if oldValue == value:
             return False
         self._dataBlocks[blockIndex]['params'][paramName][field] = value
-        console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value}', f'{blockType}[{blockIndex}].{paramName}.{field}'))
+        console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value:.6f}', f'{blockType}[{blockIndex}].{paramName}.{field}'))
         return True
 
     def editDataBlockLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
@@ -371,7 +376,7 @@ class Model(QObject):
         if oldValue == value:
             return False
         self._dataBlocks[blockIndex]['loops'][loopName][rowIndex][paramName][field] = value
-        console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value}', f'{block}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field}'))
+        console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value:.6f}', f'{block}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field}'))
         return True
 
     def editCryspyDictByMainParam(self, blockIndex, paramName, field, value):
@@ -471,7 +476,7 @@ class Model(QObject):
                 loopName = None
                 paramName = None
                 rowIndex = None
-                value = self._proxy.data._cryspyModelDicts[0][block][group][idx]  # NEED FIX: 0 should correspond to the model index !!!
+                value = self._proxy.data._cryspyDict[block][group][idx]
 
                 # unit_cell_parameters
                 if group == 'unit_cell_parameters':
@@ -518,9 +523,9 @@ class Model(QObject):
                 blockIndex = [block['name'] for block in self._dataBlocks].index(blockName)
 
                 if loopName is None:
-                    self.editDataBlockMainParam(paramName, 'value', value, blockIndex)
+                    self.editDataBlockMainParam(blockIndex, paramName, 'value', value)
                 else:
-                    self.editDataBlockLoopParam(loopName, paramName, rowIndex, 'value', value, blockIndex)
+                    self.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, 'value', value)
 
     def defaultYCalcArray(self):
         xArray = self._proxy.experiment._xArrays[0]  # NEED FIX
@@ -682,3 +687,31 @@ class Model(QObject):
                                       for x, y, z, diameter, color in structViewModel]
         console.debug(IO.formatMsg('sub', f'{len(atoms)} atom(s)', f'model no. {self._currentIndex + 1}', 'for structure view', 'defined'))
         self.structViewAtomsModelChanged.emit()
+
+
+class StructureViewWorker(QObject):
+    finished = Signal()
+
+    def __init__(self, proxy):
+        super().__init__()
+        self._proxy = proxy
+
+    def run(self):
+        self._proxy.model.updateCurrentModelStructView()
+        self.finished.emit()
+
+
+class StructureViewUpdater(QObject):
+    finished = Signal()
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        self._proxy = parent
+        self._threadpool = QThreadPool.globalInstance()
+        self._worker = StructureViewWorker(self._proxy)
+
+        self._worker.finished.connect(self.finished)
+
+    def update(self):
+        self._threadpool.start(self._worker.run)
+        console.debug(IO.formatMsg('main', '---------------AAAAAA'))

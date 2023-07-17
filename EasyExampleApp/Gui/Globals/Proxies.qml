@@ -21,6 +21,10 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                                          pyProxy:
                                          qmlProxy
 
+    //readonly property var main_model_dataBlocks: main.model.dataBlocks
+    //readonly property var main_experiment_dataBlocks: main.experiment.dataBlocks
+    readonly property var main_fittables_data: main.fittables.data
+
     readonly property var qmlProxy: QtObject {
 
         //////////

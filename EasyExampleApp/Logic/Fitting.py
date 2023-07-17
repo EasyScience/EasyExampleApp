@@ -8,6 +8,7 @@ import lmfit
 from PySide6.QtCore import QObject, Signal, Slot, Property, QThreadPool
 
 from EasyApp.Logic.Logging import console
+from Logic.Helpers import IO
 from Logic.Data import Data
 
 try:
@@ -43,7 +44,8 @@ class Worker(QObject):
 
     def run(self):
         def callbackFunc(params, iter, resid, *args, **kws):
-            console.info(f"Iteration: {iter:5d},   Reduced chi2 per {self._proxy.fitting._pointsCount} points: {self._proxy.fitting._chiSq/self._proxy.fitting._pointsCount:16.6f}")
+            console.info(IO.formatMsg('main', f'Iteration: {iter:5d}', f'Reduced chi2: {self._proxy.fitting._chiSq/self._proxy.fitting._pointsCount:16.6f}'))
+
             self._proxy.fitting._fitIteration = iter
             # Check if fitting termination is requested
             if self._needCancel:
@@ -64,9 +66,9 @@ class Worker(QObject):
             self._gofPrevIter = self._gofLastIter
             # Update goodnes-of-fit (GOF) value updated in the status bar
             if iter == 1 or gofShift > 0.01:
-                ###reducedGofStart = self._proxy.fitting._chiSqStart / self._proxy.fitting._pointsCount
-                ###reducedGofLastIter = self._gofLastIter / self._proxy.fitting._pointsCount
-                ###self._proxy.status.goodnessOfFit = f'{reducedGofStart:0.2f} → {reducedGofLastIter:0.2f}'  # NEED move to connection
+                reducedGofStart = self._proxy.fitting._chiSqStart / self._proxy.fitting._pointsCount
+                reducedGofLastIter = self._gofLastIter / self._proxy.fitting._pointsCount
+                self._proxy.status.goodnessOfFit = f'{reducedGofStart:0.2f} → {reducedGofLastIter:0.2f}'  # NEED move to connection
                 self._proxy.fitting.chiSqSignificantlyChanged.emit()
             return False
 
@@ -82,11 +84,9 @@ class Worker(QObject):
             return self._proxy.fitting.chiSq
 
         self._proxy.fitting._freezeChiSqStart = True
-        console.error('')
 
         # Save initial state of cryspyDict if cancel fit is requested
         self._cryspyDictInitial = copy.deepcopy(self._proxy.data._cryspyDict)
-        console.error('')
 
         # Preliminary calculations
         self._cryspyUsePrecalculatedData = False
@@ -96,7 +96,6 @@ class Worker(QObject):
             dict_in_out=self._proxy.data._cryspyInOutDict,
             flag_use_precalculated_data=self._cryspyUsePrecalculatedData,
             flag_calc_analytical_derivatives=self._cryspyCalcAnalyticalDerivatives)
-        console.error('')
 
         # Create list of parameters to be varied
         parameter_names_free = [way for way in parameter_names]
@@ -106,14 +105,12 @@ class Worker(QObject):
             nameStr = Data.cryspyDictParamPathToStr(name)
             #self._paramsInit.add(nameStr, value=val)
             paramsLmfit.add(nameStr, value=val)
-        console.error('')
 
         ###self._proxy.fitting._fittablesCount = len(param_0)
         ###self._proxy.status.variables = f'{self._proxy.fitting._fittablesCount}'  # NEED move to connection
         self._proxy.fitting._freeParamsCount = len(param_0)
         if self._proxy.fitting._freeParamsCount != self._proxy.fittables._freeParamsCount:
             console.error(f'Number of free parameters differs. Expected {self._proxy.fittables._freeParamsCount}, got {self._proxy.fitting._freeParamsCount}')
-        console.error('')
 
         # Minimization: lmfit.minimize
         self._proxy.fitting._chiSqStart = self._proxy.fitting.chiSq
@@ -127,9 +124,8 @@ class Worker(QObject):
                                 tol=tol
                                 )
         #lmfit.report_fit(result)
-        console.error('')
 
-        if result.success:
+        if result.success:  # NEED FIX: Move to connections. Pass names via signal.emit(names)
             console.info('Minimization has been successfully finished')
             # Calculate optimal chi2
             self._cryspyUsePrecalculatedData = False
@@ -144,6 +140,7 @@ class Worker(QObject):
             ####self._proxy.fitting._chiSqStart = self._proxy.fitting.chiSq
 
             names = [Data.cryspyDictParamPathToStr(name) for name in parameter_names_free]
+
             self._proxy.experiment.editDataBlockByCryspyDictParams(names)
             self._proxy.model.editDataBlockByCryspyDictParams(names)
 

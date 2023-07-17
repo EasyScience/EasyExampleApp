@@ -106,7 +106,7 @@ Column {
 
     // Table
     EaComponents.TableView {
-        id: table
+        id: tableView
 
         property var currentValueTextInput: null
 
@@ -119,7 +119,7 @@ Column {
         // Table mode
         // We only use the length of the model object defined in backend logic and
         // directly access that model in every row using the TableView index property.
-        model: Globals.Proxies.main.fittables.data.length
+        model: Globals.Proxies.main_fittables_data.length
         // Table mode
 
         // Header row
@@ -168,11 +168,11 @@ Column {
         delegate: EaComponents.TableViewDelegate {
 
             property bool isCurrentItem: ListView.isCurrentItem
-            property var item: Globals.Proxies.main.fittables.data[index]
+            property var item: Globals.Proxies.main_fittables_data[index]
 
             onIsCurrentItemChanged: {
-                if (table.currentValueTextInput != valueColumn) {
-                   table.currentValueTextInput = valueColumn
+                if (tableView.currentValueTextInput != valueColumn) {
+                   tableView.currentValueTextInput = valueColumn
                 }
             }
 
@@ -197,7 +197,7 @@ Column {
                     focus = false
                     console.debug('')
                     console.debug("*** Editing 'value' field of fittable on Analysis page ***")
-                    Globals.Proxies.main.fittables.edit(item.blockType,
+                    Globals.Proxies.main.fittables.editSilently(item.blockType,
                                                         item.blockIndex,
                                                         item.loopName,
                                                         item.rowIndex,
@@ -224,7 +224,7 @@ Column {
                 onToggled: {
                     console.debug('')
                     console.debug("*** Editing 'fit' field of fittable on Analysis page ***")
-                    Globals.Proxies.main.fittables.edit(item.blockType,
+                    Globals.Proxies.main.fittables.editSilently(item.blockType,
                                                         item.blockIndex,
                                                         item.loopName,
                                                         item.rowIndex,
@@ -240,7 +240,7 @@ Column {
 
     // Parameter change slider
     Row {
-        visible: Globals.Proxies.main.fittables.data.length
+        visible: Globals.Proxies.main_fittables_data.length
 
         spacing: EaStyle.Sizes.fontPixelSize
 
@@ -253,14 +253,25 @@ Column {
             id: slider
 
             enabled: !Globals.Proxies.main.fitting.isFittingNow
-            width: table.width - EaStyle.Sizes.fontPixelSize * 14
+            width: tableView.width - EaStyle.Sizes.fontPixelSize * 14
 
 
-            from: Globals.Proxies.main.fittables.data[table.currentIndex].min
-            to: Globals.Proxies.main.fittables.data[table.currentIndex].max
-            value: Globals.Proxies.main.fittables.data[table.currentIndex].value //table.currentValueTextInput.text
+            from: Globals.Proxies.main_fittables_data[tableView.currentIndex].min
+            to: Globals.Proxies.main_fittables_data[tableView.currentIndex].max
+            stepSize: (to - from) / 100
+            value: Globals.Proxies.main_fittables_data[tableView.currentIndex].value //tableView.currentValueTextInput.text
 
-            onMoved: moveDelayTimer.restart()
+            snapMode: Slider.SnapAlways
+
+            onMoved: {
+                //moveDelayTimer.restart()
+                if (tableView.currentValueTextInput.text !== slider.value.toFixed(4)) {
+                    //enableOpenGL()
+                    tableView.currentValueTextInput.text = slider.value.toFixed(4)
+                    tableView.currentValueTextInput.editingFinished()
+                    //disableOpenGL()
+                }
+            }
         }
 
         EaElements.TextField {
@@ -277,10 +288,10 @@ Column {
         id: moveDelayTimer
         interval: 0 //50
         onTriggered: {
-            if (table.currentValueTextInput.text !== slider.value.toFixed(4)) {
+            if (tableView.currentValueTextInput.text !== slider.value.toFixed(4)) {
                 //enableOpenGL()
-                table.currentValueTextInput.text = slider.value.toFixed(4)
-                table.currentValueTextInput.editingFinished()
+                tableView.currentValueTextInput.text = slider.value.toFixed(4)
+                tableView.currentValueTextInput.editingFinished()
                 //disableOpenGL()
             }
         }

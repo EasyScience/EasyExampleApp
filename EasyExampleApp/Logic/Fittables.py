@@ -28,6 +28,8 @@ _EMPTY_DATA = [
 class Fittables(QObject):
     dataChanged = Signal()
     dataJsonChanged = Signal()
+    modelChangedSilently = Signal()
+    experimentChangedSilently = Signal()
     nameFilterCriteriaChanged = Signal()
     variabilityFilterCriteriaChanged = Signal()
     paramsCountChanged = Signal()
@@ -46,6 +48,7 @@ class Fittables(QObject):
 
     @Property('QVariant', notify=dataChanged)
     def data(self):
+        #console.error('FITTABLES DATA GETTER')
         return self._data
 
     @Property(str, notify=dataJsonChanged)
@@ -106,6 +109,32 @@ class Fittables(QObject):
                 self._proxy.experiment.setLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
             elif blockType == 'model':
                 self._proxy.model.setLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
+
+    @Slot(str, int, str, int, str, str, float)
+    def editSilently(self, blockType, blockIndex, loopName, rowIndex, paramName, field, value):  # NED FIX: Move to connections
+        changedIntern = False
+        changedCryspy = False
+        if loopName == '':
+            console.debug(IO.formatMsg('main', 'Changing fittable', f'{blockType}[{blockIndex}].{paramName}.{field} to {value}'))
+            if blockType == 'experiment':
+                changedIntern = self._proxy.experiment.editDataBlockMainParam(blockIndex, paramName, field, value)
+                changedCryspy = self._proxy.experiment.editCryspyDictByMainParam(blockIndex, paramName, field, value)
+            elif blockType == 'model':
+                changedIntern = self._proxy.model.editDataBlockMainParam(blockIndex, paramName, field, value)
+                changedCryspy = self._proxy.model.editCryspyDictByMainParam(blockIndex, paramName, field, value)
+        else:
+            console.debug(IO.formatMsg('main', 'Changing fittable', f'{blockType}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field} to {value}'))
+            if blockType == 'experiment':
+                changedIntern = self._proxy.experiment.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
+                changedCryspy = self._proxy.experiment.editCryspyDictByLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
+            elif blockType == 'model':
+                changedIntern = self._proxy.model.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
+                changedCryspy = self._proxy.model.editCryspyDictByLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
+        if changedIntern and changedCryspy:
+            if blockType == 'model':
+                self.modelChangedSilently.emit()
+            elif blockType == 'experiment':
+                self.experimentChangedSilently.emit()
 
     def set(self):
         _data = []
