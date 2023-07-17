@@ -32,19 +32,19 @@ class Plotting(QObject):
             },
             'QtCharts': {
                 'experimentPage': {
-                    'measSerie': QtCharts.QXYSeries,
-                    'bkgSerie': QtCharts.QXYSeries
+                    'measSerie': None,  # QtCharts.QXYSeries,
+                    'bkgSerie': None,  # QtCharts.QXYSeries
                 },
                 'modelPage': {
-                    'calcSerie': QtCharts.QXYSeries,
-                    'braggSerie': QtCharts.QXYSeries
+                    'calcSerie': None,  # QtCharts.QXYSeries,
+                    'braggSerie': None,  # QtCharts.QXYSeries
                 },
                 'analysisPage': {
-                    'measSerie': QtCharts.QXYSeries,
-                    'bkgSerie': QtCharts.QXYSeries,
-                    'totalCalcSerie': QtCharts.QXYSeries,
-                    'residSerie': QtCharts.QXYSeries,
-                    'braggSerie': QtCharts.QXYSeries
+                    'measSerie': None,  # QtCharts.QXYSeries,
+                    'bkgSerie': None,  # QtCharts.QXYSeries,
+                    'totalCalcSerie': None,  # QtCharts.QXYSeries,
+                    'residSerie': None,  # QtCharts.QXYSeries,
+                    'braggSerie': None  # QtCharts.QXYSeries
                 }
             }
         }
@@ -88,6 +88,7 @@ class Plotting(QObject):
         if self._chartRefs['QtCharts'][page][serie] == ref:
             return
         self._chartRefs['QtCharts'][page][serie] = ref
+        console.debug(IO.formatMsg('sub', f'{serie} on {page}: {ref}'))
         self.chartRefsChanged.emit()
 
     @Slot(str, 'QVariant')

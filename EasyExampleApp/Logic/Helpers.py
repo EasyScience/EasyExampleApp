@@ -7,6 +7,7 @@ import sys
 import orjson
 import argparse
 from urllib.parse import urlparse
+from pycifstar.global_ import Global
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QObject, Signal, Slot, QCoreApplication
 
@@ -200,6 +201,23 @@ class Converter:
 
 
 class CryspyParser:
+
+    @staticmethod
+    def cifToDict(cif):
+        obj = Global()
+        obj.take_from_string(cif)
+        data = obj.datas[0]
+        out = {'name': data.name, 'items': {}, 'loops': {}}
+        for item in data.items.items:
+            out['items'][item.name] = item.value
+        for loop in data.loops:
+            loopName = loop.prefix
+            out['loops'][loopName] = {}
+            for paramIdx, fullParamName in enumerate(loop.names):
+                paramName = fullParamName.replace(loopName, '')
+                paramValues = [values[paramIdx] for values in loop.values]
+                out['loops'][loopName][paramName] = paramValues
+        return out
 
     @staticmethod
     def dataBlocksToCif(blocks):

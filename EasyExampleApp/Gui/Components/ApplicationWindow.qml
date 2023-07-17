@@ -129,7 +129,7 @@ EaComponents.ApplicationWindow {
 
         // Model tab
         EaElements.AppBarTabButton {
-            enabled: Globals.Vars.modelPageEnabled
+            enabled: Globals.Vars.modelPageEnabled || Globals.Proxies.main.project.created  // NEED FIX: rename to defined
             fontIcon: 'layer-group'  //'gem'
             text: qsTr('Model')
             ToolTip.text: qsTr('Model description page')
@@ -142,7 +142,7 @@ EaComponents.ApplicationWindow {
 
         // Experiment tab
         EaElements.AppBarTabButton {
-            enabled: Globals.Vars.experimentPageEnabled
+            enabled: Globals.Vars.experimentPageEnabled || Globals.Proxies.main.model.defined
             fontIcon: 'microscope'
             text: qsTr('Experiment')
             ToolTip.text: qsTr('Experimental settings and measured data page')
@@ -155,7 +155,7 @@ EaComponents.ApplicationWindow {
 
         // Analysis tab
         EaElements.AppBarTabButton {
-            enabled: Globals.Vars.analysisPageEnabled
+            enabled: Globals.Vars.analysisPageEnabled || Globals.Proxies.main.experiment.defined
             fontIcon: 'calculator'
             text: qsTr('Analysis')
             ToolTip.text: qsTr('Simulation and fitting page')
@@ -191,7 +191,15 @@ EaComponents.ApplicationWindow {
         Loader { id: homePageLoader },
         Loader { id: projectPageLoader },
         Loader { id: modelPageLoader },
-        Loader { id: experimentPageLoader },
+        Loader {
+            id: experimentPageLoader
+
+            //source: Globals.Vars.experimentPageEnabled || Globals.Proxies.main.model.defined ?
+            //            'Pages/Experiment/PageStructure.qml' :
+            //            ''
+            //asynchronous: true
+            //visible: status === Loader.Ready
+},
         Loader { id: analysisPageLoader },
         Loader { id: summaryPageLoader }
     ]

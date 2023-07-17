@@ -1,4 +1,4 @@
-data_npd
+data_d20
 
 _diffrn_radiation_probe neutron
 _diffrn_radiation_wavelength 1.87

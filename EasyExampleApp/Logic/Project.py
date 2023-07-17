@@ -5,9 +5,17 @@
 import os
 import json, jsbeautifier
 from datetime import datetime
-from PySide6.QtCore import QObject, Signal, Slot, Property
+from PySide6.QtCore import QObject, Signal, Slot, Property, QUrl
+from PySide6.QtQml import QJSValue
 
 from EasyApp.Logic.Logging import console
+from Logic.Helpers import IO, CryspyParser
+
+try:
+    import cryspy
+    from cryspy.H_functions_global.function_1_cryspy_objects import str_to_globaln
+except ImportError:
+    console.debug('No CrysPy module has been found')
 
 
 _EMPTY_DATA = {
@@ -88,6 +96,32 @@ class Project(QObject):
     @Slot()
     def setNeedSaveToTrue(self):
         self.needSave = True
+
+
+
+    @Slot('QVariant')
+    def loadProjectFromFile(self, fpath):
+        fpath = fpath.toLocalFile()
+        fpath = IO.generalizePath(fpath)
+        console.debug(f"Open an existing project from: {fpath}")
+        with open(fpath, 'r') as file:
+            edCif = file.read()
+        #
+        self._data = CryspyParser.cifToDict(edCif)
+
+        modelFileNames = self._data['loops']['_model_file']['_name']
+        experimentFileNames = self._data['loops']['_experiment_file']['_name']
+        #
+        dirpath = os.path.dirname(fpath)
+        modelFilePaths = [QUrl.fromLocalFile(os.path.join(dirpath, fname)) for fname in modelFileNames]
+        experimentFilePaths = [QUrl.fromLocalFile(os.path.join(dirpath, fname)) for fname in experimentFileNames]
+        #
+        self._proxy.model.loadModelsFromFiles(modelFilePaths)
+        self._proxy.experiment.loadExperimentsFromFiles(experimentFilePaths)
+        #
+        self.dataChanged.emit()
+        self.created = True
+
 
     @Slot()
     def create(self):

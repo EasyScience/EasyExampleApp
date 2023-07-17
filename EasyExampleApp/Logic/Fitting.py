@@ -102,7 +102,8 @@ class Worker(QObject):
         param_0 = [self._proxy.data._cryspyDict[way[0]][way[1]][way[2]] for way in parameter_names_free]
         paramsLmfit = lmfit.Parameters()
         for name, val in zip(parameter_names_free, param_0):
-            nameStr = Data.cryspyDictParamPathToStr(name)
+            nameStr = Data.cryspyDictParamPathToStr(name)  # Only ascii letters and numbers allowed for lmfit.Parameters()???
+            console.error(f'nameStr {nameStr}')
             #self._paramsInit.add(nameStr, value=val)
             paramsLmfit.add(nameStr, value=val)
 

@@ -19,7 +19,7 @@ class Connections(QObject):
 
         # Project
         self._proxy.project.dataChanged.connect(self.onProjectDataChanged)
-        self._proxy.project.createdChanged.connect(self._proxy.project.save)
+        #self._proxy.project.createdChanged.connect(self._proxy.project.save)
 
         # Model
         self._proxy.model.currentIndexChanged.connect(self.onModelCurrentIndexChanged)
@@ -197,12 +197,12 @@ class Connections(QObject):
     def onAnalysisDefined(self):
         self._proxy.status.calculator = 'CrysPy'
         self._proxy.status.minimizer = 'Lmfit (BFGS)'
-        self._proxy.fittables.set()
-        console.debug(IO.formatMsg('main', f'Updating curves on analysis page using {self._proxy.plotting.currentLib1d}...'))
-        self._proxy.plotting.drawMeasuredOnAnalysisChart()
-        self._proxy.plotting.drawBackgroundOnAnalysisChart()
-        self._proxy.plotting.drawCalculatedOnAnalysisChart()
-        self._proxy.plotting.drawResidualOnAnalysisChart()
+        #self._proxy.fittables.set()
+        #console.debug(IO.formatMsg('main', f'Updating curves on analysis page using {self._proxy.plotting.currentLib1d}...'))
+        #self._proxy.plotting.drawMeasuredOnAnalysisChart()
+        #self._proxy.plotting.drawBackgroundOnAnalysisChart()
+        #self._proxy.plotting.drawCalculatedOnAnalysisChart()
+        #self._proxy.plotting.drawResidualOnAnalysisChart()
 
     def onAnalysisYCalcTotalChanged(self):
         console.debug(f"Updating curves on analysis page using {self._proxy.plotting.currentLib1d}")
@@ -248,7 +248,7 @@ class Connections(QObject):
         if not self._modelNeedUpdate:
             return
         console.debug(IO.formatMsg('main', 'Updating structure view for the current model...'))
-        # self._proxy.model._structureViewUpdater.update()
+        #self._proxy.model._structureViewUpdater.update()
         self._proxy.model.updateCurrentModelStructView()
         console.debug(IO.formatMsg('main', '(Re)converting model data blocks to CIF...'))
         self._proxy.model.setDataBlocksCif()
@@ -280,7 +280,8 @@ class Connections(QObject):
     def onFittingFitFinished(self):
         # Model page
         console.debug(IO.formatMsg('main', 'Updating structure view for the current model...'))
-        self._proxy.model._structureViewUpdater.update()  # self._proxy.model.updateCurrentModelStructView()
+        #self._proxy.model._structureViewUpdater.update()
+        self._proxy.model.updateCurrentModelStructView()
         console.debug(IO.formatMsg('main', '(Re)converting model data blocks to CIF...'))
         self._proxy.model.setDataBlocksCif()
 

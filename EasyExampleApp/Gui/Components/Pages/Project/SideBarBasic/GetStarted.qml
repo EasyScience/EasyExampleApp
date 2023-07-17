@@ -35,10 +35,23 @@ Grid {
     }
 
     EaElements.SideBarButton {
-        enabled: false
-
         fontIcon: "upload"
         text: qsTr("Open an existing project")
+
+        onClicked: {
+            console.debug(`Clicking '${text}' button: ${this}`)
+            if (true) { //Globals.Vars.isTestMode) {
+                console.debug('*** Open an existing project (test mode) ***')
+                //Globals.Vars.experimentPageEnabled = true
+                Globals.Vars.modelPageEnabled = true
+                //Globals.Vars.analysisPageEnabled = true
+                const fpath = Qt.resolvedUrl('../../../../../../examples/1-model_1-experiment/project.cif')
+                Globals.Proxies.main.project.loadProjectFromFile(fpath)
+                Globals.Vars.summaryPageEnabled = true
+            } else {
+                //openCifFileDialog.open()
+            }
+        }
     }
 
     EaElements.SideBarButton {

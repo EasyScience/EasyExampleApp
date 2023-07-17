@@ -105,7 +105,7 @@ class Model(QObject):
         if self._defined == newValue:
             return
         self._defined = newValue
-        console.debug(IO.formatMsg('main', 'Model defined: {newValue}'))
+        console.debug(IO.formatMsg('main', f'Model defined: {newValue}'))
 
         self.definedChanged.emit()
 
@@ -650,7 +650,7 @@ class Model(QObject):
                     float(x),
                     float(y),
                     float(z),
-                    0.333333 * self.atomData(symbol, 'covalentRadius'),
+                    self.atomData(symbol, 'covalentRadius'),
                     self.atomData(symbol, 'color')
                 ))
         # Add those atoms, which have 0 in xyz to be translated into 1

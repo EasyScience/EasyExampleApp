@@ -23,18 +23,19 @@ Rectangle {
     property real cellLengthB: typeof Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex] !== 'undefined' ?
         Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex].params['_cell_length_b']['value'] :
         10.0  // NEED FIX
-    property real cellLengthC:  typeof Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex] !== 'undefined' ?
+    property real cellLengthC: typeof Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex] !== 'undefined' ?
         Globals.Proxies.main.model.dataBlocks[Globals.Proxies.main.model.currentIndex].params['_cell_length_c']['value'] :
         10.0  // NEED FIX
 
     property real scaleCoeff: defaultScaleCoeff
-    property real cellCylinderThickness: 1
-    property real axesCylinderThickness: 5
-    property real axisConeSize: 20
+    property real cellCylinderThickness: 2
+    property real axesCylinderThickness: 10
+    property real axisConeSize: 40
+    property real atomSizeScale: 0.7
 
     property real defaultScaleCoeff: Math.min(width, height) /
                                      Math.max(cellLengthA, cellLengthB, cellLengthC) *
-                                     0.5
+                                     1.1
     property var defaultEulerRotation: Qt.vector3d(12, -34, -8)
     property var alongAEulerRotation: Qt.vector3d(-90, 90, 180)
     property var alongBEulerRotation: Qt.vector3d(0, 90, 90)
@@ -203,9 +204,9 @@ Rectangle {
                     position: Qt.vector3d((atoms.model[index].x - 0.5) * cellLengthA * scaleCoeff,
                                           (atoms.model[index].y - 0.5) * cellLengthB * scaleCoeff,
                                           (atoms.model[index].z - 0.5) * cellLengthC * scaleCoeff)
-                    scale: Qt.vector3d(atoms.model[index].diameter,
-                                       atoms.model[index].diameter,
-                                       atoms.model[index].diameter)
+                    scale: Qt.vector3d(atomSizeScale * atoms.model[index].diameter,
+                                       atomSizeScale * atoms.model[index].diameter,
+                                       atomSizeScale * atoms.model[index].diameter)
                     materials: [ DefaultMaterial { diffuseColor: atoms.model[index].color } ]
                 }
             }
@@ -430,11 +431,11 @@ Rectangle {
     // to orthographic, scale jumps to the expected one. The same occures when size
     // of the container is changed. So, this timer is temporary fix to get the
     // correct scale few moments after the structure view is created.
-    Timer {
-        running: true
-        interval: 100
-        onTriggered: container.width += 1
-    }
+    //Timer {
+    //    running: true
+    //    interval: 100
+    //    onTriggered: container.width += 1
+    //}
     // Misc
 
 }

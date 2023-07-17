@@ -45,29 +45,53 @@ Rectangle {
             columnSpacing: commonSpacing
 
             EaElements.Label {
+                visible: Globals.Proxies.main.project.data.items._short_description
                 font.bold: true
-                text: qsTr("Description:")
+                text: qsTr("Short description:")
             }
             EaElements.TextInput {
-                text: Globals.Proxies.main.project.data.description
-                onEditingFinished: Globals.Proxies.main.project.editData('description', text)
+                text: Globals.Proxies.main.project.data.items._short_description
+                //onEditingFinished: Globals.Proxies.main.project.editData('description', text)
             }
 
+            /*
             EaElements.Label {
+                visible: Globals.Proxies.main.project.data.location
                 font.bold: true
                 text: qsTr("Location:")
             }
             EaElements.Label {
                 text: Globals.Proxies.main.project.data.location
             }
+            */
 
             EaElements.Label {
+                visible: Globals.Proxies.main.project.data.items._modified
                 font.bold: true
-                text: qsTr("Created:")
+                text: qsTr("Modified:")
             }
             EaElements.Label {
-                text: Globals.Proxies.main.project.data.creationDate
+                text: Globals.Proxies.main.project.data.items._modified
             }
+
+            EaElements.Label {
+                visible: Globals.Proxies.main.project.data.loops._model_file._name
+                font.bold: true
+                text: qsTr("Model file(s):")
+            }
+            EaElements.Label {
+                text: Globals.Proxies.main.project.data.loops._model_file._name.join(', ')
+            }
+
+            EaElements.Label {
+                visible: Globals.Proxies.main.project.data.loops._experiment_file._name
+                font.bold: true
+                text: qsTr("Experiment file(s):")
+            }
+            EaElements.Label {
+                text: Globals.Proxies.main.project.data.loops._experiment_file._name.join(', ')
+            }
+
         }
 
         // Project image

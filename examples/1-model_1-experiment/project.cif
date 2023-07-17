@@ -1,0 +1,12 @@
+data_Co2SiO4
+
+_short_description 'neutrons, powder, constant wavelength, D20@ILL'
+_modified '26.04.2021 17:46'
+
+loop_
+_model_file_name
+co2sio4.cif
+
+loop_
+_experiment_file_name
+d20.cif

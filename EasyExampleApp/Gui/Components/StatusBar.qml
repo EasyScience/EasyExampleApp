@@ -64,6 +64,7 @@ EaElements.StatusBar {
     }
 
     EaElements.StatusBarItem {
+        visible: valueText !== '' && Globals.Proxies.main.analysis.defined  // NEED FIX
         keyIcon: 'thumbs-up'
         keyText: qsTr('Goodness-of-fit')
         valueText: Globals.Proxies.main.status.goodnessOfFit ?? ''

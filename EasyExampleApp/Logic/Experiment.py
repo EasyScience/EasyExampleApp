@@ -203,7 +203,7 @@ class Experiment(QObject):
 
             self.dataBlocksChanged.emit()
         else:
-            console.debug(IO.formatMsg('sub', f'No experiment(s)', '', 'to intern dataset', 'added'))
+            console.debug(IO.formatMsg('sub', 'No experiment(s)', '', 'to intern dataset', 'added'))
 
 
 
