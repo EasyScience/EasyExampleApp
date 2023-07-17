@@ -14,7 +14,8 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: Globals.Proxies.experimentGroupTitle(qsTr("Experiments"))
-        collapsible: false
+        icon: 'microscope'
+        collapsed: false
         last: !Globals.Proxies.main.experiment.defined
 
         Loader { source: 'SideBarBasic/Experiments.qml' }
@@ -22,34 +23,39 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Diffraction radiation")
+        icon: 'radiation'
         visible: Globals.Proxies.main.experiment.defined
 
         Loader { source: 'SideBarBasic/DiffrnRadiation.qml' }
     }
 
     EaElements.GroupBox {
-        title: qsTr("Powder diffraction: measured 2θ")
+        title: qsTr("Measured range")
+        icon: 'arrows-alt-h'
         visible: Globals.Proxies.main.experiment.defined
 
         Loader { source: 'SideBarBasic/PdMeas2Theta.qml' }
     }
 
     EaElements.GroupBox {
-        title: qsTr("Powder diffraction: resolution")
+        title: qsTr("Instrument resolution")
+        icon: 'grip-lines-vertical'
         visible: Globals.Proxies.main.experiment.defined
 
         Loader { source: 'SideBarBasic/PdInstrResolution.qml' }
     }
 
     EaElements.GroupBox {
-        title: qsTr("Powder diffraction: peak asymmetry")
+        title: qsTr("Peak asymmetry")
+        icon: 'balance-scale-left'
         visible: Globals.Proxies.main.experiment.defined
 
         Loader { source: 'SideBarBasic/PdInstrReflexAsymmetry.qml' }
     }
 
     EaElements.GroupBox {
-        title: Globals.Proxies.experimentLoopTitle(qsTr('Powder diffraction: background'), '_pd_background')
+        title: Globals.Proxies.experimentLoopTitle(qsTr('Background'), '_pd_background')
+        icon: 'wave-square'
         visible: Globals.Proxies.main.experiment.defined
 
         Loader { source: 'SideBarBasic/PdBackground.qml' }
@@ -57,6 +63,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: Globals.Proxies.experimentLoopTitle(qsTr('Associated phases'), '_phase')
+        icon: 'layer-group'
         visible: Globals.Proxies.main.experiment.defined
 
         Loader { source: 'SideBarBasic/Phase.qml' }

@@ -121,7 +121,6 @@ EaElements.GroupColumn {
 
             EaComponents.TableViewButton {
                 fontIcon: "atom"
-                outlineIcon: true
                 backgroundColor: "transparent"
                 borderColor: "transparent"
                 iconColor: Globals.Proxies.main.model.atomData(

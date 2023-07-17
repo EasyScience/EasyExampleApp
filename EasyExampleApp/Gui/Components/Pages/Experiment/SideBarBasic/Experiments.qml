@@ -81,7 +81,6 @@ Column {
             EaComponents.TableViewButton {
                 fontIcon: "microscope"
                 ToolTip.text: qsTr("Measured pattern color")
-                outlineIcon: true
                 backgroundColor: "transparent"
                 borderColor: "transparent"
                 iconColor: EaStyle.Colors.chartForegroundsExtra[2]

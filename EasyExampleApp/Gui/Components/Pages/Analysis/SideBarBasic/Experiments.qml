@@ -15,65 +15,105 @@ import EasyApp.Gui.Logic as EaLogic
 import Gui.Globals as Globals
 
 
-EaComponents.TableView {
-    id: tableView
+EaElements.ComboBox {
+    id: comboBox
 
-    property int experimentCurrentIndex: Globals.Proxies.main.experiment.currentIndex
+    topInset: 0
+    bottomInset: 0
 
-    defaultInfoText: qsTr("No experiments defined")
+    width: EaStyle.Sizes.sideBarContentWidth
+    anchors.bottomMargin: EaStyle.Sizes.fontPixelSize
 
-    maxRowCountShow: 3
-    onExperimentCurrentIndexChanged: currentIndex = Globals.Proxies.main.experiment.currentIndex
-    onCurrentIndexChanged: Globals.Proxies.main.experiment.currentIndex = currentIndex
+    textRole: "name"
 
     model: Globals.Proxies.main.experiment.dataBlocksNoMeas
+    currentIndex: Globals.Proxies.main.experiment.currentIndex
 
-    // Header row
-    header: EaComponents.TableViewHeader {
+    onActivated: Globals.Proxies.main.experiment.currentIndex = currentIndex
 
-        EaComponents.TableViewLabel {
-            width: EaStyle.Sizes.fontPixelSize * 3.0
-            //text: qsTr("no.")
+    // ComboBox delegate (popup rows)
+    delegate: ItemDelegate {
+        id: itemDelegate
+
+        width: parent.width
+        height: EaStyle.Sizes.tableRowHeight
+
+        highlighted: comboBox.highlightedIndex === index
+
+        // ComboBox delegate (popup rows) contentItem
+        contentItem: Item {
+            width: parent.width
+            height: parent.height
+
+            Row {
+                height: parent.height
+                spacing: EaStyle.Sizes.tableColumnSpacing
+
+                EaComponents.TableViewLabel {
+                    text: index + 1
+                    color: EaStyle.Colors.themeForegroundMinor
+                }
+
+                EaComponents.TableViewButton {
+                    anchors.verticalCenter: parent.verticalCenter
+                    fontIcon: "microscope"
+                    ToolTip.text: qsTr("Measured pattern color")
+                    backgroundColor: "transparent"
+                    borderColor: "transparent"
+                    iconColor: EaStyle.Colors.chartForegroundsExtra[2]
+                }
+
+                EaComponents.TableViewParameter {
+                    enabled: false
+                    text: comboBox.model[index].name
+                }
+            }
         }
+        // ComboBox delegate (popup rows) contentItem
 
-        EaComponents.TableViewLabel {
-            width: EaStyle.Sizes.tableRowHeight
-            //text: qsTr("color")
+        // ComboBox delegate (popup rows) background
+        background: Rectangle {
+            color: itemDelegate.highlighted ?
+                       EaStyle.Colors.tableHighlight :
+                       index % 2 ?
+                           EaStyle.Colors.themeBackgroundHovered2 :
+                           EaStyle.Colors.themeBackgroundHovered1
         }
-
-        EaComponents.TableViewLabel {
-            flexibleWidth: true
-            horizontalAlignment: Text.AlignLeft
-            color: EaStyle.Colors.themeForegroundMinor
-            text: qsTr("label")
-        }
+        // ComboBox delegate (popup rows) background
 
     }
-    // Header row
+    // ComboBox delegate (popup rows)
 
-    // Table rows
-    delegate: EaComponents.TableViewDelegate {
+    // ComboBox (selected item) contentItem
+    contentItem: Item {
+        width: parent.width
+        height: parent.height
 
-        EaComponents.TableViewLabel {
-            text: index + 1
-            color: EaStyle.Colors.themeForegroundMinor
+        Row {
+            height: parent.height
+            spacing: EaStyle.Sizes.tableColumnSpacing
+
+            EaComponents.TableViewLabel {
+                text: currentIndex + 1
+                color: EaStyle.Colors.themeForegroundMinor
+            }
+
+            EaComponents.TableViewButton {
+                anchors.verticalCenter: parent.verticalCenter
+                fontIcon: "microscope"
+                ToolTip.text: qsTr("Measured pattern color")
+                backgroundColor: "transparent"
+                borderColor: "transparent"
+                iconColor: EaStyle.Colors.chartForegroundsExtra[2]
+            }
+
+            EaComponents.TableViewParameter {
+                enabled: false
+                text: typeof comboBox.model[currentIndex] !== 'undefined' ?
+                    comboBox.model[currentIndex].name :
+                    ''
+            }
         }
-
-        EaComponents.TableViewButton {
-            fontIcon: "microscope"
-            ToolTip.text: qsTr("Measured pattern color")
-            outlineIcon: true
-            backgroundColor: "transparent"
-            borderColor: "transparent"
-            iconColor: EaStyle.Colors.chartForegroundsExtra[2]
-        }
-
-        EaComponents.TableViewParameter {
-            enabled: false
-            text: tableView.model[index].name
-        }
-
     }
-    // Table rows
-
+    // ComboBox (selected item) contentItem
 }

@@ -6,7 +6,7 @@ import QtQuick
 import QtQuick.Controls
 
 import EasyApp.Gui.Globals as EaGlobals
-import EasyApp.Gui.Style 1.0 as EaStyle
+import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Elements as EaElements
 
 import Gui.Globals as Globals

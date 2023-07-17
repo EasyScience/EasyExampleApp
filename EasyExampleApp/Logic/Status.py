@@ -8,7 +8,7 @@ from PySide6.QtCore import QObject, Signal, Property
 class Status(QObject):
     projectChanged = Signal()
     phaseCountChanged = Signal()
-    dataPointsChanged = Signal()
+    experimentsCountChanged = Signal()
     calculatorChanged = Signal()
     minimizerChanged = Signal()
     variablesChanged = Signal()
@@ -21,7 +21,7 @@ class Status(QObject):
         self._proxy = parent
         self._project = 'Undefined'
         self._phaseCount = ''
-        self._dataPoints = ''
+        self._experimentsCount = ''
         self._calculator = ''
         self._minimizer = ''
         self._variables = ''
@@ -51,16 +51,16 @@ class Status(QObject):
         self._phaseCount = newValue
         self.phaseCountChanged.emit()
 
-    @Property(str, notify=dataPointsChanged)
-    def dataPoints(self):
-        return self._dataPoints
+    @Property(str, notify=experimentsCountChanged)
+    def experimentsCount(self):
+        return self._experimentsCount
 
-    @dataPoints.setter
-    def dataPoints(self, newValue):
-        if self._dataPoints == newValue:
+    @experimentsCount.setter
+    def experimentsCount(self, newValue):
+        if self._experimentsCount == newValue:
             return
-        self._dataPoints = newValue
-        self.dataPointsChanged.emit()
+        self._experimentsCount = newValue
+        self.experimentsCountChanged.emit()
 
     @Property(str, notify=calculatorChanged)
     def calculator(self):

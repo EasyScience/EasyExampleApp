@@ -14,7 +14,8 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: Globals.Proxies.modelGroupTitle(qsTr("Models"))
-        collapsible: false
+        icon: 'layer-group'
+        collapsed: false
         last: !Globals.Proxies.main.model.defined
 
         Loader { source: 'SideBarBasic/Models.qml' }
@@ -22,6 +23,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Space group")
+        icon: 'satellite'
         visible: Globals.Proxies.main.model.defined
 
         Loader { source: 'SideBarBasic/SpaceGroup.qml' }
@@ -29,6 +31,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Cell")
+        icon: 'cube'
         visible: Globals.Proxies.main.model.defined
 
         Loader { source: 'SideBarBasic/Cell.qml' }
@@ -36,6 +39,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: Globals.Proxies.modelLoopTitle(qsTr('Atom site'), '_atom_site')
+        icon: 'atom'
         visible: Globals.Proxies.main.model.defined
 
         Loader { source: 'SideBarBasic/AtomSite.qml' }
@@ -43,6 +47,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: Globals.Proxies.modelLoopTitle(qsTr('Atomic displacement'), '_atom_site')
+        icon: 'arrows-alt'
         visible: Globals.Proxies.main.model.defined
 
         Loader { source: 'SideBarBasic/AtomSiteAdp.qml' }

@@ -152,6 +152,12 @@ class Connections(QObject):
             self._proxy.plotting.drawCalculatedOnAnalysisChart()
             self._proxy.plotting.drawResidualOnAnalysisChart()
 
+        # Status bar
+        if self._proxy.experiment.defined:
+            self._proxy.status.experimentsCount = f'{len(self._proxy.experiment.dataBlocksNoMeas)}'
+        else:
+            self._proxy.status.experimentsCount = ''
+
         # GUI upadte silently (without calling self.onExperimentDataBlocksNoMeasChanged)
         self._silent = True
         self._proxy.experiment.dataBlocksNoMeasChanged.emit()
@@ -185,6 +191,12 @@ class Connections(QObject):
             self._proxy.plotting.drawCalculatedOnAnalysisChart()
             self._proxy.plotting.drawResidualOnAnalysisChart()
 
+        # Status bar
+        if self._proxy.experiment.defined:
+            self._proxy.status.experimentsCount = f'{len(self._proxy.experiment.dataBlocksNoMeas)}'
+        else:
+            self._proxy.status.experimentsCount = ''
+
         console.debug('')
 
 
@@ -195,7 +207,7 @@ class Connections(QObject):
     #    self._proxy.experiment.addArrays()
 
     #def onExperimentYMeasArraysChanged(self):
-    #    self._proxy.status.dataPoints = f'{self._proxy.experiment._xArrays[self._proxy.experiment.currentIndex].size}'
+    #######    self._proxy.status.dataPoints = f'{self._proxy.experiment._xArrays[self._proxy.experiment.currentIndex].size}'
     #    self._proxy.plotting.drawMeasuredOnExperimentChart()
 
     #def onExperimentYBkgArraysChanged(self):

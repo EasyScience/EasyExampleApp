@@ -195,7 +195,7 @@ EaElements.RemoteController {
 //        res.push( rc.compare(Globals.Refs.app.modelPage.plotView.xData, Globals.Tests.expected.created.experiment.xData) )
 //        res.push( rc.compare(Globals.Refs.app.experimentPage.plotView.measuredYData, Globals.Tests.expected.created.experiment.yData) )
 
-        res.push( rc.compare(Globals.Proxies.main.status.dataPoints, '1418') )
+        res.push( rc.compare(Globals.Proxies.main.status.experimentsCount, '1') )
 
         rc.mouseClick(Globals.Refs.app.experimentPage.continueButton)
         //rc.wait(2000)

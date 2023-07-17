@@ -113,13 +113,9 @@ Column {
         enabled: !Globals.Proxies.main.fitting.isFittingNow
         defaultInfoText: qsTr("No parameters found")
 
-        maxRowCountShow: Globals.Proxies.main.experiment.dataBlocksNoMeas.length > 1 ?
-                             5 - Globals.Proxies.main.experiment.dataBlocksNoMeas.length +
-                             Math.trunc((applicationWindow.height - EaStyle.Sizes.appWindowMinimumHeight) /
-                                        EaStyle.Sizes.tableRowHeight) :
-                             7 +
-                             Math.trunc((applicationWindow.height - EaStyle.Sizes.appWindowMinimumHeight) /
-                                        EaStyle.Sizes.tableRowHeight)
+        maxRowCountShow: 7 +
+                         Math.trunc((applicationWindow.height - EaStyle.Sizes.appWindowMinimumHeight) /
+                                    EaStyle.Sizes.tableRowHeight)
         // Table mode
         // We only use the length of the model object defined in backend logic and
         // directly access that model in every row using the TableView index property.

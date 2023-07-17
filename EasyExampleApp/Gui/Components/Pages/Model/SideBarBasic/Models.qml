@@ -81,7 +81,6 @@ Column {
             EaComponents.TableViewButton {
                 fontIcon: "layer-group"
                 ToolTip.text: qsTr("Calculated pattern color")
-                outlineIcon: true
                 backgroundColor: "transparent"
                 borderColor: "transparent"
                 iconColor: EaStyle.Colors.chartForegrounds[index]

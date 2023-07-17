@@ -16,12 +16,8 @@ Rectangle {
     id: container
 
     width: EaStyle.Sizes.sideBarContentWidth
-    height: Globals.Proxies.main.model.dataBlocks.length > 1 ?
-                (12 - Globals.Proxies.main.model.dataBlocks.length) * EaStyle.Sizes.tableRowHeight -
-                EaStyle.Sizes.fontPixelSize +
-                (applicationWindow.height - EaStyle.Sizes.appWindowMinimumHeight) :
-                13 * EaStyle.Sizes.tableRowHeight +
-                 (applicationWindow.height - EaStyle.Sizes.appWindowMinimumHeight)
+    height: 34.5 * EaStyle.Sizes.fontPixelSize +
+            (applicationWindow.height - EaStyle.Sizes.appWindowMinimumHeight)
 
     color: enabled ? EaStyle.Colors.textViewBackground : EaStyle.Colors.textViewBackgroundDisabled
     Behavior on color { EaAnimations.ThemeChange {} }

@@ -14,15 +14,16 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Get started")
-        collapsible: false
+        icon: 'rocket'
+        collapsed: false
 
-        Loader { source: 'SideBarBasic/GetStartedGroup.qml' }
+        Loader { source: 'SideBarBasic/GetStarted.qml' }
     }
 
     EaElements.GroupBox {
         title: qsTr("Examples")
-        collapsed: true
+        icon: 'database'
 
-        Loader { source: 'SideBarBasic/ExamplesGroup.qml' }
+        Loader { source: 'SideBarBasic/Examples.qml' }
     }
 }

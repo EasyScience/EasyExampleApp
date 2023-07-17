@@ -4,6 +4,7 @@
 
 import QtQuick
 
+import EasyApp.Gui.Style 1.0 as EaStyle
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
 
@@ -13,18 +14,16 @@ import Gui.Globals as Globals
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
-        title: Globals.Proxies.main.experiment.dataBlocksNoMeas.length ?
-                   qsTr("Experiments") + ` (${Globals.Proxies.main.experiment.dataBlocksNoMeas.length})` :
-                   qsTr("Experiments")
-        visible: Globals.Proxies.main.experiment.dataBlocksNoMeas.length > 1
         collapsible: false
+        last: true
 
         Loader { source: 'SideBarBasic/Experiments.qml' }
     }
 
     EaElements.GroupBox {
-        title: qsTr("Parameters")
+        //title: qsTr("Parameters")
         collapsible: false
+        last: true
 
         Loader { source: 'SideBarBasic/Fittables.qml' }
     }
