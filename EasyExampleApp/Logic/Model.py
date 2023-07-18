@@ -367,7 +367,10 @@ class Model(QObject):
         if oldValue == value:
             return False
         self._dataBlocks[blockIndex]['params'][paramName][field] = value
-        console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value:.6f}', f'{blockType}[{blockIndex}].{paramName}.{field}'))
+        if type(value) == float:
+            console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value:.6f}', f'{blockType}[{blockIndex}].{paramName}.{field}'))
+        else:
+            console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value}', f'{blockType}[{blockIndex}].{paramName}.{field}'))
         return True
 
     def editDataBlockLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
@@ -376,7 +379,10 @@ class Model(QObject):
         if oldValue == value:
             return False
         self._dataBlocks[blockIndex]['loops'][loopName][rowIndex][paramName][field] = value
-        console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value:.6f}', f'{block}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field}'))
+        if type(value) == float:
+            console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value:.6f}', f'{block}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field}'))
+        else:
+            console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value}', f'{block}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field}'))
         return True
 
     def editCryspyDictByMainParam(self, blockIndex, paramName, field, value):
