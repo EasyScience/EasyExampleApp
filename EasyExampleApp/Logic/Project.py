@@ -5,6 +5,8 @@
 import os
 import json, jsbeautifier
 from datetime import datetime
+from pycifstar.global_ import  Global as PycifstarGlobal
+from pycifstar.data import Data as PycifstarData
 from PySide6.QtCore import QObject, Signal, Slot, Property, QUrl
 from PySide6.QtQml import QJSValue
 
@@ -106,23 +108,25 @@ class Project(QObject):
         console.debug(f"Open an existing project from: {fpath}")
         with open(fpath, 'r') as file:
             edCif = file.read()
-        #
-        self._data = CryspyParser.cifToDict(edCif)
 
-        modelDirNames = self._data['loops']['_model']['_dir_name']
-        modelFileNames = self._data['loops']['_model']['_file_name']
-        experimentDirNames = self._data['loops']['_experiment']['_dir_name']
-        experimentFileNames = self._data['loops']['_experiment']['_file_name']
-        #
+        starObj = PycifstarData()
+        starObj.take_from_string(edCif)
+        self._data = CryspyParser.starObjToEdProject(starObj)
+
+        modelDirNames = [item['_dir_name']['value'] for item in self._data['loops']['_model']]
+        modelFileNames = [item['_file_name']['value'] for item in self._data['loops']['_model']]
+        experimentDirNames = [item['_dir_name']['value'] for item in self._data['loops']['_experiment']]
+        experimentFileNames = [item['_file_name']['value'] for item in self._data['loops']['_experiment']]
+
         projectPath = os.path.dirname(fpath)
         modelFilePaths = [os.path.join(projectPath, dirName, fileName) for (dirName, fileName) in zip(modelDirNames, modelFileNames)]
         experimentFilePaths = [os.path.join(projectPath, dirName, fileName) for (dirName, fileName) in zip(experimentDirNames, experimentFileNames)]
         modelFilePaths = [QUrl.fromLocalFile(path) for path in modelFilePaths]
         experimentFilePaths = [QUrl.fromLocalFile(path) for path in experimentFilePaths]
-        #
+
         self._proxy.model.loadModelsFromFiles(modelFilePaths)
         self._proxy.experiment.loadExperimentsFromFiles(experimentFilePaths)
-        #
+
         self.dataChanged.emit()
         self.created = True
 

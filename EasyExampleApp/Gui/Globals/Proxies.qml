@@ -579,6 +579,23 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         return main.experiment.chartRanges[idx][name]
     }
 
+    // Project
+
+    function projectMainParam(name) {
+        if (!main.project.created) {
+            return {}
+        }
+        return main.project.data.params[name]
+    }
+
+    function projectLoopParam(loopName, paramName, rowIndex) {
+        if (!main.project.created) {
+            return {}
+        }
+        return main.project.data.loops[loopName][rowIndex][paramName]
+    }
+
+
     // Model
 
     function modelGroupTitle(title) {

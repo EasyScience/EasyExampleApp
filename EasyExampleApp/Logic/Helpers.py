@@ -302,6 +302,89 @@ class CryspyParser:
         return cryspyCif
 
     @staticmethod
+    def starObjToEdProject(starObj):
+        edProject = {'name': starObj.name,
+                     'params': {},
+                     'loops': {}}
+
+        for param in starObj.items.items:
+            if param.name == '_description':
+                edProject['params'][param.name] = dict(Parameter(
+                    param.value,
+                    name = param.name,
+                    prettyName = 'Description',
+                    url = 'https://easydiffraction.org',
+                ))
+            elif param.name == '_date_created':
+                edProject['params'][param.name] = dict(Parameter(
+                    param.value,
+                    name = param.name,
+                    prettyName = 'Created',
+                    url = 'https://easydiffraction.org',
+                ))
+            elif param.name == '_date_last_modified':
+                edProject['params'][param.name] = dict(Parameter(
+                    param.value,
+                    name = param.name,
+                    prettyName = 'Last modified',
+                    url = 'https://easydiffraction.org',
+                ))
+
+        for loop in starObj.loops:
+            loopName = loop.prefix
+
+        # 'loops': {'_model': [{'_file_name': {'value': 'C',
+
+            if loopName == '_model':
+                edModels = []
+                for rowIdx, rowItems in enumerate(loop.values):
+                    edModel = {}
+                    for columnIdx, columnName in enumerate(loop.names):
+                        paramName = columnName.replace(loopName, '')
+                        #edModel[paramName] = f'{rowIdx} - {columnIdx} - {columnName}'
+                        if paramName == '_dir_name':
+                            edModel[paramName] = dict(Parameter(
+                                rowItems[columnIdx],
+                                name=paramName,
+                                prettyName='Model directory',
+                                url='https://easydiffraction.org',
+                            ))
+                        if paramName == '_file_name':
+                            edModel[paramName] = dict(Parameter(
+                                rowItems[columnIdx],
+                                name=paramName,
+                                prettyName='Model file',
+                                url='https://easydiffraction.org',
+                            ))
+                    edModels.append(edModel)
+                edProject['loops'][loopName] = edModels
+
+            elif loopName == '_experiment':
+                edExperiments = []
+                for rowIdx, rowItems in enumerate(loop.values):
+                    edExperiment = {}
+                    for columnIdx, columnName in enumerate(loop.names):
+                        paramName = columnName.replace(loopName, '')
+                        if paramName == '_dir_name':
+                            edExperiment[paramName] = dict(Parameter(
+                                rowItems[columnIdx],
+                                name=paramName,
+                                prettyName='Experiment directory',
+                                url='https://easydiffraction.org',
+                            ))
+                        elif paramName == '_file_name':
+                            edExperiment[paramName] = dict(Parameter(
+                                rowItems[columnIdx],
+                                name=paramName,
+                                prettyName='Experiment file',
+                                url='https://easydiffraction.org',
+                            ))
+                    edExperiments.append(edExperiment)
+                edProject['loops'][loopName] = edExperiments
+
+        return edProject
+
+    @staticmethod
     def cryspyObjAndDictToEdModels(cryspy_obj, cryspy_dict):
         phase_names = [name.replace('crystal_', '') for name in cryspy_dict.keys() if name.startswith('crystal_')]
         ed_phases = []

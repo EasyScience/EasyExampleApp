@@ -13,22 +13,23 @@ import Gui.Globals as Globals
 
 
 Rectangle {
-    readonly property int commonSpacing: EaStyle.Sizes.fontPixelSize * 1.5
+    readonly property int innerSpacing: 0.75 * EaStyle.Sizes.fontPixelSize
+    readonly property int outterSpacing: 1.5 * EaStyle.Sizes.fontPixelSize
+    readonly property int nameColumnWidth: 9 * EaStyle.Sizes.fontPixelSize
 
     color: EaStyle.Colors.mainContentBackground
 
+    // Main column
     Column {
-
         anchors.top: parent.top
         anchors.left: parent.left
 
-        anchors.topMargin: commonSpacing
-        anchors.leftMargin: commonSpacing * 1.5
+        anchors.topMargin: outterSpacing
+        anchors.leftMargin: outterSpacing * 1.5
 
-        spacing: commonSpacing
+        spacing: innerSpacing
 
-        // Project title
-
+        // Title
         EaElements.TextInput {
             font.family: EaStyle.Fonts.secondFontFamily
             font.pixelSize: EaStyle.Sizes.fontPixelSize * 3
@@ -36,66 +37,105 @@ Rectangle {
             text: Globals.Proxies.main.project.data.name
             onEditingFinished: Globals.Proxies.main.project.editData('name', text)
         }
+        // Title
 
-        // Project info
+        // Extra spacer
+        Item { height: 1; width: 1 }
+        // Extra spacer
 
-        Grid {
-            columns: 2
-            rowSpacing: 0
-            columnSpacing: commonSpacing
-
-            EaElements.Label {
-                visible: Globals.Proxies.main.project.data.items._short_description
-                font.bold: true
-                text: qsTr("Short description:")
+        // Description
+        Column {
+            Row {
+                property var parameter: Globals.Proxies.projectMainParam('_description')
+                EaElements.Label {
+                    width: nameColumnWidth
+                    font.bold: true
+                    text: parent.parameter.prettyName ?? ''
+                }
+                EaElements.TextInput {
+                    text: parent.parameter.value ?? ''
+                    //onEditingFinished: Globals.Proxies.main.project.editData('description', text)
+                }
             }
-            EaElements.TextInput {
-                text: Globals.Proxies.main.project.data.items._short_description
-                //onEditingFinished: Globals.Proxies.main.project.editData('description', text)
-            }
-
-            /*
-            EaElements.Label {
-                visible: Globals.Proxies.main.project.data.location
-                font.bold: true
-                text: qsTr("Location:")
-            }
-            EaElements.Label {
-                text: Globals.Proxies.main.project.data.location
-            }
-            */
-
-            EaElements.Label {
-                visible: Globals.Proxies.main.project.data.items._modified
-                font.bold: true
-                text: qsTr("Modified:")
-            }
-            EaElements.Label {
-                text: Globals.Proxies.main.project.data.items._modified
-            }
-
-            EaElements.Label {
-                visible: Globals.Proxies.main.project.data.loops._model._file_name
-                font.bold: true
-                text: qsTr("Model file(s):")
-            }
-            EaElements.Label {
-                text: Globals.Proxies.main.project.data.loops._model._file_name.join(', ')
-            }
-
-            EaElements.Label {
-                visible: Globals.Proxies.main.project.data.loops._experiment._file_name
-                font.bold: true
-                text: qsTr("Experiment file(s):")
-            }
-            EaElements.Label {
-                text: Globals.Proxies.main.project.data.loops._experiment._file_name.join(', ')
-            }
-
         }
+        // Description
+
+        // Date
+        Column {
+            Row {
+                property var parameter: Globals.Proxies.projectMainParam('_date_created')
+                EaElements.Label {
+                    width: nameColumnWidth
+                    font.bold: true
+                    text: parent.parameter.prettyName ?? ''
+                }
+                EaElements.Label {
+                    text: parent.parameter.value ?? ''
+                }
+            }
+            Row {
+                property var parameter: Globals.Proxies.projectMainParam('_date_last_modified')
+                EaElements.Label {
+                    width: nameColumnWidth
+                    font.bold: true
+                    text: parent.parameter.prettyName ?? ''
+                }
+                EaElements.Label {
+                    text: parent.parameter.value ?? ''
+                }
+            }
+        }
+        // Date
+
+        // Models
+        Column {
+            Repeater {
+                id: modelRepeater
+                model: typeof Globals.Proxies.main.project.data.loops !== 'undefined' ?
+                           Globals.Proxies.main.project.data.loops._model :
+                           {}
+                Row {
+                    //property var parameter: Globals.Proxies.projectMainParam('_description')
+                    EaElements.Label {
+                        width: nameColumnWidth
+                        font.bold: true
+                        text: index ? '' : modelRepeater.model[index]._file_name.prettyName
+                    }
+                    EaElements.Label {
+                        text: modelRepeater.model[index]._dir_name.value +
+                              '/' +
+                              modelRepeater.model[index]._file_name.value
+                    }
+                }
+            }
+        }
+        // Models
+
+        // Experiments
+        Column {
+            Repeater {
+                id: experimentRepeater
+                model: typeof Globals.Proxies.main.project.data.loops !== 'undefined' ?
+                           Globals.Proxies.main.project.data.loops._experiment :
+                           {}
+                Row {
+                    //property var parameter: Globals.Proxies.projectMainParam('_description')
+                    EaElements.Label {
+                        width: nameColumnWidth
+                        font.bold: true
+                        text: index ? '' : experimentRepeater.model[index]._file_name.prettyName
+                    }
+                    EaElements.Label {
+                        text: experimentRepeater.model[index]._dir_name.value +
+                              '/' +
+                              experimentRepeater.model[index]._file_name.value
+                    }
+                }
+            }
+        }
+        // Experiments
 
         // Project image
-
         Image {
             //visible: Globals.Proxies.main.fitting.isFitFinished
 
@@ -105,5 +145,6 @@ Rectangle {
         }
 
     }
+    // Main column
 
 }

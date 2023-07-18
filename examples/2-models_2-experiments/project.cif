@@ -1,7 +1,9 @@
 data_Co2SiO4-CoO_D20-ILL
 
-_short_description 'neutrons, powder, constant wavelength, D20@ILL'
-_modified '26.04.2021 17:46'
+_description 'neutrons, powder, constant wavelength, D20@ILL'
+
+_date_created '26.04.2021 17:46'
+_date_last_modified '26.04.2021 17:46'
 
 loop_
 _model_dir_name
