@@ -75,21 +75,21 @@ Rectangle {
             }
 
             EaElements.Label {
-                visible: Globals.Proxies.main.project.data.loops._model_file._name
+                visible: Globals.Proxies.main.project.data.loops._model._file_name
                 font.bold: true
                 text: qsTr("Model file(s):")
             }
             EaElements.Label {
-                text: Globals.Proxies.main.project.data.loops._model_file._name.join(', ')
+                text: Globals.Proxies.main.project.data.loops._model._file_name.join(', ')
             }
 
             EaElements.Label {
-                visible: Globals.Proxies.main.project.data.loops._experiment_file._name
+                visible: Globals.Proxies.main.project.data.loops._experiment._file_name
                 font.bold: true
                 text: qsTr("Experiment file(s):")
             }
             EaElements.Label {
-                text: Globals.Proxies.main.project.data.loops._experiment_file._name.join(', ')
+                text: Globals.Proxies.main.project.data.loops._experiment._file_name.join(', ')
             }
 
         }

@@ -4,6 +4,7 @@
 
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Dialogs
 //import QtQuick.XmlListModel 2.15
 
 import EasyApp.Gui.Globals as EaGlobals
@@ -40,16 +41,14 @@ Grid {
 
         onClicked: {
             console.debug(`Clicking '${text}' button: ${this}`)
-            if (true) { //Globals.Vars.isTestMode) {
+            if (Globals.Vars.isTestMode) {
                 console.debug('*** Open an existing project (test mode) ***')
-                //Globals.Vars.experimentPageEnabled = true
                 Globals.Vars.modelPageEnabled = true
-                //Globals.Vars.analysisPageEnabled = true
                 const fpath = Qt.resolvedUrl('../../../../../../examples/1-model_1-experiment/project.cif')
                 Globals.Proxies.main.project.loadProjectFromFile(fpath)
                 Globals.Vars.summaryPageEnabled = true
             } else {
-                //openCifFileDialog.open()
+                openCifFileDialog.open()
             }
         }
     }
@@ -66,6 +65,20 @@ Grid {
 
         fontIcon: "times-circle"
         text: qsTr("Close current project")
+    }
+
+    // Misc
+
+    FileDialog{
+        id: openCifFileDialog
+        fileMode: FileDialog.OpenFile
+        nameFilters: [ "CIF files (*.cif)"]
+        onAccepted: {
+            console.debug('*** Loading model(s) from file(s) ***')
+            Globals.Vars.modelPageEnabled = true
+            Globals.Proxies.main.project.loadProjectFromFile(selectedFile)
+            Globals.Vars.summaryPageEnabled = true
+        }
     }
 
 }

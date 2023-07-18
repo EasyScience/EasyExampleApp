@@ -109,12 +109,16 @@ class Project(QObject):
         #
         self._data = CryspyParser.cifToDict(edCif)
 
-        modelFileNames = self._data['loops']['_model_file']['_name']
-        experimentFileNames = self._data['loops']['_experiment_file']['_name']
+        modelDirNames = self._data['loops']['_model']['_dir_name']
+        modelFileNames = self._data['loops']['_model']['_file_name']
+        experimentDirNames = self._data['loops']['_experiment']['_dir_name']
+        experimentFileNames = self._data['loops']['_experiment']['_file_name']
         #
-        dirpath = os.path.dirname(fpath)
-        modelFilePaths = [QUrl.fromLocalFile(os.path.join(dirpath, fname)) for fname in modelFileNames]
-        experimentFilePaths = [QUrl.fromLocalFile(os.path.join(dirpath, fname)) for fname in experimentFileNames]
+        projectPath = os.path.dirname(fpath)
+        modelFilePaths = [os.path.join(projectPath, dirName, fileName) for (dirName, fileName) in zip(modelDirNames, modelFileNames)]
+        experimentFilePaths = [os.path.join(projectPath, dirName, fileName) for (dirName, fileName) in zip(experimentDirNames, experimentFileNames)]
+        modelFilePaths = [QUrl.fromLocalFile(path) for path in modelFilePaths]
+        experimentFilePaths = [QUrl.fromLocalFile(path) for path in experimentFilePaths]
         #
         self._proxy.model.loadModelsFromFiles(modelFilePaths)
         self._proxy.experiment.loadExperimentsFromFiles(experimentFilePaths)
