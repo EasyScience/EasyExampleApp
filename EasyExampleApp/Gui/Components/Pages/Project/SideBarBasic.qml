@@ -26,4 +26,12 @@ EaComponents.SideBarColumn {
 
         Loader { source: 'SideBarBasic/Examples.qml' }
     }
+
+    EaElements.GroupBox {
+        title: qsTr("Recent projects")
+        icon: 'archive'
+
+        Loader { source: 'SideBarBasic/Recent.qml' }
+    }
+
 }

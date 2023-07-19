@@ -583,16 +583,25 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
     function projectMainParam(name) {
         if (!main.project.created) {
-            return {}
+            return { 'value': '', 'prettyName': '' }
         }
-        return main.project.data.params[name]
+        const param = main.project.dataBlock.params[name]
+        if (typeof param === 'undefined') {
+            return { 'value': '', 'prettyName': '' }
+        }
+        return main.project.dataBlock.params[name]
     }
 
     function projectLoopParam(loopName, paramName, rowIndex) {
         if (!main.project.created) {
             return {}
         }
-        return main.project.data.loops[loopName][rowIndex][paramName]
+        return main.project.dataBlock.loops[loopName][rowIndex][paramName]
+    }
+
+    function setProjectMainParam(param, field, value) {
+        console.debug(`*** Editing project main param ${param.name} '${field}' to ${value} ***`)
+        main.project.setMainParam(param.name, field, value)
     }
 
 

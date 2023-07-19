@@ -32,12 +32,14 @@ EaComponents.ContentPage {
     sideBar: EaComponents.SideBar {
         tabs: [
             EaElements.TabButton { text: qsTr("Basic controls") },
-            EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false }
+            EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false },
+            EaElements.TabButton { text: qsTr("Text mode"); enabled: Globals.Proxies.main.project.created }
         ]
 
         items: [
             Loader { source: 'SideBarBasic.qml' },
-            Loader { source: 'SideBarAdvanced.qml' }
+            Loader { source: 'SideBarAdvanced.qml' },
+            Loader { source: 'SideBarText.qml' }
         ]
 
         continueButton.text: Globals.Proxies.main.project.created ?

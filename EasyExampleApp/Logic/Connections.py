@@ -18,7 +18,8 @@ class Connections(QObject):
         self._experimentNeedUpdate = False
 
         # Project
-        self._proxy.project.dataChanged.connect(self.onProjectDataChanged)
+        self._proxy.project.dataBlockChanged.connect(self.onProjectDataBlockChanged)
+        self._proxy.project.createdChanged.connect(self.onProjectCreatedChanged)
         #self._proxy.project.createdChanged.connect(self._proxy.project.save)
 
         # Model
@@ -53,9 +54,18 @@ class Connections(QObject):
 
     # Project
 
-    def onProjectDataChanged(self):
-        self._proxy.status.project = self._proxy.project.data['name']
-        self._proxy.project.setNeedSaveToTrue
+    def onProjectCreatedChanged(self):
+        self._proxy.project.setModels()
+        self._proxy.project.setExperiments()
+
+
+    def onProjectDataBlockChanged(self):
+        self._proxy.status.project = self._proxy.project.dataBlock['name']
+        #self._proxy.project.setNeedSaveToTrue
+        console.debug(IO.formatMsg('main', '(Re)converting project data block to CIF...'))
+        self._proxy.project.setDataBlockCif()
+
+
 
     # Model
 
@@ -70,7 +80,10 @@ class Connections(QObject):
             return
 
         # Project page
-        #self._proxy.project.setNeedSaveToTrue()
+        if self._proxy.project.created:
+            #self._proxy.project.setNeedSaveToTrue()
+            self._proxy.project.setModels()
+            self._proxy.project.setExperiments()
 
         # Model page
         console.debug(IO.formatMsg('main', 'Updating structure view for the current model...'))

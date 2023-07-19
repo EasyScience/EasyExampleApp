@@ -4,6 +4,7 @@
 
 import QtQuick
 import QtQuick.Controls
+import QtCore
 
 import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Style as EaStyle
@@ -18,18 +19,11 @@ EaComponents.TableView {
     id: tableView
 
     maxRowCountShow: 9
-    defaultInfoText: qsTr("No examples available")
+    defaultInfoText: qsTr("No recent projects found")
 
     // Table model
-    /*
-    model: EaComponents.JsonListModel {
-        json: JSON.stringify(Globals.Proxies.main.project.examples)
-        query: "$[*]"
-    }
-    */
-    // We only use the length of the model object defined in backend logic and
-    // directly access that model in every row using the TableView index property.
-    model: Globals.Proxies.main.project.examples
+    model: Globals.Proxies.main.project.recent
+    Component.onCompleted: Globals.Proxies.main.project.recent = JSON.parse(settings.value('recentProjects', '[]'))
     // Table model
 
     // Header row
@@ -42,17 +36,10 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewLabel {
-            width: EaStyle.Sizes.fontPixelSize * 10
-            horizontalAlignment: Text.AlignLeft
-            color: EaStyle.Colors.themeForegroundMinor
-            text: qsTr("name")
-        }
-
-        EaComponents.TableViewLabel {
             flexibleWidth: true
             horizontalAlignment: Text.AlignLeft
             color: EaStyle.Colors.themeForegroundMinor
-            text: qsTr("description")
+            text: qsTr("file")
         }
 
         EaComponents.TableViewLabel {
@@ -71,25 +58,28 @@ EaComponents.TableView {
             color: EaStyle.Colors.themeForegroundMinor
         }
 
-        EaComponents.TableViewLabel {
-            text: tableView.model[index].name
-        }
-
         EaComponents.TableViewLabelControl {
-            text: tableView.model[index].description
-            ToolTip.text: tableView.model[index].description
+            text: tableView.model[index]
+            ToolTip.text: tableView.model[index]
         }
 
         EaComponents.TableViewButton {
             fontIcon: "upload"
-            ToolTip.text: qsTr("Load this example")
+            ToolTip.text: qsTr("Load this project")
             onClicked: {
-                const fpath = Qt.resolvedUrl(tableView.model[index].path)
+                const fpath = Qt.resolvedUrl(tableView.model[index])
                 Globals.Proxies.main.project.loadProjectFromFile(fpath)
             }
         }
 
     }
     // Table rows
+
+    // Persistent settings
+    Settings {
+        id: settings
+        location: EaGlobals.Vars.settingsFile // Gives WASM error on run
+        category: 'Project.Recent'
+    }
 
 }

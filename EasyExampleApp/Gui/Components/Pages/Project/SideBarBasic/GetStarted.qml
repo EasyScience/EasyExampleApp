@@ -5,7 +5,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
-//import QtQuick.XmlListModel 2.15
+import QtCore
 
 import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Style as EaStyle
@@ -78,7 +78,15 @@ Grid {
             Globals.Vars.modelPageEnabled = true
             Globals.Proxies.main.project.loadProjectFromFile(selectedFile)
             Globals.Vars.summaryPageEnabled = true
+            settings.setValue('recentProjects', JSON.stringify(Globals.Proxies.main.project.recent))
         }
+    }
+
+    // Persistent settings
+    Settings {
+        id: settings
+        location: EaGlobals.Vars.settingsFile // Gives WASM error on run
+        category: 'Project.Recent'
     }
 
 }

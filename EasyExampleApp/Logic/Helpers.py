@@ -315,6 +315,13 @@ class CryspyParser:
                     prettyName = 'Description',
                     url = 'https://easydiffraction.org',
                 ))
+            elif param.name == '_location':
+                edProject['params'][param.name] = dict(Parameter(
+                    param.value,
+                    name = param.name,
+                    prettyName = 'Location',
+                    url = 'https://easydiffraction.org',
+                ))
             elif param.name == '_date_created':
                 edProject['params'][param.name] = dict(Parameter(
                     param.value,
@@ -333,28 +340,31 @@ class CryspyParser:
         for loop in starObj.loops:
             loopName = loop.prefix
 
-        # 'loops': {'_model': [{'_file_name': {'value': 'C',
-
             if loopName == '_model':
                 edModels = []
                 for rowIdx, rowItems in enumerate(loop.values):
                     edModel = {}
                     for columnIdx, columnName in enumerate(loop.names):
                         paramName = columnName.replace(loopName, '')
-                        #edModel[paramName] = f'{rowIdx} - {columnIdx} - {columnName}'
                         if paramName == '_dir_name':
                             edModel[paramName] = dict(Parameter(
                                 rowItems[columnIdx],
                                 name=paramName,
                                 prettyName='Model directory',
-                                url='https://easydiffraction.org',
+                                url='https://easydiffraction.org'
                             ))
-                        if paramName == '_file_name':
+                        elif paramName == '_cif_file_name':
                             edModel[paramName] = dict(Parameter(
                                 rowItems[columnIdx],
                                 name=paramName,
                                 prettyName='Model file',
-                                url='https://easydiffraction.org',
+                                url='https://easydiffraction.org'
+                            ))
+                        elif paramName == '_jpg_file_name':
+                            edModel[paramName] = dict(Parameter(
+                                rowItems[columnIdx],
+                                name=paramName,
+                                url='https://easydiffraction.org'
                             ))
                     edModels.append(edModel)
                 edProject['loops'][loopName] = edModels
@@ -370,14 +380,20 @@ class CryspyParser:
                                 rowItems[columnIdx],
                                 name=paramName,
                                 prettyName='Experiment directory',
-                                url='https://easydiffraction.org',
+                                url='https://easydiffraction.org'
                             ))
-                        elif paramName == '_file_name':
+                        elif paramName == '_cif_file_name':
                             edExperiment[paramName] = dict(Parameter(
                                 rowItems[columnIdx],
                                 name=paramName,
                                 prettyName='Experiment file',
-                                url='https://easydiffraction.org',
+                                url='https://easydiffraction.org'
+                            ))
+                        elif paramName == '_jpg_file_name':
+                            edExperiment[paramName] = dict(Parameter(
+                                rowItems[columnIdx],
+                                name=paramName,
+                                url='https://easydiffraction.org'
                             ))
                     edExperiments.append(edExperiment)
                 edProject['loops'][loopName] = edExperiments
