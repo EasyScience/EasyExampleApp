@@ -26,9 +26,8 @@ Column {
 
         defaultInfoText: qsTr("No models defined")
 
-        maxRowCountShow: 3
+        maxRowCountShow: 5
         onModelCurrentIndexChanged: currentIndex = Globals.Proxies.main.model.currentIndex
-        onCurrentIndexChanged: Globals.Proxies.main.model.currentIndex = currentIndex
 
         // Table model
         model: Globals.Proxies.main.model.dataBlocks
@@ -72,10 +71,10 @@ Column {
 
         // Table rows
         delegate: EaComponents.TableViewDelegate {
+            mouseArea.onPressed: Globals.Proxies.main.model.currentIndex = tableView.currentIndex
 
             EaComponents.TableViewLabel {
                 text: index + 1
-                color: EaStyle.Colors.themeForegroundMinor
             }
 
             EaComponents.TableViewButton {
@@ -87,6 +86,7 @@ Column {
             }
 
             EaComponents.TableViewParameter {
+                selected: index === Globals.Proxies.main.model.currentIndex
                 text: tableView.model[index].name
             }
 

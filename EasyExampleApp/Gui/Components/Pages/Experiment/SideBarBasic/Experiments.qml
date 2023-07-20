@@ -26,9 +26,8 @@ Column {
 
         defaultInfoText: qsTr("No experiments defined")
 
-        maxRowCountShow: 3
+        maxRowCountShow: 5
         onExperimentCurrentIndexChanged: currentIndex = Globals.Proxies.main.experiment.currentIndex
-        onCurrentIndexChanged: Globals.Proxies.main.experiment.currentIndex = currentIndex
 
         // Table model
         model: Globals.Proxies.main.experiment.dataBlocksNoMeas
@@ -72,10 +71,10 @@ Column {
 
         // Table rows
         delegate: EaComponents.TableViewDelegate {
+            mouseArea.onPressed: Globals.Proxies.main.experiment.currentIndex = tableView.currentIndex
 
             EaComponents.TableViewLabel {
                 text: index + 1
-                color: EaStyle.Colors.themeForegroundMinor
             }
 
             EaComponents.TableViewButton {
@@ -87,6 +86,7 @@ Column {
             }
 
             EaComponents.TableViewParameter {
+                selected: index === Globals.Proxies.main.experiment.currentIndex
                 text: tableView.model[index].name
             }
 

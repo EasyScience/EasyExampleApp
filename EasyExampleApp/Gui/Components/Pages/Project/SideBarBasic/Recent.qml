@@ -18,7 +18,10 @@ import Gui.Globals as Globals
 EaComponents.TableView {
     id: tableView
 
-    maxRowCountShow: 9
+    showHeader: false
+    tallRows: true
+    maxRowCountShow: 6
+
     defaultInfoText: qsTr("No recent projects found")
 
     // Table model
@@ -38,40 +41,31 @@ EaComponents.TableView {
         EaComponents.TableViewLabel {
             flexibleWidth: true
             horizontalAlignment: Text.AlignLeft
-            color: EaStyle.Colors.themeForegroundMinor
-            text: qsTr("file")
+            text: qsTr("file name / file path")
         }
-
-        EaComponents.TableViewLabel {
-            width: EaStyle.Sizes.tableRowHeight
-        }
-
     }
     // Header row
 
-
     // Table rows
     delegate: EaComponents.TableViewDelegate {
+
+        mouseArea.onPressed: {
+            const filePath = tableView.model[index]
+            const fileUrl = Qt.resolvedUrl(filePath)
+            Globals.Proxies.main.project.loadProjectFromFile(fileUrl)
+        }
 
         EaComponents.TableViewLabel {
             text: index + 1
             color: EaStyle.Colors.themeForegroundMinor
         }
 
-        EaComponents.TableViewLabelControl {
-            text: tableView.model[index]
-            ToolTip.text: tableView.model[index]
+        EaComponents.TableViewDoubleLabelControl {
+            fontIcon: 'archive'
+            text: projectDirName(tableView.model[index])
+            minorText: tableView.model[index]
+            //ToolTip.text: tableView.model[index]
         }
-
-        EaComponents.TableViewButton {
-            fontIcon: "upload"
-            ToolTip.text: qsTr("Load this project")
-            onClicked: {
-                const fpath = Qt.resolvedUrl(tableView.model[index])
-                Globals.Proxies.main.project.loadProjectFromFile(fpath)
-            }
-        }
-
     }
     // Table rows
 
@@ -80,6 +74,22 @@ EaComponents.TableView {
         id: settings
         location: EaGlobals.Vars.settingsFile // Gives WASM error on run
         category: 'Project.Recent'
+    }
+
+    // Logic
+
+    function baseFileName(filePath) {
+        //const filePath = tableView.model[index]
+        const fileName = filePath.split('\\').pop().split('/').pop()
+        const baseFileName = fileName.split('.').shift()
+        return baseFileName
+    }
+
+    function projectDirName(filePath) {
+        //const filePath = tableView.model[index]
+        let dirName = filePath.split('\\').slice(-2).reverse().pop()
+        dirName = dirName.split('/').slice(-2).reverse().pop()
+        return dirName
     }
 
 }

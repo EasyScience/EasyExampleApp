@@ -17,18 +17,13 @@ import Gui.Globals as Globals
 EaComponents.TableView {
     id: tableView
 
-    maxRowCountShow: 9
+    showHeader: false
+    tallRows: true
+    maxRowCountShow: 6
+
     defaultInfoText: qsTr("No examples available")
 
     // Table model
-    /*
-    model: EaComponents.JsonListModel {
-        json: JSON.stringify(Globals.Proxies.main.project.examples)
-        query: "$[*]"
-    }
-    */
-    // We only use the length of the model object defined in backend logic and
-    // directly access that model in every row using the TableView index property.
     model: Globals.Proxies.main.project.examples
     // Table model
 
@@ -42,23 +37,10 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewLabel {
-            width: EaStyle.Sizes.fontPixelSize * 10
-            horizontalAlignment: Text.AlignLeft
-            color: EaStyle.Colors.themeForegroundMinor
-            text: qsTr("name")
-        }
-
-        EaComponents.TableViewLabel {
             flexibleWidth: true
             horizontalAlignment: Text.AlignLeft
-            color: EaStyle.Colors.themeForegroundMinor
-            text: qsTr("description")
+            text: qsTr("name / description")
         }
-
-        EaComponents.TableViewLabel {
-            width: EaStyle.Sizes.tableRowHeight
-        }
-
     }
     // Header row
 
@@ -66,29 +48,23 @@ EaComponents.TableView {
     // Table rows
     delegate: EaComponents.TableViewDelegate {
 
+        mouseArea.onPressed: {
+            const filePath = tableView.model[index].path
+            const fileUrl = Qt.resolvedUrl(filePath)
+            Globals.Proxies.main.project.loadProjectFromFile(fileUrl)
+        }
+
         EaComponents.TableViewLabel {
             text: index + 1
             color: EaStyle.Colors.themeForegroundMinor
         }
 
-        EaComponents.TableViewLabel {
+        EaComponents.TableViewDoubleLabelControl {
+            fontIcon: 'archive'
             text: tableView.model[index].name
+            minorText: tableView.model[index].description
+            //ToolTip.text: tableView.model[index].description
         }
-
-        EaComponents.TableViewLabelControl {
-            text: tableView.model[index].description
-            ToolTip.text: tableView.model[index].description
-        }
-
-        EaComponents.TableViewButton {
-            fontIcon: "upload"
-            ToolTip.text: qsTr("Load this example")
-            onClicked: {
-                const fpath = Qt.resolvedUrl(tableView.model[index].path)
-                Globals.Proxies.main.project.loadProjectFromFile(fpath)
-            }
-        }
-
     }
     // Table rows
 

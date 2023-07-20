@@ -15,6 +15,9 @@ import Gui.Globals as Globals
 
 
 Column {
+    property int selectedIndex: 0
+    property string selectedColor: EaStyle.Colors.themeForegroundHovered
+
     spacing: EaStyle.Sizes.fontPixelSize
 
     // Filter parameters widget
@@ -170,6 +173,8 @@ Column {
             property bool isCurrentItem: ListView.isCurrentItem
             property var item: Globals.Proxies.main_fittables_data[index]
 
+            mouseArea.onPressed: selectedIndex = tableView.currentIndex
+
             onIsCurrentItemChanged: {
                 if (tableView.currentValueTextInput != valueColumn) {
                    tableView.currentValueTextInput = valueColumn
@@ -184,6 +189,8 @@ Column {
             EaComponents.TableViewLabel {
                 text: parameterName(item.fullName)
                 textFormat: Text.RichText
+                selected: hovered ||
+                          index === selectedIndex
                 elide: Text.ElideMiddle
                 ToolTip.text: text
             }
@@ -256,10 +263,10 @@ Column {
             width: tableView.width - EaStyle.Sizes.fontPixelSize * 14
 
 
-            from: Globals.Proxies.main_fittables_data[tableView.currentIndex].min
-            to: Globals.Proxies.main_fittables_data[tableView.currentIndex].max
+            from: Globals.Proxies.main_fittables_data[selectedIndex].min
+            to: Globals.Proxies.main_fittables_data[selectedIndex].max
             stepSize: (to - from) / 100
-            value: Globals.Proxies.main_fittables_data[tableView.currentIndex].value //tableView.currentValueTextInput.text
+            value: Globals.Proxies.main_fittables_data[selectedIndex].value
 
             snapMode: Slider.SnapAlways
 

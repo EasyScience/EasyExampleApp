@@ -191,15 +191,7 @@ EaComponents.ApplicationWindow {
         Loader { id: homePageLoader },
         Loader { id: projectPageLoader },
         Loader { id: modelPageLoader },
-        Loader {
-            id: experimentPageLoader
-
-            //source: Globals.Vars.experimentPageEnabled || Globals.Proxies.main.model.defined ?
-            //            'Pages/Experiment/PageStructure.qml' :
-            //            ''
-            //asynchronous: true
-            //visible: status === Loader.Ready
-},
+        Loader { id: experimentPageLoader },
         Loader { id: analysisPageLoader },
         Loader { id: summaryPageLoader }
     ]
