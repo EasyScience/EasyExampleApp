@@ -74,6 +74,7 @@ Column {
             mouseArea.onPressed: Globals.Proxies.main.model.currentIndex = tableView.currentIndex
 
             EaComponents.TableViewLabel {
+                enabled: false
                 text: index + 1
             }
 

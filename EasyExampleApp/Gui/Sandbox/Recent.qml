@@ -67,21 +67,21 @@ EaComponents.TableView {
         }
 
         /*
-        EaComponents.TableViewLabelControl {
+        EaComponents.TableViewAdvancedLabel {
             height: 40
-            EaComponents.TableViewLabelControl {
+            EaComponents.TableViewAdvancedLabel {
                 text: baseFileName(tableView.model[index])
                 //ToolTip.text: tableView.model[index]
             }
 
-            EaComponents.TableViewLabelControl {
+            EaComponents.TableViewAdvancedLabel {
                 text: tableView.model[index]
                 //ToolTip.text: tableView.model[index]
             }
         }
         */
 
-        EaComponents.TableViewDoubleLabelControl {
+        EaComponents.TableViewTwoRowsAdvancedLabel {
             //highlighted: true
             //width: 300
             fontIcon: 'rocket'

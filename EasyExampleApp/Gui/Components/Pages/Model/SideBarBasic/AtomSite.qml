@@ -18,6 +18,7 @@ EaElements.GroupColumn {
     EaComponents.TableView {
         id: tableView
 
+        maxRowCountShow: 6
         defaultInfoText: qsTr("No atoms defined")
 
         // Table model

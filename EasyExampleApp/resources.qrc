@@ -83,7 +83,7 @@
         <file>../../EasyApp/EasyApp/Gui/Components/TableViewDelegate.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Components/TableViewHeader.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Components/TableViewLabel.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Components/TableViewLabelControl.qml</file>
+        <file>../../EasyApp/EasyApp/Gui/Components/TableViewAdvancedLabel.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Components/TableViewTextInput.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Elements/AppBarTabButton.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Elements/ApplicationWindow.qml</file>

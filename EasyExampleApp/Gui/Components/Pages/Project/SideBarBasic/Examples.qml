@@ -59,11 +59,11 @@ EaComponents.TableView {
             color: EaStyle.Colors.themeForegroundMinor
         }
 
-        EaComponents.TableViewDoubleLabelControl {
+        EaComponents.TableViewTwoRowsAdvancedLabel {
             fontIcon: 'archive'
             text: tableView.model[index].name
             minorText: tableView.model[index].description
-            //ToolTip.text: tableView.model[index].description
+            ToolTip.text: tableView.model[index].description
         }
     }
     // Table rows

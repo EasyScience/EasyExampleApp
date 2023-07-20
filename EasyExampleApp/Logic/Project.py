@@ -216,8 +216,6 @@ class Project(QObject):
             oldNames = [os.path.basename(item['_cif_file_name']['value']) for item in self._dataBlock['loops']['_model']]
         if oldNames == names:
             return
-        print(oldNames)
-        print(names)
 
         self._dataBlock['loops']['_model'] = []
         for name in names:

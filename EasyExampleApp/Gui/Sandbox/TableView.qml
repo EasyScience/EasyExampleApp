@@ -32,7 +32,7 @@ Column {
         delegate: EaComponents.TableViewDelegate {
             height: 1.5 * EaStyle.Sizes.tableRowHeight
             EaComponents.TableViewLabel {}
-            EaComponents.TableViewDoubleLabelControl {}
+            EaComponents.TableViewTwoRowsAdvancedLabel {}
         }
     }
     // Empty regular table
@@ -53,7 +53,7 @@ Column {
         delegate: EaComponents.TableViewDelegate {
             height: 1.5 * EaStyle.Sizes.tableRowHeight
             EaComponents.TableViewLabel {}
-            EaComponents.TableViewDoubleLabelControl {}
+            EaComponents.TableViewTwoRowsAdvancedLabel {}
         }
     }
     // Empty tall table
@@ -99,7 +99,7 @@ Column {
         delegate: EaComponents.TableViewDelegate {
             //mouseArea.onPressed: {}
 
-            EaComponents.TableViewLabelControl {
+            EaComponents.TableViewAdvancedLabel {
                 text: index + 1
                 checkable: true
                 checked: index === parent.parent.ListView.view.currentIndex
@@ -180,7 +180,7 @@ Column {
                 color: EaStyle.Colors.themeForegroundMinor
             }
 
-            EaComponents.TableViewDoubleLabelControl {
+            EaComponents.TableViewTwoRowsAdvancedLabel {
                 fontIcon: 'layer-group'
                 text: projectDirName(tallTable.model[index])
                 minorText: tallTable.model[index]
