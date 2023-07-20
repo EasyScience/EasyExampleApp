@@ -34,9 +34,9 @@ _EMPTY_DATA = {
 }
 
 _DEFAULT_DATA = {
-    'name': 'Default project',
+    'name': 'Project name',
     'params': {
-        '_description': { 'value': 'Default project description' },
+        '_description': { 'value': 'Project description' },
         '_location': { 'value': '' },
         '_date_created': { 'value': '' },
         '_date_last_modified': { 'value': '' }
@@ -210,7 +210,7 @@ class Project(QObject):
         self.dataBlockChanged.emit()
 
     def setModels(self):
-        names = [f"{block['name']}.cif" for block in self._proxy.model.dataBlocks]
+        names = [f"{block['name']}" for block in self._proxy.model.dataBlocks]
         oldNames = []
         if '_model' in self._dataBlock['loops']:
             oldNames = [os.path.basename(item['_cif_file_name']['value']) for item in self._dataBlock['loops']['_model']]
@@ -246,7 +246,7 @@ class Project(QObject):
 
     #
     def setExperiments(self):
-        names = [f"{block['name']}.cif" for block in self._proxy.experiment.dataBlocksNoMeas]
+        names = [f"{block['name']}" for block in self._proxy.experiment.dataBlocksNoMeas]
         oldNames = []
         if '_experiment' in self._dataBlock['loops']:
             oldNames = [os.path.basename(item['_cif_file_name']['value']) for item in self._dataBlock['loops']['_experiment']]
@@ -312,30 +312,41 @@ class Project(QObject):
 
     @Slot()
     def save(self):
-        console.debug('Save project')
-        # Create full project dict
-        out = {}
-        if self.created:
-            out['project'] = self._dataBlock
-        if self._proxy.experiment.defined:
-            out['experiment'] = self._proxy.experiment.dataBlocksNoMeas
-            for idx, data in enumerate(out['experiment']):
-                data['xArray'] = self._proxy.experiment._xArrays[idx].tolist()
-                data['yMeasArray'] = self._proxy.experiment._yMeasArrays[idx].tolist()
+        console.debug(IO.formatMsg('main', 'Saving project...'))
+
+        dateLastModified = datetime.now().strftime("%d %b %Y %H:%M")
+        self.setMainParam('_date_last_modified', 'value', dateLastModified)
+
+        projectDirPath = self._dataBlock['params']['_location']['value']
+        projectFileName = 'project.cif'
+        projectFilePath = os.path.join(projectDirPath, projectFileName)
+        os.makedirs(projectDirPath, exist_ok=True)
+        with open(projectFilePath, 'w') as file:
+            file.write(self.dataBlockCif)
+            console.debug(IO.formatMsg('sub', f'saved to: {projectFilePath}'))
+
         if self._proxy.model.defined:
-            out['model'] = self._proxy.model.dataBlocks
-            for idx, data in enumerate(out['model']):
-                data['yCalcArray'] = self._proxy.model._yCalcArrays[idx].tolist()
-        # Format project as json
-        options = jsbeautifier.default_options()
-        options.indent_size = 2
-        formattedProject = jsbeautifier.beautify(json.dumps(out), options)
-        # Save formatted project as json
-        filePath = os.path.join(out['project']['location'], 'project.json')
-        os.makedirs(os.path.dirname(filePath), exist_ok=True)
-        with open(filePath, 'w') as file:
-            file.write(formattedProject)
-        # Toggle need save
+            modelDirNames = [item['_dir_name']['value'] for item in self._dataBlock['loops']['_model']]
+            modelFileNames = [item['_cif_file_name']['value'] for item in self._dataBlock['loops']['_model']]
+            modelFilePaths = [os.path.join(projectDirPath, dirName, fileName) for (dirName, fileName) in zip(modelDirNames, modelFileNames)]
+            for (modelFilePath, dataBlockCif) in zip(modelFilePaths, self._proxy.model.dataBlocksCif):
+                dataBlockCif = dataBlockCif[0]
+                os.makedirs(os.path.dirname(modelFilePath), exist_ok=True)
+                with open(modelFilePath, 'w') as file:
+                    file.write(dataBlockCif)
+                    console.debug(IO.formatMsg('sub', f'saved to: {modelFilePath}'))
+
+        if self._proxy.experiment.defined:
+            experimentDirNames = [item['_dir_name']['value'] for item in self._dataBlock['loops']['_experiment']]
+            experimentFileNames = [item['_cif_file_name']['value'] for item in self._dataBlock['loops']['_experiment']]
+            experimentFilePaths = [os.path.join(projectDirPath, dirName, fileName) for (dirName, fileName) in zip(experimentDirNames, experimentFileNames)]
+            for (experimentFilePath, dataBlockCifNoMeas, dataBlockCifMeasOnly) in zip(experimentFilePaths, self._proxy.experiment.dataBlocksCifNoMeas, self._proxy.experiment.dataBlocksCifMeasOnly):
+                os.makedirs(os.path.dirname(experimentFilePath), exist_ok=True)
+                dataBlockCif = dataBlockCifNoMeas + '\n\n' + dataBlockCifMeasOnly
+                with open(experimentFilePath, 'w') as file:
+                    file.write(dataBlockCif)
+                    console.debug(IO.formatMsg('sub', f'saved to: {experimentFilePath}'))
+
         self.needSave = False
 
 

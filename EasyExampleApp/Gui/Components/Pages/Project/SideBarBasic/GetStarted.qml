@@ -54,6 +54,7 @@ Grid {
     }
 
     EaElements.SideBarButton {
+        visible: false
         enabled: false
 
         fontIcon: "download"
@@ -61,6 +62,7 @@ Grid {
     }
 
     EaElements.SideBarButton {
+        visible: false
         enabled: false
 
         fontIcon: "times-circle"

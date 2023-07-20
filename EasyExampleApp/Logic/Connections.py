@@ -20,7 +20,6 @@ class Connections(QObject):
         # Project
         self._proxy.project.dataBlockChanged.connect(self.onProjectDataBlockChanged)
         self._proxy.project.createdChanged.connect(self.onProjectCreatedChanged)
-        #self._proxy.project.createdChanged.connect(self._proxy.project.save)
 
         # Model
         self._proxy.model.currentIndexChanged.connect(self.onModelCurrentIndexChanged)
@@ -61,10 +60,9 @@ class Connections(QObject):
 
     def onProjectDataBlockChanged(self):
         self._proxy.status.project = self._proxy.project.dataBlock['name']
-        #self._proxy.project.setNeedSaveToTrue
         console.debug(IO.formatMsg('main', '(Re)converting project data block to CIF...'))
         self._proxy.project.setDataBlockCif()
-
+        self._proxy.project.setNeedSaveToTrue()
 
 
     # Model
@@ -81,9 +79,8 @@ class Connections(QObject):
 
         # Project page
         if self._proxy.project.created:
-            #self._proxy.project.setNeedSaveToTrue()
+            self._proxy.project.setNeedSaveToTrue()
             self._proxy.project.setModels()
-            self._proxy.project.setExperiments()
 
         # Model page
         console.debug(IO.formatMsg('main', 'Updating structure view for the current model...'))
@@ -135,7 +132,9 @@ class Connections(QObject):
 
     def onExperimentDataBlocksChanged(self):
         # Project page
-        #self._proxy.project.setNeedSaveToTrue()
+        if self._proxy.project.created:
+            self._proxy.project.setNeedSaveToTrue()
+            self._proxy.project.setExperiments()
 
         # Experiment page
         console.debug(IO.formatMsg('main', 'Calculating data...'))
@@ -176,7 +175,9 @@ class Connections(QObject):
             return
 
         # Project page
-        #self._proxy.project.setNeedSaveToTrue()
+        if self._proxy.project.created:
+            self._proxy.project.setNeedSaveToTrue()
+            self._proxy.project.setExperiments()
 
         # Experiment page
         console.debug(IO.formatMsg('main', 'Recalculating data...'))
@@ -203,6 +204,7 @@ class Connections(QObject):
         else:
             self._proxy.status.experimentsCount = ''
 
+        self._proxy.project.setNeedSaveToTrue()
         console.debug('')
 
     # Analysis

@@ -17,7 +17,7 @@ EaComponents.ProjectDescriptionDialog {
 
     onAccepted: {
         Globals.Proxies.main.project.setName(projectName)
-        Globals.Proxies.main.project.setMainParam('_description', 'value', projectDescription)
+        Globals.Proxies.main.project.setMainParam('_description', 'value', projectDescription ? projectDescription : '.')
         Globals.Proxies.main.project.setMainParam('_location', 'value', projectLocation)
         Globals.Proxies.main.project.create()
     }
