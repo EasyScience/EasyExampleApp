@@ -35,8 +35,8 @@ EaElements.RemoteController {
         interval: 3000
         onTriggered: {
             console.debug(`Starting forced exit timer`)
-            console.debug(`Calling exitHelper from QML with code ${exitCode}`)
-            Globals.Proxies.main.exitHelper.exitApp(exitCode)
+            console.debug(`Calling python exit app helper from within QML with code ${exitCode}`)
+            Globals.Proxies.main.backendHelpers.exitApp(exitCode)
         }
     }
 

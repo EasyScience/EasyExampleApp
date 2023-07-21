@@ -13,54 +13,46 @@ if __name__ == '__main__':
 
     from PySide6.QtCore import qInstallMessageHandler
     qInstallMessageHandler(console.qmlMessageHandler)
-    console.debug('Custom Qt message handler has been defined')
+    console.debug('Custom Qt message handler defined')
 
     from Logic.Helpers import EnvironmentVariables
     EnvironmentVariables.set()
-    console.debug('Environment variables have been defined')
+    console.debug('Environment variables defined')
 
     from Logic.Helpers import WebEngine
     WebEngine.initialize()
-    console.debug('QtWebEngine for the QML GUI components has been initialized')
+    console.debug('QtWebEngine for the QML GUI components initialized')
 
     from Logic.Helpers import Application
     app = Application(sys.argv)
-    console.debug('Qt Application has been created')
+    console.debug('Qt Application created')
 
     from PySide6.QtQml import QQmlApplicationEngine
     engine = QQmlApplicationEngine()
-    console.debug('QML application engine has been created')
+    console.debug('QML application engine created')
 
     from Logic.Helpers import ResourcePaths
     resourcePaths = ResourcePaths()
     for p in resourcePaths.imports:
         engine.addImportPath(p)
-    console.debug('Paths to be accessible from the QML components has been added')
+    console.debug('Resource paths exposed to QML')
 
-    import pathlib
-    appName = app.applicationName()
-    homeDirPath = pathlib.Path.home()
-    settingsIniFileName = 'settings.ini'
-    settingsIniFilePath = str(homeDirPath.joinpath(f'.{appName}', settingsIniFileName))
-    engine.rootContext().setContextProperty('pySettingsPath', settingsIniFilePath)
-    console.debug('Persistent settings file path has been exposed to QML')
+    from Logic.Helpers import PersistentSettingsHandler
+    settingsHandler = PersistentSettingsHandler()
+    engine.rootContext().setContextProperty('pySettingsPath', settingsHandler.path)
+    console.debug('Persistent settings file path exposed to QML')
 
     from Logic.Helpers import CommandLineArguments
     cliArgs = CommandLineArguments()
     engine.rootContext().setContextProperty('pyIsTestMode', cliArgs.testmode)
-    console.debug('pyIsTestMode object has been exposed to QML')
-
-    from Logic.Helpers import ExitHelper
-    exitHelper = ExitHelper()
-    engine.rootContext().setContextProperty('pyExitHelper', exitHelper)
-    console.debug('pyExitHelper object has been exposed to QML')
+    console.debug('pyIsTestMode object exposed to QML')
 
     engine.load(resourcePaths.splashScreenQml)
-    console.debug('Splash screen QML component has been loaded')
+    console.debug('Splash screen QML component loaded')
 
     if not engine.rootObjects():
         sys.exit(-1)
-    console.debug('QML engine has been checked for having root component')
+    console.debug('QML engine has root component')
 
     from Logic.Helpers import PyProxyWorker
     from PySide6.QtCore import QThreadPool

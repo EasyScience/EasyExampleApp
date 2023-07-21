@@ -26,6 +26,11 @@ EaComponents.TableView {
 
     // Table model
     model: Globals.Proxies.main.project.recent
+    onModelChanged: {
+        if (model.length > 0) {
+            settings.setValue('recentProjects', JSON.stringify(Globals.Proxies.main.project.recent))
+        }
+    }
     Component.onCompleted: Globals.Proxies.main.project.recent = JSON.parse(settings.value('recentProjects', '[]'))
     // Table model
 

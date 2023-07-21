@@ -4,6 +4,7 @@
 
 import QtQuick
 import QtQuick.Controls
+import Qt5Compat.GraphicalEffects
 
 import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Elements as EaElements
@@ -179,20 +180,31 @@ Rectangle {
                         visible: childrenRect.height
                         height: childrenRect.height + 2 * border.width
                         width: childrenRect.width + 2 * border.width
+                        color: EaStyle.Colors.chartBackground
                         border.color: EaStyle.Colors.chartAxis
                         border.width: 1
                         Image {
+                            id: modelImage
                             x: parent.border.width
                             y: parent.border.width
                             height: status === Image.Ready ? imageHeight : 0
+                            fillMode: Image.PreserveAspectFit
                             asynchronous: true
                             mipmap: true
-                            fillMode: Image.PreserveAspectFit
-                            source: typeof modelRepeater.model[index]._jpg_file_name !== 'undefined' ?
-                                Globals.Proxies.projectMainParam('_location').value + '/' +
-                                modelRepeater.model[index]._dir_name.value + '/' +
-                                modelRepeater.model[index]._jpg_file_name.value :
-                                ''
+                            source: {
+                                if (typeof modelRepeater.model[index]._jpg_file_name === 'undefined' ||
+                                        typeof modelRepeater.model[index]._dir_name === 'undefined' ) {
+                                    return ''  // Globals.Vars.imagePath('model.svg')
+                                }
+                                const path = Globals.Proxies.projectMainParam('_location').value + '/' +
+                                           modelRepeater.model[index]._dir_name.value + '/' +
+                                           modelRepeater.model[index]._jpg_file_name.value
+                                const exists = Globals.Proxies.main.backendHelpers.fileExists(path)
+                                if (exists) {
+                                    return path
+                                }
+                                return ''  // Globals.Vars.imagePath('model.svg')
+                            }
                         }
                     }
                 }
@@ -244,12 +256,21 @@ Rectangle {
                             asynchronous: true
                             mipmap: true
                             fillMode: Image.PreserveAspectFit
-                            source: typeof experimentRepeater.model[index]._jpg_file_name !== 'undefined' ?
-                                Globals.Proxies.projectMainParam('_location').value + '/' +
-                                experimentRepeater.model[index]._dir_name.value + '/' +
-                                experimentRepeater.model[index]._jpg_file_name.value :
-                                ''
+                            source: {
+                                if (typeof experimentRepeater.model[index]._jpg_file_name === 'undefined' ||
+                                        typeof experimentRepeater.model[index]._dir_name === 'undefined' ) {
+                                    return ''  // Globals.Vars.imagePath('model.svg')
+                                }
 
+                                const path = Globals.Proxies.projectMainParam('_location').value + '/' +
+                                           experimentRepeater.model[index]._dir_name.value + '/' +
+                                           experimentRepeater.model[index]._jpg_file_name.value
+                                const exists = Globals.Proxies.main.backendHelpers.fileExists(path)
+                                if (exists) {
+                                    return path
+                                }
+                                return ''  // Globals.Vars.imagePath('model.svg')
+                            }
                         }
                     }
                 }

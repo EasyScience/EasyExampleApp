@@ -34,4 +34,9 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     property bool showLegendOnExperimentPage: true
     property bool showLegendOnAnalysisPage: true
 
+    // Paths
+    function imagePath(fileName) {
+        return Qt.resolvedUrl(`../Resources/Images/${fileName}`)
+    }
+
 }

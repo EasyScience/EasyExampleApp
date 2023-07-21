@@ -8,14 +8,14 @@ from PySide6.QtCore import QObject, Signal, Slot, Property
 from PySide6.QtQml import QJSValue
 
 from EasyApp.Logic.Logging import console
-from Logic.Calculators import GaussianCalculator
-from Logic.Helpers import CryspyParser, IO
+from Logic.Helpers import IO
+from Logic.Calculators import CryspyParser
 from Logic.Data import Data
 
 try:
     import cryspy
     from cryspy.H_functions_global.function_1_cryspy_objects import \
-        file_to_globaln, str_to_globaln
+        str_to_globaln
     from cryspy.procedure_rhochi.rhochi_by_dictionary import \
         rhochi_calc_chi_sq_by_dictionary
     console.debug('CrysPy modules have been imported')

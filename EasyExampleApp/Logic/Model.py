@@ -10,25 +10,25 @@ from PySide6.QtCore import QObject, Signal, Slot, Property, QThreadPool
 from PySide6.QtQml import QJSValue
 
 from EasyApp.Logic.Logging import console
-from Logic.Calculators import GaussianCalculator
-from Logic.Helpers import CryspyParser, IO, PERIODIC_TABLE
+from Logic.Helpers import IO
+from Logic.Calculators import CryspyParser
+from Logic.Tables import PERIODIC_TABLE
 from Logic.Data import Data
 
 try:
     import cryspy
     from cryspy.H_functions_global.function_1_cryspy_objects import \
-        file_to_globaln, str_to_globaln
+        str_to_globaln
     from cryspy.A_functions_base.database import DATABASE
     from cryspy.A_functions_base.function_2_space_group import \
-        get_it_coordinate_system_codes_by_it_number, \
         REFERENCE_TABLE_IT_COORDINATE_SYSTEM_CODE_NAME_HM_EXTENDED, \
         REFERENCE_TABLE_IT_NUMBER_NAME_HM_FULL, \
         ACCESIBLE_NAME_HM_SHORT
     from cryspy.procedure_rhochi.rhochi_by_dictionary import \
         rhochi_calc_chi_sq_by_dictionary
-    console.debug('CrysPy module has been imported')
+    console.debug('CrysPy module imported')
 except ImportError:
-    console.debug('No CrysPy module has been found')
+    console.error('No CrysPy module found')
 
 
 _DEFAULT_CIF_BLOCK = """data_default

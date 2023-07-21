@@ -3,21 +3,13 @@
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 import os
-import json, jsbeautifier
 from datetime import datetime
-from pycifstar.global_ import  Global as PycifstarGlobal
 from pycifstar.data import Data as PycifstarData
 from PySide6.QtCore import QObject, Signal, Slot, Property, QUrl
-from PySide6.QtQml import QJSValue
 
 from EasyApp.Logic.Logging import console
-from Logic.Helpers import IO, CryspyParser, Parameter
-
-try:
-    import cryspy
-    from cryspy.H_functions_global.function_1_cryspy_objects import str_to_globaln
-except ImportError:
-    console.debug('No CrysPy module has been found')
+from Logic.Helpers import IO
+from Logic.Calculators import Parameter, CryspyParser
 
 
 _DEFAULT_CIF = """data_DefaultProject
@@ -187,7 +179,6 @@ class Project(QObject):
         #    experiment['_project_dir_path'] = os.path.dirname(fpath)
         #print(self._dataBlock['loops']['_model'][0]['_project_dir_path'])
         #print(self._dataBlock['loops']['_experiment'][0]['_project_dir_path'])
-
 
         if fpath in self._recent:
             self._recent.remove(fpath)

@@ -14,9 +14,9 @@ from Logic.Data import Data
 try:
     from cryspy.procedure_rhochi.rhochi_by_dictionary import \
         rhochi_calc_chi_sq_by_dictionary
-    console.debug('CrysPy module has been imported')
+    console.debug('CrysPy module imported')
 except ImportError:
-    console.debug('No CrysPy module has been found')
+    console.error('No CrysPy module found')
 
 
 SCALE = 1

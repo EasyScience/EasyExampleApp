@@ -4,7 +4,6 @@
 from PySide6.QtCore import QObject, Property
 
 from EasyApp.Logic.Logging import LoggerLevelHandler
-from EasyApp.Logic.Logging import console
 from Logic.Connections import Connections
 from Logic.Project import Project
 from Logic.Experiment import Experiment
@@ -16,7 +15,7 @@ from Logic.Fittables import Fittables
 from Logic.Summary import Summary
 from Logic.Status import Status
 from Logic.Plotting import Plotting
-from Logic.Helpers import ExitHelper
+from Logic.Helpers import BackendHelpers
 
 
 class PyProxy(QObject):
@@ -34,7 +33,7 @@ class PyProxy(QObject):
         self._status = Status(self)
         self._plotting = Plotting(self)
         self._connections = Connections(self)
-        self._exitHelper = ExitHelper(self)
+        self._backendHelpers = BackendHelpers(self)
 
     @Property('QVariant', constant=True)
     def logger(self):
@@ -85,5 +84,5 @@ class PyProxy(QObject):
         return self._plotting
 
     @Property('QVariant', constant=True)
-    def exitHelper(self):
-        return self._exitHelper
+    def backendHelpers(self):
+        return self._backendHelpers

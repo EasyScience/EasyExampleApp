@@ -75,8 +75,8 @@ ${name} is developed by ESS DMSC`
 
     // Logic
 
-    function iconPath(file) {
-        return Qt.resolvedUrl(`../Resources/Logo/${file}`)
+    function iconPath(fileName) {
+        return Qt.resolvedUrl(`../Resources/Logo/${fileName}`)
     }
 
     function githubRawContentUrl(branch, file) {

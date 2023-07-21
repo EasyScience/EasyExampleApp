@@ -8,11 +8,11 @@ from PySide6.QtCore import QObject, Signal, Property
 from EasyApp.Logic.Logging import console
 
 try:
-    import cryspy
-    from cryspy.H_functions_global.function_1_cryspy_objects import str_to_globaln
-    console.debug('CrysPy module has been imported')
+    from cryspy.H_functions_global.function_1_cryspy_objects import \
+        str_to_globaln
+    console.debug('CrysPy module imported')
 except ImportError:
-    console.debug('No CrysPy module has been found')
+    console.error('No CrysPy module found')
 
 
 class Data(QObject):
