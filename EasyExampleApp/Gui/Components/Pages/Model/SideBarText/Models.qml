@@ -59,7 +59,7 @@ EaElements.ComboBox {
                     ToolTip.text: qsTr("Calculated pattern color")
                     backgroundColor: "transparent"
                     borderColor: "transparent"
-                    iconColor: EaStyle.Colors.chartForegroundsExtra[index]
+                    iconColor: EaStyle.Colors.models[index]
                 }
 
                 EaComponents.TableViewParameter {
@@ -103,7 +103,7 @@ EaElements.ComboBox {
                 ToolTip.text: qsTr("Calculated pattern color")
                 backgroundColor: "transparent"
                 borderColor: "transparent"
-                iconColor: EaStyle.Colors.chartForegroundsExtra[currentIndex]
+                iconColor: EaStyle.Colors.models[currentIndex]
             }
 
             EaComponents.TableViewParameter {

@@ -26,7 +26,7 @@ EaCharts.QtCharts1dMeasVsCalc {
     axisY.min: parameterValue('yMin')
     axisY.max: parameterValue('yMax')
 
-    calcSerie.color: EaStyle.Colors.chartForegroundsExtra[Globals.Proxies.main.model.currentIndex]
+    calcSerie.color: EaStyle.Colors.models[Globals.Proxies.main.model.currentIndex]
 
     // Legend
     Rectangle {

@@ -29,7 +29,7 @@ Column {
     property string calcSerieColor: EaStyle.Colors.chartForegrounds[0]
 
     property int extraMargin: -12
-    property real residualToMainChartHeightRatio: 0.25
+    property real residualToMainChartHeightRatio: 0.3
     property real mainChartHeightCoeff: 1 - residualToMainChartHeightRatio
 
     property bool useOpenGL: Globals.Proxies.main.fitting.isFittingNow ?
@@ -498,7 +498,7 @@ Column {
             //serie.useOpenGL = Globals.Proxies.main.fitting.isFittingNow
             serie.brush = Globals.Proxies.main.plotting.verticalLine(
                        markerSize,
-                       EaStyle.Colors.chartForegroundsExtra[phaseIdx])
+                       EaStyle.Colors.models[phaseIdx])
             serie.borderWidth = 0.001
             serie.borderColor = 'transparent'
             //serie.markerShape = ScatterSeries.MarkerShapeRectangle
@@ -513,8 +513,8 @@ Column {
             const legendItem = Qt.createQmlObject('import EasyApp.Gui.Elements as EaElements; EaElements.Label {}', legendColumn)
             const textFont = `'${EaStyle.Fonts.fontFamily}'`
             const iconFont = `'${EaStyle.Fonts.iconsFamily}'`
-            const textColor = `'${EaStyle.Colors.chartForegroundsExtra[phaseIdx]}'`
-            const iconColor = `'${EaStyle.Colors.chartForegroundsExtra[phaseIdx]}'`
+            const textColor = `'${EaStyle.Colors.models[phaseIdx]}'`
+            const iconColor = `'${EaStyle.Colors.models[phaseIdx]}'`
             const textHtmlStart = `<font color=${textColor} face=${textFont}>│&nbsp;&nbsp;Bragg peaks</font>`
             const iconHtml =      `<font color=${iconColor} face=${iconFont}>layer-group</font>`
             const textHtmlEnd =   `<font color=${textColor} face=${textFont}>${phaseName}</font>`

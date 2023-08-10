@@ -780,7 +780,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
         let blockIconColor = iconColor
         if (param.blockType === "model") {
-            blockIconColor = `'${EaStyle.Colors.chartForegroundsExtra[param.blockIndex]}'`
+            blockIconColor = `'${EaStyle.Colors.models[param.blockIndex]}'`
         } else if (param.blockType === "experiment") {
             blockIconColor = `'${EaStyle.Colors.chartForegroundsExtra[2]}'`
         }
@@ -791,7 +791,7 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
                         modelLoopParam('_atom_site', '_type_symbol', param.rowIndex, param.blockIndex).value, 'color'
                         )}'`
         } else if (param.loopName === "_phase") {
-            groupIconColor = `'${EaStyle.Colors.chartForegroundsExtra[param.rowIndex]}'`
+            groupIconColor = `'${EaStyle.Colors.models[param.rowIndex]}'`
         }
 
         let prettyRowName = param.rowName

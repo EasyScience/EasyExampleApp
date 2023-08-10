@@ -80,7 +80,7 @@ EaElements.GroupColumn {
                 ToolTip.text: qsTr("Calculated pattern color")
                 backgroundColor: "transparent"
                 borderColor: "transparent"
-                iconColor: EaStyle.Colors.chartForegroundsExtra[index]
+                iconColor: EaStyle.Colors.models[index]
             }
 
             EaComponents.TableViewParameter {
