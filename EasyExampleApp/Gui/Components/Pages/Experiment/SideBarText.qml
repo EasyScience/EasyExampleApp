@@ -15,7 +15,7 @@ import Gui.Globals as Globals
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
-        visible: Globals.Proxies.main.experiment.dataBlocksNoMeas.length > 1
+        //visible: Globals.Proxies.main.experiment.dataBlocksNoMeas.length > 1
         bottomPadding: 0
         collapsible: false
         last: true

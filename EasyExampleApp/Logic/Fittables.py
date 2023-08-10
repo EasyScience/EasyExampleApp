@@ -153,10 +153,13 @@ class Fittables(QObject):
                     fittable = {}
                     fittable['blockType'] = 'model'
                     fittable['blockIndex'] = i
-                    fittable['blockName'] = block['name']
-                    fittable['paramName'] = paramName
-                    fittable['fullName'] = f"{fittable['blockType']}.{fittable['blockName']}.{fittable['paramName'][1:]}"
-                    fittable['iconifiedName'] = fittable['fullName']
+                    fittable['blockName'] = block['name']['value']
+                    fittable['blockIcon'] = block['name']['icon']
+                    fittable['name'] = paramContent['name']
+                    fittable['prettyName'] = paramContent['prettyName']
+                    fittable['title'] = paramContent['title']
+                    fittable['icon'] = paramContent['icon']
+                    fittable['groupIcon'] = paramContent['groupIcon']
                     fittable['enabled'] = paramContent['enabled']
                     fittable['value'] = paramContent['value']
                     fittable['error'] = paramContent['error']
@@ -164,13 +167,24 @@ class Fittables(QObject):
                     fittable['max'] = paramContent['max']
                     fittable['units'] = paramContent['units']
                     fittable['fit'] = paramContent['fit']
+
+                    absDelta = paramContent['absDelta']
+                    pctDelta = paramContent['pctDelta']
+                    if absDelta is not None:
+                        fittable['from'] = max(fittable['value'] - absDelta, fittable['min'])
+                        fittable['to'] = min(fittable['value'] + absDelta, fittable['max'])
+                    elif pctDelta is not None:
+                        fittable['from'] = max(fittable['value'] * (100 - pctDelta) / 100, fittable['min'])
+                        fittable['to'] = min(fittable['value'] * (100 + pctDelta) / 100, fittable['max'])
+
+                    fullName = f"{fittable['blockType']}.{fittable['blockName']}.{fittable['name'][1:]}"
                     if fittable['enabled']:
                         _modelParamsCount += 1
                         if fittable['fit']:
                             _freeParamsCount += 1
                         else:
                             _fixedParamsCount += 1
-                        if self.nameFilterCriteria in fittable['fullName']:
+                        if self.nameFilterCriteria in fullName:
                             if self.variabilityFilterCriteria == 'free' and fittable['fit']:
                                 _data.append(fittable)
                             elif self.variabilityFilterCriteria == 'fixed' and not fittable['fit']:
@@ -188,13 +202,18 @@ class Fittables(QObject):
                             fittable = {}
                             fittable['blockType'] = 'model'
                             fittable['blockIndex'] = i
-                            fittable['blockName'] = block['name']
+                            fittable['blockName'] = block['name']['value']
+                            fittable['blockIcon'] = block['name']['icon']
                             fittable['loopName'] = loopName
+                            fittable['prettyLoopName'] = paramContent['prettyLoopName']
                             fittable['rowName'] = paramContent['rowName']
+                            fittable['prettyRowName'] = paramContent['prettyRowName']
                             fittable['rowIndex'] = rowIndex
-                            fittable['paramName'] = paramName
-                            fittable['fullName'] = f"{fittable['blockType']}.{fittable['blockName']}.{fittable['loopName'][1:]}.{fittable['rowName']}.{fittable['paramName'][1:]}"
-                            fittable['iconifiedName'] = fittable['fullName']
+                            fittable['name'] = paramContent['name']
+                            fittable['prettyName'] = paramContent['prettyName']
+                            fittable['title'] = paramContent['title']
+                            fittable['icon'] = paramContent['icon']
+                            fittable['groupIcon'] = paramContent['groupIcon']
                             fittable['enabled'] = paramContent['enabled']
                             fittable['value'] = paramContent['value']
                             fittable['error'] = paramContent['error']
@@ -202,13 +221,24 @@ class Fittables(QObject):
                             fittable['max'] = paramContent['max']
                             fittable['units'] = paramContent['units']
                             fittable['fit'] = paramContent['fit']
+
+                            absDelta = paramContent['absDelta']
+                            pctDelta = paramContent['pctDelta']
+                            if absDelta is not None:
+                                fittable['from'] = max(fittable['value'] - absDelta, fittable['min'])
+                                fittable['to'] = min(fittable['value'] + absDelta, fittable['max'])
+                            elif pctDelta is not None:
+                                fittable['from'] = max(fittable['value'] * (100 - pctDelta) / 100, fittable['min'])
+                                fittable['to'] = min(fittable['value'] * (100 + pctDelta) / 100, fittable['max'])
+
+                            fullName = f"{fittable['blockType']}.{fittable['blockName']}.{fittable['loopName'][1:]}.{fittable['rowName']}.{fittable['name'][1:]}"
                             if fittable['enabled']:
                                 _modelParamsCount += 1
                                 if fittable['fit']:
                                     _freeParamsCount += 1
                                 else:
                                     _fixedParamsCount += 1
-                                if self.nameFilterCriteria in fittable['fullName']:
+                                if self.nameFilterCriteria in fullName:
                                     if self.variabilityFilterCriteria == 'free' and fittable['fit']:
                                         _data.append(fittable)
                                     elif self.variabilityFilterCriteria == 'fixed' and not fittable['fit']:
@@ -228,10 +258,13 @@ class Fittables(QObject):
                     fittable = {}
                     fittable['blockType'] = 'experiment'
                     fittable['blockIndex'] = i
-                    fittable['blockName'] = block['name']
-                    fittable['paramName'] = paramName
-                    fittable['fullName'] = f"{fittable['blockType']}.{fittable['blockName']}.{fittable['paramName'][1:]}"
-                    fittable['iconifiedName'] = fittable['fullName']
+                    fittable['blockName'] = block['name']['value']
+                    fittable['blockIcon'] = block['name']['icon']
+                    fittable['name'] = paramContent['name']
+                    fittable['prettyName'] = paramContent['prettyName']
+                    fittable['title'] = paramContent['title']
+                    fittable['icon'] = paramContent['icon']
+                    fittable['groupIcon'] = paramContent['groupIcon']
                     fittable['enabled'] = paramContent['enabled']
                     fittable['value'] = paramContent['value']
                     fittable['error'] = paramContent['error']
@@ -239,13 +272,24 @@ class Fittables(QObject):
                     fittable['max'] = paramContent['max']
                     fittable['units'] = paramContent['units']
                     fittable['fit'] = paramContent['fit']
+
+                    absDelta = paramContent['absDelta']
+                    pctDelta = paramContent['pctDelta']
+                    if absDelta is not None:
+                        fittable['from'] = max(fittable['value'] - absDelta, fittable['min'])
+                        fittable['to'] = min(fittable['value'] + absDelta, fittable['max'])
+                    elif pctDelta is not None:
+                        fittable['from'] = max(fittable['value'] * (100 - pctDelta) / 100, fittable['min'])
+                        fittable['to'] = min(fittable['value'] * (100 + pctDelta) / 100, fittable['max'])
+
+                    fullName = f"{fittable['blockType']}.{fittable['blockName']}.{fittable['name'][1:]}"
                     if fittable['enabled']:
                         _experimentParamsCount += 1
                         if fittable['fit']:
                             _freeParamsCount += 1
                         else:
                             _fixedParamsCount += 1
-                        if self.nameFilterCriteria in fittable['fullName']:
+                        if self.nameFilterCriteria in fullName:
                             if self.variabilityFilterCriteria == 'free' and fittable['fit']:
                                 _data.append(fittable)
                             elif self.variabilityFilterCriteria == 'fixed' and not fittable['fit']:
@@ -263,13 +307,18 @@ class Fittables(QObject):
                             fittable = {}
                             fittable['blockType'] = 'experiment'
                             fittable['blockIndex'] = i
-                            fittable['blockName'] = block['name']
+                            fittable['blockName'] = block['name']['value']
+                            fittable['blockIcon'] = block['name']['icon']
                             fittable['loopName'] = loopName
+                            fittable['prettyLoopName'] = paramContent['prettyLoopName']
                             fittable['rowName'] = paramContent['rowName']
                             fittable['rowIndex'] = rowIndex
-                            fittable['paramName'] = paramName
-                            fittable['fullName'] = f"{fittable['blockType']}.{fittable['blockName']}.{fittable['loopName'][1:]}.{fittable['rowName']}.{fittable['paramName'][1:]}"
-                            fittable['iconifiedName'] = fittable['fullName']
+                            fittable['prettyRowName'] = paramContent['prettyRowName']
+                            fittable['name'] = paramContent['name']
+                            fittable['prettyName'] = paramContent['prettyName']
+                            fittable['title'] = paramContent['title']
+                            fittable['icon'] = paramContent['icon']
+                            fittable['groupIcon'] = paramContent['groupIcon']
                             fittable['enabled'] = paramContent['enabled']
                             fittable['value'] = paramContent['value']
                             fittable['error'] = paramContent['error']
@@ -277,13 +326,24 @@ class Fittables(QObject):
                             fittable['max'] = paramContent['max']
                             fittable['units'] = paramContent['units']
                             fittable['fit'] = paramContent['fit']
+
+                            absDelta = paramContent['absDelta']
+                            pctDelta = paramContent['pctDelta']
+                            if absDelta is not None:
+                                fittable['from'] = max(fittable['value'] - absDelta, fittable['min'])
+                                fittable['to'] = min(fittable['value'] + absDelta, fittable['max'])
+                            elif pctDelta is not None:
+                                fittable['from'] = max(fittable['value'] * (100 - pctDelta) / 100, fittable['min'])
+                                fittable['to'] = min(fittable['value'] * (100 + pctDelta) / 100, fittable['max'])
+
+                            fullName = f"{fittable['blockType']}.{fittable['blockName']}.{fittable['loopName'][1:]}.{fittable['rowName']}.{fittable['name'][1:]}"
                             if fittable['enabled']:
                                 _experimentParamsCount += 1
                                 if fittable['fit']:
                                     _freeParamsCount += 1
                                 else:
                                     _fixedParamsCount += 1
-                                if self.nameFilterCriteria in fittable['fullName']:
+                                if self.nameFilterCriteria in fullName:
                                     if self.variabilityFilterCriteria == 'free' and fittable['fit']:
                                         _data.append(fittable)
                                     elif self.variabilityFilterCriteria == 'fixed' and not fittable['fit']:
@@ -296,7 +356,6 @@ class Fittables(QObject):
         if True:  # len(_data):
             self._data = _data
             console.debug(IO.formatMsg('sub', 'Fittables changed'))
-
             self.dataChanged.emit()
             self._freeParamsCount = _freeParamsCount
             self._fixedParamsCount = _fixedParamsCount

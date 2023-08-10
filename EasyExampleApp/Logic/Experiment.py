@@ -18,9 +18,9 @@ try:
         str_to_globaln
     from cryspy.procedure_rhochi.rhochi_by_dictionary import \
         rhochi_calc_chi_sq_by_dictionary
-    console.debug('CrysPy modules have been imported')
+    console.debug('CrysPy module imported')
 except ImportError:
-    console.debug('No CrysPy module have been found')
+    console.debug('No CrysPy module found')
 
 
 _DEFAULT_DATA_BLOCK = """data_default
@@ -81,6 +81,7 @@ class Experiment(QObject):
     yBkgArraysChanged = Signal()
     yCalcTotalArraysChanged = Signal()
     yResidArraysChanged = Signal()
+    xBraggDictsChanged = Signal()
     chartRangesChanged = Signal()
 
     def __init__(self, parent):
@@ -88,14 +89,14 @@ class Experiment(QObject):
         self._proxy = parent
 
         self._defined = False
-        self._currentIndex = 0
+        self._currentIndex = -1
 
         self._dataBlocksNoMeas = []
         self._dataBlocksMeasOnly = []
 
         self._dataBlocksCif = []
-        self._dataBlocksCifNoMeas = ""
-        self._dataBlocksCifMeasOnly = ""
+        self._dataBlocksCifNoMeas = []
+        self._dataBlocksCifMeasOnly = []
 
         self._xArrays = []
         self._yMeasArrays = []
@@ -103,6 +104,7 @@ class Experiment(QObject):
         self._yBkgArrays = []
         self._yCalcTotalArrays = []
         self._yResidArrays = []
+        self._xBraggDicts = []
 
         self._chartRanges = []
 
@@ -196,7 +198,9 @@ class Experiment(QObject):
             self._dataBlocksMeasOnly += edExperimentsMeasOnly
             self._dataBlocksNoMeas += edExperimentsNoMeas
 
-            self.defined = bool(len(self.dataBlocksNoMeas))
+            self._currentIndex = len(self.dataBlocksNoMeas) - 1
+            if not self.defined:
+                self.defined = bool(len(self.dataBlocksNoMeas))
 
             console.debug(IO.formatMsg('sub', f'{len(edExperimentsMeasOnly)} experiment(s)', 'meas data only', 'to intern dataset', 'added'))
             console.debug(IO.formatMsg('sub', f'{len(edExperimentsNoMeas)} experiment(s)', 'without meas data', 'to intern dataset', 'added'))
@@ -205,15 +209,12 @@ class Experiment(QObject):
         else:
             console.debug(IO.formatMsg('sub', 'No experiment(s)', '', 'to intern dataset', 'added'))
 
-
-
-
     @Slot(str)
     def replaceExperiment(self, edCif=''):
         console.debug("Cryspy obj and dict need to be replaced")
 
         currentDataBlock = self.dataBlocksNoMeas[self.currentIndex]
-        currentExperimentName = currentDataBlock['name']
+        currentExperimentName = currentDataBlock['name']['value']
 
         cryspyObjBlockNames = [item.data_name for item in self._proxy.data._cryspyObj.items]
         cryspyObjBlockIdx = cryspyObjBlockNames.index(currentExperimentName)
@@ -244,11 +245,6 @@ class Experiment(QObject):
 #        edCif = cifNoMeas + '\n' + cifMeasOnly
 #        self.loadExperimentsFromEdCif(edCif)
 
-
-
-
-
-
     @Slot(int)
     def removeExperiment(self, index):
         console.debug(f"Removing experiment no. {index + 1}")
@@ -268,19 +264,23 @@ class Experiment(QObject):
         console.debug(f"Experiment no. {index + 1} has been removed")
 
     @Slot()
-    def removeAllExperiments(self):
-        pass
-        #self._dataBlocksNoMeas.clear()
-        #self._dataBlocksMeasOnly.clear()
-        #self._xArrays.clear()
-        #self._yMeasArrays.clear()
-        #self.dataBlocksNoMeasChanged.emit()
-        #self.dataBlocksMeasOnlyChanged.emit()
-        #self.yMeasArraysChanged.emit()
-        #self.yBkgArraysChanged.emit()
-        #console.debug("All experiments have been removed")
-
-
+    def resetAll(self):
+        self._defined = False
+        self._currentIndex = -1
+        self._dataBlocksNoMeas = []
+        self._dataBlocksMeasOnly = []
+        self._dataBlocksCif = []
+        self._dataBlocksCifNoMeas = ""
+        self._dataBlocksCifMeasOnly = ""
+        self._xArrays = []
+        self._yMeasArrays = []
+        self._syMeasArrays = []
+        self._yBkgArrays = []
+        self._yCalcTotalArrays = []
+        self._yResidArrays = []
+        self._xBraggDicts = []
+        self._chartRanges = []
+        console.debug("All experiments removed")
 
     @Slot(int, str, str, 'QVariant')
     def setMainParamWithFullUpdate(self, blockIndex, paramName, field, value):
@@ -370,8 +370,6 @@ class Experiment(QObject):
 
         console.debug(f"Intern dict ▌ {block}[{blockIndex}].{loopName} has been reset to default values")
 
-
-
     def editDataBlockMainParam(self, blockIndex, paramName, field, value):
         block = 'experiment'
         oldValue = self._dataBlocksNoMeas[blockIndex]['params'][paramName][field]
@@ -397,27 +395,39 @@ class Experiment(QObject):
         return True
 
     def editCryspyDictByMainParam(self, blockIndex, paramName, field, value):
-        path, value = self.cryspyDictPathByMainParam(blockIndex, paramName, field, value)
+        if field != 'value' and field != 'fit':
+            return True
+
+        path, value = self.cryspyDictPathByMainParam(blockIndex, paramName, value)
+        if field == 'fit':
+            path[1] = f'flags_{path[1]}'
+
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
             return False
         self._proxy.data._cryspyDict[path[0]][path[1]][path[2]] = value
+
         console.debug(IO.formatMsg('sub', 'Cryspy dict', f'{oldValue} → {value}', f'{path}'))
         return True
 
     def editCryspyDictByLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
-        path, value = self.cryspyDictPathByLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
+        if field != 'value' and field != 'fit':
+            return True
+
+        path, value = self.cryspyDictPathByLoopParam(blockIndex, loopName, paramName, rowIndex, value)
+        if field == 'fit':
+            path[1] = f'flags_{path[1]}'
+
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
             return False
         self._proxy.data._cryspyDict[path[0]][path[1]][path[2]] = value
+
         console.debug(IO.formatMsg('sub', 'Cryspy dict', f'{oldValue} → {value}', f'{path}'))
         return True
 
-
-
-    def cryspyDictPathByMainParam(self, blockIndex, paramName, field, value):
-        blockName = self._dataBlocksNoMeas[blockIndex]['name']
+    def cryspyDictPathByMainParam(self, blockIndex, paramName, value):
+        blockName = self._dataBlocksNoMeas[blockIndex]['name']['value']
         path = ['','','']
         path[0] = f"pd_{blockName}"
 
@@ -470,14 +480,10 @@ class Experiment(QObject):
         else:
             console.error(f"Undefined parameter name '{paramName}'")
 
-        # if 'flags' objects are needed
-        if field == 'fit':
-            path[1] = f'flags_{path[1]}'
-
         return path, value
 
-    def cryspyDictPathByLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
-        blockName = self._dataBlocksNoMeas[blockIndex]['name']
+    def cryspyDictPathByLoopParam(self, blockIndex, loopName, paramName, rowIndex, value):
+        blockName = self._dataBlocksNoMeas[blockIndex]['name']['value']
         path = ['','','']
         path[0] = f"pd_{blockName}"
 
@@ -497,11 +503,158 @@ class Experiment(QObject):
                 path[1] = 'phase_scale'
                 path[2] = rowIndex
 
-        # if 'flags' objects are needed
-        if field == 'fit':
-            path[1] = f'flags_{path[1]}'
-
         return path, value
+
+    def paramValueByFieldAndCrypyParamPath(self, field, path):  # NEED FIX: code duplicate of editDataBlockByLmfitParams
+        block, group, idx = path
+
+        # pd (powder diffraction) block
+        if block.startswith('pd_'):
+            blockName = block[3:]
+            loopName = None
+            paramName = None
+            rowIndex = None
+
+            # wavelength
+            if group == 'wavelength':
+                paramName = '_diffrn_radiation_wavelength'
+
+            # offset_ttheta
+            elif group == 'offset_ttheta':
+                paramName = '_pd_meas_2theta_offset'
+
+            # resolution_parameters
+            elif group == 'resolution_parameters':
+                if idx[0] == 0:
+                    paramName = '_pd_instr_resolution_u'
+                elif idx[0] == 1:
+                    paramName = '_pd_instr_resolution_v'
+                elif idx[0] == 2:
+                    paramName = '_pd_instr_resolution_w'
+                elif idx[0] == 3:
+                    paramName = '_pd_instr_resolution_x'
+                elif idx[0] == 4:
+                    paramName = '_pd_instr_resolution_y'
+                elif idx[0] == 5:
+                    paramName = '_pd_instr_resolution_z'
+
+            # asymmetry_parameters
+            elif group == 'asymmetry_parameters':
+                if idx[0] == 0:
+                    paramName = '_pd_instr_reflex_asymmetry_p1'
+                elif idx[0] == 1:
+                    paramName = '_pd_instr_reflex_asymmetry_p2'
+                elif idx[0] == 2:
+                    paramName = '_pd_instr_reflex_asymmetry_p3'
+                elif idx[0] == 3:
+                    paramName = '_pd_instr_reflex_asymmetry_p4'
+
+            # background_ttheta
+            elif group == 'background_ttheta':
+                loopName = '_pd_background'
+                paramName = '_2theta'
+                rowIndex = idx[0]
+
+            # background_intensity
+            elif group == 'background_intensity':
+                loopName = '_pd_background'
+                paramName = '_intensity'
+                rowIndex = idx[0]
+
+            # phase_scale
+            elif group == 'phase_scale':
+                loopName = '_phase'
+                paramName = '_scale'
+                rowIndex = idx[0]
+
+            blockIndex = [block['name']['value'] for block in self._dataBlocksNoMeas].index(blockName)
+
+            if loopName is None:
+                return self.dataBlocksNoMeas[blockIndex]['params'][paramName][field]
+            else:
+                return self.dataBlocksNoMeas[blockIndex]['loops'][loopName][rowIndex][paramName][field]
+
+        return None
+
+    def editDataBlockByLmfitParams(self, params):
+        for param in params.values():
+            block, group, idx = Data.strToCryspyDictParamPath(param.name)
+
+            # pd (powder diffraction) block
+            if block.startswith('pd_'):
+                blockName = block[3:]
+                loopName = None
+                paramName = None
+                rowIndex = None
+                value = param.value
+                error = 0
+                if param.stderr is not None:
+                    error = param.stderr
+
+                # wavelength
+                if group == 'wavelength':
+                    paramName = '_diffrn_radiation_wavelength'
+
+                # offset_ttheta
+                elif group == 'offset_ttheta':
+                    paramName = '_pd_meas_2theta_offset'
+                    value = np.rad2deg(value)
+
+                # resolution_parameters
+                elif group == 'resolution_parameters':
+                    if idx[0] == 0:
+                        paramName = '_pd_instr_resolution_u'
+                    elif idx[0] == 1:
+                        paramName = '_pd_instr_resolution_v'
+                    elif idx[0] == 2:
+                        paramName = '_pd_instr_resolution_w'
+                    elif idx[0] == 3:
+                        paramName = '_pd_instr_resolution_x'
+                    elif idx[0] == 4:
+                        paramName = '_pd_instr_resolution_y'
+                    elif idx[0] == 5:
+                        paramName = '_pd_instr_resolution_z'
+
+                # asymmetry_parameters
+                elif group == 'asymmetry_parameters':
+                    if idx[0] == 0:
+                        paramName = '_pd_instr_reflex_asymmetry_p1'
+                    elif idx[0] == 1:
+                        paramName = '_pd_instr_reflex_asymmetry_p2'
+                    elif idx[0] == 2:
+                        paramName = '_pd_instr_reflex_asymmetry_p3'
+                    elif idx[0] == 3:
+                        paramName = '_pd_instr_reflex_asymmetry_p4'
+
+                # background_ttheta
+                elif group == 'background_ttheta':
+                    loopName = '_pd_background'
+                    paramName = '_2theta'
+                    rowIndex = idx[0]
+                    value = np.rad2deg(value)
+
+                # background_intensity
+                elif group == 'background_intensity':
+                    loopName = '_pd_background'
+                    paramName = '_intensity'
+                    rowIndex = idx[0]
+
+                # phase_scale
+                elif group == 'phase_scale':
+                    loopName = '_phase'
+                    paramName = '_scale'
+                    rowIndex = idx[0]
+
+                value = float(value)  # convert float64 to float (needed for QML access)
+                error = float(error)  # convert float64 to float (needed for QML access)
+                blockIndex = [block['name']['value'] for block in self._dataBlocksNoMeas].index(blockName)
+
+                if loopName is None:
+                    self.editDataBlockMainParam(blockIndex, paramName, 'value', value)
+                    self.editDataBlockMainParam(blockIndex, paramName, 'error', error)
+                else:
+                    self.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, 'value', value)
+                    self.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, 'error', error)
 
     def editDataBlockByCryspyDictParams(self, params):
         for param in params:
@@ -570,44 +723,12 @@ class Experiment(QObject):
                     rowIndex = idx[0]
 
                 value = float(value)  # convert float64 to float (needed for QML access)
-                blockIndex = [block['name'] for block in self._dataBlocksNoMeas].index(blockName)
+                blockIndex = [block['name']['value'] for block in self._dataBlocksNoMeas].index(blockName)
 
                 if loopName is None:
                     self.editDataBlockMainParam(blockIndex, paramName, 'value', value)
                 else:
                     self.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, 'value', value)
-
-    def defaultXArray(self):
-        xMin = _DEFAULT_DATA_BLOCK['params']['xMin']['value']
-        xMax = _DEFAULT_DATA_BLOCK['params']['xMax']['value']
-        xStep = _DEFAULT_DATA_BLOCK['params']['xStep']['value']
-        xArray = np.arange(xMin, xMax + xStep, xStep)
-        return xArray
-
-    def defaultYMeasArray(self):
-        xArray = self.defaultXArray()
-        params1 = {'shift': {'value': -1.0}, 'width': {'value': 1.5}, 'scale': {'value': 2.5}}
-        yArray1 = GaussianCalculator.pseudoMeasured(xArray, params1)
-        params2 = {'shift': {'value': 0.0}, 'width': {'value': 0.5}, 'scale': {'value': 0.5}}
-        yArray2 = GaussianCalculator.pseudoMeasured(xArray, params2)
-        background = self.defaultYBkgArray()
-        yMeasArray = yArray1 + yArray2 + background
-        return yMeasArray
-
-    def defaultYBkgArray(self):
-        xArray = self.defaultXArray()
-        xMin = _DEFAULT_DATA_BLOCK['params']['xMin']['value']
-        xMax = _DEFAULT_DATA_BLOCK['params']['xMax']['value']
-        yBkgMin = _DEFAULT_DATA_BLOCK['params']['background_min']['value']
-        yBkgMax = _DEFAULT_DATA_BLOCK['params']['background_max']['value']
-        xBkgPoints = np.array([xMin, xMax])
-        yBkgPoints = np.array([yBkgMin, yBkgMax])
-        yBkgArray = np.interp(xArray, xBkgPoints, yBkgPoints)
-        return yBkgArray
-
-
-
-
 
     def runCryspyCalculations(self):
         result = rhochi_calc_chi_sq_by_dictionary(
@@ -618,50 +739,51 @@ class Experiment(QObject):
 
         console.debug(IO.formatMsg('sub', 'Cryspy calculations', 'finished'))
 
-        self._proxy.fitting.chiSq = result[0]
+        chiSq = result[0]
         self._proxy.fitting._pointsCount = result[1]
+        self._proxy.fitting._freeParamsCount = len(result[4])
+        self._proxy.fitting.chiSq = chiSq / (self._proxy.fitting._pointsCount - self._proxy.fitting._freeParamsCount)
 
-        reducedGofLastIter = self._proxy.fitting.chiSq / self._proxy.fitting._pointsCount            # NEED FIX
-        if self._proxy.fitting._chiSqStart is None:
-            self._proxy.status.goodnessOfFit = f'{reducedGofLastIter:0.2f}'                           # NEED move to connection
+        gofLastIter = self._proxy.fitting.chiSq  # NEED FIX
+        if self._proxy.fitting.chiSqStart is None:
+            self._proxy.status.goodnessOfFit = f'{gofLastIter:0.2f}'                           # NEED move to connection
         else:
-            reducedGofStart = self._proxy.fitting._chiSqStart / self._proxy.fitting._pointsCount      # NEED FIX
-            self._proxy.status.goodnessOfFit = f'{reducedGofStart:0.2f} → {reducedGofLastIter:0.2f}'  # NEED move to connection
-            if not self._proxy.fitting._freezeChiSqStart:
-                self._proxy.fitting._chiSqStart = self._proxy.fitting.chiSq
-
+            gofStart = self._proxy.fitting.chiSqStart # NEED FIX
+            self._proxy.status.goodnessOfFit = f'{gofStart:0.2f} → {gofLastIter:0.2f}'  # NEED move to connection
+        if not self._proxy.fitting._freezeChiSqStart:
+            self._proxy.fitting.chiSqStart = self._proxy.fitting.chiSq
 
     def setMeasuredArraysForSingleExperiment(self, idx):
-        ed_name = self._proxy.experiment.dataBlocksNoMeas[idx]['name']
-        cryspy_name = f'pd_{ed_name}'
+        ed_name = self._proxy.experiment.dataBlocksNoMeas[idx]['name']['value']
+        cryspy_block_name = f'pd_{ed_name}'
         cryspyInOutDict = self._proxy.data._cryspyInOutDict
 
         # X data
-        x_array = cryspyInOutDict[cryspy_name]['ttheta']
+        x_array = cryspyInOutDict[cryspy_block_name]['ttheta']
         x_array = np.rad2deg(x_array)
         self.setXArray(x_array, idx)
 
         # Measured Y data
-        y_meas_array = cryspyInOutDict[cryspy_name]['signal_exp'][0]
+        y_meas_array = cryspyInOutDict[cryspy_block_name]['signal_exp'][0]
         self.setYMeasArray(y_meas_array, idx)
 
         # Standard deviation of the measured Y data
-        sy_meas_array = cryspyInOutDict[cryspy_name]['signal_exp'][1]
+        sy_meas_array = cryspyInOutDict[cryspy_block_name]['signal_exp'][1]
         self.setSYMeasArray(sy_meas_array, idx)
 
     def setCalculatedArraysForSingleExperiment(self, idx):
-        ed_name = self._proxy.experiment.dataBlocksNoMeas[idx]['name']
-        cryspy_name = f'pd_{ed_name}'
+        ed_name = self._proxy.experiment.dataBlocksNoMeas[idx]['name']['value']
+        cryspy_block_name = f'pd_{ed_name}'
         cryspyInOutDict = self._proxy.data._cryspyInOutDict
 
         # Background Y data # NED FIX: use calculatedYBkgArray()
-        y_bkg_array = cryspyInOutDict[cryspy_name]['signal_background']
+        y_bkg_array = cryspyInOutDict[cryspy_block_name]['signal_background']
         self.setYBkgArray(y_bkg_array, idx)
 
         # Total calculated Y data (sum of all phases up and down polarisation plus background)
-        y_calc_total_array = cryspyInOutDict[cryspy_name]['signal_plus'] + \
-                             cryspyInOutDict[cryspy_name]['signal_minus'] + \
-                             cryspyInOutDict[cryspy_name]['signal_background']
+        y_calc_total_array = cryspyInOutDict[cryspy_block_name]['signal_plus'] + \
+                             cryspyInOutDict[cryspy_block_name]['signal_minus'] + \
+                             y_bkg_array
         self.setYCalcTotalArray(y_calc_total_array, idx)
 
         # Residual (Ymeas -Ycalc)
@@ -672,6 +794,13 @@ class Experiment(QObject):
         # Bragg peaks data
         #cryspyInOutDict[cryspy_name]['dict_in_out_co2sio4']['index_hkl'] # [0] - h array, [1] - k array, [2] - l array
         #cryspyInOutDict[cryspy_name]['dict_in_out_co2sio4']['ttheta_hkl'] # need rad2deg
+        modelNames = [key[12:] for key in cryspyInOutDict[cryspy_block_name].keys() if 'dict_in_out' in key]
+        xBraggDict = {}
+        for modelName in modelNames:
+            x_bragg_array = cryspyInOutDict[cryspy_block_name][f'dict_in_out_{modelName}']['ttheta_hkl']
+            x_bragg_array = np.rad2deg(x_bragg_array)
+            xBraggDict[modelName] = x_bragg_array
+        self.setXBraggDict(xBraggDict, idx)
 
     def setChartRangesForSingleExperiment(self, idx):
         x_array = self._xArrays[idx]
@@ -696,11 +825,6 @@ class Experiment(QObject):
             self.setMeasuredArraysForSingleExperiment(idx)
             self.setCalculatedArraysForSingleExperiment(idx)
             self.setChartRangesForSingleExperiment(idx)
-
-
-
-
-
 
     def setXArray(self, xArray, idx):
         try:
@@ -754,6 +878,15 @@ class Experiment(QObject):
             console.debug(IO.formatMsg('sub', 'Y-resid (meas-calc)', f'experiment no. {len(self._yResidArrays)}', 'to intern dataset', 'added'))
         self.yResidArraysChanged.emit()
 
+    def setXBraggDict(self, xBraggDict, idx):
+        try:
+            self._xBraggDicts[idx] = xBraggDict
+            console.debug(IO.formatMsg('sub', 'X-Bragg (peaks)', f'experiment no. {idx + 1}', 'in intern dataset', 'replaced'))
+        except IndexError:
+            self._xBraggDicts.append(xBraggDict)
+            console.debug(IO.formatMsg('sub', 'X-Bragg (peaks)', f'experiment no. {len(self._xBraggDicts)}', 'to intern dataset', 'added'))
+        self.xBraggDictsChanged.emit()
+
     def setChartRanges(self, ranges, idx):
         try:
             self._chartRanges[idx] = ranges
@@ -762,9 +895,6 @@ class Experiment(QObject):
             self._chartRanges.append(ranges)
             console.debug(IO.formatMsg('sub', 'Chart ranges', f'experiment no. {len(self._chartRanges)}', 'to intern dataset', 'added'))
         self.chartRangesChanged.emit()
-
-
-
 
     def setDataBlocksCifNoMeas(self):
         self._dataBlocksCifNoMeas = [CryspyParser.dataBlockToCif(block) for block in self._dataBlocksNoMeas]

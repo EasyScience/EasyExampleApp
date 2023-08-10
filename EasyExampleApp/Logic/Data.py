@@ -3,7 +3,7 @@
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 import numpy as np
-from PySide6.QtCore import QObject, Signal, Property
+from PySide6.QtCore import QObject, Slot
 
 from EasyApp.Logic.Logging import console
 
@@ -16,30 +16,21 @@ except ImportError:
 
 
 class Data(QObject):
-    edDictChanged = Signal()
-
     def __init__(self, parent):
         super().__init__(parent)
         self._proxy = parent
-        self._edDict = {}
-
-        self._cryspyExperimentObj = None
-        self._cryspyModelObjs = []
-
-        self._cryspyExperimentDict = {}
-        self._cryspyModelDicts = []
-
-
-
         self._cryspyObj = str_to_globaln('')
         self._cryspyDict = {}
         self._cryspyInOutDict = {}
 
-    # QML accessible properties
+    # QML accessible properties and methods
 
-    @Property('QVariant', notify=edDictChanged)
-    def edDict(self):
-        return self._edDict
+    @Slot()
+    def resetAll(self):
+        self._cryspyObj = str_to_globaln('')
+        self._cryspyDict = {}
+        self._cryspyInOutDict = {}
+        console.debug("All data removed")
 
     # Static methods
 

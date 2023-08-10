@@ -632,12 +632,11 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         return main.model.dataBlocks[idx].params[name]
     }
 
-    function modelLoopParam(loopName, paramName, rowIndex) {
+    function modelLoopParam(loopName, paramName, rowIndex, blockIndex = main.model.currentIndex) {
         if (!main.model.defined) {
             return {}
         }
-        const idx = main.model.currentIndex
-        return main.model.dataBlocks[idx].loops[loopName][rowIndex][paramName]
+        return main.model.dataBlocks[blockIndex].loops[loopName][rowIndex][paramName]
     }
 
     function setModelMainParamWithFullUpdate(param, field, value) {
@@ -747,5 +746,94 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         console.debug(`*** Appending experiment loop row ${loopName} ***`)
         main.experiment.appendLoopRow(loopName)
     }
+
+    function paramName(param, format) {
+
+        //console.info(JSON.stringify(param))
+
+        const textFont = `'${EaStyle.Fonts.fontFamily}'`
+        const iconFont = `'${EaStyle.Fonts.iconsFamily}'`
+        const textColor = `'${EaStyle.Colors.themeForeground}'`
+        const iconColor = `'${EaStyle.Colors.themeForegroundMinor}'`
+
+        let blockIconColor = iconColor
+        if (param.blockType === "model") {
+            blockIconColor = `'${EaStyle.Colors.chartForegroundsExtra[param.blockIndex]}'`
+        } else if (param.blockType === "experiment") {
+            blockIconColor = `'${EaStyle.Colors.chartForegroundsExtra[2]}'`
+        }
+
+        let groupIconColor = iconColor
+        if (param.loopName === "_atom_site") {
+            groupIconColor = `'${main.model.atomData(
+                        modelLoopParam('_atom_site', '_type_symbol', param.rowIndex, param.blockIndex).value, 'color'
+                        )}'`
+        } else if (param.loopName === "_phase") {
+            groupIconColor = `'${EaStyle.Colors.chartForegroundsExtra[param.rowIndex]}'`
+        }
+
+        let prettyRowName = param.rowName
+        if (param.prettyRowName) {
+            prettyRowName = param.prettyRowName
+        }
+
+        const blockTypeHtml =       `<font color=${blockIconColor} face=${textFont}>${param.blockType}</font>`
+        const blockIconHtml =       `<font color=${blockIconColor} face=${iconFont}>${param.blockIcon}</font>`
+        const blockIndexHtml =      `<font color=${blockIconColor} face=${textFont}>${param.blockIndex + 1}</font>`
+        const blockNameHtml =       `<font color=${blockIconColor} face=${textFont}>${param.blockName}</font>`
+
+        const groupIconHtml =       `<font color=${groupIconColor} face=${iconFont}>${param.groupIcon}</font>`
+        const prettyloopNameHtml =  `<font color=${groupIconColor} face=${textFont}>${param.prettyLoopName}</font>`
+        const loopNameHtml =        `<font color=${groupIconColor} face=${textFont}>${param.loopName}</font>`
+        const rowIndexHtml =        `<font color=${groupIconColor} face=${textFont}>${param.rowIndex + 1}</font>`
+        const rowNameHtml =         `<font color=${groupIconColor} face=${textFont}>${param.rowName}</font>`
+        const rowPrettyNameHtml =   `<font color=${groupIconColor} face=${textFont}>${prettyRowName}</font>`
+
+        const paramIconHtml =       `<font color=${iconColor}      face=${iconFont}>${param.icon}</font>`
+        const paramPrettyNameHtml = `<font color=${textColor}      face=${textFont}><b>${param.prettyName}</b></font>`
+        const paramNameHtml =       `<font color=${textColor}      face=${textFont}><b>${param.name}</b></font>`
+        const paramTitleHtml =      `<font color=${textColor}      face=${textFont}><b>${param.title}</b></font>`
+
+        let name = ''
+        let _ = ''
+
+
+
+        if (format === EaGlobals.Vars.ShortestWithIconsAndPrettyLabels) {
+            _ = '&nbsp;&nbsp;'
+            name = `${blockIconHtml}${_}${groupIconHtml}`
+            if (param.loopName) name += `${_}${rowPrettyNameHtml}${_}${paramIconHtml}${_}${paramTitleHtml}`
+            else name += `${_}${paramIconHtml}${_}${paramTitleHtml}`
+        } else if (format === EaGlobals.Vars.ReducedWithIconsAndPrettyLabels) {
+            _ = '&nbsp;&nbsp;'
+            name = `${blockIconHtml}${_}${blockNameHtml}${_}${groupIconHtml}`
+            if (param.loopName) name += `${_}${rowPrettyNameHtml}${_}${paramIconHtml}${_}${paramPrettyNameHtml}`
+            else name += `${_}${paramIconHtml}${_}${paramPrettyNameHtml}`
+        } else if (format === EaGlobals.Vars.FullWithIconsAndPrettyLabels) {
+            _ = '&nbsp;&nbsp;'
+            name = `${blockIconHtml}${_}${blockTypeHtml}${_}${blockNameHtml}${_}${groupIconHtml}`
+            if (param.loopName) name += `${_}${prettyloopNameHtml}${_}${rowPrettyNameHtml}${_}${paramIconHtml}${_}${paramPrettyNameHtml}`
+            else name += `${_}${paramIconHtml}${_}${paramPrettyNameHtml}`
+        } else if (format === EaGlobals.Vars.FullWithPrettyLabels) {
+            _ = '&nbsp;&nbsp;'
+            name = `${blockTypeHtml}${_}${blockNameHtml}`
+            if (param.loopName) name += `${_}${prettyloopNameHtml}${_}${rowPrettyNameHtml}${_}${paramPrettyNameHtml}`
+            else name += `${_}${paramPrettyNameHtml}`
+        } else if (format === EaGlobals.Vars.FullWithLabels) {
+            _ = '.'
+            name = `${blockTypeHtml}[${blockNameHtml}]`
+            if (param.loopName) name += `${_}${loopNameHtml}${paramNameHtml}[${rowNameHtml}]`
+            else name += `${_}${paramNameHtml}`
+        } else if (format === EaGlobals.Vars.FullWithIndices) {
+            _ = '.'
+            name = `${blockTypeHtml}[${blockIndexHtml}]`
+            if (param.loopName) name += `${_}${loopNameHtml}${paramNameHtml}[${rowIndexHtml}]`
+            else name += `${_}${paramNameHtml}`
+        }
+
+        //console.info(name)
+        return name
+    }
+
 
 }

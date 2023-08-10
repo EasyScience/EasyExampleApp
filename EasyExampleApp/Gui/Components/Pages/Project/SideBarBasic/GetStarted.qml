@@ -75,7 +75,7 @@ Grid {
         fileMode: FileDialog.OpenFile
         nameFilters: [ "CIF files (*.cif)"]
         onAccepted: {
-            console.debug('*** Loading model(s) from file(s) ***')
+            console.debug('*** Loading project from file ***')
             Globals.Vars.modelPageEnabled = true
             Globals.Proxies.main.project.loadProjectFromFile(selectedFile)
             Globals.Vars.summaryPageEnabled = true

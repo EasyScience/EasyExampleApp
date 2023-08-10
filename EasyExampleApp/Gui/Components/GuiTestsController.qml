@@ -181,7 +181,7 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton.text, 'Load experiment(s) from file(s)') )
         res.push( rc.compare(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.text, 'Define experiment manually') )
-        res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.experimentPage.continueButton.text, 'Continue') )
         res.push( rc.compare(Globals.Refs.app.experimentPage.continueButton.enabled, false) )
 
@@ -189,13 +189,13 @@ EaElements.RemoteController {
         rc.wait(2000)
 
         res.push( rc.compare(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton.enabled, true) )
-        res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.experimentPage.addDefaultExperimentDataButton.enabled, false) )
         res.push( rc.compare(Globals.Refs.app.experimentPage.continueButton.text, 'Continue') )
 
 //        res.push( rc.compare(Globals.Refs.app.modelPage.plotView.xData, Globals.Tests.expected.created.experiment.xData) )
 //        res.push( rc.compare(Globals.Refs.app.experimentPage.plotView.measuredYData, Globals.Tests.expected.created.experiment.yData) )
 
-        res.push( rc.compare(Globals.Proxies.main.status.experimentsCount, '2') )
+        res.push( rc.compare(Globals.Proxies.main.status.experimentsCount, '1') )
 
         rc.mouseClick(Globals.Refs.app.experimentPage.continueButton)
         //rc.wait(2000)
@@ -217,7 +217,7 @@ EaElements.RemoteController {
         res.push( rc.compare(Globals.Refs.app.analysisPage.startFittingButton.text, 'Start fitting') )
         res.push( rc.compare(Globals.Refs.app.analysisPage.startFittingButton.enabled, true) )
         res.push( rc.compare(Globals.Refs.app.analysisPage.continueButton.text, 'Continue') )
-        res.push( rc.compare(Globals.Refs.app.analysisPage.continueButton.enabled, true) )
+        res.push( rc.compare(Globals.Refs.app.analysisPage.continueButton.enabled, false) )
 
         res.push( rc.compare(Globals.Proxies.main.status.calculator, 'CrysPy') )
         res.push( rc.compare(Globals.Proxies.main.status.minimizer, 'Lmfit (BFGS)') )
@@ -244,9 +244,9 @@ EaElements.RemoteController {
 
         rc.mouseClick(Globals.Refs.app.analysisPage.fitStatusDialogOkButton)
 
-        res.push( rc.compare(Globals.Proxies.main.status.variables, '72 (8 free, 64 fixed)') )
-        res.push( rc.compare(Globals.Proxies.main.status.fitIteration, '316') )
-        res.push( rc.compare(Globals.Proxies.main.status.goodnessOfFit, '368.68 → 4.41') )
+        res.push( rc.compare(Globals.Proxies.main.status.variables, '58 (6 free, 52 fixed)') )
+        res.push( rc.compare(Globals.Proxies.main.status.fitIteration, '269') )
+        res.push( rc.compare(Globals.Proxies.main.status.goodnessOfFit, '341.99 → 4.41') )
         res.push( rc.compare(Globals.Proxies.main.status.fitStatus, 'Success') )
 
         rc.mouseClick(Globals.Refs.app.analysisPage.continueButton)

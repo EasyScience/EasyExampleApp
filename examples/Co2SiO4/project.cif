@@ -1,11 +1,11 @@
 data_Co2SiO4
 
-loop_
-_model_dir_name
-_model_cif_file_name
-models co2sio4.cif
+_description "neutrons, powder, constant wavelength, D20@ILL"
 
 loop_
-_experiment_dir_name
+_model_cif_file_name
+co2sio4.cif 
+
+loop_
 _experiment_cif_file_name
-experiments d20.cif
+d20.cif

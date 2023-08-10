@@ -83,12 +83,12 @@ Column {
                 ToolTip.text: qsTr("Calculated pattern color")
                 backgroundColor: "transparent"
                 borderColor: "transparent"
-                iconColor: EaStyle.Colors.chartForegrounds[index]
+                iconColor: EaStyle.Colors.chartForegroundsExtra[index]
             }
 
             EaComponents.TableViewParameter {
                 selected: index === Globals.Proxies.main.model.currentIndex
-                text: tableView.model[index].name
+                text: tableView.model[index].name.value
             }
 
             EaComponents.TableViewButton {
@@ -116,7 +116,8 @@ Column {
                 console.debug(`Clicking '${text}' button: ${this}`)
                 if (Globals.Vars.isTestMode) {
                     console.debug('*** Loading model from file (test mode) ***')
-                    const fpaths = [Qt.resolvedUrl('../../../../../../examples/2-models_2-experiments_tmp/Co2SiO4_CoO_mult-models.cif')]
+                    const fpaths = [Qt.resolvedUrl('../../../../../../examples/Co2SiO4-Mult-Phases/models/co2sio4.cif'),
+                                    Qt.resolvedUrl('../../../../../../examples/Co2SiO4-Mult-Phases/models/coo.cif')]
                     Globals.Proxies.main.model.loadModelsFromFiles(fpaths)
                 } else {
                     openCifFileDialog.open()

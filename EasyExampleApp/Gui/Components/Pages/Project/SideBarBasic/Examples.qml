@@ -23,17 +23,13 @@ EaComponents.TableView {
 
     defaultInfoText: qsTr("No examples available")
 
-    // Table model
     model: Globals.Proxies.main.project.examples
-    // Table model
 
-    // Header row
+    // header
     header: EaComponents.TableViewHeader {
-
         EaComponents.TableViewLabel {
             enabled: false
             width: EaStyle.Sizes.fontPixelSize * 2.5
-            //text: qsTr("No.")
         }
 
         EaComponents.TableViewLabel {
@@ -42,16 +38,18 @@ EaComponents.TableView {
             text: qsTr("name / description")
         }
     }
-    // Header row
+    // header
 
-
-    // Table rows
+    // delegate
     delegate: EaComponents.TableViewDelegate {
-
         mouseArea.onPressed: {
             const filePath = tableView.model[index].path
             const fileUrl = Qt.resolvedUrl(filePath)
+            Globals.Vars.modelPageEnabled = true
+            Globals.Vars.experimentPageEnabled = true
             Globals.Proxies.main.project.loadProjectFromFile(fileUrl)
+            Globals.Vars.analysisPageEnabled = true
+            Globals.Vars.summaryPageEnabled = true
         }
 
         EaComponents.TableViewLabel {
@@ -66,6 +64,6 @@ EaComponents.TableView {
             ToolTip.text: tableView.model[index].description
         }
     }
-    // Table rows
+    // delegate
 
 }

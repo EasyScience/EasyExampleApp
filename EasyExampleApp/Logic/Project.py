@@ -3,6 +3,7 @@
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
 import os
+import time
 from datetime import datetime
 from pycifstar.data import Data as PycifstarData
 from PySide6.QtCore import QObject, Signal, Slot, Property, QUrl
@@ -12,32 +13,19 @@ from Logic.Helpers import IO
 from Logic.Calculators import Parameter, CryspyParser
 
 
-_DEFAULT_CIF = """data_DefaultProject
-_description 'Default project description'
-_location ''
-_date_created ''
-_date_last_modified ''
-"""
-
 _EMPTY_DATA = {
     'name': '',
     'params': {},
     'loops': {}
 }
 
-_DEFAULT_DATA = {
-    'name': 'Project name',
-    'params': {
-        '_description': { 'value': 'Project description' },
-        '_location': { 'value': '' },
-        '_date_created': { 'value': '' },
-        '_date_last_modified': { 'value': '' }
-
-    },
-    'loops': {}
-}
-
 _EXAMPLES = [
+    {
+        'name': 'La0.5Ba0.5CoO3',
+        'description': 'neutrons, powder, constant wavelength, HRPT@PSI',
+        'path': '../../../../../../examples/La0.5Ba0.5CoO3/project.cif'
+
+     },
     {
         'name': 'Co2SiO4',
         'description': 'neutrons, powder, constant wavelength, D20@ILL',
@@ -45,11 +33,33 @@ _EXAMPLES = [
 
      },
     {
-        'name': 'Co2SiO4-Mult',
-        'description': 'neutrons, powder, constant wavelength, D20@ILL, 2 phases, 2 datasets',
-        'path': '../../../../../../examples/Co2SiO4-Mult/project.cif'
-    }
+        'name': 'Dy3Al5O12',
+        'description': 'neutrons, powder, constant wavelength, G41@LLB',
+        'path': '../../../../../../examples/Dy3Al5O12/project.cif'
+
+     },
+     {
+        'name': 'PbSO4',
+        'description': 'neutrons, powder, constant wavelength, D1A@ILL',
+        'path': '../../../../../../examples/PbSO4/project.cif'
+
+     },
+     {
+         'name': 'Co2SiO4-Mult-Phases',
+         'description': 'neutrons, powder, constant wavelength, D20@ILL, 2 phases',
+         'path': '../../../../../../examples/Co2SiO4-Mult-Phases/project.cif'
+     },
+     #{
+     #    'name': 'Si3N4',
+     #    'description': 'neutrons, powder, constant wavelength, multi-phase, 3T2@LLB',
+     #    'path': '../../../../../../examples/Si3N4/project.cif'
+     #}
 ]
+
+_DEFAULT_CIF = """data_DefaultProject
+_description 'Default project description'
+"""
+
 
 class Project(QObject):
     createdChanged = Signal()
@@ -57,6 +67,9 @@ class Project(QObject):
     dataBlockChanged = Signal()
     dataBlockCifChanged = Signal()
     recentChanged = Signal()
+    locationChanged = Signal()
+    dateCreatedChanged = Signal()
+    dateLastModifiedChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -67,6 +80,16 @@ class Project(QObject):
         self._created = False
         self._needSave = False
         self._recent = []
+
+        self._location = ''
+        self._dateCreated = ''
+        self._dateLastModified = ''
+        self._dirNames = {
+            'models': 'models',
+            'experiments': 'experiments',
+            'analysis': 'analysis',
+            'summary': 'summary'
+        }
 
     @Property('QVariant', notify=dataBlockChanged)
     def dataBlock(self):
@@ -106,8 +129,6 @@ class Project(QObject):
     def setNeedSaveToTrue(self):
         self.needSave = True
 
-
-    #
     @Property('QVariant', notify=recentChanged)
     def recent(self):
         return self._recent
@@ -120,6 +141,45 @@ class Project(QObject):
         self._recent = newValue
         self.recentChanged.emit()
 
+    @Property(str, notify=locationChanged)
+    def location(self):
+        return self._location
+
+    @location.setter
+    def location(self, newValue):
+        if self._location == newValue:
+            return
+        self._location = newValue
+        self.locationChanged.emit()
+
+    @Property(str, notify=dateCreatedChanged)
+    def dateCreated(self):
+        return self._dateCreated
+
+    @dateCreated.setter
+    def dateCreated(self, newValue):
+        if self._dateCreated == newValue:
+            return
+        self._dateCreated = newValue
+        self.dateCreatedChanged.emit()
+
+    @Property(str, notify=dateLastModifiedChanged)
+    def dateLastModified(self):
+        return self._dateLastModified
+
+    @dateLastModified.setter
+    def dateLastModified(self, newValue):
+        if self._dateLastModified == newValue:
+            return
+        self._dateLastModified = newValue
+        self.dateLastModifiedChanged.emit()
+
+    @Property('QVariant', constant=True)
+    def dirNames(self):
+        return self._dirNames
+
+
+
 
     def createDataBlockFromCif(self, edCif):
         starObj = PycifstarData()
@@ -127,12 +187,12 @@ class Project(QObject):
         dataBlock = CryspyParser.starObjToEdProject(starObj)
         return dataBlock
 
-
     @Slot('QVariant')
     def loadProjectFromFile(self, fpath):
         fpath = fpath.toLocalFile()
         fpath = IO.generalizePath(fpath)
-        console.debug(f"Open an existing project from: {fpath}")
+
+        console.debug(f"Opening project from: {fpath}")
         with open(fpath, 'r') as file:
             edCif = file.read()
 
@@ -140,29 +200,28 @@ class Project(QObject):
         starObj.take_from_string(edCif)
         self._dataBlock = CryspyParser.starObjToEdProject(starObj)
 
-        modelDirNames = [item['_dir_name']['value'] for item in self._dataBlock['loops']['_model']]
-        modelFileNames = [item['_cif_file_name']['value'] for item in self._dataBlock['loops']['_model']]
-        experimentDirNames = [item['_dir_name']['value'] for item in self._dataBlock['loops']['_experiment']]
-        experimentFileNames = [item['_cif_file_name']['value'] for item in self._dataBlock['loops']['_experiment']]
+        st = os.stat(fpath)
+        fmt = "%d %b %Y %H:%M"
+        self.dateCreated = time.strftime(fmt, time.localtime(st.st_birthtime))
+        self.dateLastModified = time.strftime(fmt, time.localtime(st.st_mtime))
 
-        projectPath = os.path.dirname(fpath)
-        modelFilePaths = [os.path.join(projectPath, dirName, fileName) for (dirName, fileName) in zip(modelDirNames, modelFileNames)]
-        experimentFilePaths = [os.path.join(projectPath, dirName, fileName) for (dirName, fileName) in zip(experimentDirNames, experimentFileNames)]
+        self.location = os.path.dirname(fpath)
+
+        modelFileNames = [item['_name']['value'] for item in self._dataBlock['loops']['_model_cif_file']]
+        modelFilePaths = [os.path.join(self._location, self._dirNames['models'], fileName) for fileName in modelFileNames]
         modelFilePaths = [QUrl.fromLocalFile(path) for path in modelFilePaths]
-        experimentFilePaths = [QUrl.fromLocalFile(path) for path in experimentFilePaths]
-
         self._proxy.model.loadModelsFromFiles(modelFilePaths)
+
+        experimentFileNames = [item['_name']['value'] for item in self._dataBlock['loops']['_experiment_cif_file']]
+        experimentFilePaths = [os.path.join(self._location, self._dirNames['experiments'], fileName) for fileName in experimentFileNames]
+        experimentFilePaths = [QUrl.fromLocalFile(path) for path in experimentFilePaths]
         self._proxy.experiment.loadExperimentsFromFiles(experimentFilePaths)
 
-        if '_location' in self._dataBlock['params']:
-            self.setMainParam('_location', 'value', projectPath)
-        else:
-            self._dataBlock['params']['_location'] = dict(Parameter(
-                projectPath,
-                name='_location',
-                prettyName='Location',
-                url='https://easydiffraction.org'
-            ))
+        reportFileName = 'report.cif'
+        reportFilePath = os.path.join(self._location, self._dirNames['summary'], reportFileName)
+        reportFilePath = QUrl.fromLocalFile(reportFilePath)
+        self._proxy.summary.loadReportFromFile(reportFilePath)
+
         if '_description' not in self._dataBlock['params']:
             self._dataBlock['params']['_description'] = dict(Parameter(
                 '.',
@@ -170,15 +229,6 @@ class Project(QObject):
                 prettyName='Description',
                 url='https://easydiffraction.org'
             ))
-
-
-        # NEED FIX: use _location insted of _project_dir_path
-        #for model in self._dataBlock['loops']['_model']:
-        #    model['_project_dir_path'] = os.path.dirname(fpath)
-        #for experiment in self._dataBlock['loops']['_experiment']:
-        #    experiment['_project_dir_path'] = os.path.dirname(fpath)
-        #print(self._dataBlock['loops']['_model'][0]['_project_dir_path'])
-        #print(self._dataBlock['loops']['_experiment'][0]['_project_dir_path'])
 
         if fpath in self._recent:
             self._recent.remove(fpath)
@@ -188,96 +238,69 @@ class Project(QObject):
 
         self.dataBlockChanged.emit()
         self.created = True
+        self.needSave = False
 
-
-    #
     @Slot(str)
     def setName(self, value):
-        oldValue = self._dataBlock['name']
+        oldValue = self._dataBlock['name']['value']
         if oldValue == value:
             return
-        self._dataBlock['name'] = value
+        self._dataBlock['name']['value'] = value
         console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value}', 'project.name'))
         self.dataBlockChanged.emit()
 
     def setModels(self):
-        names = [f"{block['name']}" for block in self._proxy.model.dataBlocks]
+        names = [f"{block['name']['value']}" for block in self._proxy.model.dataBlocks]
         oldNames = []
-        if '_model' in self._dataBlock['loops']:
-            oldNames = [os.path.basename(item['_cif_file_name']['value']) for item in self._dataBlock['loops']['_model']]
+        if '_model_cif_file' in self._dataBlock['loops']:
+            oldNames = [os.path.splitext(item['_name']['value'])[0] for item in self._dataBlock['loops']['_model_cif_file']]
         if oldNames == names:
             return
 
-        self._dataBlock['loops']['_model'] = []
+        self._dataBlock['loops']['_model_cif_file'] = []
         for name in names:
             edModel = {}
-            edModel['_dir_name'] = dict(Parameter(
-                'models',
-                name='_dir_name',
-                prettyName='Model directory',
-                url='https://easydiffraction.org'
-            ))
-            edModel['_cif_file_name'] = dict(Parameter(
+            edModel['_name'] = dict(Parameter(
                 f'{name}.cif',
-                name='_cif_file_name',
-                prettyName='Model file',
+                name='_name',
+                prettyName='Model file(s)',
                 url='https://easydiffraction.org'
             ))
-            edModel['_jpg_file_name'] = dict(Parameter(
-                f'{name}.jpg',
-                name='_jpg_file_name',
-                url='https://easydiffraction.org'
-            ))
-            self._dataBlock['loops']['_model'].append(edModel)
+            self._dataBlock['loops']['_model_cif_file'].append(edModel)
 
         console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldNames} → {names}'))
         self.dataBlockChanged.emit()
 
-    #
     def setExperiments(self):
-        names = [f"{block['name']}" for block in self._proxy.experiment.dataBlocksNoMeas]
+        names = [f"{block['name']['value']}" for block in self._proxy.experiment.dataBlocksNoMeas]
         oldNames = []
-        if '_experiment' in self._dataBlock['loops']:
-            oldNames = [os.path.basename(item['_cif_file_name']['value']) for item in self._dataBlock['loops']['_experiment']]
+        if '_experiment_cif_file' in self._dataBlock['loops']:
+            oldNames = [os.path.splitext(item['_name']['value'])[0] for item in self._dataBlock['loops']['_experiment_cif_file']]
         if oldNames == names:
             return
 
-        self._dataBlock['loops']['_experiment'] = []
+        self._dataBlock['loops']['_experiment_cif_file'] = []
         for name in names:
             edExperiment = {}
-            edExperiment['_dir_name'] = dict(Parameter(
-                'experiments',
-                name='_dir_name',
-                prettyName='Experiment directory',
-                url='https://easydiffraction.org'
-            ))
-            edExperiment['_cif_file_name'] = dict(Parameter(
+            edExperiment['_name'] = dict(Parameter(
                 f'{name}.cif',
-                name='_cif_file_name',
-                prettyName='Experiment file',
+                name='_name',
+                prettyName='Experiment file(s)',
                 url='https://easydiffraction.org'
             ))
-            edExperiment['_jpg_file_name'] = dict(Parameter(
-                f'{name}.jpg',
-                name='_jpg_file_name',
-                url='https://easydiffraction.org'
-            ))
-            self._dataBlock['loops']['_experiment'].append(edExperiment)
+            self._dataBlock['loops']['_experiment_cif_file'].append(edExperiment)
 
         console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldNames} → {names}'))
         self.dataBlockChanged.emit()
 
-
-    #
     @Slot(str, str, 'QVariant')
     def setMainParam(self, paramName, field, value):
         changedIntern = self.editDataBlockMainParam(paramName, field, value)
         if changedIntern:
             self.dataBlockChanged.emit()
 
-    #
     def editDataBlockMainParam(self, paramName, field, value):
-        blockType = 'model'
+        blockType = 'project'
         oldValue = self._dataBlock['params'][paramName][field]
         if oldValue == value:
             return False
@@ -288,25 +311,23 @@ class Project(QObject):
             console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value}', f'{blockType}.{paramName}.{field}'))
         return True
 
-
-
-
     @Slot()
     def create(self):
-        dateCreated = datetime.now().strftime("%d %b %Y %H:%M")
-        self.setMainParam('_date_created', 'value', dateCreated)
-        self.setMainParam('_date_last_modified', 'value', dateCreated)
-        self.created = True
+        self.save()
 
+        fpath = os.path.join(self.location, 'project.cif')
+        st = os.stat(fpath)
+        fmt = "%d %b %Y %H:%M"
+        self.dateCreated = time.strftime(fmt, time.localtime(st.st_birthtime))
+        self.dateLastModified = time.strftime(fmt, time.localtime(st.st_mtime))
+
+        self.created = True
 
     @Slot()
     def save(self):
         console.debug(IO.formatMsg('main', 'Saving project...'))
 
-        dateLastModified = datetime.now().strftime("%d %b %Y %H:%M")
-        self.setMainParam('_date_last_modified', 'value', dateLastModified)
-
-        projectDirPath = self._dataBlock['params']['_location']['value']
+        projectDirPath = self.location
         projectFileName = 'project.cif'
         projectFilePath = os.path.join(projectDirPath, projectFileName)
         os.makedirs(projectDirPath, exist_ok=True)
@@ -315,9 +336,8 @@ class Project(QObject):
             console.debug(IO.formatMsg('sub', f'saved to: {projectFilePath}'))
 
         if self._proxy.model.defined:
-            modelDirNames = [item['_dir_name']['value'] for item in self._dataBlock['loops']['_model']]
-            modelFileNames = [item['_cif_file_name']['value'] for item in self._dataBlock['loops']['_model']]
-            modelFilePaths = [os.path.join(projectDirPath, dirName, fileName) for (dirName, fileName) in zip(modelDirNames, modelFileNames)]
+            modelFileNames = [item['_name']['value'] for item in self._dataBlock['loops']['_model_cif_file']]
+            modelFilePaths = [os.path.join(projectDirPath, self._dirNames['models'], fileName) for fileName in modelFileNames]
             for (modelFilePath, dataBlockCif) in zip(modelFilePaths, self._proxy.model.dataBlocksCif):
                 dataBlockCif = dataBlockCif[0]
                 os.makedirs(os.path.dirname(modelFilePath), exist_ok=True)
@@ -326,9 +346,8 @@ class Project(QObject):
                     console.debug(IO.formatMsg('sub', f'saved to: {modelFilePath}'))
 
         if self._proxy.experiment.defined:
-            experimentDirNames = [item['_dir_name']['value'] for item in self._dataBlock['loops']['_experiment']]
-            experimentFileNames = [item['_cif_file_name']['value'] for item in self._dataBlock['loops']['_experiment']]
-            experimentFilePaths = [os.path.join(projectDirPath, dirName, fileName) for (dirName, fileName) in zip(experimentDirNames, experimentFileNames)]
+            experimentFileNames = [item['_name']['value'] for item in self._dataBlock['loops']['_experiment_cif_file']]
+            experimentFilePaths = [os.path.join(projectDirPath, self._dirNames['experiments'], fileName) for fileName in experimentFileNames]
             for (experimentFilePath, dataBlockCifNoMeas, dataBlockCifMeasOnly) in zip(experimentFilePaths, self._proxy.experiment.dataBlocksCifNoMeas, self._proxy.experiment.dataBlocksCifMeasOnly):
                 os.makedirs(os.path.dirname(experimentFilePath), exist_ok=True)
                 dataBlockCif = dataBlockCifNoMeas + '\n\n' + dataBlockCifMeasOnly
@@ -336,13 +355,18 @@ class Project(QObject):
                     file.write(dataBlockCif)
                     console.debug(IO.formatMsg('sub', f'saved to: {experimentFilePath}'))
 
+        if self._proxy.summary.isCreated:
+            fileName = 'report.cif'
+            reportFilePath = os.path.join(projectDirPath, self._dirNames['summary'], fileName)
+            os.makedirs(os.path.dirname(reportFilePath), exist_ok=True)
+            with open(reportFilePath, 'w') as file:
+                dataBlockCif = self._proxy.summary.dataBlocksCif
+                file.write(dataBlockCif)
+                console.debug(IO.formatMsg('sub', f'saved to: {reportFilePath}'))
+
         self.needSave = False
 
-
-    #
     def setDataBlockCif(self):
         self._dataBlockCif = CryspyParser.dataBlockToCif(self._dataBlock)
         console.debug(IO.formatMsg('sub', 'Project', '', 'to CIF string', 'converted'))
         self.dataBlockCifChanged.emit()
-
-

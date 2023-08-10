@@ -49,7 +49,7 @@ EaElements.GroupColumn {
                 flexibleWidth: true
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.modelLoopParam('_atom_site', '_label', 0).prettyName ?? ''  // NEED FIX
+                text: Globals.Proxies.modelLoopParam('_atom_site', '_label', 0).title ?? ''  // NEED FIX
             }
 
             EaComponents.TableViewLabel {
@@ -60,7 +60,7 @@ EaElements.GroupColumn {
                 width: EaStyle.Sizes.fontPixelSize * 3.0
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.modelLoopParam('_atom_site', '_type_symbol', 0).prettyName ?? ''  // NEED FIX
+                text: Globals.Proxies.modelLoopParam('_atom_site', '_type_symbol', 0).title ?? ''  // NEED FIX
             }
 
             EaComponents.TableViewLabel {
@@ -68,21 +68,21 @@ EaElements.GroupColumn {
                 width: EaStyle.Sizes.fontPixelSize * 4.8
                 horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.modelLoopParam('_atom_site', '_fract_x', 0).prettyName ?? ''  // NEED FIX
+                text: Globals.Proxies.modelLoopParam('_atom_site', '_fract_x', 0).title ?? ''  // NEED FIX
             }
 
             EaComponents.TableViewLabel {
                 width: fractXLabel.width
                 horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.modelLoopParam('_atom_site', '_fract_y', 0).prettyName ?? ''  // NEED FIX
+                text: Globals.Proxies.modelLoopParam('_atom_site', '_fract_y', 0).title ?? ''  // NEED FIX
             }
 
             EaComponents.TableViewLabel {
                 width: fractXLabel.width
                 horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.modelLoopParam('_atom_site', '_fract_z', 0).prettyName ?? ''  // NEED FIX
+                text: Globals.Proxies.modelLoopParam('_atom_site', '_fract_z', 0).title ?? ''  // NEED FIX
             }
 
             EaComponents.TableViewLabel {
@@ -96,7 +96,7 @@ EaElements.GroupColumn {
                 width: fractXLabel.width
                 horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.modelLoopParam('_atom_site', '_occupancy', 0).prettyName ?? ''  // NEED FIX
+                text: Globals.Proxies.modelLoopParam('_atom_site', '_occupancy', 0).title ?? ''  // NEED FIX
             }
 
             EaComponents.TableViewLabel {
@@ -166,7 +166,7 @@ EaElements.GroupColumn {
             }
 
             EaComponents.TableViewButton {
-                enabled: tableView.model > 1
+                enabled: tableView !== null && tableView.model > 1
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this atom")
                 onClicked: Globals.Proxies.removeModelLoopRow('_atom_site', index)

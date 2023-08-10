@@ -29,9 +29,15 @@ Rectangle {
         id: listView
 
         property var firstDelegateRef: null
-        property bool cifEdited: listView.firstDelegateRef === null ?
+        property bool cifEdited: {
+            //console.error(Globals.Proxies.main.model.currentIndex)
+            //console.error(JSON.stringify(Globals.Proxies.main.model.dataBlocksCif))
+            //console.error(Globals.Proxies.main.model.currentIndex)
+
+            listView.firstDelegateRef === null || typeof Globals.Proxies.main.model.dataBlocksCif[Globals.Proxies.main.model.currentIndex] === 'undefined' ?
                                      false :
                                      listView.firstDelegateRef.text !== Globals.Proxies.main.model.dataBlocksCif[Globals.Proxies.main.model.currentIndex][0]
+        }
 
         anchors.fill: parent
         anchors.topMargin: EaStyle.Sizes.fontPixelSize

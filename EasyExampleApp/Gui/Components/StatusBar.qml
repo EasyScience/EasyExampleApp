@@ -18,7 +18,7 @@ EaElements.StatusBar {
         keyIcon: 'archive'
         keyText: qsTr('Project')
         valueText: Globals.Proxies.main.status.project ?? ''
-        ToolTip.text: qsTr('Current project name')
+        ToolTip.text: qsTr('Current project')
     }
 
     EaElements.StatusBarItem {
@@ -68,7 +68,9 @@ EaElements.StatusBar {
         keyIcon: 'thumbs-up'
         keyText: qsTr('Goodness-of-fit')
         valueText: Globals.Proxies.main.status.goodnessOfFit ?? ''
-        ToolTip.text: qsTr('Goodness-of-fit (χ²): previous and last comparisons')  // 'Goodness-of-fit for comparison of the observed data with the data expected under the model'
+        ToolTip.text: valueText.includes('→') ?
+                          qsTr('Reduced χ² goodness-of-fit: previous → last') :
+                          qsTr('Reduced χ² goodness-of-fit')  // 'Goodness-of-fit for comparison of the observed data with the data expected under the model'
     }
 
     EaElements.StatusBarItem {

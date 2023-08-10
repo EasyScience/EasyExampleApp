@@ -50,7 +50,7 @@ Rectangle {
             font.pixelSize: EaStyle.Sizes.fontPixelSize
 
             color: !enabled || readOnly ?
-                       EaStyle.Colors.themeForegroundDisabled :
+                       EaStyle.Colors.themeForegroundMinor :
                        EaStyle.Colors.themeForeground
             Behavior on color { EaAnimations.ThemeChange {} }
 

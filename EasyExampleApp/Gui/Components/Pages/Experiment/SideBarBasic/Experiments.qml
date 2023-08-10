@@ -88,7 +88,7 @@ Column {
 
             EaComponents.TableViewParameter {
                 selected: index === Globals.Proxies.main.experiment.currentIndex
-                text: tableView.model[index].name
+                text: tableView.model[index].name.value
             }
 
             EaComponents.TableViewButton {
@@ -115,7 +115,7 @@ Column {
                 console.debug(`Clicking '${text}' button: ${this}`)
                 if (Globals.Vars.isTestMode) {
                     console.debug('*** Loading experiment from file (test mode) ***')
-                    const fpaths = [Qt.resolvedUrl('../../../../../../examples/2-models_2-experiments_tmp/Co2SiO4_mult-experiments.cif')]
+                    const fpaths = [Qt.resolvedUrl('../../../../../../examples/Co2SiO4-Mult-Phases/experiments/d20.cif')]
                     Globals.Proxies.main.experiment.loadExperimentsFromFiles(fpaths)
                 } else {
                     openCifFileDialog.open()
@@ -126,6 +126,7 @@ Column {
 
         EaElements.SideBarButton {
             //enabled: !Globals.Proxies.main.experiment.defined
+            enabled: false
             fontIcon: "plus-circle"
             text: qsTr("Define experiment manually")
             onClicked: {

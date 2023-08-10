@@ -16,23 +16,25 @@ import Gui.Globals as Globals
 
 Column {
     id: container
-    width:500
-    height:500
 
     property alias measSerie: measSerie
     property alias bkgSerie: bkgSerie
     property alias calcSerie: calcSerie
     property alias residSerie: residSerie
 
+    property var phaseNames: Globals.Proxies.main.experiment.dataBlocksNoMeas[
+                                 Globals.Proxies.main.experiment.currentIndex].loops._phase.map(
+                                 phase => phase._label.value)
+
     property string calcSerieColor: EaStyle.Colors.chartForegrounds[0]
 
     property int extraMargin: -12
-    property real residualToMainChartHeightRatio: 0.33
+    property real residualToMainChartHeightRatio: 0.25
     property real mainChartHeightCoeff: 1 - residualToMainChartHeightRatio
 
-    property bool useOpenGL: EaGlobals.Vars.useOpenGL //Globals.Proxies.main.plotting.useWebGL1d
-
-    //property alias
+    property bool useOpenGL: Globals.Proxies.main.fitting.isFittingNow ?
+                                 true :
+                                 EaGlobals.Vars.useOpenGL //Globals.Proxies.main.plotting.useWebGL1d
 
     Column {
         width: parent.width
@@ -45,7 +47,7 @@ Column {
         Item {
             width: parent.width
             height: parent.height * mainChartHeightCoeff -
-                    braggPeaksChart.parent.height * 0.5
+                    braggChart.parent.height * 0.5
 
             EaCharts.QtCharts1dBase {
                 id: mainChart
@@ -209,17 +211,20 @@ Column {
         }
 
         //////////////////////////////////////
-        // Bragg peaks chart container: Ibragg
+        // Bragg peaks chart container: Bragg
         //////////////////////////////////////
 
         Item {
             z: -1
             width: parent.width
-            height: 30
+            height: (0.5 + 1.5 * phaseNames.length) * EaStyle.Sizes.fontPixelSize
+
+
+            /////onHeightChanged: console.info(`================== ${height} - ${phaseNames.length}`)
             //visible: false
 
             EaCharts.QtCharts1dBase {
-                id: braggPeaksChart
+                id: braggChart
 
                 anchors.topMargin: -12 - EaStyle.Sizes.fontPixelSize * 1.5
                 anchors.bottomMargin: -12 - EaStyle.Sizes.fontPixelSize * 1.5
@@ -231,8 +236,8 @@ Column {
                 axisX.titleVisible: false
                 axisX.labelsVisible: false
 
-                axisY.min: -1
-                axisY.max: 1
+                axisY.min: -0.5 * phaseNames.length
+                axisY.max: 0.5
                 axisY.titleVisible: false
                 axisY.labelsVisible: false
                 axisY.tickCount: 2
@@ -240,18 +245,26 @@ Column {
                 backgroundColor: "transparent"
                 plotAreaColor: "transparent"
 
+                //onSeriesAdded: { console.error(series) }
+
+                /*
                 ScatterSeries {
-                    id: braggPeaksSerie
+                    id: braggSerie
 
-                    axisX: braggPeaksChart.axisX
-                    axisY: braggPeaksChart.axisY
+                    axisX: braggChart.axisX
+                    axisY: braggChart.axisY
 
-                    useOpenGL: braggPeaksChart.useOpenGL
+                    //useOpenGL: braggChart.useOpenGL
 
-                    color: EaStyle.Colors.chartForegroundsExtra[0]
+                    brush: Globals.Proxies.main.plotting.verticalLine(
+                               1.5 * EaStyle.Sizes.fontPixelSize,
+                               EaStyle.Colors.chartForegroundsExtra[0])
+                    borderWidth: 0.001
+                    borderColor: 'transparent'
 
-                    XYPoint {x: 0.6; y: 0}
+                    Component.onCompleted: console.error(this)
                 }
+                */
             }
         }
 
@@ -262,7 +275,7 @@ Column {
         Item {
             width: parent.width
             height: parent.height * residualToMainChartHeightRatio -
-                    braggPeaksChart.parent.height * 0.5
+                    braggChart.parent.height * 0.5
 
             EaCharts.QtCharts1dBase {
                 id: residualChart
@@ -359,31 +372,35 @@ Column {
         border.color: EaStyle.Colors.chartGridLine
 
         Column {
+            id: legendColumn
+
             leftPadding: EaStyle.Sizes.fontPixelSize
             rightPadding: EaStyle.Sizes.fontPixelSize
             topPadding: EaStyle.Sizes.fontPixelSize * 0.5
             bottomPadding: EaStyle.Sizes.fontPixelSize * 0.5
 
             EaElements.Label {
-                text: '━  Imeas (measured)'
+                text: '━  Measured (Imeas)'
                 color: measSerie.color
             }
             EaElements.Label {
-                text: '━  Icalc (total calculated)'
+                text: '━  Total calculated (Icalc)'
                 color: calcSerie.color
             }
             EaElements.Label {
-                text: '─  Ibkg (background)'
+                text: '─  Background (Ibkg)'
                 color: bkgSerie.color
             }
             EaElements.Label {
-                text: '━  Imeas - Icalc (residual)'
+                text: '━  Residual (Imeas - Icalc)'
                 color: residSerie.color
             }
+            /*
             EaElements.Label {
                 text: '│  Ibragg (Bragg peaks)'
-                color: braggPeaksSerie.color
+                color: EaStyle.Colors.chartForegroundsExtra[0] //braggSerie.color
             }
+            */
         }
     }
 
@@ -413,9 +430,11 @@ Column {
         Globals.Proxies.main.plotting.setQtChartsSerieRef('analysisPage',
                                                           'residSerie',
                                                           this.residSerie)
-        Globals.Proxies.main.plotting.setQtChartsSerieRef('analysisPage',
-                                                          'braggSerie',
-                                                          this.braggSerie)
+        //Globals.Proxies.main.plotting.setQtChartsSerieRef('analysisPage',
+        //                                                  'braggSerie',
+        //                                                  this.braggSerie)
+        createBraggSeries()
+
         Globals.Proxies.main.analysis.defined = true
     }
 
@@ -447,8 +466,8 @@ Column {
         xAxisChart.plotArea.x = mainChart.plotArea.x
         residualChart.plotArea.width = xAxisChart.plotArea.width
         residualChart.plotArea.x = mainChart.plotArea.x
-        braggPeaksChart.plotArea.width = xAxisChart.plotArea.width
-        braggPeaksChart.plotArea.x = mainChart.plotArea.x
+        braggChart.plotArea.width = xAxisChart.plotArea.width
+        braggChart.plotArea.x = mainChart.plotArea.x
         mainChart.plotArea.width = xAxisChart.plotArea.width
         console.debug('All charts have been aligned')
     }
@@ -463,6 +482,45 @@ Column {
         dataToolTip.text = `<p align="left">x: ${point.x.toFixed(2)}<br\>y: ${point.y.toFixed(2)}</p>`
         dataToolTip.parent = chart
         dataToolTip.visible = state
+    }
+
+    function createBraggSeries() {
+        for (const phaseIdx in phaseNames) {
+            const phaseName = phaseNames[phaseIdx]
+            const serie = braggChart.createSeries(ChartView.SeriesTypeScatter,
+                                                  phaseName,
+                                                  braggChart.axisX,
+                                                  braggChart.axisY)
+            const markerSize = //serie.useOpenGL ?
+                                 //5 :  // don't work here... :(
+                                 1.5 * EaStyle.Sizes.fontPixelSize
+            serie.useOpenGL = braggChart.useOpenGL
+            //serie.useOpenGL = Globals.Proxies.main.fitting.isFittingNow
+            serie.brush = Globals.Proxies.main.plotting.verticalLine(
+                       markerSize,
+                       EaStyle.Colors.chartForegroundsExtra[phaseIdx])
+            serie.borderWidth = 0.001
+            serie.borderColor = 'transparent'
+            //serie.markerShape = ScatterSeries.MarkerShapeRectangle
+            serie.markerSize = serie.useOpenGL ?
+                        0 :
+                        markerSize
+
+            Globals.Proxies.main.plotting.setQtChartsSerieRef('analysisPage',
+                                                              'braggSeries',
+                                                              serie)
+
+            const legendItem = Qt.createQmlObject('import EasyApp.Gui.Elements as EaElements; EaElements.Label {}', legendColumn)
+            const textFont = `'${EaStyle.Fonts.fontFamily}'`
+            const iconFont = `'${EaStyle.Fonts.iconsFamily}'`
+            const textColor = `'${EaStyle.Colors.chartForegroundsExtra[phaseIdx]}'`
+            const iconColor = `'${EaStyle.Colors.chartForegroundsExtra[phaseIdx]}'`
+            const textHtmlStart = `<font color=${textColor} face=${textFont}>│&nbsp;&nbsp;Bragg peaks</font>`
+            const iconHtml =      `<font color=${iconColor} face=${iconFont}>layer-group</font>`
+            const textHtmlEnd =   `<font color=${textColor} face=${textFont}>${phaseName}</font>`
+            legendItem.text = `${textHtmlStart} ${iconHtml} ${textHtmlEnd}`
+            legendItem.textFormat = Text.RichText
+        }
     }
 
 }

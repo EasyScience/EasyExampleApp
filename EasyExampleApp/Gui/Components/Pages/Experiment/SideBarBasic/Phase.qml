@@ -45,14 +45,14 @@ EaElements.GroupColumn {
                 width: EaStyle.Sizes.fontPixelSize * 6.0
                 horizontalAlignment: Text.AlignLeft
                 color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.experimentLoopParam('_phase', '_label', 0).prettyName ?? ''  // 0 = 1st element inde§
+                text: Globals.Proxies.experimentLoopParam('_phase', '_label', 0).title ?? ''  // 0 = 1st element index
             }
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 4.0
                 horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.experimentLoopParam('_phase', '_scale', 0).prettyName ?? ''  // 0 = 1st element index
+                text: Globals.Proxies.experimentLoopParam('_phase', '_scale', 0).title ?? ''  // 0 = 1st element index
             }
 
             EaComponents.TableViewLabel {
@@ -80,7 +80,7 @@ EaElements.GroupColumn {
                 ToolTip.text: qsTr("Calculated pattern color")
                 backgroundColor: "transparent"
                 borderColor: "transparent"
-                iconColor: EaStyle.Colors.chartForegrounds[index]
+                iconColor: EaStyle.Colors.chartForegroundsExtra[index]
             }
 
             EaComponents.TableViewParameter {
@@ -98,7 +98,7 @@ EaElements.GroupColumn {
             EaComponents.TableViewLabel {}
 
             EaComponents.TableViewButton {
-                enabled: tableView.model > 1
+                enabled: tableView.model.length > 1
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this phase")
                 onClicked: Globals.Proxies.main.model.removeModel(index)

@@ -17,8 +17,8 @@ Rectangle {
     id: main
 
     readonly property int fullWidth: width
-    readonly property int nameColumnWidth: 8 * EaStyle.Sizes.fontPixelSize
-    readonly property int imageHeight: 9.5 * EaStyle.Sizes.fontPixelSize
+    readonly property int nameColumnWidth: 10 * EaStyle.Sizes.fontPixelSize
+    readonly property int imageHeight: 7.0 * EaStyle.Sizes.fontPixelSize
     readonly property int innerSpacing: 0.85 * EaStyle.Sizes.fontPixelSize
     readonly property int outterSpacing: 1.5 * EaStyle.Sizes.fontPixelSize
 
@@ -57,15 +57,16 @@ Rectangle {
                 font.pixelSize: EaStyle.Sizes.fontPixelSize * 3
                 font.weight: Font.ExtraLight
                 onAccepted: focus = false
-                validator: RegularExpressionValidator { regularExpression: /^[a-zA-Z][a-zA-Z0-9]{1,30}$/ }
+                validator: RegularExpressionValidator { regularExpression: /^[a-zA-Z][a-zA-Z0-9_-\.]{1,30}$/ }
                 placeholderText: qsTr("Enter project name here")
-                text: Globals.Proxies.main.project.dataBlock.name
+                text: Globals.Proxies.main.project.dataBlock.name.value
                 onEditingFinished: Globals.Proxies.main.project.setName(text)
                 onFocusChanged: {
                     if (!focus && !text) {
-                        text = Globals.Proxies.main.project.dataBlock.name
+                        text = Globals.Proxies.main.project.dataBlock.name.value
                     }
                 }
+
             }
             // Title
 
@@ -73,98 +74,154 @@ Rectangle {
             Item { height: 1; width: 1 }
             // Extra spacer
 
-            // Description & location
-            Column {
-                Row {
-                    property var parameter: Globals.Proxies.projectMainParam('_description')
-                    spacing: innerSpacing
-                    EaElements.Label {
-                        width: nameColumnWidth
-                        font.bold: true
-                        text: parent.parameter.prettyName
-                    }
-                    EaElements.TextInput {
-                        text: parent.parameter.value
-                        placeholderText: qsTr("Enter project description here")
-                        onAccepted: focus = false
-                        onEditingFinished: {
-                            if (text) {
-                                Globals.Proxies.setProjectMainParam(parent.parameter, 'value', text)
-                            } else {
-                                text = parent.parameter.value
-                            }
+            // Description
+            Row {
+                property var parameter: Globals.Proxies.projectMainParam('_description')
+                spacing: innerSpacing
+                EaElements.Label {
+                    width: nameColumnWidth
+                    font.bold: true
+                    text: parent.parameter.prettyName
+                }
+                EaElements.TextInput {
+                    text: parent.parameter.value
+                    placeholderText: qsTr("Enter project description here")
+                    onAccepted: focus = false
+                    onEditingFinished: {
+                        if (text) {
+                            Globals.Proxies.setProjectMainParam(parent.parameter, 'value', text)
+                        } else {
+                            text = parent.parameter.value
                         }
                     }
                 }
+            }
+            // Description
+
+            // Extra spacer
+            Item { height: 1; width: 1 }
+            // Extra spacer
+
+            // Date
+            Column {
                 Row {
-                    property var parameter: Globals.Proxies.projectMainParam('_location')
-                    visible: parameter.value
                     spacing: innerSpacing
                     EaElements.Label {
                         width: nameColumnWidth
                         font.bold: true
-                        text: parent.parameter.prettyName
+                        text: qsTr('Created')
+                    }
+                    EaElements.Label {
+                        text: Globals.Proxies.main.project.dateCreated
+                    }
+                }
+                Row {
+                    spacing: innerSpacing
+                    EaElements.Label {
+                        width: nameColumnWidth
+                        font.bold: true
+                        text: qsTr('Last modified')
+                    }
+                    EaElements.Label {
+                        text: Globals.Proxies.main.project.dateLastModified
+                    }
+                }
+            }
+            // Date
+
+            // Extra spacer
+            Item { height: 1; width: 1 }
+            // Extra spacer
+
+            // Location and dirs
+            Column {
+                Row {
+                    spacing: innerSpacing
+                    EaElements.Label {
+                        width: nameColumnWidth
+                        font.bold: true
+                        text: qsTr('Location')
                     }
                     EaElements.Label {
                         width: column.width - nameColumnWidth
                         elide: Text.ElideMiddle
-                        text: parent.parameter.value
+                        text: Globals.Proxies.main.project.location
+                    }
+                }
+                Row {
+                    spacing: innerSpacing
+                    EaElements.Label {
+                        width: nameColumnWidth
+                        font.bold: true
+                        text: qsTr('Model directory')
+                    }
+                    EaElements.Label {
+                        width: column.width - nameColumnWidth
+                        elide: Text.ElideMiddle
+                        text: Globals.Proxies.main.project.dirNames.models
+                    }
+                }
+                Row {
+                    spacing: innerSpacing
+                    EaElements.Label {
+                        width: nameColumnWidth
+                        font.bold: true
+                        text: qsTr('Experiment directory')
+                    }
+                    EaElements.Label {
+                        width: column.width - nameColumnWidth
+                        elide: Text.ElideMiddle
+                        text: Globals.Proxies.main.project.dirNames.experiments
+                    }
+                }
+                Row {
+                    spacing: innerSpacing
+                    EaElements.Label {
+                        width: nameColumnWidth
+                        font.bold: true
+                        text: qsTr('Analysis directory')
+                    }
+                    EaElements.Label {
+                        width: column.width - nameColumnWidth
+                        elide: Text.ElideMiddle
+                        text: Globals.Proxies.main.project.dirNames.analysis
+                    }
+                }
+                Row {
+                    spacing: innerSpacing
+                    EaElements.Label {
+                        width: nameColumnWidth
+                        font.bold: true
+                        text: qsTr('Summary directory')
+                    }
+                    EaElements.Label {
+                        width: column.width - nameColumnWidth
+                        elide: Text.ElideMiddle
+                        text: Globals.Proxies.main.project.dirNames.summary
                     }
                 }
             }
-            // Description & location
+            // Location and dirs
 
-            // Date
-            Column {
-                Row {
-                    property var parameter: Globals.Proxies.projectMainParam('_date_created')
-                    visible: parameter.value
-                    spacing: innerSpacing
-                    EaElements.Label {
-                        width: nameColumnWidth
-                        font.bold: true
-                        text: parent.parameter.prettyName
-                    }
-                    EaElements.Label {
-                        text: parent.parameter.value
-                    }
-                }
-                Row {
-                    property var parameter: Globals.Proxies.projectMainParam('_date_last_modified')
-                    visible: parameter.value
-                    spacing: innerSpacing
-                    EaElements.Label {
-                        width: nameColumnWidth
-                        font.bold: true
-                        text: parent.parameter.prettyName
-                    }
-                    EaElements.Label {
-                        text: parent.parameter.value
-                    }
-                }
-            }
-            // Date
+            // Extra spacer
+            Item { height: 1; width: 1 }
+            // Extra spacer
 
             // Models
-            Column {
-                Repeater {
-                    id: modelRepeater
-                    model: typeof Globals.Proxies.main.project.dataBlock.loops !== 'undefined' ?
-                               Globals.Proxies.main.project.dataBlock.loops._model :
-                               {}
-                    Row {
-                        spacing: innerSpacing
-                        EaElements.Label {
-                            width: nameColumnWidth
-                            font.bold: true
-                            text: index ? '' : modelRepeater.model[index]._cif_file_name.prettyName
-                        }
-                        EaElements.Label {
-                            text: modelRepeater.model[index]._dir_name.value +
-                                  '/' +
-                                  modelRepeater.model[index]._cif_file_name.value
-                        }
-                    }
+            Row {
+                spacing: innerSpacing
+                EaElements.Label {
+                    width: nameColumnWidth
+                    font.bold: true
+                    text: typeof Globals.Proxies.main.project.dataBlock.loops._model_cif_file === 'undefined' ?
+                              '' :
+                              Globals.Proxies.main.project.dataBlock.loops._model_cif_file[0]._name.prettyName
+                }
+                EaElements.Label {
+                    text: typeof Globals.Proxies.main.project.dataBlock.loops._model_cif_file === 'undefined' ?
+                              '' :
+                              Globals.Proxies.main.project.dataBlock.loops._model_cif_file.map(item => item._name.value).join(',  ')
+
                 }
             }
             // Models
@@ -175,7 +232,8 @@ Rectangle {
                 visible: childrenRect.height > 2
                 Item { height: 1; width: nameColumnWidth }
                 Repeater {
-                    model: modelRepeater.model
+                    id: modelImageRepeater
+                    model: Globals.Proxies.main.project.dataBlock.loops._model_cif_file
                     Rectangle {
                         visible: childrenRect.height
                         height: childrenRect.height + 2 * border.width
@@ -184,7 +242,6 @@ Rectangle {
                         border.color: EaStyle.Colors.chartAxis
                         border.width: 1
                         Image {
-                            id: modelImage
                             x: parent.border.width
                             y: parent.border.width
                             height: status === Image.Ready ? imageHeight : 0
@@ -192,13 +249,14 @@ Rectangle {
                             asynchronous: true
                             mipmap: true
                             source: {
-                                if (typeof modelRepeater.model[index]._jpg_file_name === 'undefined' ||
-                                        typeof modelRepeater.model[index]._dir_name === 'undefined' ) {
-                                    return ''  // Globals.Vars.imagePath('model.svg')
-                                }
-                                const path = Globals.Proxies.projectMainParam('_location').value + '/' +
-                                           modelRepeater.model[index]._dir_name.value + '/' +
-                                           modelRepeater.model[index]._jpg_file_name.value
+                                const cifFileName = modelImageRepeater.model[index]._name.value
+                                let split = cifFileName.split('.')
+                                split.pop()
+                                const baseFileName = split.join(".")
+                                const jpgFileName = baseFileName + '.jpg'
+                                const path = Globals.Proxies.main.project.location + '/' +
+                                           Globals.Proxies.main.project.dirNames.models + '/' +
+                                           jpgFileName
                                 const exists = Globals.Proxies.main.backendHelpers.fileExists(path)
                                 if (exists) {
                                     return path
@@ -212,26 +270,20 @@ Rectangle {
             // Model images
 
             // Experiments
-            Column {
-                Repeater {
-                    id: experimentRepeater
-                    model: typeof Globals.Proxies.main.project.dataBlock.loops !== 'undefined' ?
-                               Globals.Proxies.main.project.dataBlock.loops._experiment :
-                               {}
-                    Row {
-                        //property var parameter: Globals.Proxies.projectMainParam('_description')
-                        spacing: innerSpacing
-                        EaElements.Label {
-                            width: nameColumnWidth
-                            font.bold: true
-                            text: index ? '' : experimentRepeater.model[index]._cif_file_name.prettyName
-                        }
-                        EaElements.Label {
-                            text: experimentRepeater.model[index]._dir_name.value +
-                                  '/' +
-                                  experimentRepeater.model[index]._cif_file_name.value
-                        }
-                    }
+            Row {
+                spacing: innerSpacing
+                EaElements.Label {
+                    width: nameColumnWidth
+                    font.bold: true
+                    text: typeof Globals.Proxies.main.project.dataBlock.loops._experiment_cif_file === 'undefined' ?
+                              '' :
+                              Globals.Proxies.main.project.dataBlock.loops._experiment_cif_file[0]._name.prettyName
+                }
+                EaElements.Label {
+                    text: typeof Globals.Proxies.main.project.dataBlock.loops._experiment_cif_file === 'undefined' ?
+                              '' :
+                              Globals.Proxies.main.project.dataBlock.loops._experiment_cif_file.map(item => item._name.value).join(',  ')
+
                 }
             }
             // Experiments
@@ -242,7 +294,8 @@ Rectangle {
                 visible: childrenRect.height > 2
                 Item { height: 1; width: nameColumnWidth }
                 Repeater {
-                    model: experimentRepeater.model
+                    id: experimentImageRepeater
+                    model: Globals.Proxies.main.project.dataBlock.loops._experiment_cif_file
                     Rectangle {
                         visible: childrenRect.height
                         height: childrenRect.height + 2 * border.width
@@ -257,19 +310,19 @@ Rectangle {
                             mipmap: true
                             fillMode: Image.PreserveAspectFit
                             source: {
-                                if (typeof experimentRepeater.model[index]._jpg_file_name === 'undefined' ||
-                                        typeof experimentRepeater.model[index]._dir_name === 'undefined' ) {
-                                    return ''  // Globals.Vars.imagePath('model.svg')
-                                }
-
-                                const path = Globals.Proxies.projectMainParam('_location').value + '/' +
-                                           experimentRepeater.model[index]._dir_name.value + '/' +
-                                           experimentRepeater.model[index]._jpg_file_name.value
+                                const cifFileName = experimentImageRepeater.model[index]._name.value
+                                let split = cifFileName.split('.')
+                                split.pop()
+                                const baseFileName = split.join(".")
+                                const jpgFileName = baseFileName + '.jpg'
+                                const path = Globals.Proxies.main.project.location + '/' +
+                                           Globals.Proxies.main.project.dirNames.experiments + '/' +
+                                           jpgFileName
                                 const exists = Globals.Proxies.main.backendHelpers.fileExists(path)
                                 if (exists) {
                                     return path
                                 }
-                                return ''  // Globals.Vars.imagePath('model.svg')
+                                return ''  // Globals.Vars.imagePath('experiment.svg')
                             }
                         }
                     }

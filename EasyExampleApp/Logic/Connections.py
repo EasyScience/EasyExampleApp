@@ -24,23 +24,16 @@ class Connections(QObject):
         # Model
         self._proxy.model.currentIndexChanged.connect(self.onModelCurrentIndexChanged)
         self._proxy.model.dataBlocksChanged.connect(self.onModelDataBlocksChanged)
-        #self._proxy.model.yCalcArraysChanged.connect(self.onModelYCalcArraysChanged)
 
         # Experiment
         self._proxy.experiment.currentIndexChanged.connect(self.onExperimentCurrentIndexChanged)
         self._proxy.experiment.dataBlocksNoMeasChanged.connect(self.onExperimentDataBlocksNoMeasChanged)
         self._proxy.experiment.dataBlocksChanged.connect(self.onExperimentDataBlocksChanged)
-        #self._proxy.experiment.yMeasArraysChanged.connect(self.onExperimentYMeasArraysChanged)
-        #self._proxy.experiment.yBkgArraysChanged.connect(self.onExperimentYBkgArraysChanged)
-        #self._proxy.experiment.yCalcTotalArraysChanged.connect(self.onExperimentYCalcTotalArraysChanged)
-        #self._proxy.experiment.yResidArraysChanged.connect(self.onExperimentYResidArraysChanged)
 
         # Analysis
         self._proxy.analysis.definedChanged.connect(self.onAnalysisDefined)
-        self._proxy.analysis.yCalcTotalChanged.connect(self.onAnalysisYCalcTotalChanged)
 
         # Fittables
-        #self._proxy.fittables.dataChanged.connect(self.onFittablesDataChanged)
         self._proxy.fittables.nameFilterCriteriaChanged.connect(self.onFittablesFilterCriteriaChanged)
         self._proxy.fittables.variabilityFilterCriteriaChanged.connect(self.onFittablesFilterCriteriaChanged)
         self._proxy.fittables.paramsCountChanged.connect(self.onFittablesParamsCountChanged)
@@ -51,26 +44,27 @@ class Connections(QObject):
         self._proxy.fitting.fitFinished.connect(self.onFittingFitFinished)
         self._proxy.fitting.chiSqSignificantlyChanged.connect(self.onFittingChiSqSignificantlyChanged)
 
+    #########
     # Project
+    #########
 
     def onProjectCreatedChanged(self):
         self._proxy.project.setModels()
         self._proxy.project.setExperiments()
 
-
     def onProjectDataBlockChanged(self):
-        self._proxy.status.project = self._proxy.project.dataBlock['name']
+        self._proxy.status.project = self._proxy.project.dataBlock['name']['value']
         console.debug(IO.formatMsg('main', '(Re)converting project data block to CIF...'))
         self._proxy.project.setDataBlockCif()
         self._proxy.project.setNeedSaveToTrue()
 
-
+    #######
     # Model
+    #######
 
     def onModelCurrentIndexChanged(self):
         # Model page
         console.debug(IO.formatMsg('main', 'Updating structure view for the current model...'))
-        #self._proxy.model._structureViewUpdater.update()
         self._proxy.model.updateCurrentModelStructView()
 
     def onModelDataBlocksChanged(self):        
@@ -84,7 +78,6 @@ class Connections(QObject):
 
         # Model page
         console.debug(IO.formatMsg('main', 'Updating structure view for the current model...'))
-        #self._proxy.model._structureViewUpdater.update()
         self._proxy.model.updateCurrentModelStructView()
         console.debug(IO.formatMsg('main', '(Re)converting model data blocks to CIF...'))
         self._proxy.model.setDataBlocksCif()
@@ -103,6 +96,7 @@ class Connections(QObject):
             console.debug(IO.formatMsg('main', f'Redrawing curves on analysis page using {self._proxy.plotting.currentLib1d}...'))
             self._proxy.plotting.drawCalculatedOnAnalysisChart()
             self._proxy.plotting.drawResidualOnAnalysisChart()
+            self._proxy.plotting.drawBraggOnAnalysisChart()
             console.debug(IO.formatMsg('main', 'Updating fittables on the analysis page...'))
             self._proxy.fittables.set()
 
@@ -114,21 +108,24 @@ class Connections(QObject):
 
         console.debug('')
 
+    ############
     # Experiment
+    ############
 
     def onExperimentCurrentIndexChanged(self):
         # Experiment page
-        console.debug(IO.formatMsg('main', f'Updating curves on experiment page using {self._proxy.plotting.currentLib1d}...'))
+        console.debug(IO.formatMsg('main', f'Redrawing curves on experiment page using {self._proxy.plotting.currentLib1d}...'))
         self._proxy.plotting.drawMeasuredOnExperimentChart()
         self._proxy.plotting.drawBackgroundOnExperimentChart()
 
         # Analysis page
         if self._proxy.analysis.defined:
-            console.debug(IO.formatMsg('main', f'Updating curves on analysis page using {self._proxy.plotting.currentLib1d}...'))
+            console.debug(IO.formatMsg('main', f'Redrawing curves on analysis page using {self._proxy.plotting.currentLib1d}...'))
             self._proxy.plotting.drawMeasuredOnAnalysisChart()
             self._proxy.plotting.drawBackgroundOnAnalysisChart()
             self._proxy.plotting.drawCalculatedOnAnalysisChart()
             self._proxy.plotting.drawResidualOnAnalysisChart()
+            self._proxy.plotting.drawBraggOnAnalysisChart()
 
     def onExperimentDataBlocksChanged(self):
         # Project page
@@ -154,6 +151,7 @@ class Connections(QObject):
             self._proxy.plotting.drawBackgroundOnExperimentChart()
             self._proxy.plotting.drawCalculatedOnAnalysisChart()
             self._proxy.plotting.drawResidualOnAnalysisChart()
+            self._proxy.plotting.drawBraggOnAnalysisChart()
             console.debug(IO.formatMsg('main', 'Setting fittables on the analysis page...'))
             self._proxy.fittables.set()
 
@@ -195,6 +193,7 @@ class Connections(QObject):
             self._proxy.plotting.drawBackgroundOnExperimentChart()
             self._proxy.plotting.drawCalculatedOnAnalysisChart()
             self._proxy.plotting.drawResidualOnAnalysisChart()
+            self._proxy.plotting.drawBraggOnAnalysisChart()
             console.debug(IO.formatMsg('main', 'Updating fittables on the analysis page...'))
             self._proxy.fittables.set()
 
@@ -207,28 +206,25 @@ class Connections(QObject):
         self._proxy.project.setNeedSaveToTrue()
         console.debug('')
 
+    ##########
     # Analysis
+    ##########
 
     def onAnalysisDefined(self):
         self._proxy.status.calculator = 'CrysPy'
         self._proxy.status.minimizer = 'Lmfit (BFGS)'
-        #self._proxy.fittables.set()
-        #console.debug(IO.formatMsg('main', f'Updating curves on analysis page using {self._proxy.plotting.currentLib1d}...'))
-        #self._proxy.plotting.drawMeasuredOnAnalysisChart()
-        #self._proxy.plotting.drawBackgroundOnAnalysisChart()
-        #self._proxy.plotting.drawCalculatedOnAnalysisChart()
-        #self._proxy.plotting.drawResidualOnAnalysisChart()
-
-    def onAnalysisYCalcTotalChanged(self):
-        console.debug(f"Updating curves on analysis page using {self._proxy.plotting.currentLib1d}")
+        console.debug(IO.formatMsg('main', f'Drawing curves on analysis page using {self._proxy.plotting.currentLib1d}...'))
+        self._proxy.plotting.drawMeasuredOnAnalysisChart()
+        self._proxy.plotting.drawBackgroundOnExperimentChart()
         self._proxy.plotting.drawCalculatedOnAnalysisChart()
-        self._proxy.plotting.drawBackgroundOnAnalysisChart()
         self._proxy.plotting.drawResidualOnAnalysisChart()
+        self._proxy.plotting.drawBraggOnAnalysisChart()
+        console.debug(IO.formatMsg('main', 'Setting fittables on the analysis page...'))
+        self._proxy.fittables.set()
 
+    ###########
     # Fittables
-
-    #def onFittablesDataChanged(self):
-    #    self._proxy.fittables.setDataJson()
+    ###########
 
     def onFittablesFilterCriteriaChanged(self):
         self._proxy.fittables.set()
@@ -255,6 +251,7 @@ class Connections(QObject):
         console.debug(IO.formatMsg('main', f'Redrawing curves on analysis page using {self._proxy.plotting.currentLib1d}...'))
         self._proxy.plotting.drawCalculatedOnAnalysisChart()
         self._proxy.plotting.drawResidualOnAnalysisChart()
+        self._proxy.plotting.drawBraggOnAnalysisChart()
         console.debug(IO.formatMsg('main', 'Updating fittables on the analysis page...'))
         self._proxy.fittables.set()
 
@@ -263,7 +260,6 @@ class Connections(QObject):
         if not self._modelNeedUpdate:
             return
         console.debug(IO.formatMsg('main', 'Updating structure view for the current model...'))
-        #self._proxy.model._structureViewUpdater.update()
         self._proxy.model.updateCurrentModelStructView()
         console.debug(IO.formatMsg('main', '(Re)converting model data blocks to CIF...'))
         self._proxy.model.setDataBlocksCif()
@@ -287,15 +283,13 @@ class Connections(QObject):
         self._proxy.experiment.dataBlocksNoMeasChanged.emit()
         self._silent = False
 
-
-
-
+    #########
     # Fitting
+    #########
 
     def onFittingFitFinished(self):
         # Model page
         console.debug(IO.formatMsg('main', 'Updating structure view for the current model...'))
-        #self._proxy.model._structureViewUpdater.update()
         self._proxy.model.updateCurrentModelStructView()
         console.debug(IO.formatMsg('main', '(Re)converting model data blocks to CIF...'))
         self._proxy.model.setDataBlocksCif()
@@ -303,18 +297,25 @@ class Connections(QObject):
         # Experiment page
         console.debug(IO.formatMsg('main', 'Replacing arrays...'))
         self._proxy.experiment.replaceArrays()
-        console.debug(IO.formatMsg('main', f'Updating curves on experiment page using {self._proxy.plotting.currentLib1d}...'))
+        console.debug(IO.formatMsg('main', f'Redrawing curves on experiment page using {self._proxy.plotting.currentLib1d}...'))
         self._proxy.plotting.drawBackgroundOnExperimentChart()
         console.debug(IO.formatMsg('main', 'Reconverting experiment data blocks to CIF...'))
         self._proxy.experiment.setDataBlocksCif()
 
         # Analysis page
-        console.debug(IO.formatMsg('main', 'Redrawing curves on analysis page using {self._proxy.plotting.currentLib1d}...'))
+        console.debug(IO.formatMsg('main', f'Redrawing curves on analysis page using {self._proxy.plotting.currentLib1d}...'))
         self._proxy.plotting.drawBackgroundOnExperimentChart()
         self._proxy.plotting.drawCalculatedOnAnalysisChart()
         self._proxy.plotting.drawResidualOnAnalysisChart()
+        self._proxy.plotting.drawBraggOnAnalysisChart()
         console.debug(IO.formatMsg('main', 'Updating fittables on the analysis page...'))
         self._proxy.fittables.set()
+
+        # Summary page
+        console.debug(IO.formatMsg('main', 'Updating summary report...'))
+        if not self._proxy.summary.isCreated:
+            self._proxy.summary.isCreated = True
+        self._proxy.summary.setDataBlocksCif()  # NEED FIX: Update summary on any change, not only after fitting
 
         # GUI upadte silently (without calling self.onExperimentDataBlocksNoMeasChanged)
         self._silent = True
@@ -322,15 +323,20 @@ class Connections(QObject):
         self._proxy.experiment.dataBlocksNoMeasChanged.emit()
         self._silent = False
 
+        # Need save after fitting
+        self._proxy.project.setNeedSaveToTrue()
+
         console.debug('')
 
     def onFittingChiSqSignificantlyChanged(self):
         # Experiment page
         console.debug(IO.formatMsg('main', 'Replacing arrays...'))
         self._proxy.experiment.replaceArrays()
+        # self._proxy.plotting.drawBackgroundOnExperimentChart() # Not needed!!!! as it is updated on Experiment page clicked???
 
         # Analysis page
-        console.debug(IO.formatMsg('main', 'Redrawing curves on analysis page using {self._proxy.plotting.currentLib1d}...'))
-        self._proxy.plotting.drawBackgroundOnExperimentChart()
+        console.debug(IO.formatMsg('main', f'Redrawing curves on analysis page using {self._proxy.plotting.currentLib1d}...'))
+        self._proxy.plotting.drawBackgroundOnAnalysisChart()
         self._proxy.plotting.drawCalculatedOnAnalysisChart()
         self._proxy.plotting.drawResidualOnAnalysisChart()
+        self._proxy.plotting.drawBraggOnAnalysisChart()

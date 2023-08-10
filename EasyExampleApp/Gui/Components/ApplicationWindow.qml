@@ -62,14 +62,18 @@ EaComponents.ApplicationWindow {
             fontIcon: 'backspace'
             ToolTip.text: qsTr('Reset to initial state without project, model and data')
             onClicked: {
+                console.debug(`Clicking 'Reset' button: ${this}`)
                 appBarCentralTabs.setCurrentIndex(0)
                 Globals.Vars.projectPageEnabled = false
                 Globals.Vars.modelPageEnabled = false
                 Globals.Vars.experimentPageEnabled = false
                 Globals.Vars.analysisPageEnabled = false
                 Globals.Vars.summaryPageEnabled = false
-                Globals.Proxies.main.experiment.removeAllExperiments()
-                Globals.Proxies.main.model.removeAllModels()
+                Globals.Proxies.main.analysis.resetAll()
+                Globals.Proxies.main.experiment.resetAll()
+                Globals.Proxies.main.model.resetAll()
+                Globals.Proxies.main.data.resetAll()
+                Globals.Proxies.main.status.resetAll()
             }
             Component.onCompleted: Globals.Refs.app.appbar.resetStateButton = this
         }
@@ -88,7 +92,7 @@ EaComponents.ApplicationWindow {
         EaElements.ToolButton {
             fontIcon: 'question-circle'
             ToolTip.text: qsTr('Get online help')
-            onClicked: Qt.openUrlExternally(Globals.Configs.appConfig.homePageUrl)
+            onClicked: Qt.openUrlExternally(Globals.Configs.appConfig.docsUrl)
         },
 
         EaElements.ToolButton {
@@ -129,7 +133,7 @@ EaComponents.ApplicationWindow {
 
         // Model tab
         EaElements.AppBarTabButton {
-            enabled: Globals.Vars.modelPageEnabled || Globals.Proxies.main.project.created  // NEED FIX: rename to defined
+            enabled: Globals.Vars.modelPageEnabled  // NEED FIX: rename to defined
             fontIcon: 'layer-group'  //'gem'
             text: qsTr('Model')
             ToolTip.text: qsTr('Model description page')
@@ -142,7 +146,7 @@ EaComponents.ApplicationWindow {
 
         // Experiment tab
         EaElements.AppBarTabButton {
-            enabled: Globals.Vars.experimentPageEnabled || Globals.Proxies.main.model.defined
+            enabled: Globals.Vars.experimentPageEnabled
             fontIcon: 'microscope'
             text: qsTr('Experiment')
             ToolTip.text: qsTr('Experimental settings and measured data page')
@@ -155,7 +159,7 @@ EaComponents.ApplicationWindow {
 
         // Analysis tab
         EaElements.AppBarTabButton {
-            enabled: Globals.Vars.analysisPageEnabled || Globals.Proxies.main.experiment.defined
+            enabled: Globals.Vars.analysisPageEnabled
             fontIcon: 'calculator'
             text: qsTr('Analysis')
             ToolTip.text: qsTr('Simulation and fitting page')
@@ -174,9 +178,9 @@ EaComponents.ApplicationWindow {
             onEnabledChanged: enabled ?
                                   summaryPageLoader.source = 'Pages/Summary/PageStructure.qml' :
                                   summaryPageLoader.source = ''
-            onCheckedChanged: checked ?
-                                  Globals.Proxies.main.summary.isCreated = true :
-                                  Globals.Proxies.main.summary.isCreated = false
+            //onCheckedChanged: checked ?
+            //                      Globals.Proxies.main.summary.isCreated = true :
+            //                      Globals.Proxies.main.summary.isCreated = false
             Component.onCompleted: Globals.Refs.app.appbar.summaryButton = this
         }
 

@@ -107,7 +107,6 @@
         <file>../../EasyApp/EasyApp/Gui/Elements/Popup.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Elements/qmldir</file>
         <file>../../EasyApp/EasyApp/Gui/Elements/RadioButton.qml</file>
-        <file>../../EasyApp/EasyApp/Gui/Elements/RadioIndicator.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Elements/RectangularGlow.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Elements/RemoteController.qml</file>
         <file>../../EasyApp/EasyApp/Gui/Elements/RemotePointer.qml</file>

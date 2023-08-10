@@ -16,7 +16,8 @@ import Gui.Components as Components
 
 
 EaComponents.ContentPage {
-    defaultInfo: Globals.Proxies.main.model.defined ?
+    defaultInfo: Globals.Proxies.main.model.defined &&
+                 Globals.Proxies.main.experiment.defined ?
                      "" :
                      qsTr("No analysis done")
 
@@ -30,7 +31,10 @@ EaComponents.ContentPage {
         ]
 
         items: [
-            Loader { source: `MainContent/${EaGlobals.Vars.currentLib1d}1dTab.qml` }
+            Loader {
+                source: `MainContent/${EaGlobals.Vars.currentLib1d}1dTab.qml`
+                onStatusChanged: if (status === Loader.Ready) console.debug(`${source} loaded`)
+            }
         ]
     }
 
@@ -46,6 +50,8 @@ EaComponents.ContentPage {
             Loader { source: 'SideBarAdvanced.qml' },
             Loader { source: 'SideBarText.qml' }
         ]
+
+        continueButton.enabled: Globals.Proxies.main.summary.isCreated
 
         continueButton.onClicked: {
             console.debug(`Clicking '${continueButton.text}' button: ${this}`)

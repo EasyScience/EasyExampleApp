@@ -6,6 +6,7 @@ import QtQuick
 import QtQuick.Controls
 import QtCharts
 
+import EasyApp.Gui.Logic as EaLogic
 import EasyApp.Gui.Globals as EaGlobals
 import EasyApp.Gui.Style as EaStyle
 import EasyApp.Gui.Elements as EaElements
@@ -15,7 +16,12 @@ import Gui.Globals as Globals
 
 
 Column {
-    property int selectedIndex: 0
+    property int selectedParamIndex: -1
+    onSelectedParamIndexChanged: {
+        updateSliderLimits()
+        updateSliderValue()
+    }
+
     property string selectedColor: EaStyle.Colors.themeForegroundHovered
 
     spacing: EaStyle.Sizes.fontPixelSize
@@ -119,11 +125,13 @@ Column {
         maxRowCountShow: 7 +
                          Math.trunc((applicationWindow.height - EaStyle.Sizes.appWindowMinimumHeight) /
                                     EaStyle.Sizes.tableRowHeight)
-        // Table mode
+        // Table model
         // We only use the length of the model object defined in backend logic and
         // directly access that model in every row using the TableView index property.
         model: Globals.Proxies.main_fittables_data.length
-        // Table mode
+        // Table model
+
+        Component.onCompleted: selectedParamIndex = 0
 
         // Header row
         header: EaComponents.TableViewHeader {
@@ -140,6 +148,7 @@ Column {
             }
 
             EaComponents.TableViewLabel {
+                id: valueLabel
                 width: EaStyle.Sizes.fontPixelSize * 4.5
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
@@ -153,10 +162,24 @@ Column {
             }
 
             EaComponents.TableViewLabel {
-                width: EaStyle.Sizes.fontPixelSize * 4.0
+                width: valueLabel.width
                 horizontalAlignment: Text.AlignRight
                 color: EaStyle.Colors.themeForegroundMinor
                 text: qsTr("error")
+            }
+
+            EaComponents.TableViewLabel {
+                width: valueLabel.width
+                horizontalAlignment: Text.AlignRight
+                color: EaStyle.Colors.themeForegroundMinor
+                text: qsTr("min")
+            }
+
+            EaComponents.TableViewLabel {
+                width: valueLabel.width
+                horizontalAlignment: Text.AlignRight
+                color: EaStyle.Colors.themeForegroundMinor
+                text: qsTr("max")
             }
 
             EaComponents.TableViewLabel {
@@ -173,7 +196,7 @@ Column {
             property bool isCurrentItem: ListView.isCurrentItem
             property var item: Globals.Proxies.main_fittables_data[index]
 
-            mouseArea.onPressed: selectedIndex = tableView.currentIndex
+            mouseArea.onPressed: selectedParamIndex = tableView.currentIndex
 
             onIsCurrentItemChanged: {
                 if (tableView.currentValueTextInput != valueColumn) {
@@ -187,30 +210,36 @@ Column {
             }
 
             EaComponents.TableViewLabel {
-                text: parameterName(item.fullName)
+                width: EaStyle.Sizes.fontPixelSize * 5
+                text: Globals.Proxies.paramName(item, EaGlobals.Vars.paramNameFormat)
                 textFormat: Text.RichText
-                selected: hovered ||
-                          index === selectedIndex
-                elide: Text.ElideMiddle
+                clip: true
+                // elide: Text.ElideMiddle  // NEED FIX: Doesn't work with textFormat: Text.RichText
                 ToolTip.text: text
             }
 
             EaComponents.TableViewParameter {
                 id: valueColumn
-                enabled: item.enabled ?? true  // NEED FIX
+                selected: //index === tableView.currentIndex ||
+                          index === selectedParamIndex
                 fit: item.fit
-                text: item.value.toFixed(4)
+                text: EaLogic.Utils.toErrSinglePrecision(item.value, item.error).length <= 8 ?
+                          EaLogic.Utils.toErrSinglePrecision(item.value, item.error) :
+                          EaLogic.Utils.toDefaultPrecision(item.value)
                 onEditingFinished: {
                     focus = false
                     console.debug('')
-                    console.debug("*** Editing 'value' field of fittable on Analysis page ***")
+                    console.debug("*** Editing (manual) 'value' field of fittable on Analysis page ***")
                     Globals.Proxies.main.fittables.editSilently(item.blockType,
                                                         item.blockIndex,
                                                         item.loopName,
                                                         item.rowIndex,
-                                                        item.paramName,
+                                                        item.name,
                                                         'value',
                                                         text)
+                    updateSliderLimits()
+                    slider.value = Globals.Proxies.main_fittables_data[selectedParamIndex].value
+
                 }
             }
 
@@ -221,7 +250,43 @@ Column {
 
             EaComponents.TableViewLabel {
                 elide: Text.ElideNone
-                text: item.error === 0 ? '' : item.error.toFixed(4)
+                text: EaLogic.Utils.toSinglePrecision(item.error)
+            }
+
+            EaComponents.TableViewParameter {
+                minored: true
+                text: EaLogic.Utils.toDefaultPrecision(item.min).replace('Infinity', 'inf')
+                onEditingFinished: {
+                    focus = false
+                    console.debug('')
+                    console.debug("*** Editing 'min' field of fittable on Analysis page ***")
+                    const value = (text === '' ? '-inf' : text)
+                    Globals.Proxies.main.fittables.editSilently(item.blockType,
+                                                        item.blockIndex,
+                                                        item.loopName,
+                                                        item.rowIndex,
+                                                        item.name,
+                                                        'min',
+                                                        value)
+                }
+            }
+
+            EaComponents.TableViewParameter {
+                minored: true
+                text: EaLogic.Utils.toDefaultPrecision(item.max).replace('Infinity', 'inf')
+                onEditingFinished: {
+                    focus = false
+                    console.debug('')
+                    console.debug("*** Editing 'max' field of fittable on Analysis page ***")
+                    const value = (text === '' ? 'inf' : text)
+                    Globals.Proxies.main.fittables.editSilently(item.blockType,
+                                                        item.blockIndex,
+                                                        item.loopName,
+                                                        item.rowIndex,
+                                                        item.name,
+                                                        'max',
+                                                        value)
+                }
             }
 
             EaComponents.TableViewCheckBox {
@@ -235,7 +300,7 @@ Column {
                                                         item.blockIndex,
                                                         item.loopName,
                                                         item.rowIndex,
-                                                        item.paramName,
+                                                        item.name,
                                                         'fit',
                                                         checked)
                 }
@@ -252,8 +317,18 @@ Column {
         spacing: EaStyle.Sizes.fontPixelSize
 
         EaElements.TextField {
+            readOnly: true
             width: EaStyle.Sizes.fontPixelSize * 6
-            text: slider.from.toFixed(4)
+            //text: EaLogic.Utils.toDefaultPrecision(slider.from)
+            //text: EaLogic.Utils.toErrSinglePrecision(slider.from, Globals.Proxies.main_fittables_data[selectedParamIndex].error)
+            text: {
+                const value = Globals.Proxies.main_fittables_data[selectedParamIndex].value
+                const error = Globals.Proxies.main_fittables_data[selectedParamIndex].error
+                return EaLogic.Utils.toErrSinglePrecision(value, error).length <= 8 ?
+                            EaLogic.Utils.toErrSinglePrecision(slider.from, error) :
+                            EaLogic.Utils.toDefaultPrecision(slider.from)
+
+            }
         }
 
         EaElements.Slider {
@@ -262,28 +337,50 @@ Column {
             enabled: !Globals.Proxies.main.fitting.isFittingNow
             width: tableView.width - EaStyle.Sizes.fontPixelSize * 14
 
-
-            from: Globals.Proxies.main_fittables_data[selectedIndex].min
-            to: Globals.Proxies.main_fittables_data[selectedIndex].max
-            stepSize: (to - from) / 100
-            value: Globals.Proxies.main_fittables_data[selectedIndex].value
-
+            stepSize: (to - from) / 20
             snapMode: Slider.SnapAlways
 
+            toolTipText: {
+                const value = Globals.Proxies.main_fittables_data[selectedParamIndex].value
+                const error = Globals.Proxies.main_fittables_data[selectedParamIndex].error
+                return EaLogic.Utils.toErrSinglePrecision(value, error).length <= 8 ?
+                            EaLogic.Utils.toErrSinglePrecision(value, error) :
+                            EaLogic.Utils.toDefaultPrecision(value)
+            }
+
             onMoved: {
-                //moveDelayTimer.restart()
-                if (tableView.currentValueTextInput.text !== slider.value.toFixed(4)) {
-                    //enableOpenGL()
-                    tableView.currentValueTextInput.text = slider.value.toFixed(4)
-                    tableView.currentValueTextInput.editingFinished()
-                    //disableOpenGL()
+                    console.debug('')
+                    console.debug("*** Editing (slider) 'value' field of fittable on Analysis page ***")
+                    const item = Globals.Proxies.main_fittables_data[selectedParamIndex]
+                    Globals.Proxies.main.fittables.editSilently(item.blockType,
+                                                        item.blockIndex,
+                                                        item.loopName,
+                                                        item.rowIndex,
+                                                        item.name,
+                                                        'value',
+                                                        value.toString())
+            }
+
+            onPressedChanged: {
+                if (!pressed) {
+                    updateSliderLimits()
                 }
             }
         }
 
         EaElements.TextField {
+            readOnly: true
             width: EaStyle.Sizes.fontPixelSize * 6
-            text: slider.to.toFixed(4)
+            //text: EaLogic.Utils.toDefaultPrecision(slider.to)
+            //text: EaLogic.Utils.toErrSinglePrecision(slider.to, Globals.Proxies.main_fittables_data[selectedParamIndex].error)
+            text: {
+                const value = Globals.Proxies.main_fittables_data[selectedParamIndex].value
+                const error = Globals.Proxies.main_fittables_data[selectedParamIndex].error
+                return EaLogic.Utils.toErrSinglePrecision(value, error).length <= 8 ?
+                            EaLogic.Utils.toErrSinglePrecision(slider.to, error) :
+                            EaLogic.Utils.toDefaultPrecision(slider.to)
+
+            }
         }
 
     }
@@ -291,6 +388,7 @@ Column {
 
     // Move delay timer
 
+    /*
     Timer {
         id: moveDelayTimer
         interval: 0 //50
@@ -303,6 +401,7 @@ Column {
             }
         }
     }
+    */
 
     // Use OpenGL on slider move only
 
@@ -314,58 +413,16 @@ Column {
 
     // Logic
 
-    function parameterName(fullName) {
-        if (typeof fullName === 'undefined') {
-            return ''
-        }
+    function updateSliderValue() {
+        const value = Globals.Proxies.main_fittables_data[selectedParamIndex].value
+        slider.value = EaLogic.Utils.toDefaultPrecision(value)
+    }
 
-        if (!Globals.Vars.useIconifiedNames) {
-            return fullName
-        }
-
-        const map = [
-                      { 'from': '.phase.',                     'icon': '&nbsp; layer-group &nbsp;'                              },
-                      { 'from': 'model.',                      'icon': 'layer-group &nbsp;'                                     },
-
-                      { 'from': '.cell_length_',               'icon': '&nbsp; cube ruler &nbsp;',          'txt': 'length '    },
-                      { 'from': '.cell_angle_',                'icon': '&nbsp; cube less-than &nbsp;',      'txt': 'angle '     },
-                      { 'from': 'alpha',                                                                    'txt': 'α'          },
-                      { 'from': 'beta',                                                                     'txt': 'β'          },
-                      { 'from': 'gamma',                                                                    'txt': 'γ'          },
-
-                      { 'from': '.atom_site.',                 'icon': '&nbsp; atom &nbsp;'                                     },
-                      { 'from': '.fract_',                     'icon': '&nbsp; map-marker-alt &nbsp;',      'txt': 'fract '     },
-                      { 'from': '.occupancy',                  'icon': '&nbsp; fill &nbsp;',                'txt': 'occ'        },
-                      { 'from': '.B_iso_or_equiv',             'icon': '&nbsp; arrows-alt &nbsp;',          'txt': 'Biso'       },
-
-                      { 'from': 'experiment.',                 'icon': 'microscope &nbsp;'                                      },
-
-                      { 'from': '.diffrn_radiation_wavelength','icon': '&nbsp; radiation &nbsp;',           'txt': 'wavelength' },
-                      { 'from': '.pd_meas_2theta_offset',      'icon': '&nbsp; arrows-alt-h &nbsp;',        'txt': '2θ offset'  },
-                      { 'from': '.scale',                      'icon': '&nbsp; weight &nbsp;',              'txt': 'scale'      },
-                      { 'from': '.intensity',                  'icon': '&nbsp; mountain &nbsp;',            'txt': 'intensity'  },
-
-                      { 'from': '.pd_instr_resolution_',       'icon': '&nbsp; grip-lines-vertical &nbsp;'                      },
-                      { 'from': '.pd_instr_reflex_asymmetry_', 'icon': '&nbsp; balance-scale-left &nbsp;'                       },
-
-                      { 'from': '.pd_background.',             'icon': '&nbsp; wave-square &nbsp;',         'txt': 'bkg '       },
-                      { 'from': '_deg',                                                                     'txt': '°'          }
-                  ]
-        const face = `'${EaStyle.Fonts.iconsFamily}'`
-        const color = `'${EaStyle.Colors.themeForegroundDisabled}'`
-
-        let name = fullName
-        for (const item of map) {
-            if ('icon' in item && 'txt' in item) {
-                name = name.replace(item.from, `<font color=${color} face=${face}>${item.icon}</font>${item.txt}`)
-            } else if ('icon' in item) {
-                name = name.replace(item.from, `<font color=${color} face=${face}>${item.icon}</font>`)
-            } else if ('txt' in item) {
-                name = name.replace(item.from, item.txt)
-            }
-        }
-
-        return name
+    function updateSliderLimits() {
+        const from = Globals.Proxies.main_fittables_data[selectedParamIndex].from
+        const to = Globals.Proxies.main_fittables_data[selectedParamIndex].to
+        slider.from = EaLogic.Utils.toDefaultPrecision(from)
+        slider.to = EaLogic.Utils.toDefaultPrecision(to)
     }
 
     function enableOpenGL() {
@@ -392,5 +449,8 @@ Column {
         Globals.Refs.app.analysisPage.plotView.useAnimation = true
         Globals.Refs.app.analysisPage.plotView.useOpenGL = false
     }
+
+
+
 
 }

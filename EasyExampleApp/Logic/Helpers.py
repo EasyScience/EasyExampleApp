@@ -192,6 +192,7 @@ class BackendHelpers(QObject):
         #    console.debug(f"File {path} doesn't exist")
         return exists
 
+
 class PyProxyWorker(QObject):
     pyProxyExposedToQml = Signal()
 
@@ -200,9 +201,9 @@ class PyProxyWorker(QObject):
         self._engine = engine
 
     def exposePyProxyToQml(self):
+        from Logic.PyProxy import PyProxy
         time.sleep(0.5)
         console.debug('Slept for 0.5s to allow splash screen to start')
-        from Logic.PyProxy import PyProxy
         mainThread = QCoreApplication.instance().thread()
         proxy = PyProxy()
         console.debug('PyProxy object created')

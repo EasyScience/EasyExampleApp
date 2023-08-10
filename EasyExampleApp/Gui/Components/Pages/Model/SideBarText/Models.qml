@@ -59,12 +59,12 @@ EaElements.ComboBox {
                     ToolTip.text: qsTr("Calculated pattern color")
                     backgroundColor: "transparent"
                     borderColor: "transparent"
-                    iconColor: EaStyle.Colors.chartForegrounds[index]
+                    iconColor: EaStyle.Colors.chartForegroundsExtra[index]
                 }
 
                 EaComponents.TableViewParameter {
                     enabled: false
-                    text: comboBox.model[index].name
+                    text: comboBox.model[index].name.value
                 }
             }
         }
@@ -103,13 +103,13 @@ EaElements.ComboBox {
                 ToolTip.text: qsTr("Calculated pattern color")
                 backgroundColor: "transparent"
                 borderColor: "transparent"
-                iconColor: EaStyle.Colors.chartForegrounds[currentIndex]
+                iconColor: EaStyle.Colors.chartForegroundsExtra[currentIndex]
             }
 
             EaComponents.TableViewParameter {
                 enabled: false
                 text: typeof comboBox.model[currentIndex] !== 'undefined' ?
-                    comboBox.model[currentIndex].name :
+                    comboBox.model[currentIndex].name.value :
                     ''
             }
         }

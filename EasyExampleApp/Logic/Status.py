@@ -2,7 +2,9 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-from PySide6.QtCore import QObject, Signal, Property
+from PySide6.QtCore import QObject, Signal, Slot, Property
+
+from EasyApp.Logic.Logging import console
 
 
 class Status(QObject):
@@ -127,3 +129,16 @@ class Status(QObject):
             return
         self._fitStatus = newValue
         self.fitStatusChanged.emit()
+
+    @Slot()
+    def resetAll(self):
+        self.project = 'Undefined'
+        self.phaseCount = ''
+        self.experimentsCount = ''
+        self.calculator = ''
+        self.minimizer = ''
+        self.variables = ''
+        self.fitIteration = ''
+        self.goodnessOfFit = ''
+        self.fitStatus = ''
+        console.debug("All status info removed")

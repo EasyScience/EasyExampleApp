@@ -12,13 +12,11 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     readonly property var projectConfig: QtObject {
         readonly property var release: QtObject {
             readonly property string appName: 'EasyDiffraction'
+            readonly property string version: '0.9.0-pre-alpha.1'
             readonly property string appIssuesUrl: 'https://github.com/EasyScience/EasyExampleApp/issues'
-        }
-        readonly property var tool: QtObject {
-            property var poetry: QtObject {
-                readonly property string homepage: 'https://github.com/EasyScience/EasyExampleApp'
-                readonly property string version: '0.9.0-pre-alpha.1'
-            }
+            readonly property string homePageUrl: 'https://easydiffraction.org'
+            readonly property string docsUrl: 'https://easydiffraction.org/#docs'
+            readonly property string contactUrl: 'https://easydiffraction.org/#contact'
         }
         readonly property var ci: QtObject {
             property var app: QtObject {}
@@ -34,10 +32,12 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
         readonly property string icon: iconPath('App.svg')
 
-        readonly property string version: projectConfig.tool.poetry.version
+        readonly property string version: projectConfig.release.version
 
-        readonly property string homePageUrl: projectConfig.tool.poetry.homepage
+        readonly property string homePageUrl: projectConfig.release.homePageUrl
         readonly property string issuesUrl: projectConfig.release.appIssuesUrl
+        readonly property string docsUrl: projectConfig.release.docsUrl
+        readonly property string contactUrl: projectConfig.release.contactUrl
 
         readonly property bool remote: typeof projectConfig.ci.app.info !== 'undefined'
 
@@ -62,10 +62,11 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         readonly property string dependenciesUrl: githubRawContentUrl(branch, 'DEPENDENCIES.md')
 
         readonly property string description:
-`${name} is a scientific software for modelling and analysis of
-diffraction data.
+`${name} is a scientific software for modelling and
+analysis of diffraction data.
 
 ${name} is developed by ESS DMSC`
+
         readonly property var developerIcons: [
             { url: "https://ess.eu", icon: iconPath('ESS.png'), heightScale: 3.0 }
         ]

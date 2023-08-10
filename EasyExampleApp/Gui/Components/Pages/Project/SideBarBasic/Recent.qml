@@ -57,7 +57,11 @@ EaComponents.TableView {
         mouseArea.onPressed: {
             const filePath = tableView.model[index]
             const fileUrl = Qt.resolvedUrl(filePath)
+            Globals.Vars.modelPageEnabled = true
+            Globals.Vars.experimentPageEnabled = true
             Globals.Proxies.main.project.loadProjectFromFile(fileUrl)
+            Globals.Vars.analysisPageEnabled = true
+            Globals.Vars.summaryPageEnabled = true
         }
 
         EaComponents.TableViewLabel {

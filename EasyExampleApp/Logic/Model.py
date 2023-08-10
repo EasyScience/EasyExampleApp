@@ -51,7 +51,7 @@ _atom_site_fract_z
 _atom_site_occupancy
 _atom_site_adp_type
 _atom_site_B_iso_or_equiv
-C C 0 0 0 1 Biso 0
+O O 0 0 0 1 Biso 0
 """
 
 
@@ -60,7 +60,7 @@ class Model(QObject):
     currentIndexChanged = Signal()
     dataBlocksChanged = Signal()
     dataBlocksCifChanged = Signal()
-    yCalcArraysChanged = Signal()
+    #yCalcArraysChanged = Signal()
 
     structViewAtomsModelChanged = Signal()
     structViewCellModelChanged = Signal()
@@ -70,11 +70,11 @@ class Model(QObject):
         super().__init__(parent)
         self._proxy = parent
         self._defined = False
-        self._currentIndex = 0
+        self._currentIndex = -1
         self._dataBlocks = []
         self._dataBlocksCif = []
-        self._yCalcArrays = []
-        self._yBkgArrays = []
+        #self._yCalcArrays = []
+        #self._yBkgArrays = []
 
         self._structureViewUpdater = StructureViewUpdater(self._proxy)
 
@@ -123,7 +123,6 @@ class Model(QObject):
 
     @Property('QVariant', notify=dataBlocksChanged)
     def dataBlocks(self):
-        #console.error('MODEL DATABLOCK GETTER')
         return self._dataBlocks
 
     @Property('QVariant', notify=dataBlocksCifChanged)
@@ -186,21 +185,23 @@ class Model(QObject):
             self._proxy.data._cryspyDict.update(cryspyModelsDict)
             self._dataBlocks += edModels
 
-            self.defined = bool(len(self.dataBlocks))
+            self._currentIndex = len(self.dataBlocks) - 1
+            if not self.defined:
+                self.defined = bool(len(self.dataBlocks))
 
             console.debug(IO.formatMsg('sub', f'{len(edModels)} model(s)', '', 'to intern dataset', 'added'))
 
             self.dataBlocksChanged.emit()
+
         else:
             console.debug(IO.formatMsg('sub', 'No model(s)', '', 'to intern dataset', 'added'))
-
 
     @Slot(str)
     def replaceModel(self, edCif=''):
         console.debug("Cryspy obj and dict need to be replaced")
 
         currentDataBlock = self.dataBlocks[self.currentIndex]
-        currentModelName = currentDataBlock['name']
+        currentModelName = currentDataBlock['name']['value']
 
         cryspyObjBlockNames = [item.data_name for item in self._proxy.data._cryspyObj.items]
         cryspyObjBlockIdx = cryspyObjBlockNames.index(currentModelName)
@@ -221,15 +222,12 @@ class Model(QObject):
         console.debug(f"Model data block '{currentModelName}' (no. {self.currentIndex + 1}) has been replaced")
         self.dataBlocksChanged.emit()
 
-
-
-
     @Slot(int)
     def removeModel(self, index):
         console.debug(f"Removing model no. {index + 1}")
 
         currentDataBlock = self.dataBlocks[index]
-        currentModelName = currentDataBlock['name']
+        currentModelName = currentDataBlock['name']['value']
 
         cryspyObjBlockNames = [item.data_name for item in self._proxy.data._cryspyObj.items]
         cryspyObjBlockIdx = cryspyObjBlockNames.index(currentModelName)
@@ -244,22 +242,21 @@ class Model(QObject):
 
         self.dataBlocksChanged.emit()
 
-        if len(self._yCalcArrays) > index:
-            del self._yCalcArrays[index]
-            self.yCalcArraysChanged.emit()
+        #if len(self._yCalcArrays) > index:
+        #    del self._yCalcArrays[index]
+        #    self.yCalcArraysChanged.emit()
 
         console.debug(f"Model no. {index + 1} has been removed")
 
     @Slot()
-    def removeAllModels(self):
-        pass
-        #self._dataBlocks.clear()
-        #self._yCalcArrays.clear()
-        #self.dataBlocksChanged.emit()
-        #self.yCalcArraysChanged.emit()
-        #console.debug("All models have been removed")
-
-
+    def resetAll(self):
+        self._defined = False
+        self._currentIndex = -1
+        self._dataBlocks = []
+        self._dataBlocksCif = []
+        #self._yCalcArrays = []
+        #self._yBkgArrays = []
+        console.debug("All models removed")
 
     @Slot(int, str, str, 'QVariant')
     def setMainParamWithFullUpdate(self, blockIndex, paramName, field, value):
@@ -359,8 +356,6 @@ class Model(QObject):
 
         console.debug(IO.formatMsg('sub', 'Intern dict', 'added', f'{block}[{blockIndex}].{loopName}[{atomsCount}]'))
 
-
-
     def editDataBlockMainParam(self, blockIndex, paramName, field, value):
         blockType = 'model'
         oldValue = self._dataBlocks[blockIndex]['params'][paramName][field]
@@ -386,27 +381,39 @@ class Model(QObject):
         return True
 
     def editCryspyDictByMainParam(self, blockIndex, paramName, field, value):
-        path, value = self.cryspyDictPathByMainParam(blockIndex, paramName, field, value)
+        if field != 'value' and field != 'fit':
+            return True
+
+        path, value = self.cryspyDictPathByMainParam(blockIndex, paramName, value)
+        if field == 'fit':
+            path[1] = f'flags_{path[1]}'
+
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
             return False
         self._proxy.data._cryspyDict[path[0]][path[1]][path[2]] = value
+
         console.debug(IO.formatMsg('sub', 'Cryspy dict', f'{oldValue} → {value}', f'{path}'))
         return True
 
     def editCryspyDictByLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
-        path, value = self.cryspyDictPathByLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
+        if field != 'value' and field != 'fit':
+            return True
+
+        path, value = self.cryspyDictPathByLoopParam(blockIndex, loopName, paramName, rowIndex, value)
+        if field == 'fit':
+            path[1] = f'flags_{path[1]}'
+
         oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
         if oldValue == value:
             return False
         self._proxy.data._cryspyDict[path[0]][path[1]][path[2]] = value
+
         console.debug(IO.formatMsg('sub', 'Cryspy dict', f'{oldValue} → {value}', f'{path}'))
         return True
 
-
-
-    def cryspyDictPathByMainParam(self, blockIndex, paramName, field, value):
-        blockName = self._dataBlocks[blockIndex]['name']
+    def cryspyDictPathByMainParam(self, blockIndex, paramName, value):
+        blockName = self._dataBlocks[blockIndex]['name']['value']
         path = ['','','']
         path[0] = f"crystal_{blockName}"
 
@@ -437,14 +444,10 @@ class Model(QObject):
         else:
             console.error(f"Undefined parameter name '{paramName}'")
 
-        # if 'flags' objects are needed
-        if field == 'fit':
-            path[1] = f'flags_{path[1]}'
-
         return path, value
 
-    def cryspyDictPathByLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
-        blockName = self._dataBlocks[blockIndex]['name']
+    def cryspyDictPathByLoopParam(self, blockIndex, loopName, paramName, rowIndex, value):
+        blockName = self._dataBlocks[blockIndex]['name']['value']
         path = ['','','']
         path[0] = f"crystal_{blockName}"
 
@@ -466,11 +469,131 @@ class Model(QObject):
                 path[1] = 'atom_b_iso'
                 path[2] = rowIndex
 
-        # if 'flags' objects are needed
-        if field == 'fit':
-            path[1] = f'flags_{path[1]}'
-
         return path, value
+
+    def paramValueByFieldAndCrypyParamPath(self, field, path):  # NEED FIX: code duplicate of editDataBlockByLmfitParams
+        block, group, idx = path
+
+        # crystal block
+        if block.startswith('crystal_'):
+            blockName = block[8:]
+            loopName = None
+            paramName = None
+            rowIndex = None
+
+            # unit_cell_parameters
+            if group == 'unit_cell_parameters':
+                if idx[0] == 0:
+                    paramName = '_cell_length_a'
+                elif idx[0] == 1:
+                    paramName = '_cell_length_b'
+                elif idx[0] == 2:
+                    paramName = '_cell_length_c'
+                elif idx[0] == 3:
+                    paramName = '_cell_angle_alpha'
+                elif idx[0] == 4:
+                    paramName = '_cell_angle_beta'
+                elif idx[0] == 5:
+                    paramName = '_cell_angle_gamma'
+
+            # atom_fract_xyz
+            elif group == 'atom_fract_xyz':
+                loopName = '_atom_site'
+                rowIndex = idx[1]
+                if idx[0] == 0:
+                    paramName = '_fract_x'
+                elif idx[0] == 1:
+                    paramName = '_fract_y'
+                elif idx[0] == 2:
+                    paramName = '_fract_z'
+
+            # atom_occupancy
+            elif group == 'atom_occupancy':
+                loopName = '_atom_site'
+                rowIndex = idx[0]
+                paramName = '_occupancy'
+
+            # b_iso_or_equiv
+            elif group == 'atom_b_iso':
+                loopName = '_atom_site'
+                rowIndex = idx[0]
+                paramName = '_B_iso_or_equiv'
+
+            blockIndex = [block['name']['value'] for block in self._dataBlocks].index(blockName)
+
+            if loopName is None:
+                return self.dataBlocks[blockIndex]['params'][paramName][field]
+            else:
+                return self.dataBlocks[blockIndex]['loops'][loopName][rowIndex][paramName][field]
+
+        return None
+
+    def editDataBlockByLmfitParams(self, params):
+        for param in params.values():
+            block, group, idx = Data.strToCryspyDictParamPath(param.name)
+
+            # crystal block
+            if block.startswith('crystal_'):
+                blockName = block[8:]
+                loopName = None
+                paramName = None
+                rowIndex = None
+                value = param.value
+                error = 0
+                if param.stderr is not None:
+                    error = param.stderr
+
+                # unit_cell_parameters
+                if group == 'unit_cell_parameters':
+                    if idx[0] == 0:
+                        paramName = '_cell_length_a'
+                    elif idx[0] == 1:
+                        paramName = '_cell_length_b'
+                    elif idx[0] == 2:
+                        paramName = '_cell_length_c'
+                    elif idx[0] == 3:
+                        paramName = '_cell_angle_alpha'
+                        value = np.rad2deg(value)
+                    elif idx[0] == 4:
+                        paramName = '_cell_angle_beta'
+                        value = np.rad2deg(value)
+                    elif idx[0] == 5:
+                        paramName = '_cell_angle_gamma'
+                        value = np.rad2deg(value)
+
+                # atom_fract_xyz
+                elif group == 'atom_fract_xyz':
+                    loopName = '_atom_site'
+                    rowIndex = idx[1]
+                    if idx[0] == 0:
+                        paramName = '_fract_x'
+                    elif idx[0] == 1:
+                        paramName = '_fract_y'
+                    elif idx[0] == 2:
+                        paramName = '_fract_z'
+
+                # atom_occupancy
+                elif group == 'atom_occupancy':
+                    loopName = '_atom_site'
+                    rowIndex = idx[0]
+                    paramName = '_occupancy'
+
+                # b_iso_or_equiv
+                elif group == 'atom_b_iso':
+                    loopName = '_atom_site'
+                    rowIndex = idx[0]
+                    paramName = '_B_iso_or_equiv'
+
+                value = float(value)  # convert float64 to float (needed for QML access)
+                error = float(error)  # convert float64 to float (needed for QML access)
+                blockIndex = [block['name']['value'] for block in self._dataBlocks].index(blockName)
+
+                if loopName is None:
+                    self.editDataBlockMainParam(blockIndex, paramName, 'value', value)
+                    self.editDataBlockMainParam(blockIndex, paramName, 'error', error)
+                else:
+                    self.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, 'value', value)
+                    self.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, 'error', error)
 
     def editDataBlockByCryspyDictParams(self, params):
         for param in params:
@@ -526,74 +649,17 @@ class Model(QObject):
                     paramName = '_B_iso_or_equiv'
 
                 value = float(value)  # convert float64 to float (needed for QML access)
-                blockIndex = [block['name'] for block in self._dataBlocks].index(blockName)
+                blockIndex = [block['name']['value'] for block in self._dataBlocks].index(blockName)
 
                 if loopName is None:
                     self.editDataBlockMainParam(blockIndex, paramName, 'value', value)
                 else:
                     self.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, 'value', value)
 
-    def defaultYCalcArray(self):
-        xArray = self._proxy.experiment._xArrays[0]  # NEED FIX
-        params = _DEFAULT_CIF_BLOCK['params']
-        yCalcArray = GaussianCalculator.calculated(xArray, params)
-        return yCalcArray
-
-    def calculateYCalcArray(self, index):
-        # Re-calculate diffraction pattern
-        yCalcArray = self.calculateDiffractionPattern()
-        return yCalcArray
-
-    def updateYCalcArrayByIndex(self, index):
-        if index < len(self._yCalcArrays):
-            self._yCalcArrays[index] = self.calculateYCalcArray(index)
-        else:
-            self._yCalcArrays.append(self.calculateYCalcArray(index))
-        console.debug(f" - Pattern for model no. {index + 1} has been calculated")
-        self.yCalcArraysChanged.emit()
-
-    def updateCurrentModelYCalcArray(self):
-        index = self._currentIndex
-        self.updateYCalcArrayByIndex(index)
-
-    def addYCalcArray(self, yCalcArray):
-        self._yCalcArrays.append(yCalcArray)
-        console.debug(f" - Y-calculated data for model data block no. {len(self._dataBlocks)} has been added to intern dataset")
-        self.yCalcArraysChanged.emit()
-
     def setDataBlocksCif(self):
         self._dataBlocksCif = [[CryspyParser.dataBlockToCif(block)] for block in self._dataBlocks]
         console.debug(IO.formatMsg('sub', f'{len(self._dataBlocksCif)} model(s)', '', 'to CIF string', 'converted'))
         self.dataBlocksCifChanged.emit()
-
-
-
-
-    def calculateDiffractionPattern(self): # ?????????????? move to _proxy.analysis ????
-        self._proxy.fitting.chiSq, self._proxy.fitting._pointsCount, _, _, paramNames = rhochi_calc_chi_sq_by_dictionary(
-            self._proxy.data._cryspyDict,
-            dict_in_out=self._proxy.data._cryspyInOutDict,
-            flag_use_precalculated_data=False,
-            flag_calc_analytical_derivatives=False
-        )
-        first_experiment_name = self._proxy.data.edDict['experiments'][0]['name']  # NEED FIX
-        y_calc_array = self._proxy.data._cryspyInOutDict[f'pd_{first_experiment_name}']['signal_minus'] + self._proxy.data._cryspyInOutDict[f'pd_{first_experiment_name}']['signal_plus']
-
-        #################self._proxy.data._cryspyInOutDict[f'pd_{first_experiment_name}']['dict_in_out_co2sio4']['ttheta_hkl']
-        self._proxy.experiment._yBkgArrays[0] = self._proxy.data._cryspyInOutDict[f'pd_{first_experiment_name}']['signal_background']  # NEED FIX
-
-        reducedGofLastIter = self._proxy.fitting.chiSq / self._proxy.fitting._pointsCount            # NEED FIX
-        if self._proxy.fitting._chiSqStart is None:
-            self._proxy.status.goodnessOfFit = f'{reducedGofLastIter:0.2f}'                           # NEED move to connection
-        else:
-            reducedGofStart = self._proxy.fitting._chiSqStart / self._proxy.fitting._pointsCount      # NEED FIX
-            self._proxy.status.goodnessOfFit = f'{reducedGofStart:0.2f} → {reducedGofLastIter:0.2f}'  # NEED move to connection
-            if not self._proxy.fitting._freezeChiSqStart:
-                self._proxy.fitting._chiSqStart = self._proxy.fitting.chiSq
-
-        return y_calc_array
-
-
 
     def updateCurrentModelStructView(self):
         self.setCurrentModelStructViewAtomsModel()
@@ -720,4 +786,4 @@ class StructureViewUpdater(QObject):
 
     def update(self):
         self._threadpool.start(self._worker.run)
-        console.debug(IO.formatMsg('main', '---------------AAAAAA'))
+        console.debug(IO.formatMsg('main', '---------------'))

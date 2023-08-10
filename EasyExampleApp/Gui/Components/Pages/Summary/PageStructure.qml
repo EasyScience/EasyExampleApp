@@ -26,14 +26,17 @@ EaComponents.ContentPage {
         ]
 
         items: [
-            Loader { source: 'MainContent/Report.qml' }
+            Loader {
+                source: 'MainContent/TextView.qml'  // 'MainContent/Report.qml'
+                onStatusChanged: if (status === Loader.Ready) console.debug(`${source} loaded`)
+            }
         ]
     }
 
     sideBar: EaComponents.SideBar {
         tabs: [
             EaElements.TabButton { text: qsTr("Basic controls") },
-            EaElements.TabButton { text: qsTr("Advanced controls") }
+            EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false }
         ]
 
         items: [

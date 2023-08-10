@@ -40,14 +40,14 @@ EaElements.GroupColumn {
                 width: EaStyle.Sizes.fontPixelSize * 4.0
                 horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.experimentLoopParam('_pd_background', '_2theta', 0).prettyName ?? ''  // NEED FIX
+                text: Globals.Proxies.experimentLoopParam('_pd_background', '_2theta', 0).title ?? ''  // NEED FIX
             }
 
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 5.0
                 horizontalAlignment: Text.AlignHCenter
                 color: EaStyle.Colors.themeForegroundMinor
-                text: Globals.Proxies.experimentLoopParam('_pd_background', '_intensity', 0).prettyName ?? ''  // NEED FIX
+                text: Globals.Proxies.experimentLoopParam('_pd_background', '_intensity', 0).title ?? ''  // NEED FIX
             }
 
             EaComponents.TableViewLabel {
@@ -85,7 +85,7 @@ EaElements.GroupColumn {
             EaComponents.TableViewLabel {}
 
             EaComponents.TableViewButton {
-                enabled: tableView.model > 2
+                enabled: tableView.model.length > 2
                 fontIcon: "minus-circle"
                 ToolTip.text: qsTr("Remove this point")
                 onClicked: Globals.Proxies.removeExperimentLoopRow('_pd_background', index)

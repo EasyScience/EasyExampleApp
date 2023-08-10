@@ -25,7 +25,10 @@ EaComponents.ContentPage {
         ]
 
         items: [
-            Loader { source: `MainContent/StructureViewTab.qml` }
+            Loader {
+                source: `MainContent/StructureViewTab.qml`
+                onStatusChanged: if (status === Loader.Ready) console.debug(`${source} loaded`)
+            }
         ]
     }
 
@@ -38,8 +41,8 @@ EaComponents.ContentPage {
 
         items: [
             Loader { source: 'SideBarBasic.qml' },
-            Loader { source: 'SideBarAdvanced.qml' },
-            Loader { source: 'SideBarText.qml' }
+            Loader { source: Globals.Proxies.main.model.defined ? 'SideBarAdvanced.qml' : '' },
+            Loader { source: Globals.Proxies.main.model.defined ? 'SideBarText.qml' : '' }
         ]
 
         continueButton.enabled: Globals.Proxies.main.model.defined

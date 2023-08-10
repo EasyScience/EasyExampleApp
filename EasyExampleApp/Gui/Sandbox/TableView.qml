@@ -116,7 +116,7 @@ Column {
                 iconColor: EaStyle.Colors.chartForegrounds[0]
             }
             EaComponents.TableViewParameter {
-                text: tableView.model[index].name
+                text: tableView.model[index].name.value
             }
             EaComponents.TableViewButton {
                 fontIcon: "minus-circle"

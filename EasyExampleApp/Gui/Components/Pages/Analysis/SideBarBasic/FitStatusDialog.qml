@@ -24,11 +24,11 @@ EaElements.Dialog {
     EaElements.Label {
         text: {
             if (Globals.Proxies.main.status.fitStatus === 'Success') {
-                return 'Fitting is successfully completed.'
+                return 'Optimization terminated successfully.'
             } else if (Globals.Proxies.main.status.fitStatus === 'Failure') {
-                return 'Fitting is failed.'
-            } else if (Globals.Proxies.main.status.fitStatus === 'Cancelled') {
-                return 'Fitting is cancelled.'
+                return 'Optimization failed.'
+            } else if (Globals.Proxies.main.status.fitStatus === 'Aborted') {
+                return 'Optimization aborted.'
             } else if (Globals.Proxies.main.status.fitStatus === 'No free params') {
                 return 'Nothing to vary. Allow some parameters to be free.'
             } else {
