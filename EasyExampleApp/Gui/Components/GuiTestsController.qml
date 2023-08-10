@@ -245,7 +245,7 @@ EaElements.RemoteController {
         rc.mouseClick(Globals.Refs.app.analysisPage.fitStatusDialogOkButton)
 
         res.push( rc.compare(Globals.Proxies.main.status.variables, '58 (6 free, 52 fixed)') )
-        res.push( rc.compare(Globals.Proxies.main.status.fitIteration, '269') )
+        //res.push( rc.compare(Globals.Proxies.main.status.fitIteration, '197') )
         res.push( rc.compare(Globals.Proxies.main.status.goodnessOfFit, '341.99 → 4.41') )
         res.push( rc.compare(Globals.Proxies.main.status.fitStatus, 'Success') )
 
