@@ -43,6 +43,7 @@ class Connections(QObject):
         # Fitting
         self._proxy.fitting.fitFinished.connect(self.onFittingFitFinished)
         self._proxy.fitting.chiSqSignificantlyChanged.connect(self.onFittingChiSqSignificantlyChanged)
+        self._proxy.fitting.minimizerMethodChanged.connect(self.onFittingMinimizerMethodChanged)
 
     #########
     # Project
@@ -212,7 +213,7 @@ class Connections(QObject):
 
     def onAnalysisDefined(self):
         self._proxy.status.calculator = 'CrysPy'
-        self._proxy.status.minimizer = 'Lmfit (BFGS)'
+        self._proxy.status.minimizer = f'Lmfit ({self._proxy.fitting.minimizerMethod})'
         console.debug(IO.formatMsg('main', f'Drawing curves on analysis page using {self._proxy.plotting.currentLib1d}...'))
         self._proxy.plotting.drawMeasuredOnAnalysisChart()
         self._proxy.plotting.drawBackgroundOnExperimentChart()
@@ -340,3 +341,6 @@ class Connections(QObject):
         self._proxy.plotting.drawCalculatedOnAnalysisChart()
         self._proxy.plotting.drawResidualOnAnalysisChart()
         self._proxy.plotting.drawBraggOnAnalysisChart()
+
+    def onFittingMinimizerMethodChanged(self):
+        self._proxy.status.minimizer = f'Lmfit ({self._proxy.fitting.minimizerMethod})'

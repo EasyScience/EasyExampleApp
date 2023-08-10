@@ -158,9 +158,10 @@ class Worker(QObject):
         self._cryspyUsePrecalculatedData = True
         method = 'BFGS'
         tol = 1e+3
-        #method = 'L-BFGS-B'
-        #tol = 1e-2
-        #tol = 1e+3
+        method = 'L-BFGS-B'
+        tol = 1e-2
+        method = self._proxy.fitting.minimizerMethod
+        tol = self._proxy.fitting.minimizerTol
         reduce_fcn = None  # None : sum-of-squares of residual (default) = (r*r).sum()
         result = lmfit.minimize(residFunc,
                                 paramsLmfit,
@@ -224,6 +225,8 @@ class Fitting(QObject):
     chiSqStartChanged = Signal()
     chiSqChanged = Signal()
     chiSqSignificantlyChanged = Signal()
+    minimizerMethodChanged = Signal()
+    minimizerTolChanged = Signal()
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -239,8 +242,33 @@ class Fitting(QObject):
         self._pointsCount = None
         self._freeParamsCount = 0
 
+        self._minimizerMethod = 'BFGS'
+        self._minimizerTol = 1e+3
+
         self._worker.finished.connect(self.setIsFittingNowToFalse)
         self._worker.finished.connect(self.fitFinished)
+
+    @Property(str, notify=minimizerMethodChanged)
+    def minimizerMethod(self):
+        return self._minimizerMethod
+
+    @minimizerMethod.setter
+    def minimizerMethod(self, newValue):
+        if self._minimizerMethod == newValue:
+            return
+        self._minimizerMethod = newValue
+        self.minimizerMethodChanged.emit()
+
+    @Property(float, notify=minimizerTolChanged)
+    def minimizerTol(self):
+        return self._minimizerTol
+
+    @minimizerTol.setter
+    def minimizerTol(self, newValue):
+        if self._minimizerTol == newValue:
+            return
+        self._minimizerTol = newValue
+        self.minimizerTolChanged.emit()
 
     @Property(bool, notify=isFittingNowChanged)
     def isFittingNow(self):

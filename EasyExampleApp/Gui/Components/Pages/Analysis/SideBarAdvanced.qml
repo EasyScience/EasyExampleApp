@@ -12,9 +12,23 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Parameter names")
+        icon: "paint-brush"
         collapsed: false
 
         Loader { source: 'SideBarAdvanced/ParamNames.qml' }
     }
 
+    EaElements.GroupBox {
+        title: qsTr("Calculation engine")
+        icon: 'calculator'
+
+        Loader { source: 'SideBarAdvanced/Calculator.qml' }
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Minimization engine")
+        icon: 'level-down-alt'
+
+        Loader { source: 'SideBarAdvanced/Minimizer.qml' }
+    }
 }
