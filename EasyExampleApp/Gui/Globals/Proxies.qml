@@ -851,6 +851,11 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
             name = `${blockTypeHtml}[${blockIndexHtml}]`
             if (param.loopName) name += `${_}${loopNameHtml}${paramNameHtml}[${rowIndexHtml}]`
             else name += `${_}${paramNameHtml}`
+        } else if (format === EaGlobals.Vars.PlainFullWithLabels) {
+            _ = '.'
+            name = `${param.blockType}[${param.blockName}]`
+            if (param.loopName) name += `${_}${param.loopName}${param.name}[${param.rowName}]`
+            else name += `${_}${param.name}`
         }
 
         //console.info(name)

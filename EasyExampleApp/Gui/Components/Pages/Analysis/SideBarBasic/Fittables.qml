@@ -212,10 +212,12 @@ Column {
             EaComponents.TableViewLabel {
                 width: EaStyle.Sizes.fontPixelSize * 5
                 text: Globals.Proxies.paramName(item, EaGlobals.Vars.paramNameFormat)
-                textFormat: Text.RichText
-                clip: true
-                // elide: Text.ElideMiddle  // NEED FIX: Doesn't work with textFormat: Text.RichText
-                ToolTip.text: text
+                textFormat: EaGlobals.Vars.paramNameFormat === EaGlobals.Vars.PlainFullWithLabels ?
+                                Text.PlainText :
+                                Text.RichText
+                //clip: true
+                elide: Text.ElideMiddle  // NEED FIX: Doesn't work with textFormat: Text.RichText
+                ToolTip.text: textFormat === Text.PlainText ? text : ''
             }
 
             EaComponents.TableViewParameter {

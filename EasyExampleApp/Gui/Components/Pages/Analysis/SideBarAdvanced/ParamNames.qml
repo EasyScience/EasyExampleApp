@@ -36,6 +36,7 @@ EaComponents.TableView {
     tallRows: true
     maxRowCountShow: model.length
 
+    /*
     model: [
         { value: EaGlobals.Vars.ShortestWithIconsAndPrettyLabels,
             text: qsTr('Shortest iconified name with pretty labels') },
@@ -50,18 +51,23 @@ EaComponents.TableView {
         { value: EaGlobals.Vars.FullWithIndices,
             text: qsTr('Full plain text name with indices') }
     ]
+    */
+
+    model: [
+        { value: EaGlobals.Vars.ShortestWithIconsAndPrettyLabels,
+            text: qsTr('Iconified name with pretty labels') },
+        { value: EaGlobals.Vars.PlainFullWithLabels,
+            text: qsTr('Full plain text name with labels') }
+    ]
 
     header: EaComponents.TableViewHeader {
 
         EaComponents.TableViewLabel {
-            enabled: false
             width: EaStyle.Sizes.fontPixelSize * 2.5
         }
 
         EaComponents.TableViewLabel {
             flexibleWidth: true
-            horizontalAlignment: Text.AlignLeft
-            text: qsTr("file name / file path")
         }
     }
 
