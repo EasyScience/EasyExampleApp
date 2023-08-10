@@ -265,7 +265,7 @@ class Experiment(QObject):
 
     @Slot()
     def resetAll(self):
-        self._defined = False
+        self.defined = False
         self._currentIndex = -1
         self._dataBlocksNoMeas = []
         self._dataBlocksMeasOnly = []
@@ -280,6 +280,7 @@ class Experiment(QObject):
         self._yResidArrays = []
         self._xBraggDicts = []
         self._chartRanges = []
+        #self.dataBlocksChanged.emit()
         console.debug("All experiments removed")
 
     @Slot(int, str, str, 'QVariant')

@@ -2,12 +2,12 @@ data_hrpt
 
 _diffrn_radiation_probe neutron
 _diffrn_radiation_wavelength 1.494
-_pd_meas_2theta_offset 0.6225(1)
-_pd_instr_resolution_u 0.0834
-_pd_instr_resolution_v -0.1168
-_pd_instr_resolution_w 0.123
+_pd_meas_2theta_offset 0.0
+_pd_instr_resolution_u 0.08
+_pd_instr_resolution_v -0.11
+_pd_instr_resolution_w 0.12
 _pd_instr_resolution_x 0
-_pd_instr_resolution_y 0.0797
+_pd_instr_resolution_y 0
 _pd_meas_2theta_range_min 10
 _pd_meas_2theta_range_max 164.85
 _pd_meas_2theta_range_inc 0.05
@@ -19,21 +19,13 @@ _pd_instr_reflex_asymmetry_p4 0
 loop_
 _phase_label
 _phase_scale
-lbco 9.0976(1)
+lbco 1.0
 
 loop_
 _pd_background_2theta
 _pd_background_intensity
-10 174.3
-20 159.8
-30 167.9
-50 166.1
-70 172.3
-90 171.1
-110 172.4
-130 182.5
-150 173
-165 171.1
+10 100
+165 100
 
 loop_
 _pd_meas_2theta

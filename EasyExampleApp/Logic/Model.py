@@ -239,20 +239,15 @@ class Model(QObject):
 
         self.dataBlocksChanged.emit()
 
-        #if len(self._yCalcArrays) > index:
-        #    del self._yCalcArrays[index]
-        #    self.yCalcArraysChanged.emit()
-
         console.debug(f"Model no. {index + 1} has been removed")
 
     @Slot()
     def resetAll(self):
-        self._defined = False
+        self.defined = False
         self._currentIndex = -1
         self._dataBlocks = []
         self._dataBlocksCif = []
-        #self._yCalcArrays = []
-        #self._yBkgArrays = []
+        #self.dataBlocksChanged.emit()
         console.debug("All models removed")
 
     @Slot(int, str, str, 'QVariant')

@@ -128,6 +128,7 @@ class CryspyParser:
                     cif += f'{name} {value}'
                 cif += '\n'
         if 'loops' in block:
+            #print(block['loops'].items())
             for loopName, loop in block['loops'].items():
                 cif += '\n'
                 cif += 'loop_'

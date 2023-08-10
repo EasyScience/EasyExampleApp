@@ -1,8 +1,8 @@
 data_pbso4
 
-_cell_length_a 8.4656(0.0002)
-_cell_length_b 5.3886(0.0001)
-_cell_length_c 6.9475(0.0001)
+_cell_length_a 8.4693(1)
+_cell_length_b 5.3910(1)
+_cell_length_c 6.9506(1)
 _cell_angle_alpha 90
 _cell_angle_beta 90
 _cell_angle_gamma 90
@@ -20,8 +20,8 @@ _atom_site_adp_type
 _atom_site_B_iso_or_equiv
 _atom_site_multiplicity
 _atom_site_Wyckoff_symbol
-Pb Pb 0.1876(0.0001) 0.25 0.167(0.0001) 1 Biso 1.3949(0.0189) 4 c 
-S S 0.0654(0.0003) 0.25 0.6845(0.0004) 1 Biso 0.3947(0.0403) 4 c 
-O1 O 0.9082(0.0002) 0.25 0.5953(0.0002) 1 Biso 2.0192(0.0321) 4 c 
-O2 O 0.1934(0.0002) 0.25 0.543(0.0002) 1 Biso 1.4274(0.0298) 4 c 
-O3 O 0.0812(0.0001) 0.0272(0.0002) 0.8084(0.0001) 1 Biso 1.3054(0.0185) 8 d
+Pb Pb 0.1876 0.25 0.167 1 Biso 1.3729 4 c
+S S 0.0654 0.25 0.684 1 Biso 0.3777 4 c
+O1 O 0.9082 0.25 0.5954 1 Biso 1.9764 4 c
+O2 O 0.1935 0.25 0.5432 1 Biso 1.4456 4 c
+O3 O 0.0811 0.0272 0.8086 1 Biso 1.2822 8 d

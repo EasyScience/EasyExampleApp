@@ -46,6 +46,19 @@ class Fittables(QObject):
         self._modelParamsCount = 0
         self._experimentParamsCount = 0
 
+    @Slot()
+    def resetAll(self):
+        self._data = _EMPTY_DATA
+        self._dataJson = ''
+        self._nameFilterCriteria = ''
+        self._variabilityFilterCriteria = ''
+        self._freeParamsCount = 0
+        self._fixedParamsCount = 0
+        self._modelParamsCount = 0
+        self._experimentParamsCount = 0
+        #self.dataChanged.emit()
+        console.debug("All fittables removed")
+
     @Property('QVariant', notify=dataChanged)
     def data(self):
         #console.error('FITTABLES DATA GETTER')

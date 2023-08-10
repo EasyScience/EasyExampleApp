@@ -64,16 +64,8 @@ EaComponents.ApplicationWindow {
             onClicked: {
                 console.debug(`Clicking 'Reset' button: ${this}`)
                 appBarCentralTabs.setCurrentIndex(0)
-                Globals.Vars.projectPageEnabled = false
-                Globals.Vars.modelPageEnabled = false
-                Globals.Vars.experimentPageEnabled = false
-                Globals.Vars.analysisPageEnabled = false
-                Globals.Vars.summaryPageEnabled = false
-                Globals.Proxies.main.analysis.resetAll()
-                Globals.Proxies.main.experiment.resetAll()
-                Globals.Proxies.main.model.resetAll()
-                Globals.Proxies.main.data.resetAll()
-                Globals.Proxies.main.status.resetAll()
+                Globals.Proxies.disableAllPages()
+                Globals.Proxies.resetAll()
             }
             Component.onCompleted: Globals.Refs.app.appbar.resetStateButton = this
         }

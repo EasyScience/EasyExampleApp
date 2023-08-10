@@ -32,5 +32,5 @@ class Analysis(QObject):
 
     @Slot()
     def resetAll(self):
-        self._defined = False
+        self.defined = False
         console.debug("All analysis removed")

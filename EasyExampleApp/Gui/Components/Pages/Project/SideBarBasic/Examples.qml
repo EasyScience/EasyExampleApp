@@ -43,11 +43,16 @@ EaComponents.TableView {
     // delegate
     delegate: EaComponents.TableViewDelegate {
         mouseArea.onPressed: {
-            const filePath = tableView.model[index].path
-            const fileUrl = Qt.resolvedUrl(filePath)
+            Globals.Proxies.disableAllPagesExceptProject()
+            Globals.Proxies.resetAll()
+
             Globals.Vars.modelPageEnabled = true
             Globals.Vars.experimentPageEnabled = true
+
+            const filePath = tableView.model[index].path
+            const fileUrl = Qt.resolvedUrl(filePath)
             Globals.Proxies.main.project.loadExampleProject(fileUrl)
+
             Globals.Vars.analysisPageEnabled = true
             Globals.Vars.summaryPageEnabled = true
         }

@@ -2,11 +2,10 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-from PySide6.QtCore import QObject, Signal, Property
+from PySide6.QtCore import QObject, Signal, Slot, Property
 
 from EasyApp.Logic.Logging import console
 from Logic.Helpers import IO
-from Logic.Calculators import CryspyParser
 
 try:
     import cryspy
@@ -24,6 +23,12 @@ class Summary(QObject):
         self._proxy = parent
         self._isCreated = False
         self._dataBlocksCif = ''
+
+    @Slot()
+    def resetAll(self):
+        self.isCreated = False
+        self._dataBlocksCif = ''
+        console.debug("All summary removed")
 
     @Property(bool, notify=isCreatedChanged)
     def isCreated(self):

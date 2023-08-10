@@ -1,8 +1,8 @@
 data_lbco
 
-_cell_length_a 3.8909(1)
-_cell_length_b 3.8909
-_cell_length_c 3.8909
+_cell_length_a 3.88
+_cell_length_b 3.88
+_cell_length_c 3.88
 _cell_angle_alpha 90
 _cell_angle_beta 90
 _cell_angle_gamma 90
@@ -20,7 +20,7 @@ _atom_site_adp_type
 _atom_site_B_iso_or_equiv
 _atom_site_multiplicity
 _atom_site_Wyckoff_symbol
-La La 0 0 0 0.5 Biso 0.4958 1 a
-Ba Ba 0 0 0 0.5 Biso 0.4943 1 a
-Co Co 0.5 0.5 0.5 1 Biso 0.2567 1 b
-O O 0 0.5 0.5 1 Biso 1.4041 3 c
+La La 0 0 0 0.5 Biso 0.0 1 a
+Ba Ba 0 0 0 0.5 Biso 0.0 1 a
+Co Co 0.5 0.5 0.5 1 Biso 0.0 1 b
+O O 0 0.5 0.5 1 Biso 0.0 3 c

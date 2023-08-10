@@ -4,7 +4,6 @@
 
 import os
 import time
-from datetime import datetime
 from pycifstar.data import Data as PycifstarData
 from PySide6.QtCore import QObject, Signal, Slot, Property, QUrl
 
@@ -26,6 +25,12 @@ _EXAMPLES = [
         'path': '../../../../../../examples/La0.5Ba0.5CoO3/project.cif'
 
      },
+     {
+         'name': 'La0.5Ba0.5CoO3-Raw',
+         'description': 'neutrons, powder, constant wavelength, HRPT@PSI',
+         'path': '../../../../../../examples/La0.5Ba0.5CoO3-Raw/project.cif'
+
+      },
     {
         'name': 'Co2SiO4',
         'description': 'neutrons, powder, constant wavelength, D20@ILL',
@@ -78,6 +83,25 @@ class Project(QObject):
         self._dataBlockCif = _DEFAULT_CIF
         self._examples = _EXAMPLES
         self._created = False
+        self._needSave = False
+        self._recent = []
+
+        self._location = ''
+        self._dateCreated = ''
+        self._dateLastModified = ''
+        self._dirNames = {
+            'models': 'models',
+            'experiments': 'experiments',
+            'analysis': 'analysis',
+            'summary': 'summary'
+        }
+
+    @Slot()
+    def resetAll(self):
+        self._dataBlock = self.createDataBlockFromCif(_DEFAULT_CIF)
+        self._dataBlockCif = _DEFAULT_CIF
+        self._examples = _EXAMPLES
+        self.created = False
         self._needSave = False
         self._recent = []
 

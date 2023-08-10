@@ -604,6 +604,28 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
         main.project.setMainParam(param.name, field, value)
     }
 
+    function resetAll() {
+        main.summary.resetAll()
+        main.analysis.resetAll()
+        main.experiment.resetAll()
+        main.model.resetAll()
+        main.project.resetAll()
+        main.fittables.resetAll()
+        main.data.resetAll()
+        main.status.resetAll()
+    }
+
+    function disableAllPages() {
+        disableAllPagesExceptProject()
+        Globals.Vars.projectPageEnabled = false
+    }
+
+    function disableAllPagesExceptProject() {
+        Globals.Vars.summaryPageEnabled = false
+        Globals.Vars.analysisPageEnabled = false
+        Globals.Vars.experimentPageEnabled = false
+        Globals.Vars.modelPageEnabled = false
+    }
 
     // Model
 

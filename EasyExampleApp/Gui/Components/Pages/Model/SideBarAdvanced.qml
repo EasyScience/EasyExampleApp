@@ -12,6 +12,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Appearance")
+        icon: "paint-brush"
         collapsed: false
 
         Loader { source: 'SideBarAdvanced/Appearance.qml' }
