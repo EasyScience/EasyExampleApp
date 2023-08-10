@@ -117,6 +117,7 @@ class IO:
         :param URI rcfPath: URI to the file
         :return URI filename: platform specific URI
         """
+        return fpath  # NEED FIX: Check on different platforms
         filename = urlparse(fpath).path
         if not sys.platform.startswith("win"):
             return filename
