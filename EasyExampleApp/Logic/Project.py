@@ -188,11 +188,27 @@ class Project(QObject):
         return dataBlock
 
     @Slot('QVariant')
-    def loadProjectFromFile(self, fpath):
+    def loadExampleProject(self, fpath):
         fpath = fpath.toLocalFile()
         fpath = IO.generalizePath(fpath)
 
-        console.debug(f"Opening project from: {fpath}")
+        self.loadProjectFromFile(fpath)
+
+    @Slot('QVariant')
+    def loadProject(self, fpath):
+        fpath = fpath.toLocalFile()
+        fpath = IO.generalizePath(fpath)
+
+        if fpath in self._recent:
+            self._recent.remove(fpath)
+        self._recent.insert(0, fpath)
+        self._recent = self._recent[:10]
+        self.recentChanged.emit()
+
+        self.loadProjectFromFile(fpath)
+
+    def loadProjectFromFile(self, fpath):
+        console.debug(f"Loading project from: {fpath}")
         with open(fpath, 'r') as file:
             edCif = file.read()
 
@@ -229,12 +245,6 @@ class Project(QObject):
                 prettyName='Description',
                 url='https://easydiffraction.org'
             ))
-
-        if fpath in self._recent:
-            self._recent.remove(fpath)
-        self._recent.insert(0, fpath)
-        self._recent = self._recent[:10]
-        self.recentChanged.emit()
 
         self.dataBlockChanged.emit()
         self.created = True

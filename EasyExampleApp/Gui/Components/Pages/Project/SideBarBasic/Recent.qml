@@ -59,7 +59,7 @@ EaComponents.TableView {
             const fileUrl = Qt.resolvedUrl(filePath)
             Globals.Vars.modelPageEnabled = true
             Globals.Vars.experimentPageEnabled = true
-            Globals.Proxies.main.project.loadProjectFromFile(fileUrl)
+            Globals.Proxies.main.project.loadProject(fileUrl)
             Globals.Vars.analysisPageEnabled = true
             Globals.Vars.summaryPageEnabled = true
         }

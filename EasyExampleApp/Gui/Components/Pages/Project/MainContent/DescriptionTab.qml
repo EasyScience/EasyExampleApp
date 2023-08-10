@@ -57,7 +57,7 @@ Rectangle {
                 font.pixelSize: EaStyle.Sizes.fontPixelSize * 3
                 font.weight: Font.ExtraLight
                 onAccepted: focus = false
-                validator: RegularExpressionValidator { regularExpression: /^[a-zA-Z][a-zA-Z0-9_-\.]{1,30}$/ }
+                validator: RegularExpressionValidator { regularExpression: /^[a-zA-Z][a-zA-Z0-9_\-\.]{1,30}$/ }
                 placeholderText: qsTr("Enter project name here")
                 text: Globals.Proxies.main.project.dataBlock.name.value
                 onEditingFinished: Globals.Proxies.main.project.setName(text)
@@ -253,10 +253,10 @@ Rectangle {
                                 let split = cifFileName.split('.')
                                 split.pop()
                                 const baseFileName = split.join(".")
-                                const jpgFileName = baseFileName + '.jpg'
+                                const imgFileName = baseFileName + '.png'
                                 const path = Globals.Proxies.main.project.location + '/' +
                                            Globals.Proxies.main.project.dirNames.models + '/' +
-                                           jpgFileName
+                                           imgFileName
                                 const exists = Globals.Proxies.main.backendHelpers.fileExists(path)
                                 if (exists) {
                                     return path
@@ -314,10 +314,10 @@ Rectangle {
                                 let split = cifFileName.split('.')
                                 split.pop()
                                 const baseFileName = split.join(".")
-                                const jpgFileName = baseFileName + '.jpg'
+                                const imgFileName = baseFileName + '.png'
                                 const path = Globals.Proxies.main.project.location + '/' +
                                            Globals.Proxies.main.project.dirNames.experiments + '/' +
-                                           jpgFileName
+                                           imgFileName
                                 const exists = Globals.Proxies.main.backendHelpers.fileExists(path)
                                 if (exists) {
                                     return path

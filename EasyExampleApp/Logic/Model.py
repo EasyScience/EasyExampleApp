@@ -60,7 +60,6 @@ class Model(QObject):
     currentIndexChanged = Signal()
     dataBlocksChanged = Signal()
     dataBlocksCifChanged = Signal()
-    #yCalcArraysChanged = Signal()
 
     structViewAtomsModelChanged = Signal()
     structViewCellModelChanged = Signal()
@@ -73,8 +72,6 @@ class Model(QObject):
         self._currentIndex = -1
         self._dataBlocks = []
         self._dataBlocksCif = []
-        #self._yCalcArrays = []
-        #self._yBkgArrays = []
 
         self._structureViewUpdater = StructureViewUpdater(self._proxy)
 

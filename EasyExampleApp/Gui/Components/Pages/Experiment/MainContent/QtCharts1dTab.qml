@@ -14,6 +14,8 @@ import Gui.Globals as Globals
 
 
 Rectangle {
+    id: container
+
     color: EaStyle.Colors.chartBackground
 
     EaCharts.QtCharts1dMeasVsCalc {
@@ -28,12 +30,14 @@ Rectangle {
         axisX.max: Globals.Proxies.rangeValue('xMax')
         axisX.minAfterReset: Globals.Proxies.rangeValue('xMin')
         axisX.maxAfterReset: Globals.Proxies.rangeValue('xMax')
+        axisX.onRangeChanged: saveImgTimer.restart()
 
         axisY.title: "Imeas, Ibkg"
         axisY.min: Globals.Proxies.rangeValue('yMin')
         axisY.max: Globals.Proxies.rangeValue('yMax')
         axisY.minAfterReset: Globals.Proxies.rangeValue('yMin')
         axisY.maxAfterReset: Globals.Proxies.rangeValue('yMax')
+        axisY.onRangeChanged: saveImgTimer.restart()
 
         measSerie.pointsVisible: true
 
@@ -163,6 +167,13 @@ Rectangle {
 
     }
 
+    Timer {
+        id: saveImgTimer
+
+        interval: 5000
+        onTriggered: saveImg()
+    }
+
     // Logic
 
     function showMainTooltip(chart, point, state) {
@@ -175,6 +186,23 @@ Rectangle {
         dataToolTip.text = `<p align="left">x: ${point.x.toFixed(2)}<br\>y: ${point.y.toFixed(2)}</p>`
         dataToolTip.parent = chart
         dataToolTip.visible = state
+    }
+
+    function saveImg() {
+        if (Globals.Proxies.main.project.location) {
+            const experimentCurrenIndex = Globals.Proxies.main.experiment.currentIndex
+            const cifFileName = Globals.Proxies.main.project.dataBlock.loops._experiment_cif_file[experimentCurrenIndex]._name.value
+            let split = cifFileName.split('.')
+            split.pop()
+            const baseFileName = split.join(".")
+            const imgFileName = baseFileName + '.png'
+            const path = Globals.Proxies.main.project.location + '/' +
+                       Globals.Proxies.main.project.dirNames.experiments + '/' +
+                       imgFileName
+            container.grabToImage(function(result) {
+                result.saveToFile(path)
+            })
+        }
     }
 
 }

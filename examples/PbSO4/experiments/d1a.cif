@@ -2,36 +2,36 @@ data_d1a
 
 _diffrn_radiation_probe neutron
 _diffrn_radiation_wavelength 1.91
-_pd_meas_2theta_offset 0.0233(0)
-_pd_instr_resolution_u 0.1934(0.0044)
-_pd_instr_resolution_v -0.6145(0.0102)
-_pd_instr_resolution_w 0.5222(0.0057)
+_pd_meas_2theta_offset -0.1407
+_pd_instr_resolution_u 0.1911(0.0045)
+_pd_instr_resolution_v -0.4837(0.0078)
+_pd_instr_resolution_w 0.4149(0.0041)
 _pd_instr_resolution_x 0
-_pd_instr_resolution_y 0.139
+_pd_instr_resolution_y 0.086(0.0014)
 _pd_meas_2theta_range_min 10
 _pd_meas_2theta_range_max 155.45
 _pd_meas_2theta_range_inc 0.05
-_pd_instr_reflex_asymmetry_p1 -0.403
-_pd_instr_reflex_asymmetry_p2 0
-_pd_instr_reflex_asymmetry_p3 0
-_pd_instr_reflex_asymmetry_p4 0
+_pd_instr_reflex_asymmetry_p1 -0.37(0.0196)
+_pd_instr_reflex_asymmetry_p2 0.0005(0.0042)
+_pd_instr_reflex_asymmetry_p3 0.2223(0.0485)
+_pd_instr_reflex_asymmetry_p4 -0.099(0.0112)
 
 loop_
 _phase_label
 _phase_scale
-pbso4 1.4244(0.0066) 
+pbso4 1.4658(0.0041) 
 
 loop_
 _pd_background_2theta
 _pd_background_intensity
-11 203.8992(5.0006) 
-15 194.156(3.6111) 
-20 191.3586(2.3139) 
-30 193.0131(1.5793) 
-50 200.0107(1.4258) 
-70 196.1846(0.7807) 
-120 223.3123(1.246) 
-153 213.842(2.2921)
+11 206.2591 
+15 194.7149 
+20 194.844 
+30 188.2125 
+50 207.748 
+70 201.6625 
+120 245.7023 
+153 226.0801
 
 loop_
 _pd_meas_2theta

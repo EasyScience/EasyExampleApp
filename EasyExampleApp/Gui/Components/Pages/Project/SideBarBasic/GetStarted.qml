@@ -44,7 +44,7 @@ Grid {
                 console.debug('*** Open an existing project (test mode) ***')
                 Globals.Vars.modelPageEnabled = true
                 const fpath = Qt.resolvedUrl('../../../../../../examples/1-model_1-experiment/project.cif')
-                Globals.Proxies.main.project.loadProjectFromFile(fpath)
+                Globals.Proxies.main.project.loadProject(fpath)
                 Globals.Vars.summaryPageEnabled = true
             } else {
                 openCifFileDialog.open()
@@ -77,7 +77,7 @@ Grid {
         onAccepted: {
             console.debug('*** Loading project from file ***')
             Globals.Vars.modelPageEnabled = true
-            Globals.Proxies.main.project.loadProjectFromFile(selectedFile)
+            Globals.Proxies.main.project.loadProject(selectedFile)
             Globals.Vars.summaryPageEnabled = true
         }
     }

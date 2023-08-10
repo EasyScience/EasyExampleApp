@@ -209,6 +209,8 @@ Rectangle {
                                        atomSizeScale * atoms.model[index].diameter)
                     materials: [ DefaultMaterial { diffuseColor: atoms.model[index].color } ]
                 }
+
+                onModelChanged: saveImgTimer.restart()
             }
             // Atoms
         }
@@ -437,5 +439,29 @@ Rectangle {
     //    onTriggered: container.width += 1
     //}
     // Misc
+
+    Timer {
+        id: saveImgTimer
+
+        interval: 5000
+        onTriggered: saveImg()
+    }
+
+    function saveImg() {
+        if (Globals.Proxies.main.project.location) {
+            const modelCurrenIndex = Globals.Proxies.main.model.currentIndex
+            const cifFileName = Globals.Proxies.main.project.dataBlock.loops._model_cif_file[modelCurrenIndex]._name.value
+            let split = cifFileName.split('.')
+            split.pop()
+            const baseFileName = split.join(".")
+            const imgFileName = baseFileName + '.png'
+            const path = Globals.Proxies.main.project.location + '/' +
+                       Globals.Proxies.main.project.dirNames.models + '/' +
+                       imgFileName
+            container.grabToImage(function(result) {
+                result.saveToFile(path)
+            })
+        }
+    }
 
 }
