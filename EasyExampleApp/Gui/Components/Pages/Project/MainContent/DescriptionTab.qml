@@ -256,10 +256,11 @@ Rectangle {
                                 split.pop()
                                 const baseFileName = split.join(".")
                                 const imgFileName = baseFileName + '.png'
-                                const path = Globals.Proxies.main.project.location + '/' +
+                                let path = Globals.Proxies.main.project.location + '/' +
                                            Globals.Proxies.main.project.dirNames.models + '/' +
                                            imgFileName
                                 const exists = Globals.Proxies.main.backendHelpers.fileExists(path)
+                                path = Qt.resolvedUrl(path)
                                 if (exists) {
                                     return path
                                 }
@@ -317,10 +318,11 @@ Rectangle {
                                 split.pop()
                                 const baseFileName = split.join(".")
                                 const imgFileName = baseFileName + '.png'
-                                const path = Globals.Proxies.main.project.location + '/' +
+                                let path = Globals.Proxies.main.project.location + '/' +
                                            Globals.Proxies.main.project.dirNames.experiments + '/' +
                                            imgFileName
                                 const exists = Globals.Proxies.main.backendHelpers.fileExists(path)
+                                path = Qt.resolvedUrl(path)
                                 if (exists) {
                                     return path
                                 }
