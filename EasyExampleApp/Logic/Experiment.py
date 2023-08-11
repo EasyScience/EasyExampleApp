@@ -24,7 +24,7 @@ except ImportError:
     console.debug('No CrysPy module found')
 
 
-_DEFAULT_DATA_BLOCK_NO_MEAS = """data_pd
+_DEFAULT_DATA_BLOCK_NO_MEAS = """data_pnd
 
 _diffrn_radiation_probe neutron
 _diffrn_radiation_wavelength 1.9
