@@ -28,14 +28,15 @@ Rectangle {
         10.0  // NEED FIX
 
     property real scaleCoeff: defaultScaleCoeff
-    property real cellCylinderThickness: 2
-    property real axesCylinderThickness: 10
-    property real axisConeSize: 40
-    property real atomSizeScale: 0.7
+    property real cellCylinderThickness: 1
+    property real axesCylinderThickness: 6
+    property real axisConeSize: 25
+    property real atomSizeScale: 0.25
 
     property real defaultScaleCoeff: Math.min(width, height) /
                                      Math.max(cellLengthA, cellLengthB, cellLengthC) *
-                                     1.1
+                                     0.4
+
     property var defaultEulerRotation: Qt.vector3d(12, -34, -8)
     property var alongAEulerRotation: Qt.vector3d(-90, 90, 180)
     property var alongBEulerRotation: Qt.vector3d(0, 90, 90)
@@ -306,7 +307,7 @@ Rectangle {
             borderColor: EaStyle.Colors.chartAxis
             fontIcon: "search-minus"
             ToolTip.text: qsTr("Zoom out")
-            onClicked: scaleCoeff -= 1
+            onClicked: cameraOrthographicFront.z -= 10 //scaleCoeff -= 1
         }
 
         EaElements.TabButton {
@@ -319,7 +320,6 @@ Rectangle {
             ToolTip.text: qsTr("Reset to default scale")
             onClicked: scaleCoeff = defaultScaleCoeff
         }
-
 
         Item { height: 1; width: 0.5 * EaStyle.Sizes.fontPixelSize }  // spacer
 
@@ -423,7 +423,6 @@ Rectangle {
     }
     // Legend
 
-    // Misc
     Component.onDestruction: console.debug(`Structure view container destroyed: ${container}`)
     Component.onCompleted: console.debug(`Structure view container created: ${container}`)
 
@@ -433,13 +432,27 @@ Rectangle {
     // to orthographic, scale jumps to the expected one. The same occures when size
     // of the container is changed. So, this timer is temporary fix to get the
     // correct scale few moments after the structure view is created.
-    //Timer {
-    //    running: true
-    //    interval: 100
-    //    onTriggered: container.width += 1
-    //}
-    // Misc
+    Timer {
+        id: increaseWidthTimer
 
+        running: true
+        interval: 1000
+        onTriggered: {
+            container.width += 1
+            decreaseWidthTimer.start()
+        }
+    }
+
+    Timer {
+        id: decreaseWidthTimer
+
+        interval: 1000
+        onTriggered: {
+            container.width -= 1
+        }
+    }
+
+    // Auto-saving images
     Timer {
         id: saveImgTimer
 
