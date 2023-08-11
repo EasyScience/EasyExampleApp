@@ -256,15 +256,11 @@ Rectangle {
                                 split.pop()
                                 const baseFileName = split.join(".")
                                 const imgFileName = baseFileName + '.png'
-                                let path = Globals.Proxies.main.project.location + '/' +
-                                           Globals.Proxies.main.project.dirNames.models + '/' +
-                                           imgFileName
-                                const exists = Globals.Proxies.main.backendHelpers.fileExists(path)
-                                path = Qt.resolvedUrl(path)
-                                if (exists) {
-                                    return path
-                                }
-                                return ''  // Globals.Vars.imagePath('model.svg')
+                                const fpathParts = [Globals.Proxies.main.project.location,
+                                                    Globals.Proxies.main.project.dirNames.models,
+                                                    imgFileName]
+                                const uri = Globals.Proxies.main.backendHelpers.listToUri(fpathParts)
+                                return uri
                             }
                         }
                     }
@@ -318,15 +314,11 @@ Rectangle {
                                 split.pop()
                                 const baseFileName = split.join(".")
                                 const imgFileName = baseFileName + '.png'
-                                let path = Globals.Proxies.main.project.location + '/' +
-                                           Globals.Proxies.main.project.dirNames.experiments + '/' +
-                                           imgFileName
-                                const exists = Globals.Proxies.main.backendHelpers.fileExists(path)
-                                path = Qt.resolvedUrl(path)
-                                if (exists) {
-                                    return path
-                                }
-                                return ''  // Globals.Vars.imagePath('experiment.svg')
+                                const fpathParts = [Globals.Proxies.main.project.location,
+                                                    Globals.Proxies.main.project.dirNames.experiments,
+                                                    imgFileName]
+                                const uri = Globals.Proxies.main.backendHelpers.listToUri(fpathParts)
+                                return uri
                             }
                         }
                     }

@@ -193,6 +193,17 @@ class BackendHelpers(QObject):
         #    console.debug(f"File {path} doesn't exist")
         return exists
 
+    @Slot('QVariant', result=str)
+    def listToUri(self, fpathParts):
+        fpathParts = fpathParts.toVariant()
+        fpath = os.path.join(*fpathParts)
+        exists = pathlib.Path(fpath).is_file()
+        if not exists:
+            return ''
+        furi = pathlib.Path(fpath).as_uri()
+        if sys.platform.startswith("win") and furi[0] == '/':
+            furi = furi[1:].replace('/', os.path.sep)
+        return furi
 
 class PyProxyWorker(QObject):
     pyProxyExposedToQml = Signal()
