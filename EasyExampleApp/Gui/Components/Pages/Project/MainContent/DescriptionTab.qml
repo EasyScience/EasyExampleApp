@@ -104,6 +104,7 @@ Rectangle {
 
             // Date
             Column {
+                /*
                 Row {
                     spacing: innerSpacing
                     EaElements.Label {
@@ -115,6 +116,7 @@ Rectangle {
                         text: Globals.Proxies.main.project.dateCreated
                     }
                 }
+                */
                 Row {
                     spacing: innerSpacing
                     EaElements.Label {

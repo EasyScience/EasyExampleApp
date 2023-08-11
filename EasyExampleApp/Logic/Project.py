@@ -242,7 +242,7 @@ class Project(QObject):
 
         st = os.stat(fpath)
         fmt = "%d %b %Y %H:%M"
-        self.dateCreated = time.strftime(fmt, time.localtime(st.st_birthtime))
+        #self.dateCreated = time.strftime(fmt, time.localtime(st.st_birthtime))
         self.dateLastModified = time.strftime(fmt, time.localtime(st.st_mtime))
 
         self.location = os.path.dirname(fpath)
@@ -352,7 +352,7 @@ class Project(QObject):
         fpath = os.path.join(self.location, 'project.cif')
         st = os.stat(fpath)
         fmt = "%d %b %Y %H:%M"
-        self.dateCreated = time.strftime(fmt, time.localtime(st.st_birthtime))
+        #self.dateCreated = time.strftime(fmt, time.localtime(st.st_birthtime))
         self.dateLastModified = time.strftime(fmt, time.localtime(st.st_mtime))
 
         self.created = True
