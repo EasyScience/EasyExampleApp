@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
+import os
 from PySide6.QtCore import QObject, Signal, Slot, Property
 
 from EasyApp.Logic.Logging import console
@@ -79,6 +80,9 @@ class Summary(QObject):
         fpath = fpath.toLocalFile()
         fpath = IO.generalizePath(fpath)
         console.debug(f"Loading report from: {fpath}")
+        if not os.path.isfile(fpath):
+            console.error(f"File not found: {fpath}")
+            return
         with open(fpath, 'r') as file:
             edCif = file.read()
         self._dataBlocksCif = edCif

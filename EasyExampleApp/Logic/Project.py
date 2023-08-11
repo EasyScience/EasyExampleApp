@@ -252,10 +252,11 @@ class Project(QObject):
         modelFilePaths = [QUrl.fromLocalFile(path) for path in modelFilePaths]
         self._proxy.model.loadModelsFromFiles(modelFilePaths)
 
-        experimentFileNames = [item['_name']['value'] for item in self._dataBlock['loops']['_experiment_cif_file']]
-        experimentFilePaths = [os.path.join(self._location, self._dirNames['experiments'], fileName) for fileName in experimentFileNames]
-        experimentFilePaths = [QUrl.fromLocalFile(path) for path in experimentFilePaths]
-        self._proxy.experiment.loadExperimentsFromFiles(experimentFilePaths)
+        if '_experiment_cif_file' in self._dataBlock['loops']:
+            experimentFileNames = [item['_name']['value'] for item in self._dataBlock['loops']['_experiment_cif_file']]
+            experimentFilePaths = [os.path.join(self._location, self._dirNames['experiments'], fileName) for fileName in experimentFileNames]
+            experimentFilePaths = [QUrl.fromLocalFile(path) for path in experimentFilePaths]
+            self._proxy.experiment.loadExperimentsFromFiles(experimentFilePaths)
 
         reportFileName = 'report.cif'
         reportFilePath = os.path.join(self._location, self._dirNames['summary'], reportFileName)
