@@ -628,6 +628,7 @@ class CryspyParser:
                 ))
 
                 for item in cryspy_experiment:
+
                     # Ranges section
                     if type(item) == cryspy.C_item_loop_classes.cl_1_range.Range:
                         ed_experiment['params']['_pd_meas_2theta_range_min'] = dict(Parameter(
@@ -649,7 +650,7 @@ class CryspyParser:
                             cifDict = 'pd'
                         ))
                         ed_experiment['params']['_pd_meas_2theta_range_inc'] = dict(Parameter(
-                            0.05, # NEED FIX
+                            0.1,  # default value to be updated later
                             name = '_pd_meas_2theta_range_inc',
                             prettyName = 'range inc',
                             title = 'inc',
@@ -657,8 +658,10 @@ class CryspyParser:
                             cifDict = 'pd'
                         ))
 
+                for item in cryspy_experiment:
+
                     # Setup section
-                    elif type(item) == cryspy.C_item_loop_classes.cl_1_setup.Setup:
+                    if type(item) == cryspy.C_item_loop_classes.cl_1_setup.Setup:
                         ed_experiment['params']['_diffrn_radiation_probe'] = dict(Parameter(
                             item.radiation.replace('neutrons', 'neutron').replace('X-rays', 'x-ray'),
                             permittedValues = ['neutron', 'x-ray'],
@@ -827,38 +830,36 @@ class CryspyParser:
                         cryspy_phases = item.items
 
                         for idx, cryspy_phase in enumerate(cryspy_phases):
-                            loadedPhases = [] #[block['name'] for block in self._proxy.model.dataBlocks]
-                            if True: #cryspy_phase.label in loadedPhases:
-                                ed_phase = {}
-                                ed_phase['_label'] = dict(Parameter(
-                                    cryspy_phase.label,
-                                    idx = idx,
-                                    loopName = '_phase',
-                                    name = '_label',
-                                    #prettyName = 'label',
-                                    title = 'label',
-                                    url = 'https://easydiffraction.org',
-                                ))
-                                ed_phase['_scale'] = dict(Parameter(
-                                    cryspy_phase.scale,
-                                    error = cryspy_phase.scale_sigma,
-                                    idx = idx,
-                                    loopName = '_phase',
-                                    prettyLoopName = 'phase',
-                                    rowName = cryspy_phase.label,
-                                    name = '_scale',
-                                    prettyName = 'scale',
-                                    title = 'scale',
-                                    icon = 'weight',
-                                    groupIcon = 'layer-group',
-                                    url = 'https://easydiffraction.org',
-                                    #min = 0,
-                                    #max = 1000,
-                                    pctDelta = 25,
-                                    fittable = True,
-                                    fit = cryspy_phase.scale_refinement
-                                ))
-                                ed_phases.append(ed_phase)
+                            ed_phase = {}
+                            ed_phase['_label'] = dict(Parameter(
+                                cryspy_phase.label,
+                                idx = idx,
+                                loopName = '_phase',
+                                name = '_label',
+                                #prettyName = 'label',
+                                title = 'label',
+                                url = 'https://easydiffraction.org',
+                            ))
+                            ed_phase['_scale'] = dict(Parameter(
+                                cryspy_phase.scale,
+                                error = cryspy_phase.scale_sigma,
+                                idx = idx,
+                                loopName = '_phase',
+                                prettyLoopName = 'phase',
+                                rowName = cryspy_phase.label,
+                                name = '_scale',
+                                prettyName = 'scale',
+                                title = 'scale',
+                                icon = 'weight',
+                                groupIcon = 'layer-group',
+                                url = 'https://easydiffraction.org',
+                                #min = 0,
+                                #max = 1000,
+                                pctDelta = 25,
+                                fittable = True,
+                                fit = cryspy_phase.scale_refinement
+                            ))
+                            ed_phases.append(ed_phase)
 
                         ed_experiment['loops']['_phase'] = ed_phases
 
@@ -937,6 +938,12 @@ class CryspyParser:
                             ))
                             ed_meas_points.append(ed_meas_point)
                         ed_experiment_meas_only['loops']['_pd_meas'] = ed_meas_points
+
+                        # Modify range_inc based on the measured data points in _pd_meas loop
+                        pd_meas_2theta_range_min = ed_meas_points[0]['_2theta']['value']
+                        pd_meas_2theta_range_max = ed_meas_points[-1]['_2theta']['value']
+                        pd_meas_2theta_range_inc = (pd_meas_2theta_range_max - pd_meas_2theta_range_min) / (len(ed_meas_points) - 1)
+                        ed_experiment['params']['_pd_meas_2theta_range_inc']['value'] = pd_meas_2theta_range_inc
 
             ed_experiments_meas_only.append(ed_experiment_meas_only)
             ed_experiments.append(ed_experiment)

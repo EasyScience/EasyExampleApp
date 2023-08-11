@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
+import os
 import copy
 import numpy as np
 from PySide6.QtCore import QObject, Signal, Slot, Property
@@ -23,19 +24,16 @@ except ImportError:
     console.debug('No CrysPy module found')
 
 
-_DEFAULT_DATA_BLOCK = """data_default
+_DEFAULT_DATA_BLOCK_NO_MEAS = """data_pd
 
 _diffrn_radiation_probe neutron
-_diffrn_radiation_wavelength 1.87
+_diffrn_radiation_wavelength 1.9
 
-_pd_meas_2theta_offset 0
-_pd_meas_2theta_range_min 36.5
-_pd_meas_2theta_range_max 39
-_pd_meas_2theta_range_inc 0.5
+_pd_meas_2theta_offset 0.0
 
-_pd_instr_resolution_u 0.2
-_pd_instr_resolution_v -0.5
-_pd_instr_resolution_w 0.4
+_pd_instr_resolution_u 0.04
+_pd_instr_resolution_v -0.05
+_pd_instr_resolution_w 0.06
 _pd_instr_resolution_x 0
 _pd_instr_resolution_y 0
 
@@ -47,19 +45,21 @@ _pd_instr_reflex_asymmetry_p4 0
 loop_
 _phase_label
 _phase_scale
-default 1
+ph 1.0
 
 loop_
 _pd_background_2theta
 _pd_background_intensity
-10  1
-170 1
+0 100
+180 100
 
 loop_
 _pd_meas_2theta
 _pd_meas_intensity
 _pd_meas_intensity_sigma
-36.5 1    1
+"""
+
+_DEFAULT_DATA_BLOCK = _DEFAULT_DATA_BLOCK_NO_MEAS + """36.5 1    1
 37.0 10   3
 37.5 700  25
 38.0 1100 30
@@ -174,16 +174,54 @@ class Experiment(QObject):
         for fpath in fpaths:
             fpath = fpath.toLocalFile()
             fpath = IO.generalizePath(fpath)
+            _, fext = os.path.splitext(fpath)
             console.debug(f"Loading experiment(s) from: {fpath}")
             with open(fpath, 'r') as file:
-                edCif = file.read()
-            self.loadExperimentsFromEdCif(edCif)
+                fileContent = file.read()
+            if fext == '.xye':
+                fileContent = _DEFAULT_DATA_BLOCK_NO_MEAS + fileContent
+            self.loadExperimentsFromEdCif(fileContent)
 
     @Slot(str)
     def loadExperimentsFromEdCif(self, edCif):
         cryspyObj = self._proxy.data._cryspyObj
         cryspyCif = CryspyParser.edCifToCryspyCif(edCif)
         cryspyExperimentsObj = str_to_globaln(cryspyCif)
+
+        # Add/modify CryspyObj with ranges based on the measured data points in _pd_meas loop
+        pd_meas_2theta_range_min = 0  # default value to be updated later
+        pd_meas_2theta_range_max = 180  # default value to be updated later
+        defaultEdRangeCif = f'_pd_meas_2theta_range_min {pd_meas_2theta_range_min}\n_pd_meas_2theta_range_max {pd_meas_2theta_range_max}'
+        cryspyRangeCif = CryspyParser.edCifToCryspyCif(defaultEdRangeCif)
+        cryspyRangeObj = str_to_globaln(cryspyRangeCif).items
+        for dataBlock in cryspyExperimentsObj.items:
+            for item in dataBlock.items:
+                if type(item) == cryspy.C_item_loop_classes.cl_1_pd_meas.PdMeasL:
+                    pd_meas_2theta_range_min = item.items[0].ttheta
+                    pd_meas_2theta_range_max = item.items[-1].ttheta
+                    cryspyRangeObj[0].ttheta_min = pd_meas_2theta_range_min
+                    cryspyRangeObj[0].ttheta_max = pd_meas_2theta_range_max
+            dataBlock.add_items(cryspyRangeObj)
+
+        # Add/modify CryspyObj with phases based on the already loaded phases
+        loadedModelNames = [block['name']['value'] for block in self._proxy.model.dataBlocks]
+        for dataBlock in cryspyExperimentsObj.items:
+            for itemIdx, item in enumerate(dataBlock.items):
+                if type(item) == cryspy.C_item_loop_classes.cl_1_phase.PhaseL:
+                    cryspyModelNames = [phase.label for phase in item.items]
+                    for modelIdx, modelName in enumerate(cryspyModelNames):
+                        if modelName not in loadedModelNames:
+                            del item.items[modelIdx]
+                    if not len(item.items):
+                        del dataBlock.items[itemIdx]
+            itemTypes = [type(item) for item in dataBlock.items]
+            if cryspy.C_item_loop_classes.cl_1_phase.PhaseL not in itemTypes:
+                defaultEdModelsCif = 'loop_\n_phase_label\n_phase_scale'
+                for modelName in loadedModelNames:
+                    defaultEdModelsCif += f'\n{modelName} 1.0'
+                cryspyPhasesCif = CryspyParser.edCifToCryspyCif(defaultEdModelsCif)
+                cryspyPhasesObj = str_to_globaln(cryspyPhasesCif).items
+                dataBlock.add_items(cryspyPhasesObj)
 
         experimentsCountBefore = len(self.cryspyObjExperiments())
         cryspyObj.add_items(cryspyExperimentsObj.items)
@@ -192,7 +230,8 @@ class Experiment(QObject):
 
         if success:
             cryspyExperimentsDict = cryspyExperimentsObj.get_dictionary()
-            edExperimentsMeasOnly, edExperimentsNoMeas = CryspyParser.cryspyObjAndDictToEdExperiments(cryspyExperimentsObj, cryspyExperimentsDict)
+            edExperimentsMeasOnly, edExperimentsNoMeas = CryspyParser.cryspyObjAndDictToEdExperiments(cryspyExperimentsObj,
+                                                                                                      cryspyExperimentsDict)
 
             self._proxy.data._cryspyDict.update(cryspyExperimentsDict)
             self._dataBlocksMeasOnly += edExperimentsMeasOnly
@@ -226,7 +265,8 @@ class Experiment(QObject):
         cryspyCif = CryspyParser.edCifToCryspyCif(edCif)
         cryspyExperimentsObj = str_to_globaln(cryspyCif)
         cryspyExperimentsDict = cryspyExperimentsObj.get_dictionary()
-        _, edExperimentsNoMeas = CryspyParser.cryspyObjAndDictToEdExperiments(cryspyExperimentsObj, cryspyExperimentsDict)
+        _, edExperimentsNoMeas = CryspyParser.cryspyObjAndDictToEdExperiments(cryspyExperimentsObj,
+                                                                              cryspyExperimentsDict)
 
         self._proxy.data._cryspyObj.items[cryspyObjBlockIdx] = cryspyExperimentsObj.items[0]
         self._proxy.data._cryspyDict[cryspyDictBlockName] = cryspyExperimentsDict[cryspyDictBlockName]
