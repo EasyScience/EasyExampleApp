@@ -83,8 +83,8 @@ jobs:
           python -m pip install git+https://github.com/ikibalin/cryspy.git@beta
           python -m pip install git+https://github.com/easyscience/EasyApp.git@new-easy-app2
 
-      - name: Create python resources file
-        run: pyside6-rcc EasyExampleApp/resources.qrc -o EasyExampleApp/resources.py
+      #- name: Create python resources file
+      #  run: pyside6-rcc EasyExampleApp/resources.qrc -o EasyExampleApp/resources.py
 
       - name: Run QML GUI tests
         run: |
