@@ -8,7 +8,7 @@ build-backend = "hatchling.build"
 # the application itself is EasyExample.
 [project]
 name = "EasyExampleApp"
-version = "0.1.0-beta"
+version = "0.9.0-pre-alpha1"
 description = 'Making diffraction data analysis and modelling easy.'
 authors = [
   {name = "Andrew Sazonov", email = "andrew.sazonov@ess.eu"}
@@ -67,9 +67,6 @@ bundle_id = 'org.easyscience.easydiffraction'
 
 [ci.codesign.macos]
 identity = 'Developer ID Application: European Spallation Source Eric (W2AG9MPZ43)'
-
-[ci.app.info]
-date_for_qtifw = '2023-08-13'
 
 [ci.app.icon]
 dir = ['Gui', 'Resources', 'Logo']
