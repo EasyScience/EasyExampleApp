@@ -45,10 +45,41 @@ jobs:
         with:
             python-version: 3.11
 
+      - name: Upgrade PIP
+        run: python -m pip install --upgrade pip
+
+      - name: Add extra info to pyproject.toml
+        run: |
+          python -m pip install toml
+          python utils.py --update
+
+      - name: Declare env variables on push only
+        if: github.event_name == 'push'
+        shell: bash
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Declare env variables on pull_request only
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$GITHUB_HEAD_REF" >> $GITHUB_ENV
+
+      - name: Declare env variables on push and pull_request
+        shell: bash
+        run: |
+          echo "APP_NAME=$(python utils.py --get release.app_name)" >> $GITHUB_ENV
+          echo "RELEASE_TAG=$(python utils.py --get ci.app.info.release_tag)" >> $GITHUB_ENV
+          echo "RELEASE_TITLE=$(python utils.py --get ci.app.info.release_title)" >> $GITHUB_ENV
+          echo "SCRIPTS_PATH=$(python utils.py --get ci.project.subdirs.scripts)" >> $GITHUB_ENV
+          echo "DISTRIBUTION_PATH=$(python utils.py --get ci.project.subdirs.distribution)" >> $GITHUB_ENV
+          echo "DOWNLOAD_PATH=$(python utils.py --get ci.project.subdirs.download)" >> $GITHUB_ENV
+          echo "QTIFW_PATH=$(python utils.py --get ci.qtifw.setup.installation_path.${{ runner.os }})" >> $GITHUB_ENV
+          echo "PYTHON_PACKAGES_PATH=$(python utils.py --get ci.cache.python_packages_path)" >> $GITHUB_ENV
+          echo "GIT_INSTALL_URL=git+$GITHUB_SERVER_URL/$GITHUB_REPOSITORY@${{ env.BRANCH_NAME }}" >> $GITHUB_ENV
+
       - name: Install Python dependences
         run: |
-          python -m pip install --upgrade pip
           python -m pip install numpy lmfit orjson jsbeautifier
+          python -m pip install requests dephell_licenses
           python -m pip install git+https://github.com/ikibalin/cryspy.git@beta
           python -m pip install git+https://github.com/easyscience/EasyApp.git@new-easy-app2
 
@@ -56,6 +87,19 @@ jobs:
         run: |
           cd EasyExampleApp
           python main.py --testmode
+
+      - name: Create freezed python app bundle
+        run: python ${{ env.SCRIPTS_PATH }}/FreezeApp.py
+
+      - name: Create offline and online app installers from freezed app bundle
+        run: python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
+
+      - name: Install app
+        run: python ${{ env.SCRIPTS_PATH }}/InstallApp.py
+
+      - name: Run app in testmode, record screen and quit
+        run: python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
+
 
       #- name: Run pytest (compare app images after previous step)
       #  run: pytest

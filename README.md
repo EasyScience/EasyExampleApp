@@ -88,4 +88,4 @@ In this case, `EasyApp` need to be cloned manually and located on the same lavel
 * Install PyInstaller
 	* `pip install pyinstaller`
 * Freeze app
-	* `pyinstaller EasyExampleApp/main.py --name=EasyExample --log-level WARN --noconfirm --clean --noconsole --onedir --distpath .build/pyinstaller/dist --workpath .build/pyinstaller/temp --specpath .build/pyinstaller`
+	* `pyinstaller EasyExampleApp/main.py --name=EasyDiffraction --log-level WARN --noconfirm --clean --noconsole --onedir --distpath .build/pyinstaller/dist --workpath .build/pyinstaller/temp --specpath .build/pyinstaller`
