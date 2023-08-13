@@ -286,5 +286,20 @@
         <file>../../EasyApp/EasyApp/Logic/Maintenance.py</file>
         <file>../../EasyApp/EasyApp/Logic/Translate.py</file>
         <file>../../EasyApp/EasyApp/__init__.py</file>
+        <file>Logic/Analysis.py</file>
+        <file>Logic/Calculators.py</file>
+        <file>Logic/Connections.py</file>
+        <file>Logic/Data.py</file>
+        <file>Logic/Experiment.py</file>
+        <file>Logic/Fittables.py</file>
+        <file>Logic/Fitting.py</file>
+        <file>Logic/Helpers.py</file>
+        <file>Logic/Model.py</file>
+        <file>Logic/Plotting.py</file>
+        <file>Logic/Project.py</file>
+        <file>Logic/PyProxy.py</file>
+        <file>Logic/Status.py</file>
+        <file>Logic/Summary.py</file>
+        <file>Logic/Tables.py</file>
     </qresource>
 </RCC>
