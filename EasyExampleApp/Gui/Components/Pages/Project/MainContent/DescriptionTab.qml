@@ -99,11 +99,12 @@ Rectangle {
             // Description
 
             // Extra spacer
-            Item { height: 1; width: 1 }
+            Item {  visible: !Globals.Proxies.main.project.location.startsWith(':/'); height: 1; width: 1 }
             // Extra spacer
 
             // Date
             Column {
+                visible: !Globals.Proxies.main.project.location.startsWith(':/')
                 /*
                 Row {
                     spacing: innerSpacing
@@ -132,11 +133,12 @@ Rectangle {
             // Date
 
             // Extra spacer
-            Item { height: 1; width: 1 }
+            Item {  visible: !Globals.Proxies.main.project.location.startsWith(':/'); height: 1; width: 1 }
             // Extra spacer
 
             // Location and dirs
             Column {
+                visible: !Globals.Proxies.main.project.location.startsWith(':/')
                 Row {
                     spacing: innerSpacing
                     EaElements.Label {
@@ -147,7 +149,9 @@ Rectangle {
                     EaElements.Label {
                         width: column.width - nameColumnWidth
                         elide: Text.ElideMiddle
-                        text: Globals.Proxies.main.project.location
+                        text: Globals.Proxies.main.project.location.startsWith(':/') ?
+                                  Globals.Proxies.main.project.location.substring(2) :
+                                  Globals.Proxies.main.project.location
                     }
                 }
                 Row {
@@ -206,11 +210,12 @@ Rectangle {
             // Location and dirs
 
             // Extra spacer
-            Item { height: 1; width: 1 }
+            Item { visible: !Globals.Proxies.main.project.location.startsWith(':/'); height: 1; width: 1 }
             // Extra spacer
 
             // Models
             Row {
+                visible: !Globals.Proxies.main.project.location.startsWith(':/')
                 spacing: innerSpacing
                 EaElements.Label {
                     width: nameColumnWidth
@@ -270,6 +275,7 @@ Rectangle {
 
             // Experiments
             Row {
+                visible: !Globals.Proxies.main.project.location.startsWith(':/')
                 spacing: innerSpacing
                 EaElements.Label {
                     width: nameColumnWidth

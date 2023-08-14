@@ -6,6 +6,7 @@ import os
 import time
 from pycifstar.data import Data as PycifstarData
 from PySide6.QtCore import QObject, Signal, Slot, Property, QUrl
+from PySide6.QtCore import QFile, QTextStream, QIODevice
 
 from EasyApp.Logic.Logging import console
 from Logic.Helpers import IO
@@ -22,42 +23,42 @@ _EXAMPLES = [
     {
         'name': 'La0.5Ba0.5CoO3',
         'description': 'neutrons, powder, constant wavelength, HRPT@PSI',
-        'path': '../../../../../../examples/La0.5Ba0.5CoO3/project.cif'
+        'path': ':/Examples/La0.5Ba0.5CoO3/project.cif'
 
      },
      {
          'name': 'La0.5Ba0.5CoO3-Raw',
          'description': 'neutrons, powder, constant wavelength, HRPT@PSI',
-         'path': '../../../../../../examples/La0.5Ba0.5CoO3-Raw/project.cif'
+         'path': ':/Examples/La0.5Ba0.5CoO3-Raw/project.cif'
 
       },
     {
         'name': 'Co2SiO4',
         'description': 'neutrons, powder, constant wavelength, D20@ILL',
-        'path': '../../../../../../examples/Co2SiO4/project.cif'
+        'path': ':/Examples/Co2SiO4/project.cif'
 
      },
     {
         'name': 'Dy3Al5O12',
         'description': 'neutrons, powder, constant wavelength, G41@LLB',
-        'path': '../../../../../../examples/Dy3Al5O12/project.cif'
+        'path': ':/Examples/Dy3Al5O12/project.cif'
 
      },
      {
         'name': 'PbSO4',
         'description': 'neutrons, powder, constant wavelength, D1A@ILL',
-        'path': '../../../../../../examples/PbSO4/project.cif'
+        'path': ':/Examples/PbSO4/project.cif'
 
      },
      {
          'name': 'Co2SiO4-Mult-Phases',
          'description': 'neutrons, powder, constant wavelength, D20@ILL, 2 phases',
-         'path': '../../../../../../examples/Co2SiO4-Mult-Phases/project.cif'
+         'path': ':/Examples/Co2SiO4-Mult-Phases/project.cif'
      },
      #{
      #    'name': 'Si3N4',
      #    'description': 'neutrons, powder, constant wavelength, multi-phase, 3T2@LLB',
-     #    'path': '../../../../../../examples/Si3N4/project.cif'
+     #    'path': ':/Examples/Si3N4/project.cif'
      #}
 ]
 
@@ -202,9 +203,6 @@ class Project(QObject):
     def dirNames(self):
         return self._dirNames
 
-
-
-
     def createDataBlockFromCif(self, edCif):
         starObj = PycifstarData()
         starObj.take_from_string(edCif)
@@ -212,11 +210,15 @@ class Project(QObject):
         return dataBlock
 
     @Slot('QVariant')
-    def loadExampleProject(self, fpath):
+    def loadExampleFromFile(self, fpath):
         fpath = fpath.toLocalFile()
         fpath = IO.generalizePath(fpath)
 
         self.loadProjectFromFile(fpath)
+
+    @Slot(str)
+    def loadExampleFromSoure(self, fpath):
+        self.loadProjectFromSource(fpath)
 
     @Slot('QVariant')
     def loadProject(self, fpath):
@@ -230,6 +232,47 @@ class Project(QObject):
         self.recentChanged.emit()
 
         self.loadProjectFromFile(fpath)
+
+    def loadProjectFromSource(self, fpath):
+        console.debug(f"Loading project from: {fpath}")
+        file = QFile(fpath)
+        if not file.open(QIODevice.ReadOnly | QIODevice.Text):
+            console.error('Not found in resources')
+            return
+
+        stream = QTextStream(file)
+        edCif = stream.readAll()
+
+        starObj = PycifstarData()
+        starObj.take_from_string(edCif)
+        self._dataBlock = CryspyParser.starObjToEdProject(starObj)
+
+        self.location = os.path.dirname(fpath)
+
+        modelFileNames = [item['_name']['value'] for item in self._dataBlock['loops']['_model_cif_file']]
+        modelFilePaths = [os.path.join(self._location, self._dirNames['models'], fileName) for fileName in modelFileNames]
+        self._proxy.model.loadModelsFromResources(modelFilePaths)
+
+        if '_experiment_cif_file' in self._dataBlock['loops']:
+            experimentFileNames = [item['_name']['value'] for item in self._dataBlock['loops']['_experiment_cif_file']]
+            experimentFilePaths = [os.path.join(self._location, self._dirNames['experiments'], fileName) for fileName in experimentFileNames]
+            self._proxy.experiment.loadExperimentsFromResources(experimentFilePaths)
+
+        reportFileName = 'report.cif'
+        reportFilePath = os.path.join(self._location, self._dirNames['summary'], reportFileName)
+        self._proxy.summary.loadReportFromResources(reportFilePath)
+
+        if '_description' not in self._dataBlock['params']:
+            self._dataBlock['params']['_description'] = dict(Parameter(
+                '.',
+                name='_description',
+                prettyName='Description',
+                url='https://easydiffraction.org'
+            ))
+
+        self.dataBlockChanged.emit()
+        self.created = True
+        self.needSave = False
 
     def loadProjectFromFile(self, fpath):
         console.debug(f"Loading project from: {fpath}")

@@ -63,7 +63,7 @@ EaComponents.TableView {
 
             const filePath = tableView.model[index]
             const fileUrl = Qt.resolvedUrl(filePath)
-            Globals.Proxies.main.project.loadExampleProject(fileUrl)
+            Globals.Proxies.main.project.loadExampleFromFile(fileUrl)
 
             Globals.Vars.analysisPageEnabled = true
             Globals.Vars.summaryPageEnabled = true

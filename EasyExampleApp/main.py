@@ -4,39 +4,13 @@
 
 # Import logger from EasyApp module
 import sys
-EASYAPP_LOCAL_PATH = '../../EasyApp'
-sys.path.append(EASYAPP_LOCAL_PATH)
+#EASYAPP_LOCAL_PATH = '../../EasyApp'
+#sys.path.append(EASYAPP_LOCAL_PATH)
+import resources
 from EasyApp.Logic.Logging import console
 
 
 if __name__ == '__main__':
-
-
-    import resources
-    from PySide6.QtCore import QFile, QTextStream, QIODevice
-
-    file = QFile("/Users/as/Development/GitHub/easyScience/EasyExampleApp/examples/Co2SiO4/models/co2sio4.cif")
-    file = QFile("../examples/Co2SiO4/models/co2sio4.cif")
-
-    #file = QFile(":../examples/Co2SiO4/models/co2sio4.cif")
-
-    #file = QFile(':/Gui/main.qml') # read from qrc
-    file = QFile(':/Examples/Co2SiO4/models/co2sio4.cif') # read from qrc
-
-    if not file.open(QIODevice.ReadOnly | QIODevice.Text):
-        print('ERROR') #return
-
-    stream = QTextStream(file)
-    content = stream.readAll()
-
-    print(type(content))
-    print(content)
-
-    #sys.exit(0)
-
-
-
-
 
     from PySide6.QtCore import qInstallMessageHandler
     qInstallMessageHandler(console.qmlMessageHandler)

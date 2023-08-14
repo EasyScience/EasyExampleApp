@@ -14,29 +14,6 @@ jobs:
       fail-fast: false
 
     steps:
-      - name: Set up screen (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install libxcb-xinerama0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xfixes0 libxcb-shape0 libxcb-cursor0
-          sudo apt-get install libpulse-mainloop-glib0
-          sudo apt-get install libxkbcommon-x11-0
-          sudo apt-get install libegl1-mesa
-          Xvfb :0 -screen 0 1920x1080x24 -ac &
-          echo "DISPLAY=:0" >> $GITHUB_ENV
-
-      - name: Set up screen (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          "/Library/Application Support/VMware Tools/vmware-resolutionSet" 1920 1080
-          system_profiler SPDisplaysDataType | grep Resolution
-
-      - name: Set up screen (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          Set-DisplayResolution -Width 1920 -Height 1080 -Force
-          Get-DisplayResolution
-
       - name: Check-out repository
         uses: actions/checkout@v3
 
@@ -81,15 +58,42 @@ jobs:
           python -m pip install numpy lmfit orjson jsbeautifier
           python -m pip install pyinstaller requests dephell_licenses
           python -m pip install git+https://github.com/ikibalin/cryspy.git@beta
-          python -m pip install git+https://github.com/easyscience/EasyApp.git@new-easy-app2
+      #    python -m pip install git+https://github.com/easyscience/EasyApp.git@new-easy-app2
 
       #- name: Create python resources file
       #  run: pyside6-rcc EasyExampleApp/resources.qrc -o EasyExampleApp/resources.py
+
+      #- name: Run pytest (compare app images after previous step)
+      #  run: pytest
+
+      - name: Set up screen (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install libxcb-xinerama0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xfixes0 libxcb-shape0 libxcb-cursor0
+          sudo apt-get install libpulse-mainloop-glib0
+          sudo apt-get install libxkbcommon-x11-0
+          sudo apt-get install libegl1-mesa
+          Xvfb :0 -screen 0 1920x1080x24 -ac &
+          echo "DISPLAY=:0" >> $GITHUB_ENV
+
+      - name: Set up screen (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          "/Library/Application Support/VMware Tools/vmware-resolutionSet" 1920 1080
+          system_profiler SPDisplaysDataType | grep Resolution
+
+      - name: Set up screen (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          Set-DisplayResolution -Width 1920 -Height 1080 -Force
+          Get-DisplayResolution
 
       - name: Run QML GUI tests
         run: |
           cd EasyExampleApp
           python main.py --testmode
+          cd ..
 
       - name: Create freezed python app bundle
         run: python ${{ env.SCRIPTS_PATH }}/FreezeApp.py
@@ -97,12 +101,43 @@ jobs:
       - name: Create offline and online app installers from freezed app bundle
         run: python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
 
+      - name: Make dir for .desktop file (Linux)
+        if: runner.os == 'Linux'
+        run: mkdir -p ~/.local/share/applications/
+
       - name: Install app
         run: python ${{ env.SCRIPTS_PATH }}/InstallApp.py
 
-      - name: Run app in testmode, record screen and quit
+      - name: Debug paths (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          echo 'ls..'
+          ls ..
+          echo 'ls'
+          ls
+          echo 'ls EasyDiffraction'
+          ls EasyDiffraction
+          echo 'ls EasyDiffraction/EasyDiffraction'
+          ls EasyDiffraction/EasyDiffraction
+
+      - name: Run app in testmode and quit
         run: python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
 
+      - name: Create zip archive of offline app installer for distribution
+        run: >
+          python ${{ env.SCRIPTS_PATH }}/ZipAppInstaller.py
+          ${{ env.BRANCH_NAME }}
 
-      #- name: Run pytest (compare app images after previous step)
-      #  run: pytest
+      - name: Upload zipped offline app installer to GitHub releases (non-master branch)
+        if: github.event_name == 'push' && env.BRANCH_NAME != 'master'
+        uses: ncipollo/release-action@v1
+        with:
+          draft: true
+          prerelease: true
+          allowUpdates: true
+          replacesArtifacts: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: "${{ env.DISTRIBUTION_PATH }}/*.zip"
+          tag: ${{ env.BRANCH_NAME }}
+          name: ${{ env.BRANCH_NAME }}
+          bodyFile: "RELEASE.md"
