@@ -10,7 +10,8 @@ import sys
 import time
 from urllib.parse import urlparse
 
-from PySide6.QtCore import QObject, QCoreApplication, Signal, Slot
+from PySide6.QtCore import QObject, QCoreApplication, Signal, Slot, Property, Qt
+from PySide6.QtGui import QStyleHints
 from PySide6.QtWidgets import QApplication
 
 from EasyApp.Logic.Logging import console
@@ -92,6 +93,8 @@ class EnvironmentVariables:
     @staticmethod
     def set():
         os.environ['QSG_RHI_BACKEND'] = 'opengl'  # For QtCharts XYSeries useOpenGL
+        #qsetenv("QT_QPA_PLATFORM", "windows:darkmode=[1|2]")
+        #os.environ['QT_QPA_PLATFORM'] = 'windows:darkmode=[1|2]'
         #os.environ['QT_MESSAGE_PATTERN'] = "\033[32m%{time h:mm:ss.zzz}%{if-category}\033[32m %{category}:%{endif} %{if-debug}\033[34m%{function}%{endif}%{if-warning}\033[31m%{backtrace depth=3}%{endif}%{if-critical}\033[31m%{backtrace depth=3}%{endif}%{if-fatal}\033[31m%{backtrace depth=3}%{endif}\033[0m %{message}"
 
 
@@ -182,8 +185,37 @@ class Application(QApplication):  # QGuiApplication crashes when using in combin
 
 
 class BackendHelpers(QObject):
+    systemColorSchemeChanged = Signal()
+    #systemColorSchemeChanged2 = Signal()
+
     def __init__(self, parent=None):
         super().__init__(parent)
+        #print('QApplication.instance()', QApplication.instance())
+        #print('QApplication.instance().styleHints()', QApplication.instance().styleHints())
+        #print('QStyleHints()', QStyleHints())
+        #print('QApplication.instance().styleHints().colorScheme()', QApplication.instance().styleHints().colorScheme())
+        #print('QStyleHints().colorScheme()', QStyleHints().colorScheme())
+        self._styleHints = QApplication.instance().styleHints()
+        self._systemColorScheme = self._styleHints.colorScheme()
+        print(f"Initial system color scheme: {self._systemColorScheme}")  # Qt.ColorScheme.Light, Qt.ColorScheme.Dark, Qt.ColorScheme.Unknown?
+        self._styleHints.colorSchemeChanged.connect(self.onSystemColorSchemeChanged)
+        #print(Qt.ColorScheme, Qt.ColorScheme.Light, Qt.ColorScheme.Dark)
+
+    #@Property('QVariant', notify=systemColorSchemeChanged2)
+    #def systemColorScheme2(self):
+    #    return self._styleHints.colorScheme()
+
+
+    @Property(int, notify=systemColorSchemeChanged)
+    def systemColorScheme(self):
+        return self._systemColorScheme
+
+    def onSystemColorSchemeChanged(self):
+        print('~~~~~~AAAAAAA')
+        console.debug(f"Old system color scheme: {self._systemColorScheme}")  # Qt.ColorScheme.Light, Qt.ColorScheme.Dark, Qt.ColorScheme.Unknown?
+        self._systemColorScheme = self._styleHints.colorScheme()
+        console.debug(f"New system color scheme: {self._systemColorScheme} = {self._styleHints.colorScheme()}")  # Qt.ColorScheme.Light, Qt.ColorScheme.Dark, Qt.ColorScheme.Unknown?
+        self.systemColorSchemeChanged.emit()
 
     @Slot(int)
     def exitApp(self, exitCode):

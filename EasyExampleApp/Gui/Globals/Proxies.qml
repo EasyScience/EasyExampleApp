@@ -25,6 +25,23 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     //readonly property var main_experiment_dataBlocks: main.experiment.dataBlocks
     readonly property var main_fittables_data: main.fittables.data
 
+    property var systemColorScheme: main.backendHelpers.systemColorScheme
+    onSystemColorSchemeChanged: {
+
+        console.info(`-------------- systemColorScheme ${systemColorScheme}`)
+        console.info(`===== Qt.CrossCursor ${Qt.CrossCursor}`)
+        //console.info(`===== Qt.ColorScheme ${Qt.ColorScheme}`)
+        console.info(`===== Qt.ColorScheme.Unknown ${Qt.ColorScheme.Unknown}`)
+        console.info(`===== Qt.ColorScheme.Light ${Qt.ColorScheme.Light}`)
+        console.info(`===== Qt.ColorScheme.Dark ${Qt.ColorScheme.Dark}`)
+
+    }
+
+    //property var systemColorScheme2: main.backendHelpers.systemColorScheme2
+    //onSystemColorScheme2Changed: console.info(`------- systemColorScheme2 ${systemColorScheme2}`)
+
+
+
     readonly property var qmlProxy: QtObject {
 
         //////////

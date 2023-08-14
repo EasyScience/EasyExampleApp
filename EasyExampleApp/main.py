@@ -19,17 +19,21 @@ if __name__ == '__main__':
     EnvironmentVariables.set()
     console.debug('Environment variables defined')
 
+    # Magically fixes the following issues in QtQuick3D on macOS for local run
+    # - Particles not supported due to missing RGBA32F and RGBA16F texture format support
+    # - No GLSL shader code found (versions tried:  QList(120) ) in baked shader
+    # - Failed to build graphics pipeline state
     from Logic.Helpers import WebEngine
     WebEngine.initialize()
     console.debug('QtWebEngine for the QML GUI components initialized')
 
     from Logic.Helpers import Application
     app = Application(sys.argv)
-    console.debug('Qt Application created')
+    console.debug(f'Qt Application created {app}')
 
     from PySide6.QtQml import QQmlApplicationEngine
     engine = QQmlApplicationEngine()
-    console.debug('QML application engine created')
+    console.debug(f'QML application engine created {engine}')
 
     from Logic.Helpers import ResourcePaths
     resourcePaths = ResourcePaths()
