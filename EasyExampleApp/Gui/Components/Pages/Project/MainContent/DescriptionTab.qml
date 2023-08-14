@@ -210,12 +210,12 @@ Rectangle {
             // Location and dirs
 
             // Extra spacer
-            Item { visible: !Globals.Proxies.main.project.location.startsWith(':/'); height: 1; width: 1 }
+            Item { height: 1; width: 1 }
             // Extra spacer
 
             // Models
             Row {
-                visible: !Globals.Proxies.main.project.location.startsWith(':/')
+                //visible: !Globals.Proxies.main.project.location.startsWith(':/')
                 spacing: innerSpacing
                 EaElements.Label {
                     width: nameColumnWidth
@@ -275,7 +275,7 @@ Rectangle {
 
             // Experiments
             Row {
-                visible: !Globals.Proxies.main.project.location.startsWith(':/')
+                //visible: !Globals.Proxies.main.project.location.startsWith(':/')
                 spacing: innerSpacing
                 EaElements.Label {
                     width: nameColumnWidth

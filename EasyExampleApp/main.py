@@ -4,8 +4,8 @@
 
 # Import logger from EasyApp module
 import sys
-#EASYAPP_LOCAL_PATH = '../../EasyApp'
-#sys.path.append(EASYAPP_LOCAL_PATH)
+EASYAPP_LOCAL_PATH = '../../EasyApp'
+sys.path.append(EASYAPP_LOCAL_PATH)
 from EasyApp.Logic.Logging import console
 
 
@@ -19,9 +19,9 @@ if __name__ == '__main__':
     EnvironmentVariables.set()
     console.debug('Environment variables defined')
 
-    #from Logic.Helpers import WebEngine
-    #WebEngine.initialize()
-    #console.debug('QtWebEngine for the QML GUI components initialized')
+    from Logic.Helpers import WebEngine
+    WebEngine.initialize()
+    console.debug('QtWebEngine for the QML GUI components initialized')
 
     from Logic.Helpers import Application
     app = Application(sys.argv)

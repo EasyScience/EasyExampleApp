@@ -210,10 +210,9 @@ class Project(QObject):
         return dataBlock
 
     @Slot('QVariant')
-    def loadExampleFromFile(self, fpath):
-        fpath = fpath.toLocalFile()
-        fpath = IO.generalizePath(fpath)
-
+    def loadRecentFromFile(self, fpath):
+        #fpath = fpath.toLocalFile()
+        #fpath = IO.generalizePath(fpath)
         self.loadProjectFromFile(fpath)
 
     @Slot(str)

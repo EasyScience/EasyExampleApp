@@ -203,6 +203,8 @@ class BackendHelpers(QObject):
     def listToUri(self, fpathParts):
         fpathParts = fpathParts.toVariant()
         fpath = os.path.join(*fpathParts)
+        if fpath[:2] == ':/':  # qrc format
+            return 'qrc' + fpath
         exists = pathlib.Path(fpath).is_file()
         if not exists:
             return ''
