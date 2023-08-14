@@ -4,8 +4,8 @@
 
 # Import logger from EasyApp module
 import sys
-EASYAPP_LOCAL_PATH = '../../EasyApp'
-sys.path.append(EASYAPP_LOCAL_PATH)
+#EASYAPP_LOCAL_PATH = '../../EasyApp'
+#sys.path.append(EASYAPP_LOCAL_PATH)
 from EasyApp.Logic.Logging import console
 
 

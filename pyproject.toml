@@ -160,16 +160,3 @@ base_url = 'https://evermeet.cx/ffmpeg'
 file_name_base = 'ffmpeg-'
 file_ext = '.zip'
 exe = 'ffmpeg'
-
-[ci.cache]
-python_packages_path = "/Users/as/Development/GitHub/easyScience/EasyExampleApp/.venv/lib/python3.8/site-packages"
-
-[ci.app.info]
-build_date = "14 Aug 2023"
-date_for_qtifw = "2023-08-14"
-release_tag = "v0.9.0-pre-alpha1"
-release_title = "Version 0.9.0-pre-alpha1 (14 Aug 2023)"
-branch_name = ""
-branch_url = "//tree/"
-commit_sha_short = ""
-commit_url = "//commit/"
