@@ -96,7 +96,7 @@ class WebEngine:
         try:
             from PySide6.QtWebEngineQuick import QtWebEngineQuick
         except ModuleNotFoundError:
-            #console.debug('No module named "PySide6.QtWebEngineQuick" is found.')
+            console.debug('No module named "PySide6.QtWebEngineQuick" is found')
             pass
         else:
             QtWebEngineQuick.initialize()

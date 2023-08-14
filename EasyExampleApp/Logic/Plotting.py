@@ -8,7 +8,7 @@ from PySide6.QtGui import QImage, QBrush
 from PySide6 import QtCharts
 
 from EasyApp.Logic.Logging import console
-from Logic.Helpers import Converter, IO, WebEngine
+from Logic.Helpers import Converter, IO #, WebEngine
 
 
 _LIBS_1D = ['QtCharts', 'Plotly']
