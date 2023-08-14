@@ -60,8 +60,8 @@ jobs:
           python -m pip install git+https://github.com/ikibalin/cryspy.git@beta
           python -m pip install git+https://github.com/easyscience/EasyApp.git@new-easy-app2
 
-      - name: Create python resources file
-        run: pyside6-rcc $GITHUB_REPOSITORY/resources.qrc -o $GITHUB_REPOSITORY/resources.py
+      #- name: Create python resources file
+      #  run: pyside6-rcc $GITHUB_REPOSITORY/resources.qrc -o $GITHUB_REPOSITORY/resources.py
 
       #- name: Run pytest (compare app images after previous step)
       #  run: pytest
@@ -104,7 +104,7 @@ jobs:
       - name: Create zip archive of offline app installer for distribution
         run: >
           python ${{ env.SCRIPTS_PATH }}/ZipAppInstaller.py
-          ${{ env.BRANCH_NAME }}
+          ${{ env.BRANCH_NAME }} ${{ matrix.os }}
 
       - name: Upload zipped offline app installer to GitHub releases (non-master branch)
         if: github.event_name == 'push' && env.BRANCH_NAME != 'master'
