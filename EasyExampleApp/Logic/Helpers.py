@@ -10,7 +10,8 @@ import sys
 import time
 from urllib.parse import urlparse
 
-from PySide6.QtCore import QObject, QCoreApplication, Signal, Slot
+from PySide6.QtCore import QObject, QCoreApplication, Signal, Slot, Property, Qt
+from PySide6.QtGui import QStyleHints
 from PySide6.QtWidgets import QApplication
 
 from EasyApp.Logic.Logging import console
@@ -92,6 +93,8 @@ class EnvironmentVariables:
     @staticmethod
     def set():
         os.environ['QSG_RHI_BACKEND'] = 'opengl'  # For QtCharts XYSeries useOpenGL
+        #qsetenv("QT_QPA_PLATFORM", "windows:darkmode=[1|2]")
+        #os.environ['QT_QPA_PLATFORM'] = 'windows:darkmode=[1|2]'
         #os.environ['QT_MESSAGE_PATTERN'] = "\033[32m%{time h:mm:ss.zzz}%{if-category}\033[32m %{category}:%{endif} %{if-debug}\033[34m%{function}%{endif}%{if-warning}\033[31m%{backtrace depth=3}%{endif}%{if-critical}\033[31m%{backtrace depth=3}%{endif}%{if-fatal}\033[31m%{backtrace depth=3}%{endif}\033[0m %{message}"
 
 
@@ -182,8 +185,27 @@ class Application(QApplication):  # QGuiApplication crashes when using in combin
 
 
 class BackendHelpers(QObject):
+    systemColorSchemeChanged = Signal()
+
     def __init__(self, parent=None):
         super().__init__(parent)
+        self._styleHints = QApplication.instance().styleHints()
+        self.schemes = { Qt.ColorScheme.Unknown: 0,
+                         Qt.ColorScheme.Light: 1,
+                         Qt.ColorScheme.Dark: 2 }
+        self._systemColorScheme = self.schemes[self._styleHints.colorScheme()]
+        console.debug(f"Initial system color scheme: {self._systemColorScheme}")
+        self._styleHints.colorSchemeChanged.connect(self.onSystemColorSchemeChanged)
+
+    @Property(int, notify=systemColorSchemeChanged)
+    def systemColorScheme(self):
+        return self._systemColorScheme
+
+    def onSystemColorSchemeChanged(self):
+        console.debug(f"Previous system color scheme: {self._systemColorScheme}")
+        self._systemColorScheme = self.schemes[self._styleHints.colorScheme()]
+        console.debug(f"New system color scheme: {self._systemColorScheme}")
+        self.systemColorSchemeChanged.emit()
 
     @Slot(int)
     def exitApp(self, exitCode):
