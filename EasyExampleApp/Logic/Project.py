@@ -316,7 +316,7 @@ class Project(QObject):
 
         self.dataBlockChanged.emit()
         self.created = True
-        self.needSave = False
+        self.needSave = True
 
     @Slot(str)
     def setName(self, value):
