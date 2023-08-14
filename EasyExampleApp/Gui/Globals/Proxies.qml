@@ -552,8 +552,8 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
         readonly property var plotting: QtObject {
             readonly property bool useWebGL1d: false
-            readonly property var libs1d: ['Plotly']
-            property string currentLib1d: 'Plotly'
+            readonly property var libs1d: ['QtCharts']
+            property string currentLib1d: 'QtCharts'
         }
 
     }
