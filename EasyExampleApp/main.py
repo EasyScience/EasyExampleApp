@@ -20,9 +20,9 @@ if __name__ == '__main__':
     EnvironmentVariables.set()
     console.debug('Environment variables defined')
 
-    from Logic.Helpers import WebEngine
-    WebEngine.initialize()
-    console.debug('QtWebEngine for the QML GUI components initialized')
+    #from Logic.Helpers import WebEngine
+    #WebEngine.initialize()
+    #console.debug('QtWebEngine for the QML GUI components initialized')
 
     from Logic.Helpers import Application
     app = Application(sys.argv)
