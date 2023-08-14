@@ -40,7 +40,7 @@ class Config():
         self.setup_os = self.__dict__['ci']['app']['setup']['os'][self.os]
         self.setup_arch = self.__dict__['ci']['app']['setup']['arch'][self.os]
         #self.setup_name_suffix = f'_{self.setup_os}_{self.setup_arch}_v{self.app_version}'
-            self.setup_name_suffix = f'_{self.setup_os}_v{self.app_version}'
+        self.setup_name_suffix = f'_{self.setup_os}_v{self.app_version}'
         if self.matrix_os is not None:
             self.setup_name_suffix = f'_{self.matrix_os}_v{self.app_version}'
         self.setup_name = f'{self.app_name}{self.setup_name_suffix}'
