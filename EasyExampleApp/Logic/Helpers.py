@@ -46,7 +46,13 @@ class ResourcePaths:
             console.info(f'Resources: {resources}')
             self.mainQml = 'qrc:/Gui/main.qml'
             self.splashScreenQml = 'qrc:/Gui/Components/SplashScreen.qml'
-            self.imports = ['qrc:/EasyApp', 'qrc:/']
+            #self.imports = ['qrc:/EasyApp', 'qrc:/']
+
+            import EasyApp
+            easyAppPath = os.path.abspath(EasyApp.__path__[0])
+            console.info(f'EasyApp module: {easyAppPath}')
+
+            self.imports = [os.path.join(easyAppPath, '..'), 'qrc:/']
             return
         except ImportError:
             console.debug('No rc resources file found')
