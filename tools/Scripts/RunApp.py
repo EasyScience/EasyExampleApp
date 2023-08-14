@@ -49,4 +49,5 @@ def runApp():
 
 if __name__ == "__main__":
     checkAppExists()
-    runApp()
+    if CONFIG.os == 'macos' or 'ubuntu':
+        runApp()
