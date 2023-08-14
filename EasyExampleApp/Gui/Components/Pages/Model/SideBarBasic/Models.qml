@@ -115,10 +115,10 @@ Column {
             onClicked: {
                 console.debug(`Clicking '${text}' button: ${this}`)
                 if (Globals.Vars.isTestMode) {
-                    console.debug('*** Loading model from file (test mode) ***')
-                    const fpaths = [Qt.resolvedUrl('../../../../../../examples/Co2SiO4-Mult-Phases/models/co2sio4.cif'),
-                                    Qt.resolvedUrl('../../../../../../examples/Co2SiO4-Mult-Phases/models/coo.cif')]
-                    Globals.Proxies.main.model.loadModelsFromFiles(fpaths)
+                    console.debug('*** Loading model from resources (test mode) ***')
+                    const fpaths = [':/Examples/Co2SiO4-Mult-Phases/models/co2sio4.cif',
+                                    ':/Examples/Co2SiO4-Mult-Phases/models/coo.cif']
+                    Globals.Proxies.main.model.loadModelsFromResources(fpaths)
                 } else {
                     openCifFileDialog.open()
                 }

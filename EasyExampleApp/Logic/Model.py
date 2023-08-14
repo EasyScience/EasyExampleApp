@@ -7,6 +7,7 @@ import re
 import random
 import numpy as np
 from PySide6.QtCore import QObject, Signal, Slot, Property, QThreadPool
+from PySide6.QtCore import QFile, QTextStream, QIODevice
 from PySide6.QtQml import QJSValue
 
 from EasyApp.Logic.Logging import console
@@ -151,6 +152,20 @@ class Model(QObject):
     def addDefaultModel(self):
         console.debug("Adding default model(s)")
         self.loadModelsFromEdCif(_DEFAULT_CIF_BLOCK)
+
+    @Slot('QVariant')
+    def loadModelsFromResources(self, fpaths):
+        if type(fpaths) == QJSValue:
+            fpaths = fpaths.toVariant()
+        for fpath in fpaths:
+            console.debug(f"Loading model(s) from: {fpath}")
+            file = QFile(fpath)
+            if not file.open(QIODevice.ReadOnly | QIODevice.Text):
+                console.error('Not found in resources')
+                return
+            stream = QTextStream(file)
+            edCif = stream.readAll()
+            self.loadModelsFromEdCif(edCif)
 
     @Slot('QVariant')
     def loadModelsFromFiles(self, fpaths):

@@ -18,10 +18,10 @@
     "EasyExampleApp/Logic/Summary.py",
     "EasyExampleApp/Logic/Tables.py",
 
-    "resources.qrc",
-
     "EasyExampleApp/Gui/main.qml",
 
-    "../EasyApp/EasyApp/Logic/Logging.py"
+    "EasyExampleApp/resources.qrc",
+
+    "EasyApp/Logic/Logging.py"
     ]
 }

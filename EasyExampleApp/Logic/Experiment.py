@@ -6,6 +6,7 @@ import os
 import copy
 import numpy as np
 from PySide6.QtCore import QObject, Signal, Slot, Property
+from PySide6.QtCore import QFile, QTextStream, QIODevice
 from PySide6.QtQml import QJSValue
 
 from EasyApp.Logic.Logging import console
@@ -166,6 +167,20 @@ class Experiment(QObject):
     def addDefaultExperiment(self):
         console.debug('Adding default experiment')
         self.loadExperimentsFromEdCif(_DEFAULT_DATA_BLOCK)
+
+    @Slot('QVariant')
+    def loadExperimentsFromResources(self, fpaths):
+        if type(fpaths) == QJSValue:
+            fpaths = fpaths.toVariant()
+        for fpath in fpaths:
+            console.debug(f"Loading experiment(s) from: {fpath}")
+            file = QFile(fpath)
+            if not file.open(QIODevice.ReadOnly | QIODevice.Text):
+                console.error('Not found in resources')
+                return
+            stream = QTextStream(file)
+            edCif = stream.readAll()
+            self.loadExperimentsFromEdCif(edCif)
 
     @Slot('QVariant')
     def loadExperimentsFromFiles(self, fpaths):
