@@ -111,14 +111,11 @@ jobs:
       - name: Debug paths (Linux)
         if: runner.os == 'Linux'
         run: |
-          echo 'ls..'
           ls ..
-          echo 'ls'
           ls
-          echo 'ls EasyDiffraction'
-          ls EasyDiffraction
-          echo 'ls EasyDiffraction/EasyDiffraction'
-          ls EasyDiffraction/EasyDiffraction
+          ls /home/runner/
+          ls /home/runner/EasyDiffraction/
+          ls /home/runner/EasyDiffraction/EasyDiffraction/
 
       - name: Run app in testmode and quit
         run: python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
