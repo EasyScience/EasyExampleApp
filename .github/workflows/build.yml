@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-12, windows-2022]
+        os: [ubuntu-20.04, ubuntu-22.04, macos-12, windows-2022]
       fail-fast: false
 
     steps:
@@ -60,8 +60,8 @@ jobs:
           python -m pip install git+https://github.com/ikibalin/cryspy.git@beta
           python -m pip install git+https://github.com/easyscience/EasyApp.git@new-easy-app2
 
-      #- name: Create python resources file
-      #  run: pyside6-rcc EasyExampleApp/resources.qrc -o EasyExampleApp/resources.py
+      - name: Create python resources file
+        run: pyside6-rcc $GITHUB_REPOSITORY/resources.qrc -o $GITHUB_REPOSITORY/resources.py
 
       #- name: Run pytest (compare app images after previous step)
       #  run: pytest
@@ -130,6 +130,10 @@ jobs:
       - name: Check app istallation is done
         run: python ${{ env.SCRIPTS_PATH }}/CheckAppExists.py
 
+      # Windows 2022 - Have to disable because can't see what is going on there...
+      # macOS 12 - OK
+      # Ubuntu 20.04 - OK?
+      # Ubuntu 22.04 - FAILS - ImportError: libpyside6qml.abi3.so.6.5: cannot open shared object file: No such file or directory - https://github.com/pyinstaller/pyinstaller/issues/7197
       - name: Run app in testmode and quit
         if: runner.os != 'Windows'
         run: python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
