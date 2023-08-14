@@ -56,7 +56,7 @@ jobs:
       - name: Install Python dependences
         run: |
           python -m pip install numpy lmfit orjson jsbeautifier
-          python -m pip install pyinstaller requests dephell_licenses
+          python -m pip install pyinstaller requests dephell_licenses PySide6
           python -m pip install git+https://github.com/ikibalin/cryspy.git@beta
       #    python -m pip install git+https://github.com/easyscience/EasyApp.git@new-easy-app2
 
