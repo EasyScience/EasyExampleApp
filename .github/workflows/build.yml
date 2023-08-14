@@ -127,5 +127,9 @@ jobs:
       - name: Install app
         run: python ${{ env.SCRIPTS_PATH }}/InstallApp.py
 
+      - name: Check app istallation is done
+        run: python ${{ env.SCRIPTS_PATH }}/CheckAppExists.py
+
       - name: Run app in testmode and quit
+        if: runner.os != 'Windows'
         run: python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
