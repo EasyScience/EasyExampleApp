@@ -186,35 +186,25 @@ class Application(QApplication):  # QGuiApplication crashes when using in combin
 
 class BackendHelpers(QObject):
     systemColorSchemeChanged = Signal()
-    #systemColorSchemeChanged2 = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        #print('QApplication.instance()', QApplication.instance())
-        #print('QApplication.instance().styleHints()', QApplication.instance().styleHints())
-        #print('QStyleHints()', QStyleHints())
-        #print('QApplication.instance().styleHints().colorScheme()', QApplication.instance().styleHints().colorScheme())
-        #print('QStyleHints().colorScheme()', QStyleHints().colorScheme())
         self._styleHints = QApplication.instance().styleHints()
-        self._systemColorScheme = self._styleHints.colorScheme()
-        print(f"Initial system color scheme: {self._systemColorScheme}")  # Qt.ColorScheme.Light, Qt.ColorScheme.Dark, Qt.ColorScheme.Unknown?
+        self.schemes = { Qt.ColorScheme.Unknown: 0,
+                         Qt.ColorScheme.Light: 1,
+                         Qt.ColorScheme.Dark: 2 }
+        self._systemColorScheme = self.schemes[self._styleHints.colorScheme()]
+        console.debug(f"Initial system color scheme: {self._systemColorScheme}")
         self._styleHints.colorSchemeChanged.connect(self.onSystemColorSchemeChanged)
-        #print(Qt.ColorScheme, Qt.ColorScheme.Light, Qt.ColorScheme.Dark)
-
-    #@Property('QVariant', notify=systemColorSchemeChanged2)
-    #def systemColorScheme2(self):
-    #    return self._styleHints.colorScheme()
-
 
     @Property(int, notify=systemColorSchemeChanged)
     def systemColorScheme(self):
         return self._systemColorScheme
 
     def onSystemColorSchemeChanged(self):
-        print('~~~~~~AAAAAAA')
-        console.debug(f"Old system color scheme: {self._systemColorScheme}")  # Qt.ColorScheme.Light, Qt.ColorScheme.Dark, Qt.ColorScheme.Unknown?
-        self._systemColorScheme = self._styleHints.colorScheme()
-        console.debug(f"New system color scheme: {self._systemColorScheme} = {self._styleHints.colorScheme()}")  # Qt.ColorScheme.Light, Qt.ColorScheme.Dark, Qt.ColorScheme.Unknown?
+        console.debug(f"Previous system color scheme: {self._systemColorScheme}")
+        self._systemColorScheme = self.schemes[self._styleHints.colorScheme()]
+        console.debug(f"New system color scheme: {self._systemColorScheme}")
         self.systemColorSchemeChanged.emit()
 
     @Slot(int)

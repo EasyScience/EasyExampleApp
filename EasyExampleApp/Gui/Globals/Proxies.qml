@@ -25,24 +25,31 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
     //readonly property var main_experiment_dataBlocks: main.experiment.dataBlocks
     readonly property var main_fittables_data: main.fittables.data
 
-    property var systemColorScheme: main.backendHelpers.systemColorScheme
+    property int systemColorScheme: main.backendHelpers.systemColorScheme
+    onSystemColorSchemeChanged: EaStyle.Colors.systemColorScheme = systemColorScheme
+    /*
     onSystemColorSchemeChanged: {
-
-        console.info(`-------------- systemColorScheme ${systemColorScheme}`)
-        console.info(`===== Qt.CrossCursor ${Qt.CrossCursor}`)
-        //console.info(`===== Qt.ColorScheme ${Qt.ColorScheme}`)
-        console.info(`===== Qt.ColorScheme.Unknown ${Qt.ColorScheme.Unknown}`)
-        console.info(`===== Qt.ColorScheme.Light ${Qt.ColorScheme.Light}`)
-        console.info(`===== Qt.ColorScheme.Dark ${Qt.ColorScheme.Dark}`)
-
+        EaStyle.Colors.systemColorScheme = systemColorScheme
+        console.info(`-----onSystemColorSchemeChanged systemColorScheme ${systemColorScheme}`)
+        console.info(`-----onSystemColorSchemeChanged EaStyle.Colors.systemColorScheme ${EaStyle.Colors.systemColorScheme}`)
+        console.info(`=====onSystemColorSchemeChanged Qt.ColorScheme.Unknown ${Qt.ColorScheme.Unknown}`)
+        console.info(`=====onSystemColorSchemeChanged Qt.ColorScheme.Light ${Qt.ColorScheme.Light}`)
+        console.info(`=====onSystemColorSchemeChanged Qt.ColorScheme.Dark ${Qt.ColorScheme.Dark}`)
     }
-
-    //property var systemColorScheme2: main.backendHelpers.systemColorScheme2
-    //onSystemColorScheme2Changed: console.info(`------- systemColorScheme2 ${systemColorScheme2}`)
-
-
+    onMainChanged: {
+        console.info(`-----onMainChanged systemColorScheme ${systemColorScheme}`)
+        console.info(`-----onMainChanged EaStyle.Colors.systemColorScheme ${EaStyle.Colors.systemColorScheme}`)
+        console.info(`=====onMainChanged Qt.ColorScheme.Unknown ${Qt.ColorScheme.Unknown}`)
+        console.info(`=====onMainChanged Qt.ColorScheme.Light ${Qt.ColorScheme.Light}`)
+        console.info(`=====onMainChanged Qt.ColorScheme.Dark ${Qt.ColorScheme.Dark}`)
+    }
+    */
 
     readonly property var qmlProxy: QtObject {
+
+        readonly property var backendHelpers: QtObject {
+            property int systemColorScheme: -1
+        }
 
         //////////
         // Logger

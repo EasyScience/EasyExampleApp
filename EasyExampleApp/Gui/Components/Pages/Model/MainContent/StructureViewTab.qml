@@ -467,7 +467,8 @@ Rectangle {
             let split = cifFileName.split('.')
             split.pop()
             const baseFileName = split.join(".")
-            const imgFileName = baseFileName + '.png'
+            const suffix = EaStyle.Colors.isDarkPalette ? '_dark' : '_light'
+            const imgFileName = baseFileName + suffix + '.png'
             const path = Globals.Proxies.main.project.location + '/' +
                        Globals.Proxies.main.project.dirNames.models + '/' +
                        imgFileName

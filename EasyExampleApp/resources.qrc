@@ -112,50 +112,65 @@
         <file>Logic/Summary.py</file>
         <file>Logic/Tables.py</file>
         <file>Examples/Co2SiO4/experiments/d20.cif</file>
-        <file>Examples/Co2SiO4/experiments/d20.png</file>
+        <file>Examples/Co2SiO4/experiments/d20_dark.png</file>
+        <file>Examples/Co2SiO4/experiments/d20_light.png</file>
         <file>Examples/Co2SiO4/models/co2sio4.cif</file>
-        <file>Examples/Co2SiO4/models/co2sio4.png</file>
+        <file>Examples/Co2SiO4/models/co2sio4_dark.png</file>
+        <file>Examples/Co2SiO4/models/co2sio4_light.png</file>
         <file>Examples/Co2SiO4/summary/report.cif</file>
         <file>Examples/Co2SiO4/project.cif</file>
         <file>Examples/Co2SiO4-Mult-Phases/experiments/d20.cif</file>
         <file>Examples/Co2SiO4-Mult-Phases/experiments/d20.jpg</file>
-        <file>Examples/Co2SiO4-Mult-Phases/experiments/d20.png</file>
+        <file>Examples/Co2SiO4-Mult-Phases/experiments/d20_dark.png</file>
+        <file>Examples/Co2SiO4-Mult-Phases/experiments/d20_light.png</file>
         <file>Examples/Co2SiO4-Mult-Phases/models/co2sio4.cif</file>
-        <file>Examples/Co2SiO4-Mult-Phases/models/co2sio4.png</file>
+        <file>Examples/Co2SiO4-Mult-Phases/models/co2sio4_dark.png</file>
+        <file>Examples/Co2SiO4-Mult-Phases/models/co2sio4_light.png</file>
         <file>Examples/Co2SiO4-Mult-Phases/models/coo.cif</file>
-        <file>Examples/Co2SiO4-Mult-Phases/models/coo.png</file>
+        <file>Examples/Co2SiO4-Mult-Phases/models/coo_dark.png</file>
+        <file>Examples/Co2SiO4-Mult-Phases/models/coo_light.png</file>
         <file>Examples/Co2SiO4-Mult-Phases/summary/report.cif</file>
         <file>Examples/Co2SiO4-Mult-Phases/project.cif</file>
         <file>Examples/DefaultProject/project.cif</file>
         <file>Examples/Dy3Al5O12/experiments/g41.cif</file>
-        <file>Examples/Dy3Al5O12/experiments/g41.png</file>
+        <file>Examples/Dy3Al5O12/experiments/g41_dark.png</file>
+        <file>Examples/Dy3Al5O12/experiments/g41_light.png</file>
         <file>Examples/Dy3Al5O12/models/dy3al5o12.cif</file>
-        <file>Examples/Dy3Al5O12/models/dy3al5o12.png</file>
+        <file>Examples/Dy3Al5O12/models/dy3al5o12_dark.png</file>
+        <file>Examples/Dy3Al5O12/models/dy3al5o12_light.png</file>
         <file>Examples/Dy3Al5O12/summary/report.cif</file>
         <file>Examples/Dy3Al5O12/project.cif</file>
         <file>Examples/La0.5Ba0.5CoO3/experiments/hrpt.cif</file>
-        <file>Examples/La0.5Ba0.5CoO3/experiments/hrpt.png</file>
+        <file>Examples/La0.5Ba0.5CoO3/experiments/hrpt_dark.png</file>
+        <file>Examples/La0.5Ba0.5CoO3/experiments/hrpt_light.png</file>
         <file>Examples/La0.5Ba0.5CoO3/models/lbco.cif</file>
-        <file>Examples/La0.5Ba0.5CoO3/models/lbco.png</file>
+        <file>Examples/La0.5Ba0.5CoO3/models/lbco_dark.png</file>
+        <file>Examples/La0.5Ba0.5CoO3/models/lbco_light.png</file>
         <file>Examples/La0.5Ba0.5CoO3/summary/report.cif</file>
         <file>Examples/La0.5Ba0.5CoO3/project.cif</file>
         <file>Examples/La0.5Ba0.5CoO3-Raw/experiments/hrpt.cif</file>
-        <file>Examples/La0.5Ba0.5CoO3-Raw/experiments/hrpt.png</file>
         <file>Examples/La0.5Ba0.5CoO3-Raw/models/lbco.cif</file>
-        <file>Examples/La0.5Ba0.5CoO3-Raw/models/lbco.png</file>
         <file>Examples/La0.5Ba0.5CoO3-Raw/summary/report.cif</file>
         <file>Examples/La0.5Ba0.5CoO3-Raw/project.cif</file>
         <file>Examples/La0.5Ba0.5CoO3-Xye/hrpt.cif</file>
         <file>Examples/La0.5Ba0.5CoO3-Xye/hrpt.xye</file>
         <file>Examples/PbSO4/experiments/d1a.cif</file>
-        <file>Examples/PbSO4/experiments/d1a.png</file>
+        <file>Examples/PbSO4/experiments/d1a_dark.png</file>
+        <file>Examples/PbSO4/experiments/d1a_light.png</file>
         <file>Examples/PbSO4/models/pbso4.cif</file>
-        <file>Examples/PbSO4/models/pbso4.png</file>
+        <file>Examples/PbSO4/models/pbso4_dark.png</file>
+        <file>Examples/PbSO4/models/pbso4_light.png</file>
         <file>Examples/PbSO4/summary/report.cif</file>
         <file>Examples/PbSO4/project.cif</file>
         <file>Examples/Si3N4/experiments/3t2.cif</file>
+        <file>Examples/Si3N4/experiments/3t2_dark.png</file>
+        <file>Examples/Si3N4/experiments/3t2_light.png</file>
         <file>Examples/Si3N4/models/si3n4_a.cif</file>
+        <file>Examples/Si3N4/models/si3n4_a_dark.png</file>
+        <file>Examples/Si3N4/models/si3n4_a_light.png</file>
         <file>Examples/Si3N4/models/si3n4_b.cif</file>
+        <file>Examples/Si3N4/models/si3n4_b_dark.png</file>
+        <file>Examples/Si3N4/models/si3n4_b_light.png</file>
         <file>Examples/Si3N4/summary/report.cif</file>
         <file>Examples/Si3N4/project.cif</file>
     </qresource>
