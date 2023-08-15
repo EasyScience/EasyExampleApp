@@ -10,7 +10,7 @@ import dephell_licenses
 import Functions, Config
 
 
-CONFIG = Config.Config()
+CONFIG = Config.Config(sys.argv[1], sys.argv[2])
 
 def qtifwSetupFileName():
     file_version = CONFIG['ci']['qtifw']['setup']['version']

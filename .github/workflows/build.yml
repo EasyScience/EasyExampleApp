@@ -99,7 +99,9 @@ jobs:
         run: python ${{ env.SCRIPTS_PATH }}/FreezeApp.py
 
       - name: Create offline and online app installers from freezed app bundle
-        run: python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
+        run: >
+          python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
+          ${{ env.BRANCH_NAME }} ${{ matrix.os }}
 
       - name: Create zip archive of offline app installer for distribution
         run: >
@@ -205,7 +207,9 @@ jobs:
         run: mkdir -p ~/.local/share/applications/
 
       - name: Install app
-        run: python ${{ env.SCRIPTS_PATH }}/InstallApp.py
+        run: >
+          python ${{ env.SCRIPTS_PATH }}/InstallApp.py
+          ${{ env.BRANCH_NAME }} ${{ matrix.os }}
 
       - name: Check app istallation is done
         run: python ${{ env.SCRIPTS_PATH }}/CheckAppExists.py
@@ -214,6 +218,6 @@ jobs:
       # macOS 12 - OK
       # Ubuntu 20.04 - OK?
       # Ubuntu 22.04 - FAILS - ImportError: libpyside6qml.abi3.so.6.5: cannot open shared object file: No such file or directory - https://github.com/pyinstaller/pyinstaller/issues/7197
-      - name: Run app in testmode and quit
+      - name: Run app in testmode and quit (macOS & Linux)
         if: runner.os != 'Windows'
         run: python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode

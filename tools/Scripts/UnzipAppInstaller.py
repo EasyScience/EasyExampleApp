@@ -12,19 +12,17 @@ import Functions, Config
 CONFIG = Config.Config(sys.argv[1], sys.argv[2])
 
 def source():
-    return CONFIG.setup_zip_path
+    return os.path.basename(CONFIG.setup_zip_path)
 
 def destination():
     return CONFIG.dist_dir
 
 def createDestinationDir():
-    Functions.createDestinationDir(CONFIG.dist_dir)
+    Functions.createDir(CONFIG.dist_dir)
 
 def unzipAppInstaller():
-    print('from', CONFIG.setup_zip_path)
-    print('to', CONFIG.dist_dir)
     Functions.unzip(source(), destination())
 
 if __name__ == "__main__":
     createDestinationDir()
-    zipAppInstaller()
+    unzipAppInstaller()
