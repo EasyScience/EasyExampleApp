@@ -93,6 +93,7 @@ class EnvironmentVariables:
     @staticmethod
     def set():
         os.environ['QSG_RHI_BACKEND'] = 'opengl'  # For QtCharts XYSeries useOpenGL
+        os.environ['QT_RHI_SHADER_DEBUG'] = '1'  # https://doc.qt.io/qt-6/qtquick3d-tool-shadergen.html
         #qsetenv("QT_QPA_PLATFORM", "windows:darkmode=[1|2]")
         #os.environ['QT_QPA_PLATFORM'] = 'windows:darkmode=[1|2]'
         #os.environ['QT_MESSAGE_PATTERN'] = "\033[32m%{time h:mm:ss.zzz}%{if-category}\033[32m %{category}:%{endif} %{if-debug}\033[34m%{function}%{endif}%{if-warning}\033[31m%{backtrace depth=3}%{endif}%{if-critical}\033[31m%{backtrace depth=3}%{endif}%{if-fatal}\033[31m%{backtrace depth=3}%{endif}\033[0m %{message}"
@@ -194,7 +195,7 @@ class BackendHelpers(QObject):
                          Qt.ColorScheme.Light: 1,
                          Qt.ColorScheme.Dark: 2 }
         self._systemColorScheme = self.schemes[self._styleHints.colorScheme()]
-        console.debug(f"Initial system color scheme: {self._systemColorScheme}")
+        console.debug(f"Initial system color scheme: {self._systemColorScheme} (0 - unknown, 1 - light, 2 - dark)")
         self._styleHints.colorSchemeChanged.connect(self.onSystemColorSchemeChanged)
 
     @Property(int, notify=systemColorSchemeChanged)

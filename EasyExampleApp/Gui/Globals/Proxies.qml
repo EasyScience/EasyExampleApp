@@ -27,23 +27,6 @@ QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS 
 
     property int systemColorScheme: main.backendHelpers.systemColorScheme
     onSystemColorSchemeChanged: EaStyle.Colors.systemColorScheme = systemColorScheme
-    /*
-    onSystemColorSchemeChanged: {
-        EaStyle.Colors.systemColorScheme = systemColorScheme
-        console.info(`-----onSystemColorSchemeChanged systemColorScheme ${systemColorScheme}`)
-        console.info(`-----onSystemColorSchemeChanged EaStyle.Colors.systemColorScheme ${EaStyle.Colors.systemColorScheme}`)
-        console.info(`=====onSystemColorSchemeChanged Qt.ColorScheme.Unknown ${Qt.ColorScheme.Unknown}`)
-        console.info(`=====onSystemColorSchemeChanged Qt.ColorScheme.Light ${Qt.ColorScheme.Light}`)
-        console.info(`=====onSystemColorSchemeChanged Qt.ColorScheme.Dark ${Qt.ColorScheme.Dark}`)
-    }
-    onMainChanged: {
-        console.info(`-----onMainChanged systemColorScheme ${systemColorScheme}`)
-        console.info(`-----onMainChanged EaStyle.Colors.systemColorScheme ${EaStyle.Colors.systemColorScheme}`)
-        console.info(`=====onMainChanged Qt.ColorScheme.Unknown ${Qt.ColorScheme.Unknown}`)
-        console.info(`=====onMainChanged Qt.ColorScheme.Light ${Qt.ColorScheme.Light}`)
-        console.info(`=====onMainChanged Qt.ColorScheme.Dark ${Qt.ColorScheme.Dark}`)
-    }
-    */
 
     readonly property var qmlProxy: QtObject {
 

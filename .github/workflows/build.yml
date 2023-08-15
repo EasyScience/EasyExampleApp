@@ -3,15 +3,15 @@ name: build macOS, Linux, Windows
 on: [push, pull_request]
 
 jobs:
-  build:
-    timeout-minutes: 45
+  make-installer:
+    timeout-minutes: 30
 
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-20.04, ubuntu-22.04, macos-12, windows-2022]
-      fail-fast: false
 
     steps:
       - name: Check-out repository
@@ -119,6 +119,86 @@ jobs:
           tag: ${{ env.BRANCH_NAME }}
           name: ${{ env.BRANCH_NAME }}
           bodyFile: "RELEASE.md"
+
+      - name: Upload zipped offline app installer for the next job step
+        uses: actions/upload-artifact@master
+        with:
+          name: zipped-app-installer
+          path: ${{ env.DISTRIBUTION_PATH }}/*.zip
+
+  test-installer:
+    timeout-minutes: 15
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04, macos-12, windows-2022]
+
+    steps:
+      - name: Check-out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+            python-version: 3.11
+
+      - name: Upgrade PIP
+        run: python -m pip install --upgrade pip
+
+      - name: Declare env variables on push only
+        if: github.event_name == 'push'
+        shell: bash
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Declare env variables on pull_request only
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$GITHUB_HEAD_REF" >> $GITHUB_ENV
+
+      - name: Declare env variables on push and pull_request
+        shell: bash
+        run: |
+          echo "SCRIPTS_PATH=$(python utils.py --get ci.project.subdirs.scripts)" >> $GITHUB_ENV
+
+      - name: Install Python dependences
+        run: |
+          python -m pip install requests
+
+      - name: Set up screen (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install libxcb-xinerama0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xfixes0 libxcb-shape0 libxcb-cursor0
+          sudo apt-get install libpulse-mainloop-glib0
+          sudo apt-get install libxkbcommon-x11-0
+          sudo apt-get install libegl1-mesa
+          Xvfb :0 -screen 0 1920x1080x24 -ac &
+          echo "DISPLAY=:0" >> $GITHUB_ENV
+
+      - name: Set up screen (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          "/Library/Application Support/VMware Tools/vmware-resolutionSet" 1920 1080
+          system_profiler SPDisplaysDataType | grep Resolution
+
+      - name: Set up screen (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          Set-DisplayResolution -Width 1920 -Height 1080 -Force
+          Get-DisplayResolution
+
+      - name: Download zipped offline app instalfrom from the previous job step
+        uses: actions/download-artifact@master
+        with:
+          name: zipped-app-installer
+
+      - name: Unzip archive with offline app installer for distribution
+        run: >
+          python ${{ env.SCRIPTS_PATH }}/UnzipAppInstaller.py
+          ${{ env.BRANCH_NAME }} ${{ matrix.os }}
 
       - name: Make dir for .desktop file (Linux)
         if: runner.os == 'Linux'
