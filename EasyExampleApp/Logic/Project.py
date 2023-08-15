@@ -19,6 +19,12 @@ _EMPTY_DATA = {
     'loops': {}
 }
 
+_EMPTY_DESCRIPTION = dict(Parameter(
+                        '.',
+                        name='_description',
+                        prettyName='Description',
+                        url='https://easydiffraction.org'
+                    ))
 _EXAMPLES = [
     {
         'name': 'La0.5Ba0.5CoO3',
@@ -80,31 +86,18 @@ class Project(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._proxy = parent
-        self._dataBlock = self.createDataBlockFromCif(_DEFAULT_CIF)
-        self._dataBlockCif = _DEFAULT_CIF
-        self._examples = _EXAMPLES
-        self._created = False
-        self._needSave = False
-        self._recent = []
 
-        self._location = ''
-        self._dateCreated = ''
-        self._dateLastModified = ''
-        self._dirNames = {
-            'models': 'models',
-            'experiments': 'experiments',
-            'analysis': 'analysis',
-            'summary': 'summary'
-        }
+        self.resetAll()
 
     @Slot()
     def resetAll(self):
         self._dataBlock = self.createDataBlockFromCif(_DEFAULT_CIF)
         self._dataBlockCif = _DEFAULT_CIF
         self._examples = _EXAMPLES
-        self.created = False
+        self._created = False
         self._needSave = False
         self._recent = []
+        self._isExample = False
 
         self._location = ''
         self._dateCreated = ''
@@ -141,7 +134,7 @@ class Project(QObject):
 
     @Property(bool, notify=needSaveChanged)
     def needSave(self):
-        return self._needSave
+        return self._needSave and self._isExample == False
 
     @needSave.setter
     def needSave(self, newValue):
@@ -217,6 +210,7 @@ class Project(QObject):
 
     @Slot(str)
     def loadExampleFromSoure(self, fpath):
+        self._isExample = True
         self.loadProjectFromSource(fpath)
 
     @Slot('QVariant')
@@ -262,12 +256,7 @@ class Project(QObject):
         self._proxy.summary.loadReportFromResources(reportFilePath)
 
         if '_description' not in self._dataBlock['params']:
-            self._dataBlock['params']['_description'] = dict(Parameter(
-                '.',
-                name='_description',
-                prettyName='Description',
-                url='https://easydiffraction.org'
-            ))
+            self._dataBlock['params']['_description'] = _EMPTY_DESCRIPTION
 
         self.dataBlockChanged.emit()
         self.created = True
@@ -306,12 +295,7 @@ class Project(QObject):
         self._proxy.summary.loadReportFromFile(reportFilePath)
 
         if '_description' not in self._dataBlock['params']:
-            self._dataBlock['params']['_description'] = dict(Parameter(
-                '.',
-                name='_description',
-                prettyName='Description',
-                url='https://easydiffraction.org'
-            ))
+            self._dataBlock['params']['_description'] = _EMPTY_DESCRIPTION
 
         self.dataBlockChanged.emit()
         self.created = True
