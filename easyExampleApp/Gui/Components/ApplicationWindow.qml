@@ -255,8 +255,8 @@ EaComponents.ApplicationWindow {
                 ]
 
                 items: [
-                    ExAnalysisPage.SideBarBasic {},
-                    ExAnalysisPage.SideBarAdvanced {}
+                    ExAnalysisPage.SideBarBasic {}
+                    //ExAnalysisPage.SideBarAdvanced {}
                 ]
             }
         },

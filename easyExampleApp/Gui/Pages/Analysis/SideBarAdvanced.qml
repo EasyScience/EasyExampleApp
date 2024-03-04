@@ -50,7 +50,7 @@ EaComponents.SideBarColumn {
         }
         */
 
-        ExComponents.ConstraintsView {}
+        //ExComponents.ConstraintsView {}
 
 
         Column {

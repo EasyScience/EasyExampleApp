@@ -24,7 +24,7 @@ EaComponents.SideBarColumn {
 
         EaComponents.TableView {
             id: phasesTable
-            defaultLabelText: qsTr("No Samples Added/Loaded")
+            //defaultLabelText: qsTr("No Samples Added/Loaded")
             model: XmlListModel {
                 id: phasesModel
                 xml: ExGlobals.Variables.sampleLoaded ? ExGlobals.Constants.proxy.phasesXml : ""

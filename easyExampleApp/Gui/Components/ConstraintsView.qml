@@ -12,7 +12,7 @@ import Gui.Globals 1.0 as ExGlobals
 EaComponents.TableView  {
     id: listView
 
-    defaultLabelText: qsTr("No Constraints Added")
+    //defaultLabelText: qsTr("No Constraints Added")
 
     // Table model
 
