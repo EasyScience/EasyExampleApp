@@ -28,10 +28,10 @@ jobs:
     steps:
 
     - name: Check-out repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Python environment
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
           python-version: 3.8
 
@@ -48,7 +48,7 @@ jobs:
         echo "QTIFW_PATH=$(python pyproject.py ci.qtifw.setup.installation_path.${{ matrix.os }})" >> $GITHUB_ENV
 
     - name: Cache dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: |
           ${{ env.POETRY_VENV_PATH }}
@@ -57,7 +57,7 @@ jobs:
         key: ${{ matrix.os }}-poetry-${{ hashFiles('poetry.lock') }}
 
     - name: Set up python packages manager
-      uses: Gr1N/setup-poetry@v2
+      uses: Gr1N/setup-poetry@v9
 
     - name: Create venv and install dependences
       # --upgrade pip: To get rid of ERROR: No matching distribution found for opencv-python-headless==4.3.0.36
