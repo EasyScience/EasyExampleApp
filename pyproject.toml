@@ -35,11 +35,13 @@ easyAppGui = { git = "https://github.com/easyScience/easyAppGui.git", rev = "mas
 #easyAppGui = { path = "../easyAppGui/" }
 # PyInstaller
 #pyinstaller = "^3.6"
-pyinstaller = { git = "https://github.com/pyinstaller/pyinstaller.git", rev = "develop" }
+# pyinstaller = { git = "https://github.com/pyinstaller/pyinstaller.git", rev = "develop" }
+pyinstaller = "^6.0"
 macholib = "^1.14"
 pywin32-ctypes = { version = "^0.2", platform = "win32" }
 pypiwin32 = { version = "^223", platform = "win32" }
-pefile = { version = "^2019.4", platform = "win32" }
+# pefile = { version = "^2019.4", platform = "win32" }
+pefile = { version = "^2022", platform = "win32" }
 # Misc
 toml = "^0.10"
 requests = "^2.24"
