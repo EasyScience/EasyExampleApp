@@ -81,7 +81,7 @@ version = "0.0.1"
 description = "Generic GUI for easyScience applications"
 category = "main"
 optional = false
-python-versions = "^3.10, <4" # "^3.8" generates error when installing PySide2 in easyAppGui
+python-versions = "^3.11, <4" # "^3.8" generates error when installing PySide2 in easyAppGui
 
 [package.dependencies]
 PySide2 = "^5.15"
@@ -334,7 +334,7 @@ uncertainties = ["uncertainties (>=3.0)"]
 
 [[package]]
 name = "pyinstaller"
-version = ">=5.7, <6.0"
+version = ">=5.7.0, <6.0"
 description = "PyInstaller bundles a Python application and all its dependencies into a single package."
 category = "dev"
 optional = false
@@ -457,7 +457,7 @@ version = "5.15.1"
 description = "Python / C++ bindings helper module"
 category = "main"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <3.10"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "six"
