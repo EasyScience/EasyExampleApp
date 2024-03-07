@@ -334,7 +334,7 @@ uncertainties = ["uncertainties (>=3.0)"]
 
 [[package]]
 name = "pyinstaller"
-version = ">=5.7.0, <6.0"
+version = "5.13.2"
 description = "PyInstaller bundles a Python application and all its dependencies into a single package."
 category = "dev"
 optional = false
