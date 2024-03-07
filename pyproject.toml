@@ -26,7 +26,7 @@ easyScienceCore = "^0.3.0"
 # easyCore = { git = "https://github.com/easyScience/easyCore.git" }
 easyExampleLib = { git = "https://github.com/easyScience/easyExampleLib.git", rev = "develop" }
 easyAppLogic = { git = "https://github.com/easyScience/easyAppLogic.git", rev = "master" }
-easyAppGui = { git = "https://github.com/easyScience/easyAppGui.git", rev = "master" }
+easyAppGui = { git = "https://github.com/easyScience/easyAppGui.git", rev = "p311" }
 
 [tool.poetry.dev-dependencies]
 # easyScience
