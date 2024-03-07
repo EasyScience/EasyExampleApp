@@ -386,7 +386,7 @@ pywin32 = ">=223"
 
 [[package]]
 name = "pyside2"
-version = "5.15.1"
+version = "5.15.2"
 description = "Python bindings for the Qt cross-platform application and UI framework"
 category = "main"
 optional = false
