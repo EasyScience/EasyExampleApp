@@ -5,7 +5,7 @@ from PySide2.QtQml import QQmlApplicationEngine
 
 import pyproject
 import easyAppGui
-from easyAppLogic.Translate import Translator
+#from easyAppLogic.Translate import Translator
 from easyExampleApp.Logic.PyQmlProxy import PyQmlProxy
 
 
@@ -39,7 +39,7 @@ def main():
     engine = QQmlApplicationEngine()
 
     # Create translator
-    translator = Translator(app, engine, translations_path, languages)
+    #translator = Translator(app, engine, translations_path, languages)
     #translator.selectSystemLanguage()
 
     # Application settings
@@ -49,7 +49,7 @@ def main():
 
     # Qml application engine settings
     engine.rootContext().setContextProperty("_pyQmlProxyObj", py_qml_proxy_obj)
-    engine.rootContext().setContextProperty("_translator", translator)
+    # engine.rootContext().setContextProperty("_translator", translator)
     engine.rootContext().setContextProperty("_projectConfig", CONFIG)
     engine.rootContext().setContextProperty("_isTestMode", isTestMode())
     engine.addImportPath(easyAppGui_path)
