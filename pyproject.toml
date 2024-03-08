@@ -19,7 +19,7 @@ packages = [ { include = "easyExampleApp" } ]
 
 [tool.poetry.dependencies]
 # python = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
-python = "^3.11, <3.12" # PyInstaller 3.6 doesn't support Python 3.8
+python = "^3.10, <3.11" # PyInstaller 3.6 doesn't support Python 3.8
 #python = "3.7" # PyInstaller 3.6 doesn't support Python 3.8
 # easyScience
 easyScienceCore = "^0.3.0"
