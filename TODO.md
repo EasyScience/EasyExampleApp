@@ -26,26 +26,26 @@ Let's divide the development process into several steps.
 For EasyApp developers, the following shows where EasyApp can be located relative to EasyExampleApp to simplify the development process.
 
 ```
-EasyScience 	       		    - Parent directory.
-├── EasyApp     		        - Directory with EasyApp project.
-├── EasyExampleApp     	    - Directory with EasyExampleApp project.
+EasyScience			- Parent directory.
+├── EasyApp			- Directory with EasyApp project.
+├── EasyExampleApp		- Directory with EasyExampleApp project.
 └── ...
 ```
 
 ### EasyExampleApp project structure
 
 ```
-EasyExampleApp        		  - Project directory.
-├── EasyExampleApp     		  - Directory with GUI and Logic components.
-│   ├── Gui                 - Directory with Qt QML components of the graphical interface / front-end.
-│   │   ├── main.qml		    - Main QML file.
+EasyExampleApp			- Project directory.
+├── EasyExampleApp		- Directory with GUI and Logic components.
+│   ├── Gui			- Directory with Qt QML components of the graphical interface / front-end.
+│   │   ├── main.qml		- Main QML file.
 │   │   └── ...
-│   ├── Logic		            - Directory with Python components of the back-end.
-│   ├── main.py   		      - Main Python file.
+│   ├── Logic			- Directory with Python components of the back-end.
+│   ├── main.py			- Main Python file.
 │   └── ...
 ├── qml_project.qmlproject	- QML project description file for QtCreator (to be used by qml/qmlscene).
-├── py_project.qmlproject	  - Python project description file for QtCreator (to be used by python).
-├── pyproject.toml          - Python build system requirements.
+├── py_project.qmlproject	- Python project description file for QtCreator (to be used by python).
+├── pyproject.toml		- Python build system requirements.
 └── ...
 ```
 
