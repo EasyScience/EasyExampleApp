@@ -14,12 +14,12 @@ import Gui.Globals as Globals
 EaElements.StatusBar {
 
     visible: EaGlobals.Vars.appBarCurrentIndex !== 0
-    fittingInProgress: Globals.Proxies.main.fitting.isFittingNow
+    //fittingInProgress: Globals.Proxies.main.fitting.isFittingNow
 
-    model: EaComponents.JsonListModel {
-        json: JSON.stringify(Globals.Proxies.main.status.asJson)
-        query: "$[*]"
-    }
+    //model: EaComponents.JsonListModel {
+    //    json: JSON.stringify(Globals.Proxies.main.status.asJson)
+    //    query: "$[*]"
+    //}
 
 }
 
